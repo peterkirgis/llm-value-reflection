@@ -1,0 +1,59 @@
+# Configuration for the recode pipeline (BRIEF section 10; DECISIONS sections 1, 2, 7, 8).
+# Secrets are NEVER stored here: OPENROUTER_API_KEY is read from the repo-root
+# .env (gitignored) via python-dotenv.
+
+api:
+  base_url: "https://openrouter.ai/api/v1"
+  api_key_env: "OPENROUTER_API_KEY"
+  max_retries: 3          # transport-level retries per call (bounded)
+  json_retries: 3         # parse/validation retries with corrective suffix (BRIEF A2)
+  timeout_seconds: 180
+
+graders:
+  gemma:
+    model_id: "google/gemma-4-31b-it"    # same string v1 used (coder_model in v1 codes)
+    temperature: 0.0
+    max_tokens: 4096
+    reasoning_effort: "high"             # DECISIONS section 2; logged if endpoint rejects
+  qwen:
+    model_id: "qwen/qwen3.8-2.4t-a95b"   # largest Qwen 3.x on OpenRouter (DECISIONS section 1)
+    temperature: 0.0
+    max_tokens: 4096
+    reasoning_effort: "high"
+
+# E1 label-swap arms replicate v1 exactly (DECISIONS section 2): Gemma,
+# temperature 0.0, max_tokens 1500, NO reasoning parameter,
+# openrouter_config {disable_compression: true} only.
+v1_replication:
+  model_id: "google/gemma-4-31b-it"
+  temperature: 0.0
+  max_tokens: 1500
+  reasoning_effort: null
+  disable_compression: true
+
+paths:
+  edits: "recode/data/canonical/edits.jsonl"
+  v1_codes: "recode/data/codes/v1.jsonl"
+  codes_dir: "recode/data/codes"
+  cache_dir: "recode/data/cache"
+  edit_schema: "recode/schemas/edit.schema.json"
+  code_schema: "recode/schemas/code.schema.json"
+  prompts_dir: "recode/prompts"
+  reports_dir: "recode/reports"
+  figures_dir: "recode/figures"
+  human_dir: "recode/human"
+
+seeds:
+  master: 20260903        # all new randomness derives from here (DECISIONS section 7)
+  human_sample: 20260903  # C1 150-edit draw
+  blind_ids: 20260904     # C2 blind tokens + sheet order
+  label_swap_sample: 20260905   # E1 300-edit subsample
+  e4_subsample: 20260906
+  bootstrap: 20260907
+
+bootstrap:
+  B: 2000
+
+grading:
+  concurrency: 8
+  parse_failure_ask_threshold: 0.02   # ASK Peter if parse-failure rate exceeds this
