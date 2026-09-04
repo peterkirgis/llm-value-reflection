@@ -35,7 +35,8 @@ Outputs:
 Codes-file convention (append-only JSONL): multiple rows may exist per
 edit_id -- the LAST row wins. The parsed code sits under "coding" (v1.jsonl
 and all v2 files) and may be null for failures; null codings are excluded
-from every estimand but counted and reported.
+from every estimand but counted and reported. Loading and row validity are
+delegated to recode/src/codes_io.py (the shared predicate).
 """
 
 from __future__ import annotations
@@ -47,11 +48,13 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 try:
+    import codes_io
     from common import RECODE_ROOT
 except ImportError:  # pragma: no cover - direct-script execution fallback
     import sys
 
     sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import codes_io
     from common import RECODE_ROOT
 
 DEFAULT_EDITS = RECODE_ROOT / "data" / "canonical" / "edits.jsonl"
@@ -120,21 +123,17 @@ def load_jsonl(path: Path) -> list[dict]:
 def load_codes(path: Path) -> tuple[dict[str, dict | None], dict]:
     """Load a codes JSONL. Returns ({edit_id: coding-or-None}, meta).
 
-    Append-only convention: the LAST row per edit_id wins. v2 files carry the
-    id under "edit_id"; v1.jsonl carries it under "id". The parsed code is
-    under "coding" and may be null for failed calls.
+    Loading and validity are delegated to `codes_io` (the shared module):
+    LAST row per edit_id wins; a coding is kept only if it passes the unified
+    predicate (row-level error unset, judge.score in {-1,0,1},
+    patienthood.level valid) — anything else, including v1-style
+    {"error": ...} payloads, maps to None.
     """
-    rows = load_jsonl(path)
-    coding_by_id: dict[str, dict | None] = {}
-    for row in rows:
-        edit_id = row.get("edit_id") or row.get("id")
-        if edit_id is None:
-            raise ValueError(f"codes row without edit_id/id in {path}")
-        coding = row.get("coding")
-        if isinstance(coding, dict) and "error" in coding and "judge" not in coding:
-            # v1-style error payloads ({"error": ...}) are failures, not codes.
-            coding = None
-        coding_by_id[edit_id] = coding  # last row wins
+    rows = codes_io.load_rows(path)
+    coding_by_id = {
+        edit_id: codes_io.coding_of(row)
+        for edit_id, row in codes_io.rows_by_id(rows, source=str(path)).items()
+    }
     meta = {
         "codes_path": str(path),
         "n_code_rows": len(rows),
@@ -172,24 +171,15 @@ def join(edits: list[dict], coding_by_id: dict[str, dict | None]) -> list[dict]:
 
 
 def judge_score(rec: dict) -> int | None:
-    coding = rec.get("coding")
-    if not coding:
-        return None
-    return ((coding.get("judge") or {}).get("score"))
+    return codes_io.judge_score(rec.get("coding"))
 
 
 def patienthood_level(rec: dict) -> str | None:
-    coding = rec.get("coding")
-    if not coding:
-        return None
-    return (coding.get("patienthood") or {}).get("level")
+    return codes_io.patienthood_level(rec.get("coding"))
 
 
 def conflicts_of(rec: dict) -> list[dict]:
-    coding = rec.get("coding")
-    if not coding:
-        return []
-    return coding.get("conflicts") or []
+    return codes_io.conflicts(rec.get("coding"))
 
 
 def chain_key(rec: dict) -> tuple:

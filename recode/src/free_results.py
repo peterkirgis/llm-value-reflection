@@ -28,7 +28,9 @@ strictly from those artifacts.
 
 Codes-file convention (append-only JSONL): the LAST row per edit id wins; the
 parsed code sits under "coding" and may be null for failures; the id key is
-"edit_id" or "id".
+"edit_id" or "id". Loading and row validity are delegated to
+recode/src/codes_io.py (shared predicate: row-level error unset, judge.score
+in {-1,0,1}, patienthood.level valid — anything else counts as uncoded).
 
 Usage:
     .venv/bin/python recode/src/free_results.py                 # everything
@@ -55,6 +57,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from codes_io import codings_by_id, judge_score  # noqa: E402  (shared loader/validity)
 from common import RECODE_ROOT, document_path  # noqa: E402
 from replay import ReplayError  # noqa: E402
 from valconv.diffing import (  # noqa: E402  (import-only per DECISIONS section 4)
@@ -90,32 +93,6 @@ def load_edits(path: Path) -> list[dict]:
             if line.strip():
                 records.append(json.loads(line))
     return records
-
-
-def load_codes(path: Path) -> dict[str, dict | None]:
-    """edit_id -> parsed coding (or None). Append-only JSONL: LAST row wins."""
-    codes: dict[str, dict | None] = {}
-    with open(path, encoding="utf-8") as handle:
-        for line in handle:
-            line = line.strip()
-            if not line:
-                continue
-            row = json.loads(line)
-            edit_id = row.get("edit_id") or row.get("id")
-            if edit_id is None:
-                raise ValueError(f"{path}: row without edit_id/id")
-            codes[edit_id] = row.get("coding")
-    return codes
-
-
-def judge_score(coding: dict | None) -> int | None:
-    if not coding:
-        return None
-    judge = coding.get("judge")
-    if not isinstance(judge, dict):
-        return None
-    score = judge.get("score")
-    return int(score) if score in (-1, 0, 1) else None
 
 
 def write_csv(path: Path, headers: list[str], rows: list[list]) -> None:
@@ -999,7 +976,7 @@ def main() -> None:
     graders = {}
     if need_graders:
         for label, path in codes_paths.items():
-            graders[label] = load_codes(path)
+            graders[label] = codings_by_id(path)
             n_ok = sum(1 for c in graders[label].values() if c is not None)
             print(f"grader {label}: {len(graders[label])} rows "
                   f"({n_ok} with parsed coding) from {path}")

@@ -77,3 +77,17 @@
   blind-key content in any HTTP response. Awaiting the 30 adjudication
   extras (B3 + E4) before hand-off to Peter.
 - Both audits passed. Full test suite: 171 passing.
+
+## A3/B3/C/E analysis machinery + unified codes IO — DONE (2026-09-04)
+- `src/codes_io.py`: single validity predicate + loader (last-row-wins),
+  now used by bootstrap/headline/free_results — zero numeric drift proven
+  against committed v1 outputs (byte-identical artifacts).
+- `src/compare_v1_v2.py` (A3), `src/intergrader.py` (B3: kappa/alpha,
+  COI test with cluster-bootstrap CI, ensemble.jsonl per DECISIONS §1),
+  `src/human_validation.py` + `src/ppi_analysis.py` (C3/C4, ppi_py with
+  Appendix VI fallback, adjudication extras excluded from PPI),
+  `src/e_reports.py` (E1–E5 report generators; E4 exports the 30
+  adjudication extras in --append-extras format).
+- Both audits passed (hand-computed kappa, textbook alpha cross-check,
+  PPI n=N reduction, paired-bootstrap fixture). Suite: 276 passed.
+- All runnable with one command each once v2_gemma/v2_qwen complete.

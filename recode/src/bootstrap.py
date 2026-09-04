@@ -53,7 +53,9 @@ CLI (v2/ensemble re-runs are one command with a different codes path):
 
 Codes-file convention: append-only JSONL, possibly multiple rows per edit id
 (keep the LAST); the id key is `edit_id` (v2 files) or `id` (v1.jsonl); the
-parsed code sits under `coding` and may be null for failures.
+parsed code sits under `coding` and may be null for failures. Loading and
+row validity are delegated to `recode/src/codes_io.py` (the shared predicate:
+row-level error unset, judge.score in {-1,0,1}, patienthood.level valid).
 
 Outputs (label-suffixed so later labels never overwrite):
   recode/data/analysis/bootstrap/<label>_bootstrap_summary.json
@@ -79,6 +81,14 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from codes_io import (  # noqa: E402  (shared loader/validity — single source of truth)
+    coding_of,
+    has_conflict,
+    judge_score,
+    load_rows,
+    patienthood_level,
+    rows_by_id,
+)
 from common import RECODE_ROOT  # noqa: E402
 
 N_ROUNDS = 20
@@ -87,8 +97,6 @@ CONFLICT_CODES = [
     "paternalism", "harmlessness", "structural",
     "company_cost", "welfare", "disclosure", "other",
 ]
-JUDGE_VALUES = {-1, 0, 1}
-
 # Fixed model order (also the RNG stream index per model — never reorder).
 MODEL_ORDER = [
     "Claude Opus 4.7", "Claude Sonnet 4.6", "Claude Haiku 4.5",
@@ -135,35 +143,21 @@ def load_jsonl(path: Path) -> list[dict]:
     return rows
 
 
-def load_codes(path: Path) -> dict[str, dict | None]:
-    """edit_id -> coding dict (or None). Append-only JSONL: LAST row wins.
-
-    Accepts the v1 file's `id` key and the v2 files' `edit_id` key.
-    """
-    codes: dict[str, dict | None] = {}
-    for row in load_jsonl(path):
-        edit_id = row.get("edit_id") or row.get("id")
-        if edit_id is None:
-            continue
-        codes[edit_id] = row.get("coding")
-    return codes
-
-
 def extract_edit_stats(coding: dict | None) -> dict | None:
-    """Per-edit statistics from one coding, or None if unusable (missing /
-    null / invalid judge score / error payload)."""
-    if not isinstance(coding, dict) or "judge" not in coding or "error" in coding:
+    """Per-edit statistics from one coding (as validated by
+    codes_io.coding_of at load time), or None if the edit has no usable code.
+
+    Loading and row validity live in codes_io — the single source of truth
+    shared with headline.py / free_results.py / compare_v1_v2.py."""
+    score = judge_score(coding)
+    if score is None:
         return None
-    judge = (coding.get("judge") or {}).get("score")
-    if judge not in JUDGE_VALUES:
-        return None
-    level = (coding.get("patienthood") or {}).get("level")
-    present = set()
-    for conflict in coding.get("conflicts") or []:
-        code = (conflict or {}).get("code")
-        if code in CONFLICT_CODES:
-            present.add(code)
-    return {"judge": int(judge), "affirm": level == "affirm", "conflicts": present}
+    present = {code for code in CONFLICT_CODES if has_conflict(coding, code)}
+    return {
+        "judge": score,
+        "affirm": patienthood_level(coding) == "affirm",
+        "conflicts": present,
+    }
 
 
 class Chain:
@@ -709,8 +703,11 @@ def main() -> None:
 
     print(f"label={label}  codes={args.codes}  B={B}  seed={seed}")
     edits = load_jsonl(Path(args.edits))
-    code_rows = load_jsonl(Path(args.codes))
-    codes = load_codes(Path(args.codes))
+    code_rows = load_rows(Path(args.codes))
+    codes = {
+        edit_id: coding_of(row)
+        for edit_id, row in rows_by_id(code_rows, source=args.codes).items()
+    }
     n_coded_edits = sum(
         1 for e in edits if extract_edit_stats(codes.get(e["edit_id"])) is not None
     )
