@@ -61,3 +61,19 @@
 - Known cross-module wart (audit warning, fix before v2 analyses): the three
   modules differ slightly in which codings count as valid when an 'error'
   key is present. Unify in the A3/B3 workstream.
+
+## E-infrastructure + human UI — DONE (2026-09-04)
+- `src/e_runs.py`: E1 arms (exact v1 instrument replication, Appendix IV swap
+  map asserted in tests), E2/E3/E4/E5 drivers with resume + caching; E1 300-id
+  seeded sample drawn. Live 4-call check produced valid v1-instrument codes.
+- `prompts/v2_para1.md` / `v2_para2.md`: hand-authored Appendix V paraphrases;
+  protected-token inventories byte-identical (62 tests), 5-gram prose overlap
+  16.2% / 15.4% (bar: <60%), OUTPUT FORMAT byte-identical by construction;
+  live Qwen equivalence verdicts NO/NO (`notes/paraphrase_equivalence.md`).
+- `human/`: Flask blind-coding UI (per-coder sheets, resume, taxonomy-exact
+  values), seeded 150-edit C1 draw (15/model, applied-only), blind key,
+  coder instructions (v2 manual sections verbatim, no anchors per Appendix
+  III), 18 UI tests. Blinding audit: no model/provider/condition/round or
+  blind-key content in any HTTP response. Awaiting the 30 adjudication
+  extras (B3 + E4) before hand-off to Peter.
+- Both audits passed. Full test suite: 171 passing.
