@@ -1,0 +1,21 @@
+{
+ "label": "ensemble",
+ "B": 2000,
+ "seed": 20260907,
+ "results": [
+  {
+   "stratum": "pooled",
+   "fraction_all_claude_above_all_others": 0.9965,
+   "n_valid_draws": 2000,
+   "n_excluded_nan_draws": 0,
+   "B": 2000
+  },
+  {
+   "stratum": "cross_edit",
+   "fraction_all_claude_above_all_others": 0.3765,
+   "n_valid_draws": 2000,
+   "n_excluded_nan_draws": 0,
+   "B": 2000
+  }
+ ]
+}

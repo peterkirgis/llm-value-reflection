@@ -1,0 +1,2563 @@
+{
+ "timestamp": "2026-09-04T21:15:56+00:00",
+ "edits_path": "/Users/nicholasgannon/llm-value-reflection/recode/data/canonical/edits.jsonl",
+ "n_edits": 2740,
+ "grader_rows": {
+  "gemma": {
+   "n_unique_ids": 2582,
+   "n_valid": 2574,
+   "n_outside_frame": 0
+  },
+  "qwen": {
+   "n_unique_ids": 2582,
+   "n_valid": 2536,
+   "n_outside_frame": 0
+  }
+ },
+ "ensemble_path": "/Users/nicholasgannon/llm-value-reflection/recode/data/codes/ensemble.jsonl",
+ "B": 2000,
+ "seed": 20260907,
+ "graders": [
+  "gemma",
+  "qwen"
+ ],
+ "primary_grader": "gemma",
+ "agreement_overall": {
+  "n_universe": 2740,
+  "n_complete_all_graders": 2528,
+  "per_grader_valid": {
+   "gemma": 2574,
+   "qwen": 2536
+  },
+  "dimensions": {
+   "judge": {
+    "pairwise": {
+     "gemma|qwen": {
+      "n": 2528,
+      "kappa": 0.6077345929644236,
+      "agreement": 0.7412974683544303
+     }
+    },
+    "alpha": {
+     "alpha": 0.6067636317528046,
+     "n_pairable": 2528,
+     "n_complete": 2528,
+     "n_any": 2582
+    }
+   },
+   "patienthood": {
+    "pairwise": {
+     "gemma|qwen": {
+      "n": 2528,
+      "kappa": 0.8390395661747996,
+      "agreement": 0.9742879746835443
+     }
+    },
+    "alpha": {
+     "alpha": 0.8390390793471328,
+     "n_pairable": 2528,
+     "n_complete": 2528,
+     "n_any": 2582
+    }
+   },
+   "conflict:paternalism": {
+    "pairwise": {
+     "gemma|qwen": {
+      "n": 2528,
+      "kappa": 0.4370006487721937,
+      "agreement": 0.8223892405063291
+     }
+    },
+    "alpha": {
+     "alpha": 0.417660048907735,
+     "n_pairable": 2528,
+     "n_complete": 2528,
+     "n_any": 2582
+    }
+   },
+   "conflict:harmlessness": {
+    "pairwise": {
+     "gemma|qwen": {
+      "n": 2528,
+      "kappa": 0.5860245423842891,
+      "agreement": 0.9137658227848101
+     }
+    },
+    "alpha": {
+     "alpha": 0.5817779531981753,
+     "n_pairable": 2528,
+     "n_complete": 2528,
+     "n_any": 2582
+    }
+   },
+   "conflict:structural": {
+    "pairwise": {
+     "gemma|qwen": {
+      "n": 2528,
+      "kappa": 0.49074862001189845,
+      "agreement": 0.9576740506329114
+     }
+    },
+    "alpha": {
+     "alpha": 0.4893953854562859,
+     "n_pairable": 2528,
+     "n_complete": 2528,
+     "n_any": 2582
+    }
+   },
+   "conflict:company_cost": {
+    "pairwise": {
+     "gemma|qwen": {
+      "n": 2528,
+      "kappa": 0.4297517579770773,
+      "agreement": 0.8564082278481012
+     }
+    },
+    "alpha": {
+     "alpha": 0.41695001529939635,
+     "n_pairable": 2528,
+     "n_complete": 2528,
+     "n_any": 2582
+    }
+   },
+   "conflict:welfare": {
+    "pairwise": {
+     "gemma|qwen": {
+      "n": 2528,
+      "kappa": 0.7889048884402416,
+      "agreement": 0.9821993670886076
+     }
+    },
+    "alpha": {
+     "alpha": 0.7889370443670617,
+     "n_pairable": 2528,
+     "n_complete": 2528,
+     "n_any": 2582
+    }
+   },
+   "conflict:disclosure": {
+    "pairwise": {
+     "gemma|qwen": {
+      "n": 2528,
+      "kappa": 0.5107532935480239,
+      "agreement": 0.978243670886076
+     }
+    },
+    "alpha": {
+     "alpha": 0.5107045748528286,
+     "n_pairable": 2528,
+     "n_complete": 2528,
+     "n_any": 2582
+    }
+   },
+   "conflict:other": {
+    "pairwise": {
+     "gemma|qwen": {
+      "n": 2528,
+      "kappa": 0.1070494513753194,
+      "agreement": 0.9814082278481012
+     }
+    },
+    "alpha": {
+     "alpha": 0.10399043592712298,
+     "n_pairable": 2528,
+     "n_complete": 2528,
+     "n_any": 2582
+    }
+   }
+  }
+ },
+ "agreement_by_document_owner": {
+  "Anthropic": {
+   "n_universe": 840,
+   "n_complete_all_graders": 790,
+   "per_grader_valid": {
+    "gemma": 806,
+    "qwen": 791
+   },
+   "dimensions": {
+    "judge": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 790,
+       "kappa": 0.5941926576309071,
+       "agreement": 0.740506329113924
+      }
+     },
+     "alpha": {
+      "alpha": 0.5917575882930866,
+      "n_pairable": 790,
+      "n_complete": 790,
+      "n_any": 807
+     }
+    },
+    "patienthood": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 790,
+       "kappa": 0.801932807585358,
+       "agreement": 0.930379746835443
+      }
+     },
+     "alpha": {
+      "alpha": 0.8018820577164366,
+      "n_pairable": 790,
+      "n_complete": 790,
+      "n_any": 807
+     }
+    },
+    "conflict:paternalism": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 790,
+       "kappa": 0.4023929689214316,
+       "agreement": 0.8341772151898734
+      }
+     },
+     "alpha": {
+      "alpha": 0.3799100063253382,
+      "n_pairable": 790,
+      "n_complete": 790,
+      "n_any": 807
+     }
+    },
+    "conflict:harmlessness": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 790,
+       "kappa": 0.40739814655643936,
+       "agreement": 0.8784810126582279
+      }
+     },
+     "alpha": {
+      "alpha": 0.3925852313709147,
+      "n_pairable": 790,
+      "n_complete": 790,
+      "n_any": 807
+     }
+    },
+    "conflict:structural": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 790,
+       "kappa": 0.4993553462555451,
+       "agreement": 0.9265822784810127
+      }
+     },
+     "alpha": {
+      "alpha": 0.49274415101028,
+      "n_pairable": 790,
+      "n_complete": 790,
+      "n_any": 807
+     }
+    },
+    "conflict:company_cost": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 790,
+       "kappa": 0.4921446266737747,
+       "agreement": 0.8443037974683544
+      }
+     },
+     "alpha": {
+      "alpha": 0.4822246926811322,
+      "n_pairable": 790,
+      "n_complete": 790,
+      "n_any": 807
+     }
+    },
+    "conflict:welfare": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 790,
+       "kappa": 0.7839079830955865,
+       "agreement": 0.9493670886075949
+      }
+     },
+     "alpha": {
+      "alpha": 0.7839383697541085,
+      "n_pairable": 790,
+      "n_complete": 790,
+      "n_any": 807
+     }
+    },
+    "conflict:disclosure": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 790,
+       "kappa": null,
+       "agreement": 1.0
+      }
+     },
+     "alpha": {
+      "alpha": null,
+      "n_pairable": 790,
+      "n_complete": 790,
+      "n_any": 807
+     }
+    },
+    "conflict:other": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 790,
+       "kappa": 0.16453300679060456,
+       "agreement": 0.9759493670886076
+      }
+     },
+     "alpha": {
+      "alpha": 0.1622406523135349,
+      "n_pairable": 790,
+      "n_complete": 790,
+      "n_any": 807
+     }
+    }
+   }
+  },
+  "Google": {
+   "n_universe": 640,
+   "n_complete_all_graders": 618,
+   "per_grader_valid": {
+    "gemma": 623,
+    "qwen": 619
+   },
+   "dimensions": {
+    "judge": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 618,
+       "kappa": 0.5689311130339578,
+       "agreement": 0.7443365695792881
+      }
+     },
+     "alpha": {
+      "alpha": 0.5675933209976399,
+      "n_pairable": 618,
+      "n_complete": 618,
+      "n_any": 624
+     }
+    },
+    "patienthood": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 618,
+       "kappa": 0.9317805497295507,
+       "agreement": 0.9967637540453075
+      }
+     },
+     "alpha": {
+      "alpha": 0.931835743459543,
+      "n_pairable": 618,
+      "n_complete": 618,
+      "n_any": 624
+     }
+    },
+    "conflict:paternalism": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 618,
+       "kappa": 0.38313020898772876,
+       "agreement": 0.7686084142394822
+      }
+     },
+     "alpha": {
+      "alpha": 0.3515822633764498,
+      "n_pairable": 618,
+      "n_complete": 618,
+      "n_any": 624
+     }
+    },
+    "conflict:harmlessness": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 618,
+       "kappa": 0.6171201404305849,
+       "agreement": 0.9611650485436893
+      }
+     },
+     "alpha": {
+      "alpha": 0.6161616161616161,
+      "n_pairable": 618,
+      "n_complete": 618,
+      "n_any": 624
+     }
+    },
+    "conflict:structural": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 618,
+       "kappa": 0.45364128632998124,
+       "agreement": 0.9741100323624595
+      }
+     },
+     "alpha": {
+      "alpha": 0.4538419016030957,
+      "n_pairable": 618,
+      "n_complete": 618,
+      "n_any": 624
+     }
+    },
+    "conflict:company_cost": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 618,
+       "kappa": 0.3807615230460921,
+       "agreement": 0.8689320388349514
+      }
+     },
+     "alpha": {
+      "alpha": 0.3676475236259048,
+      "n_pairable": 618,
+      "n_complete": 618,
+      "n_any": 624
+     }
+    },
+    "conflict:welfare": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 618,
+       "kappa": 0.0,
+       "agreement": 0.9983818770226537
+      }
+     },
+     "alpha": {
+      "alpha": 0.0,
+      "n_pairable": 618,
+      "n_complete": 618,
+      "n_any": 624
+     }
+    },
+    "conflict:disclosure": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 618,
+       "kappa": null,
+       "agreement": 1.0
+      }
+     },
+     "alpha": {
+      "alpha": null,
+      "n_pairable": 618,
+      "n_complete": 618,
+      "n_any": 624
+     }
+    },
+    "conflict:other": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 618,
+       "kappa": -0.002595717066839809,
+       "agreement": 0.9919093851132686
+      }
+     },
+     "alpha": {
+      "alpha": -0.0032493907392363575,
+      "n_pairable": 618,
+      "n_complete": 618,
+      "n_any": 624
+     }
+    }
+   }
+  },
+  "OpenAI": {
+   "n_universe": 860,
+   "n_complete_all_graders": 729,
+   "per_grader_valid": {
+    "gemma": 750,
+    "qwen": 734
+   },
+   "dimensions": {
+    "judge": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 729,
+       "kappa": 0.5654221993641295,
+       "agreement": 0.720164609053498
+      }
+     },
+     "alpha": {
+      "alpha": 0.5639772327191644,
+      "n_pairable": 729,
+      "n_complete": 729,
+      "n_any": 755
+     }
+    },
+    "patienthood": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 729,
+       "kappa": 0.8525741029641185,
+       "agreement": 0.99039780521262
+      }
+     },
+     "alpha": {
+      "alpha": 0.8526603198451337,
+      "n_pairable": 729,
+      "n_complete": 729,
+      "n_any": 755
+     }
+    },
+    "conflict:paternalism": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 729,
+       "kappa": 0.4325081737505838,
+       "agreement": 0.8285322359396433
+      }
+     },
+     "alpha": {
+      "alpha": 0.41352349609230343,
+      "n_pairable": 729,
+      "n_complete": 729,
+      "n_any": 755
+     }
+    },
+    "conflict:harmlessness": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 729,
+       "kappa": 0.6658058403752999,
+       "agreement": 0.9176954732510288
+      }
+     },
+     "alpha": {
+      "alpha": 0.6637692307692308,
+      "n_pairable": 729,
+      "n_complete": 729,
+      "n_any": 755
+     }
+    },
+    "conflict:structural": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 729,
+       "kappa": 0.3751205400192864,
+       "agreement": 0.9780521262002744
+      }
+     },
+     "alpha": {
+      "alpha": 0.3738719381177481,
+      "n_pairable": 729,
+      "n_complete": 729,
+      "n_any": 755
+     }
+    },
+    "conflict:company_cost": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 729,
+       "kappa": 0.3846957976165587,
+       "agreement": 0.850480109739369
+      }
+     },
+     "alpha": {
+      "alpha": 0.3714284583447124,
+      "n_pairable": 729,
+      "n_complete": 729,
+      "n_any": 755
+     }
+    },
+    "conflict:welfare": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 729,
+       "kappa": 0.6654428636989445,
+       "agreement": 0.9972565157750343
+      }
+     },
+     "alpha": {
+      "alpha": 0.6655188246097337,
+      "n_pairable": 729,
+      "n_complete": 729,
+      "n_any": 755
+     }
+    },
+    "conflict:disclosure": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 729,
+       "kappa": 0.4813535643602779,
+       "agreement": 0.9245541838134431
+      }
+     },
+     "alpha": {
+      "alpha": 0.481142154164913,
+      "n_pairable": 729,
+      "n_complete": 729,
+      "n_any": 755
+     }
+    },
+    "conflict:other": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 729,
+       "kappa": 0.12274368231046928,
+       "agreement": 0.9807956104252401
+      }
+     },
+     "alpha": {
+      "alpha": 0.11589805825242716,
+      "n_pairable": 729,
+      "n_complete": 729,
+      "n_any": 755
+     }
+    }
+   }
+  },
+  "xAI": {
+   "n_universe": 400,
+   "n_complete_all_graders": 391,
+   "per_grader_valid": {
+    "gemma": 395,
+    "qwen": 392
+   },
+   "dimensions": {
+    "judge": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 391,
+       "kappa": 0.6311080746958162,
+       "agreement": 0.7774936061381074
+      }
+     },
+     "alpha": {
+      "alpha": 0.631177840381703,
+      "n_pairable": 391,
+      "n_complete": 391,
+      "n_any": 396
+     }
+    },
+    "patienthood": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 391,
+       "kappa": 0.9220960350667464,
+       "agreement": 0.9974424552429667
+      }
+     },
+     "alpha": {
+      "alpha": 0.9221879047524161,
+      "n_pairable": 391,
+      "n_complete": 391,
+      "n_any": 396
+     }
+    },
+    "conflict:paternalism": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 391,
+       "kappa": 0.5960076045627376,
+       "agreement": 0.8721227621483376
+      }
+     },
+     "alpha": {
+      "alpha": 0.5922096908939014,
+      "n_pairable": 391,
+      "n_complete": 391,
+      "n_any": 396
+     }
+    },
+    "conflict:harmlessness": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 391,
+       "kappa": 0.6685553671812261,
+       "agreement": 0.9028132992327366
+      }
+     },
+     "alpha": {
+      "alpha": 0.6660590512197317,
+      "n_pairable": 391,
+      "n_complete": 391,
+      "n_any": 396
+     }
+    },
+    "conflict:structural": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 391,
+       "kappa": 0.5412381806887984,
+       "agreement": 0.9565217391304348
+      }
+     },
+     "alpha": {
+      "alpha": 0.5418090209476482,
+      "n_pairable": 391,
+      "n_complete": 391,
+      "n_any": 396
+     }
+    },
+    "conflict:company_cost": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 391,
+       "kappa": 0.39281942977824713,
+       "agreement": 0.8721227621483376
+      }
+     },
+     "alpha": {
+      "alpha": 0.37299293513166343,
+      "n_pairable": 391,
+      "n_complete": 391,
+      "n_any": 396
+     }
+    },
+    "conflict:welfare": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 391,
+       "kappa": 0.0,
+       "agreement": 0.9948849104859335
+      }
+     },
+     "alpha": {
+      "alpha": -0.0012820512820512775,
+      "n_pairable": 391,
+      "n_complete": 391,
+      "n_any": 396
+     }
+    },
+    "conflict:disclosure": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 391,
+       "kappa": null,
+       "agreement": 1.0
+      }
+     },
+     "alpha": {
+      "alpha": null,
+      "n_pairable": 391,
+      "n_complete": 391,
+      "n_any": 396
+     }
+    },
+    "conflict:other": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 391,
+       "kappa": -0.010335917312661369,
+       "agreement": 0.9769820971867008
+      }
+     },
+     "alpha": {
+      "alpha": -0.010349288486416475,
+      "n_pairable": 391,
+      "n_complete": 391,
+      "n_any": 396
+     }
+    }
+   }
+  }
+ },
+ "agreement_by_provider": {
+  "anthropic": {
+   "n_universe": 900,
+   "n_complete_all_graders": 827,
+   "per_grader_valid": {
+    "gemma": 846,
+    "qwen": 829
+   },
+   "dimensions": {
+    "judge": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 827,
+       "kappa": 0.5873025728767098,
+       "agreement": 0.7376058041112454
+      }
+     },
+     "alpha": {
+      "alpha": 0.5850034766129807,
+      "n_pairable": 827,
+      "n_complete": 827,
+      "n_any": 848
+     }
+    },
+    "patienthood": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 827,
+       "kappa": 0.8288918314988,
+       "agreement": 0.9455864570737605
+      }
+     },
+     "alpha": {
+      "alpha": 0.8288910409617158,
+      "n_pairable": 827,
+      "n_complete": 827,
+      "n_any": 848
+     }
+    },
+    "conflict:paternalism": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 827,
+       "kappa": 0.40131420191932876,
+       "agreement": 0.81136638452237
+      }
+     },
+     "alpha": {
+      "alpha": 0.37484726828416826,
+      "n_pairable": 827,
+      "n_complete": 827,
+      "n_any": 848
+     }
+    },
+    "conflict:harmlessness": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 827,
+       "kappa": 0.42297039193160746,
+       "agreement": 0.8802902055622733
+      }
+     },
+     "alpha": {
+      "alpha": 0.4089712335446124,
+      "n_pairable": 827,
+      "n_complete": 827,
+      "n_any": 848
+     }
+    },
+    "conflict:structural": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 827,
+       "kappa": 0.5599774141357106,
+       "agreement": 0.9407496977025392
+      }
+     },
+     "alpha": {
+      "alpha": 0.5565817206361372,
+      "n_pairable": 827,
+      "n_complete": 827,
+      "n_any": 848
+     }
+    },
+    "conflict:company_cost": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 827,
+       "kappa": 0.4876363618340511,
+       "agreement": 0.848851269649335
+      }
+     },
+     "alpha": {
+      "alpha": 0.4790524237771441,
+      "n_pairable": 827,
+      "n_complete": 827,
+      "n_any": 848
+     }
+    },
+    "conflict:welfare": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 827,
+       "kappa": 0.8064838647918484,
+       "agreement": 0.9600967351874244
+      }
+     },
+     "alpha": {
+      "alpha": 0.8065453075294443,
+      "n_pairable": 827,
+      "n_complete": 827,
+      "n_any": 848
+     }
+    },
+    "conflict:disclosure": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 827,
+       "kappa": 0.3964972026270981,
+       "agreement": 0.9891172914147521
+      }
+     },
+     "alpha": {
+      "alpha": 0.39487492373398414,
+      "n_pairable": 827,
+      "n_complete": 827,
+      "n_any": 848
+     }
+    },
+    "conflict:other": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 827,
+       "kappa": 0.2642348754448398,
+       "agreement": 0.9806529625151149
+      }
+     },
+     "alpha": {
+      "alpha": 0.2633689839572192,
+      "n_pairable": 827,
+      "n_complete": 827,
+      "n_any": 848
+     }
+    }
+   }
+  },
+  "google": {
+   "n_universe": 600,
+   "n_complete_all_graders": 592,
+   "per_grader_valid": {
+    "gemma": 595,
+    "qwen": 593
+   },
+   "dimensions": {
+    "judge": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 592,
+       "kappa": 0.5939542443053891,
+       "agreement": 0.7668918918918919
+      }
+     },
+     "alpha": {
+      "alpha": 0.593228700780633,
+      "n_pairable": 592,
+      "n_complete": 592,
+      "n_any": 596
+     }
+    },
+    "patienthood": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 592,
+       "kappa": 0.900626678603402,
+       "agreement": 0.9949324324324325
+      }
+     },
+     "alpha": {
+      "alpha": 0.9007078309039532,
+      "n_pairable": 592,
+      "n_complete": 592,
+      "n_any": 596
+     }
+    },
+    "conflict:paternalism": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 592,
+       "kappa": 0.38635506973237854,
+       "agreement": 0.7956081081081081
+      }
+     },
+     "alpha": {
+      "alpha": 0.3622186874830132,
+      "n_pairable": 592,
+      "n_complete": 592,
+      "n_any": 596
+     }
+    },
+    "conflict:harmlessness": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 592,
+       "kappa": 0.7258243793997777,
+       "agreement": 0.9662162162162162
+      }
+     },
+     "alpha": {
+      "alpha": 0.7257383966244726,
+      "n_pairable": 592,
+      "n_complete": 592,
+      "n_any": 596
+     }
+    },
+    "conflict:structural": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 592,
+       "kappa": 0.37086178023959804,
+       "agreement": 0.9442567567567568
+      }
+     },
+     "alpha": {
+      "alpha": 0.3713020372010629,
+      "n_pairable": 592,
+      "n_complete": 592,
+      "n_any": 596
+     }
+    },
+    "conflict:company_cost": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 592,
+       "kappa": 0.41744354671638695,
+       "agreement": 0.8716216216216216
+      }
+     },
+     "alpha": {
+      "alpha": 0.4067358196742946,
+      "n_pairable": 592,
+      "n_complete": 592,
+      "n_any": 596
+     }
+    },
+    "conflict:welfare": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 592,
+       "kappa": 0.0,
+       "agreement": 0.9983108108108109
+      }
+     },
+     "alpha": {
+      "alpha": 0.0,
+      "n_pairable": 592,
+      "n_complete": 592,
+      "n_any": 596
+     }
+    },
+    "conflict:disclosure": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 592,
+       "kappa": 0.0,
+       "agreement": 0.9983108108108109
+      }
+     },
+     "alpha": {
+      "alpha": 0.0,
+      "n_pairable": 592,
+      "n_complete": 592,
+      "n_any": 596
+     }
+    },
+    "conflict:other": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 592,
+       "kappa": -0.0029041626331074433,
+       "agreement": 0.9881756756756757
+      }
+     },
+     "alpha": {
+      "alpha": -0.005097706032285432,
+      "n_pairable": 592,
+      "n_complete": 592,
+      "n_any": 596
+     }
+    }
+   }
+  },
+  "openai": {
+   "n_universe": 880,
+   "n_complete_all_graders": 760,
+   "per_grader_valid": {
+    "gemma": 782,
+    "qwen": 764
+   },
+   "dimensions": {
+    "judge": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 760,
+       "kappa": 0.5399295875615312,
+       "agreement": 0.7
+      }
+     },
+     "alpha": {
+      "alpha": 0.5377969243581069,
+      "n_pairable": 760,
+      "n_complete": 760,
+      "n_any": 786
+     }
+    },
+    "patienthood": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 760,
+       "kappa": 0.7556101706594391,
+       "agreement": 0.9815789473684211
+      }
+     },
+     "alpha": {
+      "alpha": 0.7556446701674154,
+      "n_pairable": 760,
+      "n_complete": 760,
+      "n_any": 786
+     }
+    },
+    "conflict:paternalism": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 760,
+       "kappa": 0.3842918985776128,
+       "agreement": 0.8276315789473684
+      }
+     },
+     "alpha": {
+      "alpha": 0.36298039215686273,
+      "n_pairable": 760,
+      "n_complete": 760,
+      "n_any": 786
+     }
+    },
+    "conflict:harmlessness": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 760,
+       "kappa": 0.6488361503227708,
+       "agreement": 0.9092105263157895
+      }
+     },
+     "alpha": {
+      "alpha": 0.6454764087282124,
+      "n_pairable": 760,
+      "n_complete": 760,
+      "n_any": 786
+     }
+    },
+    "conflict:structural": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 760,
+       "kappa": 0.4281083584163,
+       "agreement": 0.9828947368421053
+      }
+     },
+     "alpha": {
+      "alpha": 0.42647614068717143,
+      "n_pairable": 760,
+      "n_complete": 760,
+      "n_any": 786
+     }
+    },
+    "conflict:company_cost": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 760,
+       "kappa": 0.37166262135922323,
+       "agreement": 0.8565789473684211
+      }
+     },
+     "alpha": {
+      "alpha": 0.35351859154819587,
+      "n_pairable": 760,
+      "n_complete": 760,
+      "n_any": 786
+     }
+    },
+    "conflict:welfare": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 760,
+       "kappa": 0.49468085106382975,
+       "agreement": 0.9894736842105263
+      }
+     },
+     "alpha": {
+      "alpha": 0.4950132978723405,
+      "n_pairable": 760,
+      "n_complete": 760,
+      "n_any": 786
+     }
+    },
+    "conflict:disclosure": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 760,
+       "kappa": 0.5153061224489796,
+       "agreement": 0.9407894736842105
+      }
+     },
+     "alpha": {
+      "alpha": 0.5141065830721003,
+      "n_pairable": 760,
+      "n_complete": 760,
+      "n_any": 786
+     }
+    },
+    "conflict:other": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 760,
+       "kappa": -0.0024350649350648457,
+       "agreement": 0.9828947368421053
+      }
+     },
+     "alpha": {
+      "alpha": -0.007962840079628553,
+      "n_pairable": 760,
+      "n_complete": 760,
+      "n_any": 786
+     }
+    }
+   }
+  },
+  "x-ai": {
+   "n_universe": 360,
+   "n_complete_all_graders": 349,
+   "per_grader_valid": {
+    "gemma": 351,
+    "qwen": 350
+   },
+   "dimensions": {
+    "judge": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 349,
+       "kappa": 0.6476952825091705,
+       "agreement": 0.7965616045845272
+      }
+     },
+     "alpha": {
+      "alpha": 0.6476288806607804,
+      "n_pairable": 349,
+      "n_complete": 349,
+      "n_any": 352
+     }
+    },
+    "patienthood": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 349,
+       "kappa": 0.8816547982366904,
+       "agreement": 0.9914040114613181
+      }
+     },
+     "alpha": {
+      "alpha": 0.8818043072748856,
+      "n_pairable": 349,
+      "n_complete": 349,
+      "n_any": 352
+     }
+    },
+    "conflict:paternalism": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 349,
+       "kappa": 0.6726303507286828,
+       "agreement": 0.8825214899713467
+      }
+     },
+     "alpha": {
+      "alpha": 0.6694657459777693,
+      "n_pairable": 349,
+      "n_complete": 349,
+      "n_any": 352
+     }
+    },
+    "conflict:harmlessness": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 349,
+       "kappa": 0.6332749562171629,
+       "agreement": 0.9140401146131805
+      }
+     },
+     "alpha": {
+      "alpha": 0.6317105819360294,
+      "n_pairable": 349,
+      "n_complete": 349,
+      "n_any": 352
+     }
+    },
+    "conflict:structural": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 349,
+       "kappa": 0.4369454154342566,
+       "agreement": 0.9656160458452722
+      }
+     },
+     "alpha": {
+      "alpha": 0.4376008606777837,
+      "n_pairable": 349,
+      "n_complete": 349,
+      "n_any": 352
+     }
+    },
+    "conflict:company_cost": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 349,
+       "kappa": 0.3849300036577662,
+       "agreement": 0.8481375358166189
+      }
+     },
+     "alpha": {
+      "alpha": 0.3663310290409455,
+      "n_pairable": 349,
+      "n_complete": 349,
+      "n_any": 352
+     }
+    },
+    "conflict:welfare": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 349,
+       "kappa": 0.7648776105995958,
+       "agreement": 0.9914040114613181
+      }
+     },
+     "alpha": {
+      "alpha": 0.7651880965749579,
+      "n_pairable": 349,
+      "n_complete": 349,
+      "n_any": 352
+     }
+    },
+    "conflict:disclosure": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 349,
+       "kappa": null,
+       "agreement": 1.0
+      }
+     },
+     "alpha": {
+      "alpha": null,
+      "n_pairable": 349,
+      "n_complete": 349,
+      "n_any": 352
+     }
+    },
+    "conflict:other": {
+     "pairwise": {
+      "gemma|qwen": {
+       "n": 349,
+       "kappa": -0.009466210886142523,
+       "agreement": 0.9684813753581661
+      }
+     },
+     "alpha": {
+      "alpha": -0.01455604075691408,
+      "n_pairable": 349,
+      "n_complete": 349,
+      "n_any": 352
+     }
+    }
+   }
+  }
+ },
+ "coi": [
+  {
+   "target": "gemma",
+   "other": "qwen",
+   "verdict": "no evidence that gemma diverges more from qwen on Gemini edits for judge: -0.033 (95% CI [-0.074, +0.011]) (CI spans 0); gemma diverges LESS from qwen on Gemini edits for any-dimension disagreement: -0.077 (95% CI [-0.131, -0.022]).",
+   "gemini_provider": "google",
+   "B": 2000,
+   "seed": 20260907,
+   "rng_stream": [
+    20260907,
+    314159
+   ],
+   "chain_key": "(run_id, model_id, document_id, condition) \u2014 bootstrap.py convention",
+   "n_chains_gemini": 30,
+   "n_chains_non_gemini": 107,
+   "n_valid_edits_gemini": 592,
+   "n_valid_edits_non_gemini": 1936,
+   "dims": {
+    "judge": {
+     "rate_gemini": 0.23310810810810811,
+     "rate_non_gemini": 0.2665289256198347,
+     "difference": -0.0334208175117266,
+     "ci_lo": -0.07440772074358297,
+     "ci_hi": 0.010540811093227367,
+     "n_nan_draws": 0
+    },
+    "patienthood": {
+     "rate_gemini": 0.005067567567567568,
+     "rate_non_gemini": 0.03202479338842975,
+     "difference": -0.02695722582086218,
+     "ci_lo": -0.04322126577903889,
+     "ci_hi": -0.012984843202460131,
+     "n_nan_draws": 0
+    },
+    "conflict_presence": {
+     "rate_gemini": 0.36486486486486486,
+     "rate_non_gemini": 0.42045454545454547,
+     "difference": -0.05558968058968061,
+     "ci_lo": -0.11322897178571721,
+     "ci_hi": 0.004076706145320271,
+     "n_nan_draws": 0
+    },
+    "any": {
+     "rate_gemini": 0.49324324324324326,
+     "rate_non_gemini": 0.5702479338842975,
+     "difference": -0.07700469064105425,
+     "ci_lo": -0.1307353153642747,
+     "ci_hi": -0.022428787909186624,
+     "n_nan_draws": 0
+    }
+   }
+  }
+ ],
+ "headline_assembly": {
+  "slices": [
+   "model:Claude Haiku 4.5",
+   "model:Claude Opus 4.7",
+   "model:Claude Sonnet 4.6",
+   "model:GPT-5.4",
+   "model:GPT-5.4 Mini",
+   "model:GPT-5.5",
+   "model:Gemini 3 Flash",
+   "model:Gemini 3.1 Pro",
+   "model:Grok 4.2",
+   "model:Grok 4.3",
+   "provider:anthropic",
+   "provider:google",
+   "provider:openai",
+   "provider:x-ai"
+  ],
+  "stats": {
+   "mean_judge_pooled": {
+    "model:Claude Haiku 4.5": {
+     "gemma": 0.2054263565891473,
+     "qwen": 0.29571984435797666,
+     "ensemble": 0.2054263565891473
+    },
+    "model:Claude Opus 4.7": {
+     "gemma": 0.12915129151291513,
+     "qwen": 0.32061068702290074,
+     "ensemble": 0.12915129151291513
+    },
+    "model:Claude Sonnet 4.6": {
+     "gemma": 0.07886435331230283,
+     "qwen": 0.3064516129032258,
+     "ensemble": 0.07886435331230283
+    },
+    "model:GPT-5.4": {
+     "gemma": -0.25,
+     "qwen": -0.02631578947368421,
+     "ensemble": -0.25
+    },
+    "model:GPT-5.4 Mini": {
+     "gemma": -0.29347826086956524,
+     "qwen": -0.1989247311827957,
+     "ensemble": -0.29347826086956524
+    },
+    "model:GPT-5.5": {
+     "gemma": -0.2733812949640288,
+     "qwen": -0.17883211678832117,
+     "ensemble": -0.2733812949640288
+    },
+    "model:Gemini 3 Flash": {
+     "gemma": -0.4166666666666667,
+     "qwen": -0.36594202898550726,
+     "ensemble": -0.4166666666666667
+    },
+    "model:Gemini 3.1 Pro": {
+     "gemma": -0.4231974921630094,
+     "qwen": -0.3659305993690852,
+     "ensemble": -0.4231974921630094
+    },
+    "model:Grok 4.2": {
+     "gemma": -0.367816091954023,
+     "qwen": -0.28160919540229884,
+     "ensemble": -0.367816091954023
+    },
+    "model:Grok 4.3": {
+     "gemma": -0.5141242937853108,
+     "qwen": -0.48863636363636365,
+     "ensemble": -0.5141242937853108
+    },
+    "provider:anthropic": {
+     "gemma": 0.13356973995271867,
+     "qwen": 0.30759951749095293,
+     "ensemble": 0.13356973995271867
+    },
+    "provider:google": {
+     "gemma": -0.42016806722689076,
+     "qwen": -0.36593591905564926,
+     "ensemble": -0.42016806722689076
+    },
+    "provider:openai": {
+     "gemma": -0.26854219948849106,
+     "qwen": -0.12303664921465969,
+     "ensemble": -0.26854219948849106
+    },
+    "provider:x-ai": {
+     "gemma": -0.4415954415954416,
+     "qwen": -0.38571428571428573,
+     "ensemble": -0.4415954415954416
+    }
+   },
+   "mean_judge_cross": {
+    "model:Claude Haiku 4.5": {
+     "gemma": 0.06493506493506493,
+     "qwen": 0.07792207792207792,
+     "ensemble": 0.06493506493506493
+    },
+    "model:Claude Opus 4.7": {
+     "gemma": -0.225,
+     "qwen": 0.02564102564102564,
+     "ensemble": -0.225
+    },
+    "model:Claude Sonnet 4.6": {
+     "gemma": -0.1518987341772152,
+     "qwen": 0.039473684210526314,
+     "ensemble": -0.1518987341772152
+    },
+    "model:GPT-5.4": {
+     "gemma": -0.4,
+     "qwen": -0.1917808219178082,
+     "ensemble": -0.4
+    },
+    "model:GPT-5.4 Mini": {
+     "gemma": -0.3333333333333333,
+     "qwen": -0.2807017543859649,
+     "ensemble": -0.3333333333333333
+    },
+    "model:GPT-5.5": {
+     "gemma": -0.3974358974358974,
+     "qwen": -0.2948717948717949,
+     "ensemble": -0.3974358974358974
+    },
+    "model:Gemini 3 Flash": {
+     "gemma": -0.3684210526315789,
+     "qwen": -0.34210526315789475,
+     "ensemble": -0.3684210526315789
+    },
+    "model:Gemini 3.1 Pro": {
+     "gemma": -0.4625,
+     "qwen": -0.45569620253164556,
+     "ensemble": -0.4625
+    },
+    "model:Grok 4.2": {
+     "gemma": -0.32894736842105265,
+     "qwen": -0.25,
+     "ensemble": -0.32894736842105265
+    },
+    "model:Grok 4.3": {
+     "gemma": -0.5625,
+     "qwen": -0.5375,
+     "ensemble": -0.5625
+    },
+    "provider:anthropic": {
+     "gemma": -0.1059322033898305,
+     "qwen": 0.047619047619047616,
+     "ensemble": -0.1059322033898305
+    },
+    "provider:google": {
+     "gemma": -0.4166666666666667,
+     "qwen": -0.4,
+     "ensemble": -0.4166666666666667
+    },
+    "provider:openai": {
+     "gemma": -0.3813953488372093,
+     "qwen": -0.2548076923076923,
+     "ensemble": -0.3813953488372093
+    },
+    "provider:x-ai": {
+     "gemma": -0.44871794871794873,
+     "qwen": -0.3974358974358974,
+     "ensemble": -0.44871794871794873
+    }
+   },
+   "drift20_pooled": {
+    "model:Claude Haiku 4.5": {
+     "gemma": 3.7857142857142856,
+     "qwen": 5.428571428571429,
+     "ensemble": 3.7857142857142856
+    },
+    "model:Claude Opus 4.7": {
+     "gemma": 2.3333333333333335,
+     "qwen": 5.6,
+     "ensemble": 2.3333333333333335
+    },
+    "model:Claude Sonnet 4.6": {
+     "gemma": 1.5625,
+     "qwen": 5.9375,
+     "ensemble": 1.5625
+    },
+    "model:GPT-5.4": {
+     "gemma": -5.0,
+     "qwen": -0.5,
+     "ensemble": -5.0
+    },
+    "model:GPT-5.4 Mini": {
+     "gemma": -3.857142857142857,
+     "qwen": -2.642857142857143,
+     "ensemble": -3.857142857142857
+    },
+    "model:GPT-5.5": {
+     "gemma": -5.428571428571429,
+     "qwen": -3.5,
+     "ensemble": -5.428571428571429
+    },
+    "model:Gemini 3 Flash": {
+     "gemma": -8.214285714285714,
+     "qwen": -7.214285714285714,
+     "ensemble": -8.214285714285714
+    },
+    "model:Gemini 3.1 Pro": {
+     "gemma": -8.4375,
+     "qwen": -7.25,
+     "ensemble": -8.4375
+    },
+    "model:Grok 4.2": {
+     "gemma": -7.111111111111111,
+     "qwen": -5.444444444444445,
+     "ensemble": -7.111111111111111
+    },
+    "model:Grok 4.3": {
+     "gemma": -10.11111111111111,
+     "qwen": -9.555555555555555,
+     "ensemble": -10.11111111111111
+    },
+    "provider:anthropic": {
+     "gemma": 2.511111111111111,
+     "qwen": 5.666666666666667,
+     "ensemble": 2.511111111111111
+    },
+    "provider:google": {
+     "gemma": -8.333333333333334,
+     "qwen": -7.233333333333333,
+     "ensemble": -8.333333333333334
+    },
+    "provider:openai": {
+     "gemma": -4.7727272727272725,
+     "qwen": -2.1363636363636362,
+     "ensemble": -4.7727272727272725
+    },
+    "provider:x-ai": {
+     "gemma": -8.61111111111111,
+     "qwen": -7.5,
+     "ensemble": -8.61111111111111
+    }
+   },
+   "drift20_cross": {
+    "model:Claude Haiku 4.5": {
+     "gemma": 1.25,
+     "qwen": 1.5,
+     "ensemble": 1.25
+    },
+    "model:Claude Opus 4.7": {
+     "gemma": -3.6,
+     "qwen": 0.4,
+     "ensemble": -3.6
+    },
+    "model:Claude Sonnet 4.6": {
+     "gemma": -3.0,
+     "qwen": 0.75,
+     "ensemble": -3.0
+    },
+    "model:GPT-5.4": {
+     "gemma": -8.0,
+     "qwen": -3.5,
+     "ensemble": -8.0
+    },
+    "model:GPT-5.4 Mini": {
+     "gemma": -4.75,
+     "qwen": -4.0,
+     "ensemble": -4.75
+    },
+    "model:GPT-5.5": {
+     "gemma": -7.75,
+     "qwen": -5.75,
+     "ensemble": -7.75
+    },
+    "model:Gemini 3 Flash": {
+     "gemma": -7.0,
+     "qwen": -6.5,
+     "ensemble": -7.0
+    },
+    "model:Gemini 3.1 Pro": {
+     "gemma": -9.25,
+     "qwen": -9.0,
+     "ensemble": -9.25
+    },
+    "model:Grok 4.2": {
+     "gemma": -6.25,
+     "qwen": -4.75,
+     "ensemble": -6.25
+    },
+    "model:Grok 4.3": {
+     "gemma": -11.25,
+     "qwen": -10.75,
+     "ensemble": -11.25
+    },
+    "provider:anthropic": {
+     "gemma": -1.9230769230769231,
+     "qwen": 0.8461538461538461,
+     "ensemble": -1.9230769230769231
+    },
+    "provider:google": {
+     "gemma": -8.125,
+     "qwen": -7.75,
+     "ensemble": -8.125
+    },
+    "provider:openai": {
+     "gemma": -6.833333333333333,
+     "qwen": -4.416666666666667,
+     "ensemble": -6.833333333333333
+    },
+    "provider:x-ai": {
+     "gemma": -8.75,
+     "qwen": -7.75,
+     "ensemble": -8.75
+    }
+   },
+   "drift20_you_minus_base": {
+    "model:Claude Haiku 4.5": {
+     "gemma": 3.5,
+     "qwen": 2.0,
+     "ensemble": 3.5
+    },
+    "model:Claude Opus 4.7": {
+     "gemma": 2.0,
+     "qwen": -0.5,
+     "ensemble": 2.0
+    },
+    "model:Claude Sonnet 4.6": {
+     "gemma": 5.5,
+     "qwen": 3.5,
+     "ensemble": 5.5
+    },
+    "model:GPT-5.4": {
+     "gemma": -1.75,
+     "qwen": 1.0,
+     "ensemble": -1.75
+    },
+    "model:GPT-5.4 Mini": {
+     "gemma": 2.5,
+     "qwen": 4.0,
+     "ensemble": 2.5
+    },
+    "model:GPT-5.5": {
+     "gemma": 3.5,
+     "qwen": 3.5,
+     "ensemble": 3.5
+    },
+    "model:Gemini 3 Flash": {
+     "gemma": 4.0,
+     "qwen": 6.5,
+     "ensemble": 4.0
+    },
+    "model:Gemini 3.1 Pro": {
+     "gemma": -0.75,
+     "qwen": -0.5,
+     "ensemble": -0.75
+    },
+    "model:Grok 4.2": {
+     "gemma": 3.0,
+     "qwen": 3.0,
+     "ensemble": 3.0
+    },
+    "model:Grok 4.3": {
+     "gemma": 6.0,
+     "qwen": 7.0,
+     "ensemble": 6.0
+    },
+    "provider:anthropic": {
+     "gemma": 4.083333333333333,
+     "qwen": 1.708333333333334,
+     "ensemble": 4.083333333333333
+    },
+    "provider:google": {
+     "gemma": 1.583333333333334,
+     "qwen": 2.666666666666667,
+     "ensemble": 1.583333333333334
+    },
+    "provider:openai": {
+     "gemma": 1.0833333333333335,
+     "qwen": 2.1666666666666665,
+     "ensemble": 1.0833333333333335
+    },
+    "provider:x-ai": {
+     "gemma": 4.5,
+     "qwen": 5.0,
+     "ensemble": 4.5
+    }
+   },
+   "p_judge0": {
+    "model:Claude Haiku 4.5": {
+     "gemma": 0.29069767441860467,
+     "qwen": 0.27626459143968873,
+     "ensemble": 0.29069767441860467
+    },
+    "model:Claude Opus 4.7": {
+     "gemma": 0.22140221402214022,
+     "qwen": 0.21374045801526717,
+     "ensemble": 0.22140221402214022
+    },
+    "model:Claude Sonnet 4.6": {
+     "gemma": 0.27129337539432175,
+     "qwen": 0.23548387096774193,
+     "ensemble": 0.27129337539432175
+    },
+    "model:GPT-5.4": {
+     "gemma": 0.3125,
+     "qwen": 0.4407894736842105,
+     "ensemble": 0.3125
+    },
+    "model:GPT-5.4 Mini": {
+     "gemma": 0.42391304347826086,
+     "qwen": 0.510752688172043,
+     "ensemble": 0.42391304347826086
+    },
+    "model:GPT-5.5": {
+     "gemma": 0.2517985611510791,
+     "qwen": 0.22262773722627738,
+     "ensemble": 0.2517985611510791
+    },
+    "model:Gemini 3 Flash": {
+     "gemma": 0.40942028985507245,
+     "qwen": 0.4311594202898551,
+     "ensemble": 0.40942028985507245
+    },
+    "model:Gemini 3.1 Pro": {
+     "gemma": 0.41379310344827586,
+     "qwen": 0.501577287066246,
+     "ensemble": 0.41379310344827586
+    },
+    "model:Grok 4.2": {
+     "gemma": 0.3448275862068966,
+     "qwen": 0.2471264367816092,
+     "ensemble": 0.3448275862068966
+    },
+    "model:Grok 4.3": {
+     "gemma": 0.4632768361581921,
+     "qwen": 0.4772727272727273,
+     "ensemble": 0.4632768361581921
+    },
+    "provider:anthropic": {
+     "gemma": 0.26122931442080377,
+     "qwen": 0.24125452352231605,
+     "ensemble": 0.26122931442080377
+    },
+    "provider:google": {
+     "gemma": 0.4117647058823529,
+     "qwen": 0.4688026981450253,
+     "ensemble": 0.4117647058823529
+    },
+    "provider:openai": {
+     "gemma": 0.3171355498721228,
+     "qwen": 0.3795811518324607,
+     "ensemble": 0.3171355498721228
+    },
+    "provider:x-ai": {
+     "gemma": 0.4045584045584046,
+     "qwen": 0.3628571428571429,
+     "ensemble": 0.4045584045584046
+    }
+   },
+   "p_affirm": {
+    "model:Claude Haiku 4.5": {
+     "gemma": 0.16666666666666666,
+     "qwen": 0.16342412451361868,
+     "ensemble": 0.16666666666666666
+    },
+    "model:Claude Opus 4.7": {
+     "gemma": 0.16974169741697417,
+     "qwen": 0.2099236641221374,
+     "ensemble": 0.16974169741697417
+    },
+    "model:Claude Sonnet 4.6": {
+     "gemma": 0.13249211356466878,
+     "qwen": 0.14193548387096774,
+     "ensemble": 0.13249211356466878
+    },
+    "model:GPT-5.4": {
+     "gemma": 0.0,
+     "qwen": 0.006578947368421052,
+     "ensemble": 0.0
+    },
+    "model:GPT-5.4 Mini": {
+     "gemma": 0.0,
+     "qwen": 0.005376344086021506,
+     "ensemble": 0.0
+    },
+    "model:GPT-5.5": {
+     "gemma": 0.0035971223021582736,
+     "qwen": 0.0036496350364963502,
+     "ensemble": 0.0035971223021582736
+    },
+    "model:Gemini 3 Flash": {
+     "gemma": 0.0,
+     "qwen": 0.0,
+     "ensemble": 0.0
+    },
+    "model:Gemini 3.1 Pro": {
+     "gemma": 0.0,
+     "qwen": 0.0,
+     "ensemble": 0.0
+    },
+    "model:Grok 4.2": {
+     "gemma": 0.011494252873563218,
+     "qwen": 0.011494252873563218,
+     "ensemble": 0.011494252873563218
+    },
+    "model:Grok 4.3": {
+     "gemma": 0.005649717514124294,
+     "qwen": 0.005681818181818182,
+     "ensemble": 0.005649717514124294
+    },
+    "provider:anthropic": {
+     "gemma": 0.15484633569739953,
+     "qwen": 0.1700844390832328,
+     "ensemble": 0.15484633569739953
+    },
+    "provider:google": {
+     "gemma": 0.0,
+     "qwen": 0.0,
+     "ensemble": 0.0
+    },
+    "provider:openai": {
+     "gemma": 0.0012787723785166241,
+     "qwen": 0.005235602094240838,
+     "ensemble": 0.0012787723785166241
+    },
+    "provider:x-ai": {
+     "gemma": 0.008547008547008548,
+     "qwen": 0.008571428571428572,
+     "ensemble": 0.008547008547008548
+    }
+   },
+   "p_deny": {
+    "model:Claude Haiku 4.5": {
+     "gemma": 0.015503875968992248,
+     "qwen": 0.007782101167315175,
+     "ensemble": 0.015503875968992248
+    },
+    "model:Claude Opus 4.7": {
+     "gemma": 0.0036900369003690036,
+     "qwen": 0.0,
+     "ensemble": 0.0036900369003690036
+    },
+    "model:Claude Sonnet 4.6": {
+     "gemma": 0.0031545741324921135,
+     "qwen": 0.0032258064516129032,
+     "ensemble": 0.0031545741324921135
+    },
+    "model:GPT-5.4": {
+     "gemma": 0.046875,
+     "qwen": 0.03289473684210526,
+     "ensemble": 0.046875
+    },
+    "model:GPT-5.4 Mini": {
+     "gemma": 0.005434782608695652,
+     "qwen": 0.0,
+     "ensemble": 0.005434782608695652
+    },
+    "model:GPT-5.5": {
+     "gemma": 0.03237410071942446,
+     "qwen": 0.025547445255474453,
+     "ensemble": 0.03237410071942446
+    },
+    "model:Gemini 3 Flash": {
+     "gemma": 0.018115942028985508,
+     "qwen": 0.010869565217391304,
+     "ensemble": 0.018115942028985508
+    },
+    "model:Gemini 3.1 Pro": {
+     "gemma": 0.034482758620689655,
+     "qwen": 0.03785488958990536,
+     "ensemble": 0.034482758620689655
+    },
+    "model:Grok 4.2": {
+     "gemma": 0.022988505747126436,
+     "qwen": 0.022988505747126436,
+     "ensemble": 0.022988505747126436
+    },
+    "model:Grok 4.3": {
+     "gemma": 0.011299435028248588,
+     "qwen": 0.005681818181818182,
+     "ensemble": 0.011299435028248588
+    },
+    "provider:anthropic": {
+     "gemma": 0.0070921985815602835,
+     "qwen": 0.0036188178528347406,
+     "ensemble": 0.0070921985815602835
+    },
+    "provider:google": {
+     "gemma": 0.02689075630252101,
+     "qwen": 0.025295109612141653,
+     "ensemble": 0.02689075630252101
+    },
+    "provider:openai": {
+     "gemma": 0.0319693094629156,
+     "qwen": 0.02225130890052356,
+     "ensemble": 0.0319693094629156
+    },
+    "provider:x-ai": {
+     "gemma": 0.017094017094017096,
+     "qwen": 0.014285714285714285,
+     "ensemble": 0.017094017094017096
+    }
+   },
+   "rate_paternalism": {
+    "model:Claude Haiku 4.5": {
+     "gemma": 0.1434108527131783,
+     "qwen": 0.058365758754863814,
+     "ensemble": 0.1434108527131783
+    },
+    "model:Claude Opus 4.7": {
+     "gemma": 0.26199261992619927,
+     "qwen": 0.1183206106870229,
+     "ensemble": 0.26199261992619927
+    },
+    "model:Claude Sonnet 4.6": {
+     "gemma": 0.3722397476340694,
+     "qwen": 0.12580645161290321,
+     "ensemble": 0.3722397476340694
+    },
+    "model:GPT-5.4": {
+     "gemma": 0.221875,
+     "qwen": 0.09868421052631579,
+     "ensemble": 0.221875
+    },
+    "model:GPT-5.4 Mini": {
+     "gemma": 0.18478260869565216,
+     "qwen": 0.03763440860215054,
+     "ensemble": 0.18478260869565216
+    },
+    "model:GPT-5.5": {
+     "gemma": 0.2697841726618705,
+     "qwen": 0.12043795620437957,
+     "ensemble": 0.2697841726618705
+    },
+    "model:Gemini 3 Flash": {
+     "gemma": 0.31521739130434784,
+     "qwen": 0.16304347826086957,
+     "ensemble": 0.31521739130434784
+    },
+    "model:Gemini 3.1 Pro": {
+     "gemma": 0.2507836990595611,
+     "qwen": 0.08201892744479496,
+     "ensemble": 0.2507836990595611
+    },
+    "model:Grok 4.2": {
+     "gemma": 0.25287356321839083,
+     "qwen": 0.15517241379310345,
+     "ensemble": 0.25287356321839083
+    },
+    "model:Grok 4.3": {
+     "gemma": 0.2994350282485876,
+     "qwen": 0.2159090909090909,
+     "ensemble": 0.2994350282485876
+    },
+    "provider:anthropic": {
+     "gemma": 0.26713947990543735,
+     "qwen": 0.10253317249698432,
+     "ensemble": 0.26713947990543735
+    },
+    "provider:google": {
+     "gemma": 0.280672268907563,
+     "qwen": 0.11973018549747048,
+     "ensemble": 0.280672268907563
+    },
+    "provider:openai": {
+     "gemma": 0.23017902813299232,
+     "qwen": 0.09162303664921466,
+     "ensemble": 0.23017902813299232
+    },
+    "provider:x-ai": {
+     "gemma": 0.27635327635327633,
+     "qwen": 0.18571428571428572,
+     "ensemble": 0.27635327635327633
+    }
+   },
+   "rate_harmlessness": {
+    "model:Claude Haiku 4.5": {
+     "gemma": 0.1937984496124031,
+     "qwen": 0.08171206225680934,
+     "ensemble": 0.1937984496124031
+    },
+    "model:Claude Opus 4.7": {
+     "gemma": 0.15129151291512916,
+     "qwen": 0.05343511450381679,
+     "ensemble": 0.15129151291512916
+    },
+    "model:Claude Sonnet 4.6": {
+     "gemma": 0.14826498422712933,
+     "qwen": 0.05806451612903226,
+     "ensemble": 0.14826498422712933
+    },
+    "model:GPT-5.4": {
+     "gemma": 0.103125,
+     "qwen": 0.0625,
+     "ensemble": 0.103125
+    },
+    "model:GPT-5.4 Mini": {
+     "gemma": 0.06521739130434782,
+     "qwen": 0.03763440860215054,
+     "ensemble": 0.06521739130434782
+    },
+    "model:GPT-5.5": {
+     "gemma": 0.3597122302158273,
+     "qwen": 0.22992700729927007,
+     "ensemble": 0.3597122302158273
+    },
+    "model:Gemini 3 Flash": {
+     "gemma": 0.05434782608695652,
+     "qwen": 0.028985507246376812,
+     "ensemble": 0.05434782608695652
+    },
+    "model:Gemini 3.1 Pro": {
+     "gemma": 0.09090909090909091,
+     "qwen": 0.08201892744479496,
+     "ensemble": 0.09090909090909091
+    },
+    "model:Grok 4.2": {
+     "gemma": 0.1724137931034483,
+     "qwen": 0.13793103448275862,
+     "ensemble": 0.1724137931034483
+    },
+    "model:Grok 4.3": {
+     "gemma": 0.15254237288135594,
+     "qwen": 0.07954545454545454,
+     "ensemble": 0.15254237288135594
+    },
+    "provider:anthropic": {
+     "gemma": 0.16312056737588654,
+     "qwen": 0.06393244873341375,
+     "ensemble": 0.16312056737588654
+    },
+    "provider:google": {
+     "gemma": 0.07394957983193277,
+     "qwen": 0.05733558178752108,
+     "ensemble": 0.07394957983193277
+    },
+    "provider:openai": {
+     "gemma": 0.18542199488491048,
+     "qwen": 0.11649214659685864,
+     "ensemble": 0.18542199488491048
+    },
+    "provider:x-ai": {
+     "gemma": 0.1623931623931624,
+     "qwen": 0.10857142857142857,
+     "ensemble": 0.1623931623931624
+    }
+   },
+   "rate_structural": {
+    "model:Claude Haiku 4.5": {
+     "gemma": 0.08139534883720931,
+     "qwen": 0.01556420233463035,
+     "ensemble": 0.08139534883720931
+    },
+    "model:Claude Opus 4.7": {
+     "gemma": 0.06273062730627306,
+     "qwen": 0.026717557251908396,
+     "ensemble": 0.06273062730627306
+    },
+    "model:Claude Sonnet 4.6": {
+     "gemma": 0.13564668769716087,
+     "qwen": 0.0935483870967742,
+     "ensemble": 0.13564668769716087
+    },
+    "model:GPT-5.4": {
+     "gemma": 0.015625,
+     "qwen": 0.003289473684210526,
+     "ensemble": 0.015625
+    },
+    "model:GPT-5.4 Mini": {
+     "gemma": 0.010869565217391304,
+     "qwen": 0.0,
+     "ensemble": 0.010869565217391304
+    },
+    "model:GPT-5.5": {
+     "gemma": 0.03597122302158273,
+     "qwen": 0.01824817518248175,
+     "ensemble": 0.03597122302158273
+    },
+    "model:Gemini 3 Flash": {
+     "gemma": 0.057971014492753624,
+     "qwen": 0.06521739130434782,
+     "ensemble": 0.057971014492753624
+    },
+    "model:Gemini 3.1 Pro": {
+     "gemma": 0.04075235109717868,
+     "qwen": 0.025236593059936908,
+     "ensemble": 0.04075235109717868
+    },
+    "model:Grok 4.2": {
+     "gemma": 0.05172413793103448,
+     "qwen": 0.04597701149425287,
+     "ensemble": 0.05172413793103448
+    },
+    "model:Grok 4.3": {
+     "gemma": 0.01694915254237288,
+     "qwen": 0.011363636363636364,
+     "ensemble": 0.01694915254237288
+    },
+    "provider:anthropic": {
+     "gemma": 0.09574468085106383,
+     "qwen": 0.04825090470446321,
+     "ensemble": 0.09574468085106383
+    },
+    "provider:google": {
+     "gemma": 0.04873949579831933,
+     "qwen": 0.04384485666104553,
+     "ensemble": 0.04873949579831933
+    },
+    "provider:openai": {
+     "gemma": 0.021739130434782608,
+     "qwen": 0.007853403141361256,
+     "ensemble": 0.021739130434782608
+    },
+    "provider:x-ai": {
+     "gemma": 0.03418803418803419,
+     "qwen": 0.02857142857142857,
+     "ensemble": 0.03418803418803419
+    }
+   },
+   "rate_company_cost": {
+    "model:Claude Haiku 4.5": {
+     "gemma": 0.2364341085271318,
+     "qwen": 0.14007782101167315,
+     "ensemble": 0.2364341085271318
+    },
+    "model:Claude Opus 4.7": {
+     "gemma": 0.22509225092250923,
+     "qwen": 0.10687022900763359,
+     "ensemble": 0.22509225092250923
+    },
+    "model:Claude Sonnet 4.6": {
+     "gemma": 0.22712933753943218,
+     "qwen": 0.12903225806451613,
+     "ensemble": 0.22712933753943218
+    },
+    "model:GPT-5.4": {
+     "gemma": 0.234375,
+     "qwen": 0.06578947368421052,
+     "ensemble": 0.234375
+    },
+    "model:GPT-5.4 Mini": {
+     "gemma": 0.1358695652173913,
+     "qwen": 0.043010752688172046,
+     "ensemble": 0.1358695652173913
+    },
+    "model:GPT-5.5": {
+     "gemma": 0.17266187050359713,
+     "qwen": 0.09124087591240876,
+     "ensemble": 0.17266187050359713
+    },
+    "model:Gemini 3 Flash": {
+     "gemma": 0.2028985507246377,
+     "qwen": 0.09057971014492754,
+     "ensemble": 0.2028985507246377
+    },
+    "model:Gemini 3.1 Pro": {
+     "gemma": 0.14420062695924765,
+     "qwen": 0.06624605678233439,
+     "ensemble": 0.14420062695924765
+    },
+    "model:Grok 4.2": {
+     "gemma": 0.3160919540229885,
+     "qwen": 0.10344827586206896,
+     "ensemble": 0.3160919540229885
+    },
+    "model:Grok 4.3": {
+     "gemma": 0.0903954802259887,
+     "qwen": 0.05113636363636364,
+     "ensemble": 0.0903954802259887
+    },
+    "provider:anthropic": {
+     "gemma": 0.2293144208037825,
+     "qwen": 0.12545235223160434,
+     "ensemble": 0.2293144208037825
+    },
+    "provider:google": {
+     "gemma": 0.17142857142857143,
+     "qwen": 0.0775716694772344,
+     "ensemble": 0.17142857142857143
+    },
+    "provider:openai": {
+     "gemma": 0.18925831202046037,
+     "qwen": 0.0693717277486911,
+     "ensemble": 0.18925831202046037
+    },
+    "provider:x-ai": {
+     "gemma": 0.2022792022792023,
+     "qwen": 0.07714285714285714,
+     "ensemble": 0.2022792022792023
+    }
+   },
+   "rate_welfare": {
+    "model:Claude Haiku 4.5": {
+     "gemma": 0.13178294573643412,
+     "qwen": 0.1245136186770428,
+     "ensemble": 0.13178294573643412
+    },
+    "model:Claude Opus 4.7": {
+     "gemma": 0.13653136531365315,
+     "qwen": 0.12213740458015267,
+     "ensemble": 0.13653136531365315
+    },
+    "model:Claude Sonnet 4.6": {
+     "gemma": 0.10094637223974763,
+     "qwen": 0.09032258064516129,
+     "ensemble": 0.10094637223974763
+    },
+    "model:GPT-5.4": {
+     "gemma": 0.028125,
+     "qwen": 0.023026315789473683,
+     "ensemble": 0.028125
+    },
+    "model:GPT-5.4 Mini": {
+     "gemma": 0.0,
+     "qwen": 0.0,
+     "ensemble": 0.0
+    },
+    "model:GPT-5.5": {
+     "gemma": 0.0,
+     "qwen": 0.0036496350364963502,
+     "ensemble": 0.0
+    },
+    "model:Gemini 3 Flash": {
+     "gemma": 0.0,
+     "qwen": 0.0036231884057971015,
+     "ensemble": 0.0
+    },
+    "model:Gemini 3.1 Pro": {
+     "gemma": 0.0,
+     "qwen": 0.0,
+     "ensemble": 0.0
+    },
+    "model:Grok 4.2": {
+     "gemma": 0.034482758620689655,
+     "qwen": 0.040229885057471264,
+     "ensemble": 0.034482758620689655
+    },
+    "model:Grok 4.3": {
+     "gemma": 0.0,
+     "qwen": 0.0,
+     "ensemble": 0.0
+    },
+    "provider:anthropic": {
+     "gemma": 0.12174940898345153,
+     "qwen": 0.11097708082026538,
+     "ensemble": 0.12174940898345153
+    },
+    "provider:google": {
+     "gemma": 0.0,
+     "qwen": 0.0016863406408094434,
+     "ensemble": 0.0
+    },
+    "provider:openai": {
+     "gemma": 0.011508951406649617,
+     "qwen": 0.010471204188481676,
+     "ensemble": 0.011508951406649617
+    },
+    "provider:x-ai": {
+     "gemma": 0.017094017094017096,
+     "qwen": 0.02,
+     "ensemble": 0.017094017094017096
+    }
+   },
+   "rate_disclosure": {
+    "model:Claude Haiku 4.5": {
+     "gemma": 0.031007751937984496,
+     "qwen": 0.007782101167315175,
+     "ensemble": 0.031007751937984496
+    },
+    "model:Claude Opus 4.7": {
+     "gemma": 0.0036900369003690036,
+     "qwen": 0.0,
+     "ensemble": 0.0036900369003690036
+    },
+    "model:Claude Sonnet 4.6": {
+     "gemma": 0.00946372239747634,
+     "qwen": 0.0032258064516129032,
+     "ensemble": 0.00946372239747634
+    },
+    "model:GPT-5.4": {
+     "gemma": 0.078125,
+     "qwen": 0.09868421052631579,
+     "ensemble": 0.078125
+    },
+    "model:GPT-5.4 Mini": {
+     "gemma": 0.005434782608695652,
+     "qwen": 0.043010752688172046,
+     "ensemble": 0.005434782608695652
+    },
+    "model:GPT-5.5": {
+     "gemma": 0.0539568345323741,
+     "qwen": 0.08394160583941605,
+     "ensemble": 0.0539568345323741
+    },
+    "model:Gemini 3 Flash": {
+     "gemma": 0.0,
+     "qwen": 0.0,
+     "ensemble": 0.0
+    },
+    "model:Gemini 3.1 Pro": {
+     "gemma": 0.0,
+     "qwen": 0.0031545741324921135,
+     "ensemble": 0.0
+    },
+    "model:Grok 4.2": {
+     "gemma": 0.0,
+     "qwen": 0.0,
+     "ensemble": 0.0
+    },
+    "model:Grok 4.3": {
+     "gemma": 0.0,
+     "qwen": 0.0,
+     "ensemble": 0.0
+    },
+    "provider:anthropic": {
+     "gemma": 0.014184397163120567,
+     "qwen": 0.0036188178528347406,
+     "ensemble": 0.014184397163120567
+    },
+    "provider:google": {
+     "gemma": 0.0,
+     "qwen": 0.0016863406408094434,
+     "ensemble": 0.0
+    },
+    "provider:openai": {
+     "gemma": 0.052429667519181586,
+     "qwen": 0.07984293193717278,
+     "ensemble": 0.052429667519181586
+    },
+    "provider:x-ai": {
+     "gemma": 0.0,
+     "qwen": 0.0,
+     "ensemble": 0.0
+    }
+   },
+   "rate_other": {
+    "model:Claude Haiku 4.5": {
+     "gemma": 0.0,
+     "qwen": 0.007782101167315175,
+     "ensemble": 0.0
+    },
+    "model:Claude Opus 4.7": {
+     "gemma": 0.02214022140221402,
+     "qwen": 0.019083969465648856,
+     "ensemble": 0.02214022140221402
+    },
+    "model:Claude Sonnet 4.6": {
+     "gemma": 0.0031545741324921135,
+     "qwen": 0.025806451612903226,
+     "ensemble": 0.0031545741324921135
+    },
+    "model:GPT-5.4": {
+     "gemma": 0.003125,
+     "qwen": 0.009868421052631578,
+     "ensemble": 0.003125
+    },
+    "model:GPT-5.4 Mini": {
+     "gemma": 0.0,
+     "qwen": 0.005376344086021506,
+     "ensemble": 0.0
+    },
+    "model:GPT-5.5": {
+     "gemma": 0.0,
+     "qwen": 0.029197080291970802,
+     "ensemble": 0.0
+    },
+    "model:Gemini 3 Flash": {
+     "gemma": 0.0036231884057971015,
+     "qwen": 0.010869565217391304,
+     "ensemble": 0.0036231884057971015
+    },
+    "model:Gemini 3.1 Pro": {
+     "gemma": 0.0,
+     "qwen": 0.00946372239747634,
+     "ensemble": 0.0
+    },
+    "model:Grok 4.2": {
+     "gemma": 0.011494252873563218,
+     "qwen": 0.040229885057471264,
+     "ensemble": 0.011494252873563218
+    },
+    "model:Grok 4.3": {
+     "gemma": 0.0,
+     "qwen": 0.011363636363636364,
+     "ensemble": 0.0
+    },
+    "provider:anthropic": {
+     "gemma": 0.008274231678486997,
+     "qwen": 0.018094089264173704,
+     "ensemble": 0.008274231678486997
+    },
+    "provider:google": {
+     "gemma": 0.0016806722689075631,
+     "qwen": 0.01011804384485666,
+     "ensemble": 0.0016806722689075631
+    },
+    "provider:openai": {
+     "gemma": 0.0012787723785166241,
+     "qwen": 0.015706806282722512,
+     "ensemble": 0.0012787723785166241
+    },
+    "provider:x-ai": {
+     "gemma": 0.005698005698005698,
+     "qwen": 0.025714285714285714,
+     "ensemble": 0.005698005698005698
+    }
+   }
+  },
+  "claims": {
+   "a": {
+    "gemma": true,
+    "qwen": true,
+    "ensemble": true
+   },
+   "b": {
+    "gemma": true,
+    "qwen": true,
+    "ensemble": true
+   },
+   "c": {
+    "gemma": true,
+    "qwen": true,
+    "ensemble": true
+   },
+   "d": {
+    "gemma": false,
+    "qwen": false,
+    "ensemble": false
+   },
+   "e": {
+    "gemma": false,
+    "qwen": true,
+    "ensemble": false
+   },
+   "f": {
+    "gemma": true,
+    "qwen": true,
+    "ensemble": true
+   },
+   "g": {
+    "gemma": false,
+    "qwen": false,
+    "ensemble": false
+   }
+  }
+ },
+ "headline_meta": {
+  "gemma": {
+   "codes_path": "recode/data/codes/v2_gemma.jsonl",
+   "n_unique_ids": 2582,
+   "n_valid_codings": 2574
+  },
+  "qwen": {
+   "codes_path": "recode/data/codes/v2_qwen.jsonl",
+   "n_unique_ids": 2582,
+   "n_valid_codings": 2536
+  },
+  "ensemble": {
+   "codes_path": "/Users/nicholasgannon/llm-value-reflection/recode/data/codes/ensemble.jsonl",
+   "n_unique_ids": 2582,
+   "n_valid_codings": 2574
+  }
+ },
+ "ensemble_summary": {
+  "n_rows": 2582,
+  "n_primary_valid": 2574,
+  "per_other_grader": {
+   "qwen": {
+    "n_compared": 2528,
+    "n_null_flags": 54,
+    "n_disagree_judge": 654,
+    "n_disagree_patienthood": 65,
+    "n_disagree_any": 1396,
+    "n_disagree_conflict_presence": {
+     "paternalism": 449,
+     "harmlessness": 218,
+     "structural": 107,
+     "company_cost": 363,
+     "welfare": 45,
+     "disclosure": 55,
+     "other": 47
+    }
+   }
+  }
+ }
+}

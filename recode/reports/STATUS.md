@@ -91,3 +91,22 @@
 - Both audits passed (hand-computed kappa, textbook alpha cross-check,
   PPI n=N reduction, paired-bootstrap fixture). Suite: 276 passed.
 - All runnable with one command each once v2_gemma/v2_qwen complete.
+
+## A2/B2 grading + A3/B3 + v2/ensemble uncertainty — DONE (2026-09-04)
+- Full re-codes: v2_gemma (2,582 rows, 0.3% parse failures) and v2_qwen
+  (2,582 rows, 1.8% — under the 2% ASK bar). ~26M in / 11M out tokens total.
+- A3: judge agreement v1→v2_gemma 74.5% (655 changes on 2,572 both-coded).
+- B3: κ(gemma,qwen) judge 0.61, patienthood 0.84, paternalism 0.44.
+  COI test: Gemma does NOT diverge more on Gemini edits (differences
+  negative; e.g. any-dimension −0.077, CI [−0.131, −0.022]). ensemble.jsonl
+  built (gemma primary + disagrees_with_qwen flags).
+- Ranking stability (all 3 Claude > every non-Claude, mean judge):
+  pooled — v1 1.000, v2_gemma 0.997, v2_qwen 0.993, ensemble 0.997 (headline
+  SURVIVES blinding at the 0.95 bar); cross-edit — 0.53 / 0.38 / 0.56 / 0.38
+  (cross-edit robustness claim FAILS under every instrument).
+- §8 claim verdicts (point estimates) under v2_gemma/qwen/ensemble:
+  a YES/YES/YES, b YES/YES/YES, c YES/YES/YES (was NO under v1),
+  d NO/NO/NO, e NO/YES/NO (grader-dependent), f YES/YES/YES, g NO/NO/NO.
+- E1 committed earlier: label effect on v1 grader ≈ 0.027 judge points.
+- Still running: E2 paraphrases, E3 variant (711 cases + 100 controls),
+  E4 self-consistency, E5 context ablation.
