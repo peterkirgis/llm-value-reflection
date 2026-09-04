@@ -1,0 +1,12 @@
+grader,model,n_coded,n_judge0,judge0_share
+v1,Claude Haiku 4.5,259,58,0.2239
+v1,Claude Opus 4.7,271,49,0.1808
+v1,Claude Sonnet 4.6,318,71,0.2233
+v1,GPT-5.4,320,57,0.1781
+v1,GPT-5.4 Mini,186,58,0.3118
+v1,GPT-5.5,280,34,0.1214
+v1,Gemini 3 Flash,276,72,0.2609
+v1,Gemini 3.1 Pro,320,95,0.2969
+v1,Grok 4.2,175,49,0.2800
+v1,Grok 4.3,175,51,0.2914
+v1,ALL,2580,594,0.2302

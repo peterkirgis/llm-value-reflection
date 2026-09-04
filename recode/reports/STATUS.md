@@ -35,3 +35,29 @@
 - Tests: 55 passed (15 new heading-style tests). No grader tokens spent;
   the smoke-test artifact predates this fix (prompt cache keys change for
   the affected records, so stale cache entries are inert).
+
+## Workstream F — Free results — DONE (2026-09-04)
+- `reports/F_free_results.md` + `data/analysis/free_results/*`. Abstention:
+  2/360 allow_no_edit round slots (both Grok 4.3, rounds 18/20); every other
+  model 0/40. judge=0 share under v1: 23.0% overall (12.1%–31.2% by model).
+  Apply failures: 158 (94 GPT-5.4 Mini). Restatement >50% 8-gram overlap:
+  3.1% of scored edits (Grok 4.2 11.9%, Haiku 10.9%). Doc-type control: the
+  Claude judge-score sweep holds within constitutions but NOT within system
+  prompts under v1. All numbers audit-verified by independent recomputation.
+
+## Workstream D — Cluster bootstrap (v1 slice) — DONE (2026-09-04)
+- `reports/D_bootstrap.md`, `figures/drift_*.png`, `data/analysis/bootstrap/*`.
+  B=2000, seeded, chain-level resampling (137 chains). Pooled ranking
+  stability (all 3 Claude > every non-Claude, mean judge) = 1.0000;
+  cross-edit-only = 0.5285 — the cross-edit robustness claim does NOT
+  survive at 0.95 under v1. Re-runnable for v2/ensemble via --codes/--label.
+
+## Headline module (§8) — v1 baseline — DONE (2026-09-04)
+- `src/headline.py`, `reports/partials/headline_v1.md`. Claims under v1:
+  a YES, b YES, c NO (Gemini 3 Flash violates "all models"), d NO (Sonnet
+  structural 3.73–3.91×, not >4×), e YES, f YES (primary part), g NO
+  (6 deployer-served disclosure events exist). Discrepancies verified against
+  the raw published coded file under the site's own counting convention.
+- Known cross-module wart (audit warning, fix before v2 analyses): the three
+  modules differ slightly in which codings count as valid when an 'error'
+  key is present. Unify in the A3/B3 workstream.
