@@ -10,3 +10,25 @@ v1,Gemini 3.1 Pro,320,95,0.2969
 v1,Grok 4.2,175,49,0.2800
 v1,Grok 4.3,175,51,0.2914
 v1,ALL,2580,594,0.2302
+v2_gemma,Claude Haiku 4.5,258,75,0.2907
+v2_gemma,Claude Opus 4.7,271,60,0.2214
+v2_gemma,Claude Sonnet 4.6,317,86,0.2713
+v2_gemma,GPT-5.4,320,100,0.3125
+v2_gemma,GPT-5.4 Mini,184,78,0.4239
+v2_gemma,GPT-5.5,278,70,0.2518
+v2_gemma,Gemini 3 Flash,276,113,0.4094
+v2_gemma,Gemini 3.1 Pro,319,132,0.4138
+v2_gemma,Grok 4.2,174,60,0.3448
+v2_gemma,Grok 4.3,177,82,0.4633
+v2_gemma,ALL,2574,856,0.3326
+v2_qwen,Claude Haiku 4.5,257,71,0.2763
+v2_qwen,Claude Opus 4.7,262,56,0.2137
+v2_qwen,Claude Sonnet 4.6,310,73,0.2355
+v2_qwen,GPT-5.4,304,134,0.4408
+v2_qwen,GPT-5.4 Mini,186,95,0.5108
+v2_qwen,GPT-5.5,274,61,0.2226
+v2_qwen,Gemini 3 Flash,276,119,0.4312
+v2_qwen,Gemini 3.1 Pro,317,159,0.5016
+v2_qwen,Grok 4.2,174,43,0.2471
+v2_qwen,Grok 4.3,176,84,0.4773
+v2_qwen,ALL,2536,895,0.3529

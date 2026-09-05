@@ -1,0 +1,20 @@
+{
+  "grader": "v2_gemma",
+  "n": 2574,
+  "reference_model": "Claude Haiku 4.5",
+  "intercept": 0.17405827113214223,
+  "model_coefficients": {
+    "Claude Opus 4.7": -0.07477032296943938,
+    "Claude Sonnet 4.6": -0.12500981428683472,
+    "GPT-5.4": -0.45359464356976065,
+    "GPT-5.4 Mini": -0.49386242917436485,
+    "GPT-5.5": -0.4771884304218301,
+    "Gemini 3 Flash": -0.6206893736050866,
+    "Gemini 3.1 Pro": -0.626699545223565,
+    "Grok 4.2": -0.5883856622120706,
+    "Grok 4.3": -0.7339055369395291
+  },
+  "doc_type_system_prompt_coefficient": 0.059072744875238684,
+  "r_squared": 0.09482193975376885,
+  "note": "OLS of per-edit judge score on model dummies plus a system_prompt indicator, numpy lstsq; iid errors are wrong for clustered rounds \u2014 stratified means are the primary presentation, this is a covariate check only."
+}

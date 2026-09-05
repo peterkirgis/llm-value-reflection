@@ -6,14 +6,7 @@ below is read from the intermediate artifacts in
 `recode/data/canonical/edits.jsonl` (2,740 canonical records; 2,580
 applied edits) and the codes files passed via `--codes`.
 
-> **Grader coverage: v1 only.** Every grader-dependent column in this
-> report (sections F2 and F6, and the abstention-coding check in F1)
-> currently reflects the v1 Gemma codes alone. The v2 grading runs
-> were in progress when this report was generated; re-run
-> `free_results.py --codes v1=... --codes v2_gemma=... --codes
-> v2_qwen=...` (and later the ensemble) to regenerate those sections
-> with one block per grader. Sections F1 (rates), F3, F4, and F5 are
-> grader-independent and final.
+> Graders included: v1, v2_gemma, v2_qwen.
 
 ## F1. Abstention rates (allow_no_edit condition)
 
@@ -43,7 +36,7 @@ Abstention events (all of them):
 - `run_20260507_212254|allow_no_edit|Grok 4.3|grok_system_prompt|system_prompt|18` — Grok 4.3, grok_system_prompt, round 18 (run_20260507_212254)
 - `run_20260507_212254|allow_no_edit|Grok 4.3|grok_system_prompt|system_prompt|20` — Grok 4.3, grok_system_prompt, round 20 (run_20260507_212254)
 
-Grader coverage of the abstentions — v1: 0 of 2. **v1 never coded
+Grader coverage of the abstentions — v1: 0 of 2; v2_gemma: 2 of 2; v2_qwen: 2 of 2. **v1 never coded
 the abstentions**: its eligibility filter excluded `no_change` records,
 so the paper's v1 statistics are silent on them (they enter v2 grading,
 where the manual expects judge 0 / not_present / no conflicts).
@@ -54,7 +47,7 @@ abstained did so only after 17 consecutive edits.
 
 ## F2. Share of judge = 0, per model per grader
 
-**v1-only pending v2.** Denominator = edits with a parsed judge score
+Denominator = edits with a parsed judge score
 from that grader (v1: 2,580 applied edits; abstentions and apply
 failures were never coded by v1).
 
@@ -73,6 +66,38 @@ failures were never coded by v1).
 | Grok 4.2 | 175 | 49 | 0.2800 |
 | Grok 4.3 | 175 | 51 | 0.2914 |
 | **ALL** | 2580 | 594 | **0.2302** |
+
+### Grader: v2_gemma
+
+| model | n coded | judge = 0 | share |
+|---|---|---|---|
+| Claude Haiku 4.5 | 258 | 75 | 0.2907 |
+| Claude Opus 4.7 | 271 | 60 | 0.2214 |
+| Claude Sonnet 4.6 | 317 | 86 | 0.2713 |
+| GPT-5.4 | 320 | 100 | 0.3125 |
+| GPT-5.4 Mini | 184 | 78 | 0.4239 |
+| GPT-5.5 | 278 | 70 | 0.2518 |
+| Gemini 3 Flash | 276 | 113 | 0.4094 |
+| Gemini 3.1 Pro | 319 | 132 | 0.4138 |
+| Grok 4.2 | 174 | 60 | 0.3448 |
+| Grok 4.3 | 177 | 82 | 0.4633 |
+| **ALL** | 2574 | 856 | **0.3326** |
+
+### Grader: v2_qwen
+
+| model | n coded | judge = 0 | share |
+|---|---|---|---|
+| Claude Haiku 4.5 | 257 | 71 | 0.2763 |
+| Claude Opus 4.7 | 262 | 56 | 0.2137 |
+| Claude Sonnet 4.6 | 310 | 73 | 0.2355 |
+| GPT-5.4 | 304 | 134 | 0.4408 |
+| GPT-5.4 Mini | 186 | 95 | 0.5108 |
+| GPT-5.5 | 274 | 61 | 0.2226 |
+| Gemini 3 Flash | 276 | 119 | 0.4312 |
+| Gemini 3.1 Pro | 317 | 159 | 0.5016 |
+| Grok 4.2 | 174 | 43 | 0.2471 |
+| Grok 4.3 | 176 | 84 | 0.4773 |
+| **ALL** | 2536 | 895 | **0.3529** |
 
 ## F3. Apply failures per model
 
@@ -182,7 +207,7 @@ reflect document mix. **Primary presentation: stratified means** —
 mean judge score per model within each document type. The OLS below is
 a covariate check only.
 
-### Grader: v1 (v1-only pending v2)
+### Grader: v1
 
 | model | n const. | mean judge (const.) | n sys.prompt | mean judge (sys.prompt) | n pooled | mean judge (pooled) |
 |---|---|---|---|---|---|---|
@@ -214,6 +239,84 @@ doc_type coefficient (system_prompt vs constitution) = **+0.0931**; intercept = 
 - Gemini 3.1 Pro: -0.7157
 - Grok 4.2: -0.5179
 - Grok 4.3: -0.8363
+
+Caveat (also stored in the JSON): per-edit OLS treats rounds as
+iid, which understates uncertainty for 20-round chains — no
+standard errors are reported here; Workstream D's cluster
+bootstrap is the inferential tool. The stratified means above
+are the primary result.
+
+### Grader: v2_gemma
+
+| model | n const. | mean judge (const.) | n sys.prompt | mean judge (sys.prompt) | n pooled | mean judge (pooled) |
+|---|---|---|---|---|---|---|
+| Claude Haiku 4.5 | 121 | 0.4628 | 137 | -0.0219 | 258 | 0.2054 |
+| Claude Opus 4.7 | 134 | 0.1493 | 137 | 0.1095 | 271 | 0.1292 |
+| Claude Sonnet 4.6 | 157 | 0.2102 | 160 | -0.0500 | 317 | 0.0789 |
+| GPT-5.4 | 160 | -0.4813 | 160 | -0.0187 | 320 | -0.2500 |
+| GPT-5.4 Mini | 102 | -0.5392 | 82 | 0.0122 | 184 | -0.2935 |
+| GPT-5.5 | 138 | -0.3116 | 140 | -0.2357 | 278 | -0.2734 |
+| Gemini 3 Flash | 136 | -0.4559 | 140 | -0.3786 | 276 | -0.4167 |
+| Gemini 3.1 Pro | 160 | -0.5000 | 159 | -0.3459 | 319 | -0.4232 |
+| Grok 4.2 | 37 | -0.3784 | 137 | -0.3650 | 174 | -0.3678 |
+| Grok 4.3 | 40 | -0.6500 | 137 | -0.4745 | 177 | -0.5141 |
+
+- The constitution-minus-system-prompt gap varies in **sign and magnitude by model** (from Claude Haiku 4.5 at +0.485 to GPT-5.4 Mini at -0.551), so a single additive document-type coefficient is a coarse summary.
+- Within the **constitution** stratum, the "all three Claude models rank above every other model" ordering **holds** (lowest Claude mean +0.1493 vs best non-Claude GPT-5.5 at -0.3116).
+- Within the **system-prompt** stratum, the "all three Claude models rank above every other model" ordering **does not hold** (lowest Claude mean -0.0500 vs best non-Claude GPT-5.4 Mini at +0.0122).
+- Within the **pooled** stratum, the "all three Claude models rank above every other model" ordering **holds** (lowest Claude mean +0.0789 vs best non-Claude GPT-5.4 at -0.2500).
+
+OLS (numpy lstsq; n = 2574): judge ~ model dummies (reference: Claude Haiku 4.5) + system_prompt indicator.
+doc_type coefficient (system_prompt vs constitution) = **+0.0591**; intercept = +0.1741; R² = 0.0948. Model coefficients (vs Claude Haiku 4.5):
+
+- Claude Opus 4.7: -0.0748
+- Claude Sonnet 4.6: -0.1250
+- GPT-5.4: -0.4536
+- GPT-5.4 Mini: -0.4939
+- GPT-5.5: -0.4772
+- Gemini 3 Flash: -0.6207
+- Gemini 3.1 Pro: -0.6267
+- Grok 4.2: -0.5884
+- Grok 4.3: -0.7339
+
+Caveat (also stored in the JSON): per-edit OLS treats rounds as
+iid, which understates uncertainty for 20-round chains — no
+standard errors are reported here; Workstream D's cluster
+bootstrap is the inferential tool. The stratified means above
+are the primary result.
+
+### Grader: v2_qwen
+
+| model | n const. | mean judge (const.) | n sys.prompt | mean judge (sys.prompt) | n pooled | mean judge (pooled) |
+|---|---|---|---|---|---|---|
+| Claude Haiku 4.5 | 120 | 0.5417 | 137 | 0.0803 | 257 | 0.2957 |
+| Claude Opus 4.7 | 131 | 0.3130 | 131 | 0.3282 | 262 | 0.3206 |
+| Claude Sonnet 4.6 | 154 | 0.3896 | 156 | 0.2244 | 310 | 0.3065 |
+| GPT-5.4 | 146 | -0.2534 | 158 | 0.1835 | 304 | -0.0263 |
+| GPT-5.4 Mini | 103 | -0.4272 | 83 | 0.0843 | 186 | -0.1989 |
+| GPT-5.5 | 136 | -0.1838 | 138 | -0.1739 | 274 | -0.1788 |
+| Gemini 3 Flash | 136 | -0.4412 | 140 | -0.2929 | 276 | -0.3659 |
+| Gemini 3.1 Pro | 158 | -0.4367 | 159 | -0.2956 | 317 | -0.3659 |
+| Grok 4.2 | 37 | -0.2703 | 137 | -0.2847 | 174 | -0.2816 |
+| Grok 4.3 | 40 | -0.6250 | 136 | -0.4485 | 176 | -0.4886 |
+
+- The constitution-minus-system-prompt gap varies in **sign and magnitude by model** (from Claude Haiku 4.5 at +0.461 to GPT-5.4 Mini at -0.512), so a single additive document-type coefficient is a coarse summary.
+- Within the **constitution** stratum, the "all three Claude models rank above every other model" ordering **holds** (lowest Claude mean +0.3130 vs best non-Claude GPT-5.5 at -0.1838).
+- Within the **system-prompt** stratum, the "all three Claude models rank above every other model" ordering **does not hold** (lowest Claude mean +0.0803 vs best non-Claude GPT-5.4 at +0.1835).
+- Within the **pooled** stratum, the "all three Claude models rank above every other model" ordering **holds** (lowest Claude mean +0.2957 vs best non-Claude GPT-5.4 at -0.0263).
+
+OLS (numpy lstsq; n = 2536): judge ~ model dummies (reference: Claude Haiku 4.5) + system_prompt indicator.
+doc_type coefficient (system_prompt vs constitution) = **+0.0701**; intercept = +0.2583; R² = 0.1344. Model coefficients (vs Claude Haiku 4.5):
+
+- Claude Opus 4.7: +0.0272
+- Claude Sonnet 4.6: +0.0128
+- GPT-5.4: -0.3211
+- GPT-5.4 Mini: -0.4886
+- GPT-5.5: -0.4725
+- Gemini 3 Flash: -0.6599
+- Gemini 3.1 Pro: -0.6594
+- Grok 4.2: -0.5952
+- Grok 4.3: -0.8012
 
 Caveat (also stored in the JSON): per-edit OLS treats rounds as
 iid, which understates uncertainty for 20-round chains — no
