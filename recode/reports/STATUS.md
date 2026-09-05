@@ -110,3 +110,14 @@
 - E1 committed earlier: label effect on v1 grader ≈ 0.027 judge points.
 - Still running: E2 paraphrases, E3 variant (711 cases + 100 controls),
   E4 self-consistency, E5 context ablation.
+
+## Workstream E complete + human sheet finalized (2026-09-05)
+- E2: ranking Spearman rho 0.964 vs both paraphrases; 27/30 signed items
+  stable; per-edit judge kappa ~0.68. E3: paternalism retention 54% under
+  the truth-over-comfort variant, claim (b) holds under both. E4: judge
+  unanimity 65.4% (5/5 at temp 0.7), patienthood 96.0%; 30 lowest-agreement
+  edits exported as adjudication extras. E5: judge kappa 0.74 without
+  context. E1 (earlier): label effect ~0.027.
+- Blind sheet now 180 rows (150 random + 30 extras, extras excluded from
+  PPI by construction); UI tests 18/18 after append.
+- REMAINING: Peter + second coder run the UI; then C3/C4 + final SUMMARY.
