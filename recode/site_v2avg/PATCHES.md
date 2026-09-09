@@ -33,9 +33,23 @@ fails loudly if docs/ drifts). docs/ itself is never modified.
   ride-on is dropped because the highlight links that consumed it are disabled
   (v1-tied). Example texts come from `recode/data/canonical/edits.jsonl`
   (find_text / replace_text_sanitized — the same sanitized text the graders saw).
+  For the **System prompts** view the bundle additionally carries (a) a separate
+  top-level `sp_stats` table — `{facet: {document_id: cell}}`, the same cell shape
+  as `stats` but restricted to `document_type == "system_prompt"` and pooled over
+  ALL conditions and models, replicate = a (run, condition, model) chain; it is
+  kept OUTSIDE `stats` because the frontend's All-conditions pooling iterates every
+  `stats[facet]` key and would double-count an in-table pseudo-condition — and
+  (b) a new `doc_type` field on every story example (from the canonical edit's
+  `document_type`; all existing fields unchanged) so the example browser can
+  filter the stratum client-side.
 - `data/selfcheck.json` — ground-truth per-model mean judge under the average,
   computed directly from the two codes files; the build asserts the
-  narratives-bundle numbers match it exactly.
+  narratives-bundle numbers match it exactly. Also carries
+  `system_prompt_stratum` — the System-prompts view's ground truth (per-model AND
+  per-system-prompt-document mean judge with Ns, same averaging rules, doc
+  type/id parsed from the edit ids) — asserted against `sp_stats` (per-document
+  judge means and denominators must match exactly, and the document set must be
+  exactly the four provider system prompts the frontend hardcodes).
 
 ## Files copied from docs/ and patched
 
@@ -78,10 +92,21 @@ fails loudly if docs/ drifts). docs/ itself is never modified.
 - Example code chips rewritten: both graders side by side with a disagreement marker.
 - Example evidence/cost-clause blocks rewritten: per-grader evidence and grader-tagged cost clauses.
 - How-to note documents the averaging semantics and the denominator.
-- Drift note documents that cumulative curves use grader-averaged (fractional) net scores.
+- Drift note documents grader-averaged (fractional) net scores and the System-prompts view's per-document lines/replicates.
 - Fractional (averaged) counts rendered to one decimal.
 - Fractional (averaged) judge counts rendered to one decimal; the mean shown equals the mean of per-edit judge averages.
 - Fractional (averaged) conflict counts rendered to one decimal.
+- New "System prompts" option appended to the condition-chip list immediately after Cross Edit, plus the four system-prompt document ids/labels it compares.
+- Chip label for the new view: "System prompts".
+- Tooltip/subtitle for the new chip states the fixed semantics: all conditions; system-prompt documents only.
+- Drift-chart colors for the four system-prompt documents (provider hues) so the existing line/label renderer needs no changes.
+- aggStat reads the System-prompts view from the separate sp_stats table (keyed by document), leaving real-condition pooling untouched.
+- Example browser: the System-prompts view filters stories by the new doc_type field (all conditions) instead of by condition_id.
+- Drift chart: in the System-prompts view the lines are the four system-prompt documents (existing renderer, document labels/colors); model-visibility chips don't apply there.
+- Aggregate bars: in the System-prompts view the rows are the four system-prompt documents (existing freq-row renderer), one entry per provider's system prompt.
+- Aggregate-bar row labels use the document display names in the System-prompts view.
+- Model-visibility chip row greyed out (with an explanatory title) while the System-prompts view is active, since its charts are per document, not per model.
+- Aggregate-view heading covers the per-document rows of the System-prompts view.
 
 ### reveal.js
 

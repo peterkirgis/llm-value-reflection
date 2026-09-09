@@ -45,6 +45,23 @@ Averaging semantics (fixed, per the task spec — grader-level equal weighting):
   - denominator ("total"): edits coded by at least one v2 grader. NOTE: v2
     graded the 2 abstentions (v1 did not), so totals are 2,582 vs v1's 2,580.
 
+"System prompts" view (facet browser condition-chip row, right after Cross Edit):
+  - restricts every figure it governs to edits whose document_type ==
+    "system_prompt", ACROSS ALL CONDITIONS (own-document and cross-edit edits of
+    system prompts alike), so the four provider system prompts are compared
+    directly — one entry per document instead of one per model.
+  - data: narratives.json carries a separate top-level "sp_stats" table
+    ({facet: {document_id: cell}}; the same cell shape as "stats", pooled over
+    all conditions and models, replicate = a (run, condition, model) chain).
+    Keeping it OUTSIDE "stats" is load-bearing: the frontend's "All conditions"
+    pooling iterates every key of stats[fid], so a pseudo-condition stored
+    in-table would be double-counted.
+  - story examples carry a new "doc_type" field (existing fields unchanged) so
+    the example browser can filter the stratum client-side.
+  - ground truth: selfcheck.json gains "system_prompt_stratum" (per-model and
+    per-system-prompt-document mean judge + Ns under the same averaging rules),
+    asserted against the narratives bundle at build time.
+
 Usage:
     /Users/nicholasgannon/llm-value-reflection/.venv/bin/python \
         recode/src/build_site_v2avg.py
@@ -100,6 +117,16 @@ METHODS_NOTE = (
     "graders, and per-edit views show both codes side by side with disagreements flagged. "
     "Inter-grader agreement report: recode/reports/B_intergrader.md (in the repository)."
 )
+
+# The four provider system prompts (DECISIONS.md §10 lists the 8 documents; the
+# frontend's System-prompts view hardcodes these four in display order, so the
+# build asserts the data yields exactly this set).
+EXPECTED_SP_DOCS = {
+    "opus_system_prompt",
+    "gpt_system_prompt",
+    "gemini_system_prompt",
+    "grok_system_prompt",
+}
 
 STATIC_FILES = [
     "index.html",
@@ -375,6 +402,16 @@ def build_narratives_v2avg(codings_by_grader: dict) -> dict:
     rep_net: dict[tuple, list[float]] = defaultdict(lambda: [0.0] * bn.MAX_ROUND)
     replicates: dict[tuple[str, str], set] = defaultdict(set)
 
+    # System-prompt stratum: same cell semantics, keyed by DOCUMENT instead of
+    # (condition, model) — all conditions and models pooled; a replicate is one
+    # (run, condition, model) chain editing that document.
+    sp_stats: dict[str, dict[str, dict]] = {
+        fid: defaultdict(lambda: {"total": 0, "dirs": defaultdict(float)})
+        for fid in bn.FACET_IDS
+    }
+    sp_rep_net: dict[tuple, list[float]] = defaultdict(lambda: [0.0] * bn.MAX_ROUND)
+    sp_replicates: dict[str, set] = defaultdict(set)
+
     for edit in edits:
         edit_id = edit["edit_id"]
         pairs = valid_pairs(codings_by_grader, edit_id)
@@ -391,6 +428,13 @@ def build_narratives_v2avg(codings_by_grader: dict) -> dict:
         rep = (edit.get("run_id"), edit.get("document_id"))
         replicates[(condition, model)].add(rep)
 
+        doc_id = edit.get("document_id") or ""
+        doc_type = edit.get("document_type")
+        is_sp = doc_type == "system_prompt"
+        chain = (edit.get("run_id"), condition, model)
+        if is_sp:
+            sp_replicates[doc_id].add(chain)
+
         # Grader-averaged net facet scores -> drift accumulators.
         if isinstance(rnd, int) and 1 <= rnd <= bn.MAX_ROUND:
             net_sum: dict[str, float] = defaultdict(float)
@@ -399,6 +443,8 @@ def build_narratives_v2avg(codings_by_grader: dict) -> dict:
                     net_sum[fid] += net
             for fid, total_net in net_sum.items():
                 rep_net[(fid, condition, model, rep)][rnd - 1] += total_net / n
+                if is_sp:
+                    sp_rep_net[(fid, doc_id, chain)][rnd - 1] += total_net / n
 
         # Direction weights: (#graders assigning this facet-direction) / n.
         dir_votes: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
@@ -411,6 +457,11 @@ def build_narratives_v2avg(codings_by_grader: dict) -> dict:
             cell["total"] += 1
             for direction, votes in dir_votes.get(fid, {}).items():
                 cell["dirs"][direction] += votes / n
+            if is_sp:
+                sp_cell = sp_stats[fid][doc_id]
+                sp_cell["total"] += 1
+                for direction, votes in dir_votes.get(fid, {}).items():
+                    sp_cell["dirs"][direction] += votes / n
 
         # Stories: one example per (facet, direction) a grader assigned; the
         # card shows BOTH graders' codes with a disagreement marker.
@@ -424,6 +475,7 @@ def build_narratives_v2avg(codings_by_grader: dict) -> dict:
                     "condition_name": edit.get("condition_name", condition),
                     "model_display": model,
                     "document_id": edit.get("document_id"),
+                    "doc_type": doc_type,
                     "direction": direction,
                     "summary": (
                         f"{GRADER_LABELS[primary_short]}: "
@@ -461,6 +513,15 @@ def build_narratives_v2avg(codings_by_grader: dict) -> dict:
             cum_sums[(fid, cond, model)][r] += cum
             cum_sqs[(fid, cond, model)][r] += cum * cum
 
+    sp_cum_sums: dict[tuple[str, str], list[float]] = defaultdict(lambda: [0.0] * bn.MAX_ROUND)
+    sp_cum_sqs: dict[tuple[str, str], list[float]] = defaultdict(lambda: [0.0] * bn.MAX_ROUND)
+    for (fid, doc_id, _chain), nets in sp_rep_net.items():
+        cum = 0.0
+        for r in range(bn.MAX_ROUND):
+            cum += nets[r]
+            sp_cum_sums[(fid, doc_id)][r] += cum
+            sp_cum_sqs[(fid, doc_id)][r] += cum * cum
+
     stats_out: dict[str, dict] = {}
     for fid in bn.FACET_IDS:
         cond_map = {}
@@ -477,10 +538,27 @@ def build_narratives_v2avg(codings_by_grader: dict) -> dict:
             }
         stats_out[fid] = cond_map
 
+    # System-prompt stratum table, kept OUTSIDE "stats" so the frontend's
+    # "All conditions" pooling (which iterates every stats[fid] key) never
+    # double-counts it.
+    sp_stats_out: dict[str, dict] = {}
+    for fid in bn.FACET_IDS:
+        sp_stats_out[fid] = {
+            doc_id: {
+                "total": c["total"],
+                "dirs": {d: round(v, 6) for d, v in c["dirs"].items()},
+                "cum": [round(v, 6) for v in sp_cum_sums.get((fid, doc_id), [0.0] * bn.MAX_ROUND)],
+                "cumsq": [round(v, 6) for v in sp_cum_sqs.get((fid, doc_id), [0.0] * bn.MAX_ROUND)],
+                "reps": len(sp_replicates[doc_id]),
+            }
+            for doc_id, c in sorted(sp_stats[fid].items())
+        }
+
     return {
         "coder_model": COMBINED_CODER,
         "variant": VARIANT_LABEL,
         "stats": stats_out,
+        "sp_stats": sp_stats_out,
         "stories": stories,
     }
 
@@ -529,6 +607,92 @@ def selfcheck_from_codes(codings_by_grader: dict) -> dict:
         "n_gemma_only": n_gemma_only,
         "n_qwen_only": n_qwen_only,
     }
+
+
+def sp_stratum_from_codes(codings_by_grader: dict) -> dict:
+    """Ground truth for the "System prompts" view, computed DIRECTLY from the
+    two codes files: mean judge under the two-grader average restricted to
+    edits of system-prompt documents, across ALL conditions — per editing
+    model AND per system-prompt document, with Ns. The edit id's pipe fields
+    are run|condition|model|document_id|doc_type|round, so doc type/id are
+    fields 5/4."""
+    all_ids = set()
+    for m in codings_by_grader.values():
+        all_ids.update(m.keys())
+    per_model: dict[str, list[float]] = defaultdict(list)
+    per_doc: dict[str, list[float]] = defaultdict(list)
+    n_both = n_single = 0
+    for edit_id in sorted(all_ids):
+        parts = edit_id.split("|")
+        if len(parts) != 6 or parts[4] != "system_prompt":
+            continue
+        pairs = valid_pairs(codings_by_grader, edit_id)
+        if not pairs:
+            continue
+        if len(pairs) == 2:
+            n_both += 1
+        else:
+            n_single += 1
+        avg = judge_avg_of(pairs)
+        per_model[parts[2]].append(avg)
+        per_doc[parts[3]].append(avg)
+
+    def table(groups: dict[str, list[float]]) -> dict:
+        return {
+            key: {"mean_judge_avg": sum(v) / len(v), "n_edits": len(v)}
+            for key, v in sorted(groups.items())
+        }
+
+    return {
+        "description": (
+            "System-prompt stratum (the 'System prompts' view): edits whose "
+            "document_type == 'system_prompt', pooled across ALL conditions "
+            "(own-document and cross-edit alike), so the four provider system "
+            "prompts are compared directly. Mean judge under the same "
+            "two-grader average (single-valid-grader edits contribute that "
+            "grader's value at full weight). Computed directly from "
+            "recode/data/codes/v2_gemma.jsonl + v2_qwen.jsonl."
+        ),
+        "per_model_mean_judge": table(per_model),
+        "per_document_mean_judge": table(per_doc),
+        "n_edits_total": sum(len(v) for v in per_doc.values()),
+        "n_both_graders_valid": n_both,
+        "n_single_grader": n_single,
+    }
+
+
+def verify_sp_against_narratives(sp: dict, narratives: dict) -> None:
+    """The sp_stats judge cells (per system-prompt document) must reproduce
+    the direct per-document mean judge exactly, with matching Ns; the document
+    set must be exactly the four provider system prompts (the frontend's
+    System-prompts view hardcodes them); and the per-model stratum must
+    partition the same edits."""
+    judge_docs = narratives["sp_stats"]["judge"]
+    direct = sp["per_document_mean_judge"]
+    assert set(direct) == EXPECTED_SP_DOCS, (
+        f"system-prompt documents {sorted(direct)} != expected {sorted(EXPECTED_SP_DOCS)}"
+    )
+    assert set(judge_docs) == set(direct), (
+        f"sp_stats docs {sorted(judge_docs)} != selfcheck docs {sorted(direct)}"
+    )
+    for doc, cell in judge_docs.items():
+        site_mean = (
+            cell["dirs"].get("discretion", 0.0) - cell["dirs"].get("external", 0.0)
+        ) / cell["total"]
+        entry = direct[doc]
+        diff = abs(site_mean - entry["mean_judge_avg"])
+        assert diff < 1e-5, (
+            f"sp self-check mismatch for {doc}: site {site_mean} vs direct "
+            f"{entry['mean_judge_avg']}"
+        )
+        assert cell["total"] == entry["n_edits"], (
+            f"sp denominator mismatch for {doc}: site {cell['total']} vs direct "
+            f"{entry['n_edits']}"
+        )
+    n_by_model = sum(e["n_edits"] for e in sp["per_model_mean_judge"].values())
+    assert n_by_model == sp["n_edits_total"], (
+        f"sp per-model N {n_by_model} != stratum total {sp['n_edits_total']}"
+    )
 
 
 def verify_against_narratives(selfcheck: dict, narratives: dict) -> None:
@@ -913,8 +1077,10 @@ def apply_all_patches() -> None:
         "facets.js",
         "          shows &plusmn;1 SD across each model's (run &times; document) replicates.</p></div>",
         "          shows &plusmn;1 SD across each model's (run &times; document) replicates. Net resolutions are\n"
-        "          the equal-weight average of the two v2 graders, so fractional steps are possible.</p></div>",
-        "Drift note documents that cumulative curves use grader-averaged (fractional) net scores.",
+        "          the equal-weight average of the two v2 graders, so fractional steps are possible.\n"
+        "          In the <strong>System prompts</strong> view, lines are per system-prompt document\n"
+        "          (all conditions and models pooled) and replicates are (run &times; condition &times; model) chains.</p></div>",
+        "Drift note documents grader-averaged (fractional) net scores and the System-prompts view's per-document lines/replicates.",
     )
     patch_replace(
         "facets.js",
@@ -933,6 +1099,123 @@ def apply_all_patches() -> None:
         "              valueText = `${neg} / ${pos}<br>${pctTotal}% of ${s.total} edits`;",
         "              valueText = `${fmtN(neg)} / ${fmtN(pos)}<br>${pctTotal}% of ${s.total} edits`;",
         "Fractional (averaged) conflict counts rendered to one decimal.",
+    )
+
+    # ----- "System prompts" view (condition-chip row, right after Cross Edit) -----
+    patch_replace(
+        "facets.js",
+        '  const CONDITIONS = ["", "baseline", "you_framing", "allow_no_edit", "no_constitution_prepend", "implementation_note", "cross_edit"];',
+        '  // v2avg "System prompts" view: a pseudo-option on the condition-chip row\n'
+        "  // (NOT a prompt condition) that restricts every figure to edits of\n"
+        "  // system-prompt documents across ALL conditions, one entry per document.\n"
+        '  const SP_CONDITION = "system_prompts_view";\n'
+        '  const SP_DOCS = ["opus_system_prompt", "gpt_system_prompt", "gemini_system_prompt", "grok_system_prompt"];\n'
+        "  const SP_DOC_LABELS = {\n"
+        '    opus_system_prompt: "Claude Opus system prompt",\n'
+        '    gpt_system_prompt: "GPT system prompt",\n'
+        '    gemini_system_prompt: "Gemini system prompt",\n'
+        '    grok_system_prompt: "Grok system prompt",\n'
+        "  };\n"
+        '  const CONDITIONS = ["", "baseline", "you_framing", "allow_no_edit", "no_constitution_prepend", "implementation_note", "cross_edit", SP_CONDITION];',
+        'New "System prompts" option appended to the condition-chip list immediately after Cross Edit, plus the four system-prompt document ids/labels it compares.',
+    )
+    patch_replace(
+        "facets.js",
+        '    cross_edit: "Cross Edit",',
+        '    cross_edit: "Cross Edit",\n    [SP_CONDITION]: "System prompts",',
+        'Chip label for the new view: "System prompts".',
+    )
+    patch_replace(
+        "facets.js",
+        '    cross_edit: "Models revise alignment documents across providers, not just their own.",',
+        '    cross_edit: "Models revise alignment documents across providers, not just their own.",\n'
+        '    [SP_CONDITION]: "All conditions; system-prompt documents only. Not a prompt condition: '
+        "this view pools every condition (own-document and cross-edit edits of system prompts alike) "
+        "and keeps only edits whose document is a provider system prompt, so the four system prompts "
+        '(Claude Opus, GPT, Gemini, Grok) are compared directly — one entry per document.",',
+        "Tooltip/subtitle for the new chip states the fixed semantics: all conditions; system-prompt documents only.",
+    )
+    patch_replace(
+        "facets.js",
+        '    "Grok 4.2": "#7b3f9e",',
+        '    "Grok 4.2": "#7b3f9e",\n'
+        "    // System-prompts view: per-document line/label colors (provider hues).\n"
+        '    "Claude Opus system prompt": "#5a1810",\n'
+        '    "GPT system prompt": "#0b4f8a",\n'
+        '    "Gemini system prompt": "#7f5a06",\n'
+        '    "Grok system prompt": "#7b3f9e",',
+        "Drift-chart colors for the four system-prompt documents (provider hues) so the existing line/label renderer needs no changes.",
+    )
+    patch_replace(
+        "facets.js",
+        "    function aggStat(fid, condition, model) {\n      const condMap = data.stats[fid] || {};",
+        "    function aggStat(fid, condition, model) {\n"
+        "      // System prompts view: one cell per system-prompt document (all\n"
+        "      // conditions and models pooled in the data build); `model` is then a\n"
+        "      // document id. sp_stats lives OUTSIDE data.stats so the 'All\n"
+        "      // conditions' pooling below can never double-count the stratum.\n"
+        "      const condMap = condition === SP_CONDITION\n"
+        "        ? { [SP_CONDITION]: (data.sp_stats || {})[fid] || {} }\n"
+        "        : (data.stats[fid] || {});",
+        "aggStat reads the System-prompts view from the separate sp_stats table (keyed by document), leaving real-condition pooling untouched.",
+    )
+    patch_replace(
+        "facets.js",
+        "      return list.filter((ex) => {\n        if (condition && ex.condition_id !== condition) return false;",
+        "      return list.filter((ex) => {\n"
+        '        if (condition === SP_CONDITION) {\n'
+        '          if (ex.doc_type !== "system_prompt") return false;\n'
+        "        } else if (condition && ex.condition_id !== condition) return false;",
+        "Example browser: the System-prompts view filters stories by the new doc_type field (all conditions) instead of by condition_id.",
+    )
+    patch_replace(
+        "facets.js",
+        "      const series = [];\n      for (const m of allModels) {\n        if (hidden.has(m)) continue;\n"
+        "        const s = driftSeries(fid, condition, m);\n        if (s) series.push({ model: m, mean: s.mean, sd: s.sd });\n      }",
+        "      const spView = condition === SP_CONDITION;\n"
+        "      const series = [];\n"
+        "      for (const m of (spView ? SP_DOCS : allModels)) {\n"
+        "        if (!spView && hidden.has(m)) continue;\n"
+        "        const s = driftSeries(fid, condition, m);\n"
+        "        if (s) series.push({ model: spView ? (SP_DOC_LABELS[m] || m) : m, mean: s.mean, sd: s.sd });\n"
+        "      }",
+        "Drift chart: in the System-prompts view the lines are the four system-prompt documents (existing renderer, document labels/colors); model-visibility chips don't apply there.",
+    )
+    patch_replace(
+        "facets.js",
+        "      const rows = [];\n      let maxEngaged = 0;\n      let maxSideShare = 0;\n"
+        "      for (const model of allModels) {\n        if (hidden.has(model)) continue;",
+        "      const spView = condition === SP_CONDITION;\n"
+        "      const rows = [];\n      let maxEngaged = 0;\n      let maxSideShare = 0;\n"
+        "      for (const model of (spView ? SP_DOCS : allModels)) {\n"
+        "        if (!spView && hidden.has(model)) continue;",
+        "Aggregate bars: in the System-prompts view the rows are the four system-prompt documents (existing freq-row renderer), one entry per provider's system prompt.",
+    )
+    patch_replace(
+        "facets.js",
+        '          <span class="freq-label">${escapeHtml(model)}</span>',
+        '          <span class="freq-label">${escapeHtml(spView ? (SP_DOC_LABELS[model] || model) : model)}</span>',
+        "Aggregate-bar row labels use the document display names in the System-prompts view.",
+    )
+    patch_replace(
+        "facets.js",
+        "          panelState[fid].condition = chip.dataset.cond;\n          panelState[fid].exampleIndex = 0;",
+        "          panelState[fid].condition = chip.dataset.cond;\n"
+        "          panelState[fid].exampleIndex = 0;\n"
+        "          const spOn = chip.dataset.cond === SP_CONDITION;\n"
+        '          const modelSel = panel.querySelector(".model-selector");\n'
+        "          if (modelSel) {\n"
+        '            modelSel.style.opacity = spOn ? "0.4" : "";\n'
+        '            modelSel.style.pointerEvents = spOn ? "none" : "";\n'
+        '            modelSel.title = spOn ? "Model chips do not apply in the System prompts view: charts show one entry per system-prompt document, with all models and conditions pooled." : "";\n'
+        "          }",
+        "Model-visibility chip row greyed out (with an explanatory title) while the System-prompts view is active, since its charts are per document, not per model.",
+    )
+    patch_replace(
+        "facets.js",
+        '<h3>Aggregate view &mdash; direction by model</h3>',
+        '<h3>Aggregate view &mdash; direction by model (by system-prompt document in the System prompts view)</h3>',
+        "Aggregate-view heading covers the per-document rows of the System-prompts view.",
     )
 
 
@@ -976,9 +1259,23 @@ def write_patches_md(counters: dict) -> None:
         "  ride-on is dropped because the highlight links that consumed it are disabled",
         "  (v1-tied). Example texts come from `recode/data/canonical/edits.jsonl`",
         "  (find_text / replace_text_sanitized — the same sanitized text the graders saw).",
+        "  For the **System prompts** view the bundle additionally carries (a) a separate",
+        "  top-level `sp_stats` table — `{facet: {document_id: cell}}`, the same cell shape",
+        "  as `stats` but restricted to `document_type == \"system_prompt\"` and pooled over",
+        "  ALL conditions and models, replicate = a (run, condition, model) chain; it is",
+        "  kept OUTSIDE `stats` because the frontend's All-conditions pooling iterates every",
+        "  `stats[facet]` key and would double-count an in-table pseudo-condition — and",
+        "  (b) a new `doc_type` field on every story example (from the canonical edit's",
+        "  `document_type`; all existing fields unchanged) so the example browser can",
+        "  filter the stratum client-side.",
         "- `data/selfcheck.json` — ground-truth per-model mean judge under the average,",
         "  computed directly from the two codes files; the build asserts the",
-        "  narratives-bundle numbers match it exactly.",
+        "  narratives-bundle numbers match it exactly. Also carries",
+        "  `system_prompt_stratum` — the System-prompts view's ground truth (per-model AND",
+        "  per-system-prompt-document mean judge with Ns, same averaging rules, doc",
+        "  type/id parsed from the edit ids) — asserted against `sp_stats` (per-document",
+        "  judge means and denominators must match exactly, and the document set must be",
+        "  exactly the four provider system prompts the frontend hardcodes).",
         "",
         "## Files copied from docs/ and patched",
         "",
@@ -1052,6 +1349,9 @@ def main() -> None:
     # 4. Self-check (ground truth for auditors) + internal consistency.
     selfcheck = selfcheck_from_codes(codings_by_grader)
     verify_against_narratives(selfcheck, narratives)
+    sp = sp_stratum_from_codes(codings_by_grader)
+    verify_sp_against_narratives(sp, narratives)
+    selfcheck["system_prompt_stratum"] = sp
     selfcheck["bundle_coding_status_counts"] = counters
     selfcheck["generated_at"] = datetime.now(timezone.utc).isoformat()
     selfcheck["variant"] = VARIANT_LABEL
@@ -1078,6 +1378,21 @@ def main() -> None:
         f"total {selfcheck['n_edits_total']} edits: "
         f"{selfcheck['n_both_graders_valid']} both graders valid, "
         f"{selfcheck['n_gemma_only']} gemma-only, {selfcheck['n_qwen_only']} qwen-only"
+    )
+    print()
+    print("SELF-CHECK — 'System prompts' view stratum (doc_type == system_prompt,")
+    print("ALL conditions pooled; same two-grader averaging; asserted against the")
+    print("narratives bundle's sp_stats table above)")
+    print(f"{'per model':24s} {'mean judge avg':>15s} {'n edits':>8s}")
+    for model, entry in sp["per_model_mean_judge"].items():
+        print(f"{model:24s} {entry['mean_judge_avg']:>+15.4f} {entry['n_edits']:>8d}")
+    print(f"{'per system prompt doc':24s} {'mean judge avg':>15s} {'n edits':>8s}")
+    for doc, entry in sp["per_document_mean_judge"].items():
+        print(f"{doc:24s} {entry['mean_judge_avg']:>+15.4f} {entry['n_edits']:>8d}")
+    print(
+        f"stratum total {sp['n_edits_total']} edits: "
+        f"{sp['n_both_graders_valid']} both graders valid, "
+        f"{sp['n_single_grader']} single-grader"
     )
     print(f"wrote {sc_path}")
 

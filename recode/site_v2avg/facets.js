@@ -208,7 +208,18 @@
 
   const FACETS = Object.assign({}, ...FACET_GROUPS.map((g) => g.facets));
 
-  const CONDITIONS = ["", "baseline", "you_framing", "allow_no_edit", "no_constitution_prepend", "implementation_note", "cross_edit"];
+  // v2avg "System prompts" view: a pseudo-option on the condition-chip row
+  // (NOT a prompt condition) that restricts every figure to edits of
+  // system-prompt documents across ALL conditions, one entry per document.
+  const SP_CONDITION = "system_prompts_view";
+  const SP_DOCS = ["opus_system_prompt", "gpt_system_prompt", "gemini_system_prompt", "grok_system_prompt"];
+  const SP_DOC_LABELS = {
+    opus_system_prompt: "Claude Opus system prompt",
+    gpt_system_prompt: "GPT system prompt",
+    gemini_system_prompt: "Gemini system prompt",
+    grok_system_prompt: "Grok system prompt",
+  };
+  const CONDITIONS = ["", "baseline", "you_framing", "allow_no_edit", "no_constitution_prepend", "implementation_note", "cross_edit", SP_CONDITION];
   const CONDITION_LABELS = {
     "": "All conditions",
     baseline: "Baseline",
@@ -217,6 +228,7 @@
     no_constitution_prepend: "No System Prompt Prepend",
     implementation_note: "Real-World Implementation",
     cross_edit: "Cross Edit",
+    [SP_CONDITION]: "System prompts",
   };
   // Shown on hover so a reader can tell what each prompt variation means.
   const CONDITION_TIPS = {
@@ -227,6 +239,7 @@
     no_constitution_prepend: "The model's own system prompt is not prepended, so it edits from a neutral position rather than in character.",
     implementation_note: "The model is told its proposed change will be used in a real-world deployment to guide actual AI behavior.",
     cross_edit: "Models revise alignment documents across providers, not just their own.",
+    [SP_CONDITION]: "All conditions; system-prompt documents only. Not a prompt condition: this view pools every condition (own-document and cross-edit edits of system prompts alike) and keeps only edits whose document is a provider system prompt, so the four system prompts (Claude Opus, GPT, Gemini, Grok) are compared directly — one entry per document.",
   };
 
   const MODEL_ORDER = [
@@ -249,6 +262,11 @@
     "Gemini 3 Flash": "#c89a26",
     "Grok 4.3": "#3a1655",
     "Grok 4.2": "#7b3f9e",
+    // System-prompts view: per-document line/label colors (provider hues).
+    "Claude Opus system prompt": "#5a1810",
+    "GPT system prompt": "#0b4f8a",
+    "Gemini system prompt": "#7f5a06",
+    "Grok system prompt": "#7b3f9e",
   };
   const MAX_ROUND = 20;
   const PARTY_LABELS = {
@@ -367,7 +385,13 @@
     }
 
     function aggStat(fid, condition, model) {
-      const condMap = data.stats[fid] || {};
+      // System prompts view: one cell per system-prompt document (all
+      // conditions and models pooled in the data build); `model` is then a
+      // document id. sp_stats lives OUTSIDE data.stats so the 'All
+      // conditions' pooling below can never double-count the stratum.
+      const condMap = condition === SP_CONDITION
+        ? { [SP_CONDITION]: (data.sp_stats || {})[fid] || {} }
+        : (data.stats[fid] || {});
       const conds = condition ? [condition] : Object.keys(condMap);
       const out = {
         total: 0, dirs: {}, reps: 0,
@@ -415,7 +439,9 @@
       const { condition, model } = panelState[fid];
       const list = data.stories[fid] || [];
       return list.filter((ex) => {
-        if (condition && ex.condition_id !== condition) return false;
+        if (condition === SP_CONDITION) {
+          if (ex.doc_type !== "system_prompt") return false;
+        } else if (condition && ex.condition_id !== condition) return false;
         if (model && ex.model_display !== model) return false;
         return true;
       });
@@ -464,14 +490,16 @@
       html += `</div>`;
 
       html += `<div class="facet-duo">
-        <div class="freq-section"><h3>Aggregate view &mdash; direction by model</h3><div class="freq-bars" id="freq-bars-${fid}"></div></div>
+        <div class="freq-section"><h3>Aggregate view &mdash; direction by model (by system-prompt document in the System prompts view)</h3><div class="freq-bars" id="freq-bars-${fid}"></div></div>
         <div class="drift-section">
           <div class="drift-section-head"><h3>Cumulative drift &mdash; across editing rounds</h3>
             <label class="sd-toggle"><input type="checkbox" data-control="sd"> &plusmn;1 SD band</label></div>
           <div class="facet-drift" id="facet-drift-${fid}"></div>
           <p class="facet-drift-note">Mean cumulative resolutions per replicate, one line per model. The SD band
           shows &plusmn;1 SD across each model's (run &times; document) replicates. Net resolutions are
-          the equal-weight average of the two v2 graders, so fractional steps are possible.</p></div>
+          the equal-weight average of the two v2 graders, so fractional steps are possible.
+          In the <strong>System prompts</strong> view, lines are per system-prompt document
+          (all conditions and models pooled) and replicates are (run &times; condition &times; model) chains.</p></div>
       </div>`;
 
       html += `<p class="facet-howto">How to read this: pick a facet above, then filter by condition or model.
@@ -503,6 +531,13 @@
         chip.addEventListener("click", () => {
           panelState[fid].condition = chip.dataset.cond;
           panelState[fid].exampleIndex = 0;
+          const spOn = chip.dataset.cond === SP_CONDITION;
+          const modelSel = panel.querySelector(".model-selector");
+          if (modelSel) {
+            modelSel.style.opacity = spOn ? "0.4" : "";
+            modelSel.style.pointerEvents = spOn ? "none" : "";
+            modelSel.title = spOn ? "Model chips do not apply in the System prompts view: charts show one entry per system-prompt document, with all models and conditions pooled." : "";
+          }
           panel.querySelectorAll('[data-control="cond"]').forEach((c) =>
             c.classList.toggle("active", c.dataset.cond === chip.dataset.cond));
           renderFreqBars(fid);
@@ -589,11 +624,12 @@
       if (!root) return;
       const { condition, hidden, showSd } = panelState[fid];
 
+      const spView = condition === SP_CONDITION;
       const series = [];
-      for (const m of allModels) {
-        if (hidden.has(m)) continue;
+      for (const m of (spView ? SP_DOCS : allModels)) {
+        if (!spView && hidden.has(m)) continue;
         const s = driftSeries(fid, condition, m);
-        if (s) series.push({ model: m, mean: s.mean, sd: s.sd });
+        if (s) series.push({ model: spView ? (SP_DOC_LABELS[m] || m) : m, mean: s.mean, sd: s.sd });
       }
       if (!series.length) {
         root.innerHTML = '<p class="no-example">No data for this condition.</p>';
@@ -679,11 +715,12 @@
       const info = FACETS[fid];
       const { condition, hidden } = panelState[fid];
 
+      const spView = condition === SP_CONDITION;
       const rows = [];
       let maxEngaged = 0;
       let maxSideShare = 0;
-      for (const model of allModels) {
-        if (hidden.has(model)) continue;
+      for (const model of (spView ? SP_DOCS : allModels)) {
+        if (!spView && hidden.has(model)) continue;
         const s = aggStat(fid, condition, model);
         if (s.total === 0) continue;
         const engaged = Object.values(s.dirs).reduce((a, b) => a + b, 0);
@@ -748,7 +785,7 @@
             .join(" / ") + `<br>${engaged}/${s.total} edits`;
         }
         html += `<div class="freq-row">
-          <span class="freq-label">${escapeHtml(model)}</span>
+          <span class="freq-label">${escapeHtml(spView ? (SP_DOC_LABELS[model] || model) : model)}</span>
           ${track}
           <span class="freq-value">${valueText}</span>
         </div>`;

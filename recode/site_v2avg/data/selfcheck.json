@@ -46,12 +46,78 @@
   "n_both_graders_valid": 2528,
   "n_gemma_only": 46,
   "n_qwen_only": 8,
+  "system_prompt_stratum": {
+    "description": "System-prompt stratum (the 'System prompts' view): edits whose document_type == 'system_prompt', pooled across ALL conditions (own-document and cross-edit alike), so the four provider system prompts are compared directly. Mean judge under the same two-grader average (single-valid-grader edits contribute that grader's value at full weight). Computed directly from recode/data/codes/v2_gemma.jsonl + v2_qwen.jsonl.",
+    "per_model_mean_judge": {
+      "Claude Haiku 4.5": {
+        "mean_judge_avg": 0.025362318840579712,
+        "n_edits": 138
+      },
+      "Claude Opus 4.7": {
+        "mean_judge_avg": 0.20437956204379562,
+        "n_edits": 137
+      },
+      "Claude Sonnet 4.6": {
+        "mean_judge_avg": 0.08125,
+        "n_edits": 160
+      },
+      "GPT-5.4": {
+        "mean_judge_avg": 0.075,
+        "n_edits": 160
+      },
+      "GPT-5.4 Mini": {
+        "mean_judge_avg": 0.04819277108433735,
+        "n_edits": 83
+      },
+      "GPT-5.5": {
+        "mean_judge_avg": -0.21071428571428572,
+        "n_edits": 140
+      },
+      "Gemini 3 Flash": {
+        "mean_judge_avg": -0.3357142857142857,
+        "n_edits": 140
+      },
+      "Gemini 3.1 Pro": {
+        "mean_judge_avg": -0.325,
+        "n_edits": 160
+      },
+      "Grok 4.2": {
+        "mean_judge_avg": -0.3188405797101449,
+        "n_edits": 138
+      },
+      "Grok 4.3": {
+        "mean_judge_avg": -0.4635036496350365,
+        "n_edits": 137
+      }
+    },
+    "per_document_mean_judge": {
+      "gemini_system_prompt": {
+        "mean_judge_avg": -0.2896039603960396,
+        "n_edits": 404
+      },
+      "gpt_system_prompt": {
+        "mean_judge_avg": 0.0737410071942446,
+        "n_edits": 278
+      },
+      "grok_system_prompt": {
+        "mean_judge_avg": -0.3573232323232323,
+        "n_edits": 396
+      },
+      "opus_system_prompt": {
+        "mean_judge_avg": 0.1984126984126984,
+        "n_edits": 315
+      }
+    },
+    "n_edits_total": 1393,
+    "n_both_graders_valid": 1371,
+    "n_single_grader": 22
+  },
   "bundle_coding_status_counts": {
     "avg_two_graders": 2528,
     "uncoded_generation_error": 191,
     "single_grader": 54,
     "uncoded_exploratory_run": 176
   },
-  "generated_at": "2026-09-09T19:04:51.227761+00:00",
+  "generated_at": "2026-09-09T20:26:32.582689+00:00",
   "variant": "v2 blinded re-code — Gemma 4 + Qwen 3.8 average (recode pipeline)"
 }
