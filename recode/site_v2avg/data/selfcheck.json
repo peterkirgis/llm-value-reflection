@@ -1,0 +1,57 @@
+{
+  "description": "Per-model mean judge score under the two-grader average (mean over edits of mean over valid graders of judge score; single-grader edits contribute that grader's value). Computed directly from recode/data/codes/v2_gemma.jsonl + v2_qwen.jsonl.",
+  "per_model_mean_judge": {
+    "Claude Haiku 4.5": {
+      "mean_judge_avg": 0.24903474903474904,
+      "n_edits": 259
+    },
+    "Claude Opus 4.7": {
+      "mean_judge_avg": 0.2158671586715867,
+      "n_edits": 271
+    },
+    "Claude Sonnet 4.6": {
+      "mean_judge_avg": 0.18867924528301888,
+      "n_edits": 318
+    },
+    "GPT-5.4": {
+      "mean_judge_avg": -0.1578125,
+      "n_edits": 320
+    },
+    "GPT-5.4 Mini": {
+      "mean_judge_avg": -0.24731182795698925,
+      "n_edits": 186
+    },
+    "GPT-5.5": {
+      "mean_judge_avg": -0.23214285714285715,
+      "n_edits": 280
+    },
+    "Gemini 3 Flash": {
+      "mean_judge_avg": -0.391304347826087,
+      "n_edits": 276
+    },
+    "Gemini 3.1 Pro": {
+      "mean_judge_avg": -0.3984375,
+      "n_edits": 320
+    },
+    "Grok 4.2": {
+      "mean_judge_avg": -0.32,
+      "n_edits": 175
+    },
+    "Grok 4.3": {
+      "mean_judge_avg": -0.5028248587570622,
+      "n_edits": 177
+    }
+  },
+  "n_edits_total": 2582,
+  "n_both_graders_valid": 2528,
+  "n_gemma_only": 46,
+  "n_qwen_only": 8,
+  "bundle_coding_status_counts": {
+    "avg_two_graders": 2528,
+    "uncoded_generation_error": 191,
+    "single_grader": 54,
+    "uncoded_exploratory_run": 176
+  },
+  "generated_at": "2026-09-09T19:04:51.227761+00:00",
+  "variant": "v2 blinded re-code — Gemma 4 + Qwen 3.8 average (recode pipeline)"
+}
