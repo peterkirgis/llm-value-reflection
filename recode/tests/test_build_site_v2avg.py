@@ -6,7 +6,12 @@ Semantics under test (grader-level equal weighting):
   - categorical weights = (#valid graders assigning)/(#valid graders):
     1.0 both, 0.5 exactly one of two, 1.0 for a single-grader edit.
   - per-edit displays carry both graders side by side + agreement flags.
+  - the "System prompts" view is PER MODEL: sp_stats cells are keyed by
+    model_display, and the frontend patches leave the stock per-model renderers
+    and model-visibility chips untouched in that view.
 """
+
+import shutil
 
 import pytest
 
@@ -186,51 +191,112 @@ def sp_judge_cell(pos=0.0, neg=0.0, total=1):
     return {"total": total, "dirs": dirs}
 
 
-def test_verify_sp_against_narratives_dirs_mean_identity():
-    """Per-document (discretion − external)/total from categorical weights must
-    reproduce the direct per-document mean judge — the identity the builder
-    asserts at build time."""
+def _four_model_sp_cells():
+    """The per-model sp_stats judge cells consistent with _four_doc_stratum().
+    Note the M2 row comes from a CROSS-EDIT system-prompt edit — the per-model
+    stratum pools all conditions."""
+    return {
+        "M1": sp_judge_cell(pos=1.0),   # both graders +1
+        "M2": sp_judge_cell(pos=0.5),   # one of two graders +1 (cross_edit row)
+        "M3": sp_judge_cell(neg=1.0),   # single grader −1, full weight
+        "M4": sp_judge_cell(),          # both graders 0
+    }
+
+
+def test_verify_sp_against_narratives_per_model_dirs_mean_identity():
+    """Per-MODEL (discretion − external)/total from categorical weights must
+    reproduce the direct per-model mean judge — the identity the builder
+    asserts at build time (the System-prompts view renders per model)."""
     sp = _four_doc_stratum()
-    narratives = {"sp_stats": {"judge": {
-        "opus_system_prompt": sp_judge_cell(pos=1.0),      # both graders +1
-        "gpt_system_prompt": sp_judge_cell(pos=0.5),       # one of two graders +1
-        "gemini_system_prompt": sp_judge_cell(neg=1.0),    # single grader −1, full weight
-        "grok_system_prompt": sp_judge_cell(),             # both graders 0
-    }}}
+    narratives = {"sp_stats": {"judge": _four_model_sp_cells()}}
     b.verify_sp_against_narratives(sp, narratives)  # must not raise
+    assert sp["per_model_mean_judge"]["M2"]["mean_judge_avg"] == 0.5
+    assert sp["per_model_mean_judge"]["M4"]["mean_judge_avg"] == 0.0
+    # the reference per-document table is still present in the selfcheck
     assert sp["per_document_mean_judge"]["gpt_system_prompt"]["mean_judge_avg"] == 0.5
-    assert sp["per_document_mean_judge"]["grok_system_prompt"]["mean_judge_avg"] == 0.0
 
 
 def test_verify_sp_against_narratives_catches_drift():
     sp = _four_doc_stratum()
-    good = {
-        "opus_system_prompt": sp_judge_cell(pos=1.0),
-        "gpt_system_prompt": sp_judge_cell(pos=0.5),
-        "gemini_system_prompt": sp_judge_cell(neg=1.0),
-        "grok_system_prompt": sp_judge_cell(),
-    }
-    # a wrong mean fails
-    bad_mean = {**good, "gpt_system_prompt": sp_judge_cell(pos=1.0)}
+    good = _four_model_sp_cells()
+    # a wrong per-model mean fails
+    bad_mean = {**good, "M2": sp_judge_cell(pos=1.0)}
     with pytest.raises(AssertionError):
         b.verify_sp_against_narratives(sp, {"sp_stats": {"judge": bad_mean}})
     # a wrong denominator fails
-    bad_n = {**good, "opus_system_prompt": sp_judge_cell(pos=2.0, total=2)}
+    bad_n = {**good, "M1": sp_judge_cell(pos=2.0, total=2)}
     with pytest.raises(AssertionError):
         b.verify_sp_against_narratives(sp, {"sp_stats": {"judge": bad_n}})
-    # a missing document fails (the frontend hardcodes the four)
-    missing = {k: v for k, v in good.items() if k != "grok_system_prompt"}
+    # a missing model fails (same model set required)
+    missing = {k: v for k, v in good.items() if k != "M4"}
     with pytest.raises(AssertionError):
         b.verify_sp_against_narratives(sp, {"sp_stats": {"judge": missing}})
+    # an extra model in sp_stats fails too
+    extra = {**good, "M5": sp_judge_cell(pos=1.0)}
+    with pytest.raises(AssertionError):
+        b.verify_sp_against_narratives(sp, {"sp_stats": {"judge": extra}})
 
 
 def test_verify_sp_requires_exactly_the_four_provider_system_prompts():
     """A stratum whose document set is not the four provider system prompts is
-    rejected, whatever the narratives table says."""
+    rejected (data sanity on the reference per-document table), whatever the
+    per-model narratives table says."""
     entries = {
         eid("M1", "opus_system_prompt", "system_prompt"): (coding(1), coding(1)),
     }
     sp = b.sp_stratum_from_codes(codes_for(entries))
-    narratives = {"sp_stats": {"judge": {"opus_system_prompt": sp_judge_cell(pos=1.0)}}}
+    narratives = {"sp_stats": {"judge": {"M1": sp_judge_cell(pos=1.0)}}}
     with pytest.raises(AssertionError):
         b.verify_sp_against_narratives(sp, narratives)
+
+
+# ---------------------------------------------------------------------------
+# Frontend patch set: the System-prompts view renders per model
+# ---------------------------------------------------------------------------
+
+
+def _apply_patches_to(tmp_path, monkeypatch):
+    """Run the real patch set against a fresh copy of docs/ static files.
+    Exercises every exact-match anchor (each is asserted unique inside the
+    patch engine) without touching recode/site_v2avg/."""
+    for name in b.STATIC_FILES:
+        shutil.copyfile(b.DOCS / name, tmp_path / name)
+    monkeypatch.setattr(b, "OUT", tmp_path)
+    b.PATCH_LOG.clear()
+    b.apply_all_patches()
+    return (tmp_path / "facets.js").read_text(encoding="utf-8")
+
+
+def test_sp_view_patches_anchor_and_render_per_model(tmp_path, monkeypatch):
+    js = _apply_patches_to(tmp_path, monkeypatch)
+    # chip appended right after Cross Edit, with label and per-model tooltip
+    assert (
+        '"implementation_note", "cross_edit", SP_CONDITION];' in js
+    ), "System prompts option must sit immediately after cross_edit"
+    assert '[SP_CONDITION]: "System prompts",' in js
+    assert "rendered per editing model, exactly like the other condition chips" in js
+    # aggStat reads the separate per-model sp_stats table
+    assert "data.sp_stats" in js
+    # example browser filters the stratum by doc_type
+    assert 'ex.doc_type !== "system_prompt"' in js
+    # per-DOCUMENT rendering path fully removed
+    assert "SP_DOCS" not in js
+    assert "SP_DOC_LABELS" not in js
+    assert "Claude Opus system prompt" not in js  # per-doc label/colors removed
+    # model-visibility chips are fully active: the greying patch is gone
+    assert "pointerEvents" not in js
+    assert "Model chips do not apply" not in js
+    # stock per-model loops untouched (drift chart and freq bars iterate
+    # allModels with the hidden set in every view, System prompts included)
+    assert "for (const m of allModels) {\n        if (hidden.has(m)) continue;" in js
+    assert "for (const model of allModels) {\n        if (hidden.has(model)) continue;" in js
+    # aggregate-view heading is the stock per-model heading
+    assert "<h3>Aggregate view &mdash; direction by model</h3>" in js
+
+
+def test_all_patch_anchors_unique_against_docs(tmp_path, monkeypatch):
+    """apply_all_patches raises if any anchor is missing or non-unique in a
+    fresh docs/ copy; a clean run is the anchor regression test."""
+    _apply_patches_to(tmp_path, monkeypatch)
+    patched_files = {name for name, _why in b.PATCH_LOG}
+    assert "facets.js" in patched_files and "app.js" in patched_files

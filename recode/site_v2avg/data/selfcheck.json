@@ -47,7 +47,7 @@
   "n_gemma_only": 46,
   "n_qwen_only": 8,
   "system_prompt_stratum": {
-    "description": "System-prompt stratum (the 'System prompts' view): edits whose document_type == 'system_prompt', pooled across ALL conditions (own-document and cross-edit alike), so the four provider system prompts are compared directly. Mean judge under the same two-grader average (single-valid-grader edits contribute that grader's value at full weight). Computed directly from recode/data/codes/v2_gemma.jsonl + v2_qwen.jsonl.",
+    "description": "System-prompt stratum (the 'System prompts' view): edits whose document_type == 'system_prompt', pooled across ALL conditions (own-document and cross-edit alike). The view renders PER MODEL; per_model_mean_judge is the table asserted against the site's sp_stats, and per_document_mean_judge is kept for reference only. Mean judge under the same two-grader average (single-valid-grader edits contribute that grader's value at full weight). Computed directly from recode/data/codes/v2_gemma.jsonl + v2_qwen.jsonl.",
     "per_model_mean_judge": {
       "Claude Haiku 4.5": {
         "mean_judge_avg": 0.025362318840579712,
@@ -118,6 +118,6 @@
     "single_grader": 54,
     "uncoded_exploratory_run": 176
   },
-  "generated_at": "2026-09-09T20:26:32.582689+00:00",
+  "generated_at": "2026-09-09T20:40:37.961215+00:00",
   "variant": "v2 blinded re-code — Gemma 4 + Qwen 3.8 average (recode pipeline)"
 }
