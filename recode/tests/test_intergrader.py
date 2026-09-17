@@ -3,17 +3,22 @@
 Synthetic fixtures only — nothing here reads the real codes files (the two
 FULL grading runs may still be writing v2_gemma.jsonl / v2_qwen.jsonl).
 
-Covers, per the assignment:
+Covers, per the assignment (three-grader B3):
 - Cohen's kappa on the classic 2x2 example with hand-computed kappa = 0.4,
-  and the both-valid denominator rule;
+  the both-valid denominator rule, and all-pairs plumbing with 3 graders;
 - Krippendorff's alpha cross-checked against the krippendorff package on the
-  textbook 3-coder matrix (nominal alpha = 0.691358...);
+  textbook 3-coder matrix (nominal alpha = 0.691358...), and a 3-rater alpha
+  through agreement_block;
 - the COI difference on a constructed fixture (chains resampled, exact rates,
   degenerate CI, exclusion of invalid codings);
-- ensemble flag logic, including missing- and invalid-qwen rows, invalid
-  primary rows, presence-not-count conflict comparison, and last-row-wins
-  loading through the shared codes_io interface;
-- an end-to-end CLI smoke test over a tiny synthetic corpus.
+- MAJORITY-VOTE ensemble logic per the amended DECISIONS section 1: clean
+  2-of-3 and 3-of-3 majorities, the 3-way judge split -> gemma value +
+  no_majority flag, 1-1 ties with two valid graders, conflict-payload source
+  selection (primary grader among the majority voters, gemma > qwen > muse),
+  per-code majorities with different vote sets on one edit, the < 2-valid
+  insufficient_graders fallback, and codes_io round-trips of the written file;
+- an end-to-end 3-grader CLI smoke test over a tiny synthetic corpus (both
+  COI comparators + the no-COI baseline pair, ensemble headline column).
 """
 
 import json
@@ -29,8 +34,10 @@ from intergrader import (
     build_ensemble_rows,
     coi_test,
     coi_verdict,
+    compose_majority,
     ensemble_summary,
     kripp_alpha_from_labels,
+    majority_vote,
     pairwise_kappa,
     write_ensemble,
 )
@@ -333,149 +340,329 @@ class TestCOI:
 
 
 # ---------------------------------------------------------------------------
-# Ensemble
+# All-pairs kappa plumbing (3 graders)
 # ---------------------------------------------------------------------------
 
 
-class TestEnsemble:
-    def test_flags_per_dimension(self):
-        gemma_coding = make_coding(judge=1, pat="affirm", conflicts=("paternalism",))
-        qwen_coding = make_coding(judge=-1, pat="affirm", conflicts=("welfare",))
-        rows = build_ensemble_rows(
-            "gemma",
-            {"e1": make_row("e1", gemma_coding)},
-            {"qwen": {"e1": make_row("e1", qwen_coding)}},
-        )
-        assert len(rows) == 1
-        row = rows[0]
-        assert row["primary_grader"] == "gemma"
-        assert row["primary_coding_valid"] is True
-        assert row["coding"] == gemma_coding  # ensemble code IS the primary code
-        assert row["qwen_coding"] == qwen_coding
-        flags = row["disagrees_with_qwen"]
-        assert flags["judge"] is True
-        assert flags["patienthood"] is False
-        assert flags["conflicts"]["paternalism"] is True   # gemma-only
-        assert flags["conflicts"]["welfare"] is True       # qwen-only
-        assert flags["conflicts"]["harmlessness"] is False
-        assert flags["any"] is True
-
-    def test_agreeing_edit_has_all_false_flags(self):
-        coding = make_coding(judge=0, pat="hedge", conflicts=("structural",))
-        rows = build_ensemble_rows(
-            "gemma",
-            {"e1": make_row("e1", coding)},
-            {"qwen": {"e1": make_row("e1", make_coding(judge=0, pat="hedge",
-                                                       conflicts=("structural",)))}},
-        )
-        flags = rows[0]["disagrees_with_qwen"]
-        assert flags["judge"] is False and flags["patienthood"] is False
-        assert not any(flags["conflicts"].values())
-        assert flags["any"] is False
-
-    def test_conflict_presence_not_count(self):
-        """Two paternalism conflicts vs one -> presence equal -> no flag."""
-        rows = build_ensemble_rows(
-            "gemma",
-            {"e1": make_row("e1", make_coding(conflicts=("paternalism", "paternalism")))},
-            {"qwen": {"e1": make_row("e1", make_coding(conflicts=("paternalism",)))}},
-        )
-        flags = rows[0]["disagrees_with_qwen"]
-        assert flags["conflicts"]["paternalism"] is False
-        assert flags["any"] is False
-
-    def test_missing_qwen_row_gives_null_flags(self):
-        rows = build_ensemble_rows(
-            "gemma",
-            {"e1": make_row("e1", make_coding(judge=1))},
-            {"qwen": {}},
-        )
-        row = rows[0]
-        assert row["disagrees_with_qwen"] == {
-            "judge": None, "patienthood": None, "conflicts": None, "any": None
+class TestAllPairsKappa:
+    def test_three_graders_all_pairs_and_alpha(self):
+        judges = {
+            "a": [1, 1, 0, -1, 0, 1],
+            "b": [1, 0, 0, -1, 1, 1],
+            "c": [1, 1, 0, 0, 0, -1],
         }
-        assert row["qwen_coding"] is None
-        assert row["primary_coding_valid"] is True
-
-    def test_invalid_qwen_row_gives_null_flags(self):
-        """A qwen row whose error field is set, and one with an out-of-range
-        judge score, both count as 'lacking a valid qwen coding'."""
-        for bad_row in (
-            make_row("e1", None, error="transport: boom"),
-            make_row("e1", make_coding(judge=5)),
-        ):
-            rows = build_ensemble_rows(
-                "gemma",
-                {"e1": make_row("e1", make_coding(judge=1))},
-                {"qwen": {"e1": bad_row}},
+        codings = {
+            g: {f"e{i}": make_coding(judge=s) for i, s in enumerate(vals)}
+            for g, vals in judges.items()
+        }
+        universe = {f"e{i}" for i in range(6)}
+        block = agreement_block(codings, universe)
+        pairwise = block["dimensions"]["judge"]["pairwise"]
+        assert set(pairwise) == {"a|b", "a|c", "b|c"}
+        for ga, gb in [("a", "b"), ("a", "c"), ("b", "c")]:
+            direct = pairwise_kappa(
+                {f"e{i}": s for i, s in enumerate(judges[ga])},
+                {f"e{i}": s for i, s in enumerate(judges[gb])},
             )
-            row = rows[0]
-            assert row["disagrees_with_qwen"]["judge"] is None
-            assert row["qwen_coding"] is None
+            assert pairwise[f"{ga}|{gb}"] == direct
+            assert pairwise[f"{ga}|{gb}"]["n"] == 6
+        alpha = block["dimensions"]["judge"]["alpha"]
+        assert alpha["n_pairable"] == 6
+        assert alpha["n_complete"] == 6
+        assert alpha["alpha"] is not None
+        assert block["n_complete_all_graders"] == 6
 
-    def test_invalid_primary_row_carried_with_null_flags(self):
-        rows = build_ensemble_rows(
-            "gemma",
-            {"e1": make_row("e1", None, error="transport: boom")},
-            {"qwen": {"e1": make_row("e1", make_coding(judge=1))}},
-        )
-        row = rows[0]
-        assert row["primary_coding_valid"] is False
+    def test_pair_denominators_differ_with_partial_validity(self):
+        """b missing one edit, c missing another: each pair has its own n."""
+        codings = {
+            "a": {f"e{i}": make_coding(judge=1) for i in range(4)},
+            "b": {f"e{i}": make_coding(judge=1) for i in range(3)},          # no e3
+            "c": {f"e{i}": make_coding(judge=1) for i in (0, 1, 3)},         # no e2
+        }
+        block = agreement_block(codings, {f"e{i}" for i in range(4)})
+        pairwise = block["dimensions"]["judge"]["pairwise"]
+        assert pairwise["a|b"]["n"] == 3
+        assert pairwise["a|c"]["n"] == 3
+        assert pairwise["b|c"]["n"] == 2
+        assert block["n_complete_all_graders"] == 2
+
+
+# ---------------------------------------------------------------------------
+# Majority-vote ensemble (DECISIONS section 1, amended 2026-09-16)
+# ---------------------------------------------------------------------------
+
+PRIORITY = ["gemma", "qwen", "muse"]
+
+
+def conflict_of(code, clause="clause", cost_bearer="developer",
+                served_party="model_welfare"):
+    return {
+        "code": code,
+        "cost_bearer": cost_bearer,
+        "served_party": served_party,
+        "mechanism": "adds_protection",
+        "cost_clause": clause,
+    }
+
+
+def rows_for(edit_id, codings_by_grader):
+    """{grader: rows_by_id} maps for build_ensemble_rows, single edit."""
+    return {
+        g: ({edit_id: make_row(edit_id, coding)} if coding is not _ABSENT else {})
+        for g, coding in codings_by_grader.items()
+    }
+
+
+_ABSENT = object()
+
+
+class TestMajorityVote:
+    def test_clean_two_of_three_majority(self):
+        out = majority_vote({"gemma": 1, "qwen": 1, "muse": 0}, PRIORITY)
+        assert out["value"] == 1
+        assert out["source"] == "gemma"
+        assert out["no_majority"] is False
+        assert out["counts"] == {"1": 2, "0": 1}
+
+    def test_source_is_primary_among_majority_voters(self):
+        """gemma is outvoted -> the payload source is qwen (first majority
+        voter in gemma > qwen > muse order), not gemma."""
+        out = majority_vote({"gemma": 0, "qwen": 1, "muse": 1}, PRIORITY)
+        assert out["value"] == 1
+        assert out["source"] == "qwen"
+        assert out["no_majority"] is False
+
+    def test_three_way_split_falls_back_to_gemma(self):
+        out = majority_vote({"gemma": 1, "qwen": 0, "muse": -1}, PRIORITY)
+        assert out["value"] == 1
+        assert out["source"] == "gemma"
+        assert out["no_majority"] is True
+
+    def test_two_valid_tie_falls_back_to_highest_priority_valid(self):
+        """gemma invalid: a 1-1 qwen/muse tie takes qwen's value, flagged."""
+        out = majority_vote({"qwen": "affirm", "muse": "deny"}, PRIORITY)
+        assert out["value"] == "affirm"
+        assert out["source"] == "qwen"
+        assert out["no_majority"] is True
+
+
+class TestMajorityEnsemble:
+    def build(self, codings):
+        rows = build_ensemble_rows(PRIORITY, rows_for("e1", codings))
+        assert len(rows) == 1
+        return rows[0]
+
+    def test_clean_majority_row(self):
+        row = self.build({
+            "gemma": make_coding(judge=1, pat="affirm"),
+            "qwen": make_coding(judge=1, pat="affirm"),
+            "muse": make_coding(judge=-1, pat="deny", conflicts=("welfare",)),
+        })
+        assert row["ensemble"] == "majority_vote"
+        assert row["valid_graders"] == PRIORITY
+        assert row["n_valid_graders"] == 3
+        assert codes_io.judge_score(row["coding"]) == 1
+        assert codes_io.patienthood_level(row["coding"]) == "affirm"
+        # welfare voted 1/3 present -> absent in the ensemble
+        assert row["coding"]["conflicts"] == []
+        assert row["votes"]["judge"] == {"1": 2, "-1": 1}
+        assert row["votes"]["patienthood"] == {"affirm": 2, "deny": 1}
+        assert row["votes"]["conflicts"]["welfare"] == {"present": 1, "absent": 2}
+        assert row["flags"]["insufficient_graders"] is False
+        assert row["flags"]["no_majority"]["judge"] is False
+        assert not any(row["flags"]["no_majority"]["conflicts"].values())
+        assert row["sources"]["judge"] == "gemma"
+        assert row["sources"]["conflicts"]["welfare"] is None
+        # each grader's coding carried for reference
+        assert row["muse_coding"]["patienthood"]["level"] == "deny"
+
+    def test_three_way_judge_split_gemma_value_flagged(self):
+        row = self.build({
+            "gemma": make_coding(judge=1, pat="not_present"),
+            "qwen": make_coding(judge=0, pat="not_present"),
+            "muse": make_coding(judge=-1, pat="not_present"),
+        })
+        assert codes_io.judge_score(row["coding"]) == 1        # gemma's value
+        assert row["sources"]["judge"] == "gemma"
+        assert row["flags"]["no_majority"]["judge"] is True
+        # patienthood is unanimous -> voted independently, unflagged
+        assert codes_io.patienthood_level(row["coding"]) == "not_present"
+        assert row["flags"]["no_majority"]["patienthood"] is False
+
+    def test_judge_payload_copied_from_vote_source(self):
+        """gemma is outvoted on judge: the composed judge dict (score,
+        external_locus, evidence) comes from qwen, the primary majority
+        voter; patienthood payload independently from its own source."""
+        gemma = make_coding(judge=0, pat="hedge")
+        qwen = make_coding(judge=-1, pat="hedge")
+        qwen["judge"]["external_locus"] = "spec"
+        qwen["judge"]["evidence"] = "QWEN-EVIDENCE"
+        muse = make_coding(judge=-1, pat="not_present")
+        muse["judge"]["evidence"] = "MUSE-EVIDENCE"
+        row = self.build({"gemma": gemma, "qwen": qwen, "muse": muse})
+        assert row["coding"]["judge"] == {
+            "score": -1, "external_locus": "spec", "evidence": "QWEN-EVIDENCE"
+        }
+        assert row["sources"]["judge"] == "qwen"
+        # patienthood majority hedge (gemma+qwen) -> gemma is its source
+        assert row["sources"]["patienthood"] == "gemma"
+        assert codes_io.patienthood_level(row["coding"]) == "hedge"
+
+    def test_conflict_payload_from_primary_majority_voter(self):
+        """gemma voted absent; qwen and muse voted present -> the payload is
+        qwen's (primary among the 'present' majority voters), verbatim."""
+        gemma = make_coding()
+        qwen = make_coding(); muse = make_coding()
+        qwen["conflicts"] = [conflict_of("paternalism", clause="QWEN CLAUSE",
+                                         cost_bearer="user_stated",
+                                         served_party="user_idealized")]
+        muse["conflicts"] = [conflict_of("paternalism", clause="MUSE CLAUSE")]
+        row = self.build({"gemma": gemma, "qwen": qwen, "muse": muse})
+        assert row["coding"]["conflicts"] == qwen["conflicts"]
+        assert row["coding"]["conflicts"][0]["cost_clause"] == "QWEN CLAUSE"
+        assert row["sources"]["conflicts"]["paternalism"] == "qwen"
+        assert row["votes"]["conflicts"]["paternalism"] == {"present": 2, "absent": 1}
+
+    def test_per_code_majorities_with_different_vote_sets(self):
+        """One edit, three codes, three different majorities: paternalism by
+        gemma+muse (payload gemma), welfare by qwen+muse (payload qwen),
+        harmlessness only by gemma (absent). Composed conflicts follow
+        CONFLICT_CODES order and keep multiple events of a winning code."""
+        gemma = make_coding()
+        gemma["conflicts"] = [
+            conflict_of("paternalism", clause="G-PAT-1"),
+            conflict_of("paternalism", clause="G-PAT-2"),
+            conflict_of("harmlessness", clause="G-HARM"),
+        ]
+        qwen = make_coding()
+        qwen["conflicts"] = [conflict_of("welfare", clause="Q-WEL")]
+        muse = make_coding()
+        muse["conflicts"] = [
+            conflict_of("welfare", clause="M-WEL"),
+            conflict_of("paternalism", clause="M-PAT"),
+        ]
+        row = self.build({"gemma": gemma, "qwen": qwen, "muse": muse})
+        clauses = [c["cost_clause"] for c in row["coding"]["conflicts"]]
+        # paternalism first (CONFLICT_CODES order), BOTH gemma events kept
+        assert clauses == ["G-PAT-1", "G-PAT-2", "Q-WEL"]
+        assert row["sources"]["conflicts"] == {
+            "paternalism": "gemma", "harmlessness": None, "structural": None,
+            "company_cost": None, "welfare": "qwen", "disclosure": None,
+            "other": None,
+        }
+        assert row["votes"]["conflicts"]["harmlessness"] == {"present": 1, "absent": 2}
+
+    def test_two_valid_graders_tie_and_conflict_tie(self):
+        """gemma invalid -> qwen/muse vote; a 1-1 judge tie and a 1-1
+        conflict-presence tie both fall back to qwen (priority) + flag."""
+        codings = {
+            "gemma": _ABSENT,
+            "qwen": make_coding(judge=1, pat="affirm",
+                                conflicts=("structural",)),
+            "muse": make_coding(judge=-1, pat="affirm"),
+        }
+        grader_rows = rows_for("e1", codings)
+        grader_rows["gemma"] = {"e1": make_row("e1", None, error="boom")}
+        row = build_ensemble_rows(PRIORITY, grader_rows)[0]
+        assert row["valid_graders"] == ["qwen", "muse"]
+        assert codes_io.judge_score(row["coding"]) == 1        # qwen's value
+        assert row["flags"]["no_majority"]["judge"] is True
+        assert row["flags"]["insufficient_graders"] is False
+        # patienthood 2-0 majority, unflagged
+        assert row["flags"]["no_majority"]["patienthood"] is False
+        # structural 1-1 tie -> qwen's presence wins, flagged, payload qwen's
+        assert row["flags"]["no_majority"]["conflicts"]["structural"] is True
+        assert [c["code"] for c in row["coding"]["conflicts"]] == ["structural"]
+        assert row["sources"]["conflicts"]["structural"] == "qwen"
+        assert row["gemma_coding"] is None
+
+    def test_insufficient_graders_single_valid_verbatim(self):
+        muse = make_coding(judge=-1, pat="deny", conflicts=("company_cost",))
+        grader_rows = {
+            "gemma": {"e1": make_row("e1", None, error="boom")},
+            "qwen": {},
+            "muse": {"e1": make_row("e1", muse)},
+        }
+        row = build_ensemble_rows(PRIORITY, grader_rows)[0]
+        assert row["n_valid_graders"] == 1
+        assert row["flags"]["insufficient_graders"] is True
+        assert row["coding"] == muse                     # verbatim, not recomposed
+        assert row["error"] is None
+        # a lone grader is not a failed vote: nothing flagged no_majority
+        assert row["flags"]["no_majority"]["judge"] is False
+        assert not any(row["flags"]["no_majority"]["conflicts"].values())
+        assert row["sources"]["judge"] == "muse"
+
+    def test_no_valid_graders_null_coding_with_error(self):
+        grader_rows = {
+            "gemma": {"e1": make_row("e1", None, error="boom")},
+            "qwen": {"e1": make_row("e1", make_coding(judge=5))},  # invalid score
+            "muse": {},
+        }
+        row = build_ensemble_rows(PRIORITY, grader_rows)[0]
+        assert row["n_valid_graders"] == 0
         assert row["coding"] is None
-        assert row["error"] == "transport: boom"
-        assert row["disagrees_with_qwen"]["judge"] is None
-        # the qwen coding is still carried for reference
-        assert row["qwen_coding"] is not None
+        assert row["flags"]["insufficient_graders"] is True
+        assert "insufficient_graders" in row["error"]
+        assert codes_io.coding_of(row) is None           # reads as uncoded
 
-    def test_last_row_wins_through_codes_io_and_file_roundtrip(self, tmp_path):
-        """Append-only convention: a retried gemma edit keeps its LAST row;
-        the written ensemble file is itself readable through codes_io."""
-        gemma_path = tmp_path / "gemma.jsonl"
-        qwen_path = tmp_path / "qwen.jsonl"
-        write_jsonl(gemma_path, [
+    def test_union_of_ids_last_row_wins_and_file_roundtrip(self, tmp_path):
+        """Rows come from the UNION of grader ids; retried rows keep the
+        LAST row; the written file round-trips through codes_io."""
+        paths = {g: tmp_path / f"{g}.jsonl" for g in PRIORITY}
+        write_jsonl(paths["gemma"], [
             make_row("e1", None, error="transport: first attempt failed"),
-            make_row("e1", make_coding(judge=1, pat="deny")),
-            make_row("e2", make_coding(judge=0)),
+            make_row("e1", make_coding(judge=1)),
         ])
-        write_jsonl(qwen_path, [
-            make_row("e1", make_coding(judge=1, pat="deny")),
-            make_row("e2", make_coding(judge=-1)),
+        write_jsonl(paths["qwen"], [
+            make_row("e1", make_coding(judge=1)),
+            make_row("e2", make_coding(judge=0)),        # qwen-only edit
         ])
-        gemma_rows = codes_io.load_codes(gemma_path)
-        qwen_rows = codes_io.load_codes(qwen_path)
-        rows = build_ensemble_rows("gemma", gemma_rows, {"qwen": qwen_rows})
-        assert [r["edit_id"] for r in rows] == ["e1", "e2"]  # sorted, deduped
-        assert rows[0]["primary_coding_valid"] is True       # last row won
-        assert rows[0]["disagrees_with_qwen"]["any"] is False
-        assert rows[1]["disagrees_with_qwen"]["judge"] is True
+        write_jsonl(paths["muse"], [make_row("e1", make_coding(judge=-1))])
+        grader_rows = {g: codes_io.load_codes(p) for g, p in paths.items()}
+        rows = build_ensemble_rows(PRIORITY, grader_rows)
+        assert [r["edit_id"] for r in rows] == ["e1", "e2"]
+        assert rows[0]["n_valid_graders"] == 3            # gemma's last row won
+        assert codes_io.judge_score(rows[0]["coding"]) == 1
+        assert rows[1]["valid_graders"] == ["qwen"]
+        assert rows[1]["flags"]["insufficient_graders"] is True
 
         out_path = tmp_path / "ensemble.jsonl"
         write_ensemble(out_path, rows)
         reloaded = codes_io.load_codes(out_path)
         assert set(reloaded) == {"e1", "e2"}
-        assert codes_io.coding_of(reloaded["e1"]) is not None
+        assert codes_io.judge_score(codes_io.coding_of(reloaded["e1"])) == 1
         assert codes_io.judge_score(codes_io.coding_of(reloaded["e2"])) == 0
 
     def test_summary_counts(self):
-        primary = {
-            "e1": make_row("e1", make_coding(judge=1)),
-            "e2": make_row("e2", make_coding(judge=0)),
-            "e3": make_row("e3", None, error="boom"),
+        grader_rows = {
+            "gemma": {
+                "e1": make_row("e1", make_coding(judge=1)),
+                "e2": make_row("e2", make_coding(judge=1)),
+                "e3": make_row("e3", None, error="boom"),
+            },
+            "qwen": {
+                "e1": make_row("e1", make_coding(judge=1)),
+                "e2": make_row("e2", make_coding(judge=0)),
+                "e3": make_row("e3", make_coding(judge=0)),
+            },
+            "muse": {
+                "e1": make_row("e1", make_coding(judge=1)),
+                "e2": make_row("e2", make_coding(judge=-1)),
+                # e3 missing
+            },
         }
-        qwen = {
-            "e1": make_row("e1", make_coding(judge=-1)),   # judge disagrees
-            "e2": make_row("e2", make_coding(judge=0)),    # agrees
-            # e3: primary invalid -> null flags
-        }
-        rows = build_ensemble_rows("gemma", primary, {"qwen": qwen})
-        summary = ensemble_summary(rows, ["qwen"])
+        rows = build_ensemble_rows(PRIORITY, grader_rows)
+        summary = ensemble_summary(rows, PRIORITY)
         assert summary["n_rows"] == 3
-        assert summary["n_primary_valid"] == 2
-        s = summary["per_other_grader"]["qwen"]
-        assert s["n_compared"] == 2
-        assert s["n_null_flags"] == 1
-        assert s["n_disagree_judge"] == 1
-        assert s["n_disagree_any"] == 1
+        assert summary["n_valid_coding"] == 3
+        assert summary["n_by_valid_graders"] == {"3": 2, "2": 0, "1": 1, "0": 0}
+        assert summary["n_insufficient_graders"] == 1
+        assert summary["n_voted"] == 2
+        assert summary["n_unanimous_judge"] == 1          # e1 only
+        # e2 is a 3-way split resolved to gemma
+        assert summary["n_no_majority"]["judge"] == 1
+        assert summary["vote_source_counts"]["judge"] == {"gemma": 2}
 
 
 # ---------------------------------------------------------------------------
@@ -486,7 +673,7 @@ class TestEnsemble:
 class TestCLI:
     def build_corpus(self, tmp_path):
         edits = []
-        graders = {"gemma": [], "qwen": []}
+        graders = {"gemma": [], "qwen": [], "muse": []}
         specs = [
             ("runA", "Gem Model", "google/gem", "google", "docG", "Google"),
             ("runA", "Oth Model", "openai/oth", "openai", "docO", "OpenAI"),
@@ -506,10 +693,12 @@ class TestCLI:
                     "round": rnd,
                     "apply_status": "applied",
                 })
-                # gemma says +1 everywhere; qwen disagrees on Gemini edits only
+                # gemma and muse say +1 everywhere; qwen says -1 on Gemini
+                # edits only -> majority is +1 everywhere
                 graders["gemma"].append(make_row(edit_id, make_coding(judge=1)))
                 qwen_judge = -1 if provider == "google" else 1
                 graders["qwen"].append(make_row(edit_id, make_coding(judge=qwen_judge)))
+                graders["muse"].append(make_row(edit_id, make_coding(judge=1)))
         edits_path = tmp_path / "edits.jsonl"
         write_jsonl(edits_path, edits)
         paths = {}
@@ -527,6 +716,7 @@ class TestCLI:
             "--graders",
             f"gemma={grader_paths['gemma']}",
             f"qwen={grader_paths['qwen']}",
+            f"muse={grader_paths['muse']}",
             "--edits", str(edits_path),
             "--out-report", str(report),
             "--out-ensemble", str(ensemble),
@@ -542,32 +732,61 @@ class TestCLI:
         assert "claims (a)" in text.lower()
         # COI fixture: gemma-vs-qwen disagree on all Gemini edits, none other
         assert "DOES diverge more" in text
+        assert "no-COI baseline" in text
+        assert "MAJORITY VOTE" in text
+        assert "What the third grader changed" in text
 
         payload = json.loads(out_json.read_text(encoding="utf-8"))
-        judge_coi = payload["coi"][0]["dims"]["judge"]
-        assert judge_coi["difference"] == pytest.approx(1.0)
-        # agreement: overall judge kappa over 8 both-valid edits; the two
-        # graders agree on exactly the 4 non-Gemini edits
+        # three pairs: two COI comparators (gemma vs qwen/muse), one baseline
+        roles = {(c["target"], c["other"]): c["role"] for c in payload["coi"]}
+        assert roles == {
+            ("gemma", "qwen"): "coi",
+            ("gemma", "muse"): "coi",
+            ("qwen", "muse"): "baseline",
+        }
+        by_pair = {(c["target"], c["other"]): c for c in payload["coi"]}
+        assert by_pair[("gemma", "qwen")]["dims"]["judge"]["difference"] == pytest.approx(1.0)
+        # gemma and muse always agree -> zero COI difference on that comparator
+        assert by_pair[("gemma", "muse")]["dims"]["judge"]["difference"] == pytest.approx(0.0)
+        # the baseline pair mirrors qwen's Gemini-only divergence
+        assert by_pair[("qwen", "muse")]["dims"]["judge"]["difference"] == pytest.approx(1.0)
+
+        # agreement: all three pairs present, per-pair denominators
         judge = payload["agreement_overall"]["dimensions"]["judge"]
+        assert set(judge["pairwise"]) == {"gemma|qwen", "gemma|muse", "qwen|muse"}
         assert judge["pairwise"]["gemma|qwen"]["n"] == 8
         assert judge["pairwise"]["gemma|qwen"]["agreement"] == pytest.approx(0.5)
+        assert judge["pairwise"]["gemma|muse"]["agreement"] == pytest.approx(1.0)
+        assert judge["alpha"]["n_pairable"] == 8
         # breakdowns exist for both grouping fields
         assert set(payload["agreement_by_provider"]) == {"google", "openai"}
         assert set(payload["agreement_by_document_owner"]) == {"Google", "OpenAI"}
-        # headline assembly: one column per grader plus ensemble, and the
-        # ensemble column equals the primary (gemma) column by construction
+        # headline assembly: one column per grader plus ensemble; the
+        # majority outvotes qwen on the Gemini edits
         stats = payload["headline_assembly"]["stats"]["mean_judge_pooled"]
         gem_row = stats["model:Gem Model"]
-        assert set(gem_row) == {"gemma", "qwen", "ensemble"}
+        assert set(gem_row) == {"gemma", "qwen", "muse", "ensemble"}
         assert gem_row["gemma"] == pytest.approx(1.0)
         assert gem_row["qwen"] == pytest.approx(-1.0)
-        assert gem_row["ensemble"] == pytest.approx(gem_row["gemma"])
+        assert gem_row["ensemble"] == pytest.approx(1.0)   # majority vote
         assert "provider:google" in stats
 
-        # ensemble file: one row per gemma edit_id, flags where qwen disagrees
+        # ensemble file: one row per edit, majority coding + votes + flags
         rows = [json.loads(line) for line in ensemble.read_text().splitlines()]
         assert len(rows) == 8
+        assert all(r["ensemble"] == "majority_vote" for r in rows)
+        assert all(r["n_valid_graders"] == 3 for r in rows)
         gemini_rows = [r for r in rows if "|docG|" in r["edit_id"]]
-        assert all(r["disagrees_with_qwen"]["judge"] is True for r in gemini_rows)
+        for r in gemini_rows:
+            assert r["coding"]["judge"]["score"] == 1
+            assert r["votes"]["judge"] == {"1": 2, "-1": 1}
+            assert r["flags"]["no_majority"]["judge"] is False
+            assert r["sources"]["judge"] == "gemma"
         other_rows = [r for r in rows if "|docO|" in r["edit_id"]]
-        assert all(r["disagrees_with_qwen"]["judge"] is False for r in other_rows)
+        assert all(r["votes"]["judge"] == {"1": 3} for r in other_rows)
+
+        # ensemble summary in the JSON
+        summary = payload["ensemble_summary"]
+        assert summary["n_rows"] == 8
+        assert summary["n_insufficient_graders"] == 0
+        assert summary["n_no_majority"]["judge"] == 0

@@ -1,6 +1,6 @@
 {
- "timestamp": "2026-09-04T21:15:56+00:00",
- "edits_path": "/Users/nicholasgannon/llm-value-reflection/recode/data/canonical/edits.jsonl",
+ "timestamp": "2026-09-17T07:25:13+00:00",
+ "edits_path": "/Users/nicholasgannon/peter/llm-value-reflection/recode/data/canonical/edits.jsonl",
  "n_edits": 2740,
  "grader_rows": {
   "gemma": {
@@ -12,14 +12,20 @@
    "n_unique_ids": 2582,
    "n_valid": 2536,
    "n_outside_frame": 0
+  },
+  "muse": {
+   "n_unique_ids": 2582,
+   "n_valid": 2582,
+   "n_outside_frame": 0
   }
  },
- "ensemble_path": "/Users/nicholasgannon/llm-value-reflection/recode/data/codes/ensemble.jsonl",
+ "ensemble_path": "/Users/nicholasgannon/peter/llm-value-reflection/recode/data/codes/ensemble.jsonl",
  "B": 2000,
  "seed": 20260907,
  "graders": [
   "gemma",
-  "qwen"
+  "qwen",
+  "muse"
  ],
  "primary_grader": "gemma",
  "agreement_overall": {
@@ -27,7 +33,8 @@
   "n_complete_all_graders": 2528,
   "per_grader_valid": {
    "gemma": 2574,
-   "qwen": 2536
+   "qwen": 2536,
+   "muse": 2582
   },
   "dimensions": {
    "judge": {
@@ -36,11 +43,21 @@
       "n": 2528,
       "kappa": 0.6077345929644236,
       "agreement": 0.7412974683544303
+     },
+     "gemma|muse": {
+      "n": 2574,
+      "kappa": 0.49352630900655425,
+      "agreement": 0.6678321678321678
+     },
+     "qwen|muse": {
+      "n": 2536,
+      "kappa": 0.4874753987612622,
+      "agreement": 0.6640378548895899
      }
     },
     "alpha": {
-     "alpha": 0.6067636317528046,
-     "n_pairable": 2528,
+     "alpha": 0.5204312677810303,
+     "n_pairable": 2582,
      "n_complete": 2528,
      "n_any": 2582
     }
@@ -51,11 +68,21 @@
       "n": 2528,
       "kappa": 0.8390395661747996,
       "agreement": 0.9742879746835443
+     },
+     "gemma|muse": {
+      "n": 2574,
+      "kappa": 0.6813628399481984,
+      "agreement": 0.9595959595959596
+     },
+     "qwen|muse": {
+      "n": 2536,
+      "kappa": 0.6284547619947825,
+      "agreement": 0.9511041009463722
      }
     },
     "alpha": {
-     "alpha": 0.8390390793471328,
-     "n_pairable": 2528,
+     "alpha": 0.7234542778085924,
+     "n_pairable": 2582,
      "n_complete": 2528,
      "n_any": 2582
     }
@@ -66,11 +93,21 @@
       "n": 2528,
       "kappa": 0.4370006487721937,
       "agreement": 0.8223892405063291
+     },
+     "gemma|muse": {
+      "n": 2574,
+      "kappa": 0.47626268396290106,
+      "agreement": 0.8325563325563325
+     },
+     "qwen|muse": {
+      "n": 2536,
+      "kappa": 0.6641263395909234,
+      "agreement": 0.929416403785489
      }
     },
     "alpha": {
-     "alpha": 0.417660048907735,
-     "n_pairable": 2528,
+     "alpha": 0.5002209885587311,
+     "n_pairable": 2582,
      "n_complete": 2528,
      "n_any": 2582
     }
@@ -81,11 +118,21 @@
       "n": 2528,
       "kappa": 0.5860245423842891,
       "agreement": 0.9137658227848101
+     },
+     "gemma|muse": {
+      "n": 2574,
+      "kappa": 0.6792191676212295,
+      "agreement": 0.9269619269619269
+     },
+     "qwen|muse": {
+      "n": 2536,
+      "kappa": 0.7172991780687248,
+      "agreement": 0.9499211356466877
      }
     },
     "alpha": {
-     "alpha": 0.5817779531981753,
-     "n_pairable": 2528,
+     "alpha": 0.6572453605719648,
+     "n_pairable": 2582,
      "n_complete": 2528,
      "n_any": 2582
     }
@@ -96,11 +143,21 @@
       "n": 2528,
       "kappa": 0.49074862001189845,
       "agreement": 0.9576740506329114
+     },
+     "gemma|muse": {
+      "n": 2574,
+      "kappa": 0.5255625638478336,
+      "agreement": 0.9541569541569541
+     },
+     "qwen|muse": {
+      "n": 2536,
+      "kappa": 0.568628078798018,
+      "agreement": 0.9664826498422713
      }
     },
     "alpha": {
-     "alpha": 0.4893953854562859,
-     "n_pairable": 2528,
+     "alpha": 0.523620209767173,
+     "n_pairable": 2582,
      "n_complete": 2528,
      "n_any": 2582
     }
@@ -111,11 +168,21 @@
       "n": 2528,
       "kappa": 0.4297517579770773,
       "agreement": 0.8564082278481012
+     },
+     "gemma|muse": {
+      "n": 2574,
+      "kappa": 0.4993854375266432,
+      "agreement": 0.8663558663558664
+     },
+     "qwen|muse": {
+      "n": 2536,
+      "kappa": 0.6413277148999346,
+      "agreement": 0.9349369085173501
      }
     },
     "alpha": {
-     "alpha": 0.41695001529939635,
-     "n_pairable": 2528,
+     "alpha": 0.5046898802936057,
+     "n_pairable": 2582,
      "n_complete": 2528,
      "n_any": 2582
     }
@@ -126,11 +193,21 @@
       "n": 2528,
       "kappa": 0.7889048884402416,
       "agreement": 0.9821993670886076
+     },
+     "gemma|muse": {
+      "n": 2574,
+      "kappa": 0.6561581619022174,
+      "agreement": 0.9770784770784771
+     },
+     "qwen|muse": {
+      "n": 2536,
+      "kappa": 0.6690501516763188,
+      "agreement": 0.9791009463722398
      }
     },
     "alpha": {
-     "alpha": 0.7889370443670617,
-     "n_pairable": 2528,
+     "alpha": 0.7121788540474989,
+     "n_pairable": 2582,
      "n_complete": 2528,
      "n_any": 2582
     }
@@ -141,11 +218,21 @@
       "n": 2528,
       "kappa": 0.5107532935480239,
       "agreement": 0.978243670886076
+     },
+     "gemma|muse": {
+      "n": 2574,
+      "kappa": 0.5498352215900706,
+      "agreement": 0.9751359751359752
+     },
+     "qwen|muse": {
+      "n": 2536,
+      "kappa": 0.7885279591990445,
+      "agreement": 0.987776025236593
      }
     },
     "alpha": {
-     "alpha": 0.5107045748528286,
-     "n_pairable": 2528,
+     "alpha": 0.6185946628650989,
+     "n_pairable": 2582,
      "n_complete": 2528,
      "n_any": 2582
     }
@@ -156,11 +243,21 @@
       "n": 2528,
       "kappa": 0.1070494513753194,
       "agreement": 0.9814082278481012
+     },
+     "gemma|muse": {
+      "n": 2574,
+      "kappa": 0.20266666666666666,
+      "agreement": 0.991064491064491
+     },
+     "qwen|muse": {
+      "n": 2536,
+      "kappa": 0.29838862047558645,
+      "agreement": 0.9838328075709779
      }
     },
     "alpha": {
-     "alpha": 0.10399043592712298,
-     "n_pairable": 2528,
+     "alpha": 0.2040229831950633,
+     "n_pairable": 2582,
      "n_complete": 2528,
      "n_any": 2582
     }
@@ -173,7 +270,8 @@
    "n_complete_all_graders": 790,
    "per_grader_valid": {
     "gemma": 806,
-    "qwen": 791
+    "qwen": 791,
+    "muse": 807
    },
    "dimensions": {
     "judge": {
@@ -182,11 +280,21 @@
        "n": 790,
        "kappa": 0.5941926576309071,
        "agreement": 0.740506329113924
+      },
+      "gemma|muse": {
+       "n": 806,
+       "kappa": 0.48705127214375665,
+       "agreement": 0.652605459057072
+      },
+      "qwen|muse": {
+       "n": 791,
+       "kappa": 0.3932814090575507,
+       "agreement": 0.5903919089759798
       }
      },
      "alpha": {
-      "alpha": 0.5917575882930866,
-      "n_pairable": 790,
+      "alpha": 0.47522286383494317,
+      "n_pairable": 807,
       "n_complete": 790,
       "n_any": 807
      }
@@ -197,11 +305,21 @@
        "n": 790,
        "kappa": 0.801932807585358,
        "agreement": 0.930379746835443
+      },
+      "gemma|muse": {
+       "n": 806,
+       "kappa": 0.5969114091009013,
+       "agreement": 0.8870967741935484
+      },
+      "qwen|muse": {
+       "n": 791,
+       "kappa": 0.5362874599315879,
+       "agreement": 0.8621997471554994
       }
      },
      "alpha": {
-      "alpha": 0.8018820577164366,
-      "n_pairable": 790,
+      "alpha": 0.6505720150553416,
+      "n_pairable": 807,
       "n_complete": 790,
       "n_any": 807
      }
@@ -212,11 +330,21 @@
        "n": 790,
        "kappa": 0.4023929689214316,
        "agreement": 0.8341772151898734
+      },
+      "gemma|muse": {
+       "n": 806,
+       "kappa": 0.48344370860927155,
+       "agreement": 0.8511166253101737
+      },
+      "qwen|muse": {
+       "n": 791,
+       "kappa": 0.5879869506812512,
+       "agreement": 0.9279393173198482
       }
      },
      "alpha": {
-      "alpha": 0.3799100063253382,
-      "n_pairable": 790,
+      "alpha": 0.4718336821685639,
+      "n_pairable": 807,
       "n_complete": 790,
       "n_any": 807
      }
@@ -227,11 +355,21 @@
        "n": 790,
        "kappa": 0.40739814655643936,
        "agreement": 0.8784810126582279
+      },
+      "gemma|muse": {
+       "n": 806,
+       "kappa": 0.5936260266157174,
+       "agreement": 0.9057071960297767
+      },
+      "qwen|muse": {
+       "n": 791,
+       "kappa": 0.5549528126625547,
+       "agreement": 0.9329962073324906
       }
      },
      "alpha": {
-      "alpha": 0.3925852313709147,
-      "n_pairable": 790,
+      "alpha": 0.5177638110189794,
+      "n_pairable": 807,
       "n_complete": 790,
       "n_any": 807
      }
@@ -242,11 +380,21 @@
        "n": 790,
        "kappa": 0.4993553462555451,
        "agreement": 0.9265822784810127
+      },
+      "gemma|muse": {
+       "n": 806,
+       "kappa": 0.6199448954307587,
+       "agreement": 0.9367245657568238
+      },
+      "qwen|muse": {
+       "n": 791,
+       "kappa": 0.6762451836901755,
+       "agreement": 0.9633375474083439
       }
      },
      "alpha": {
-      "alpha": 0.49274415101028,
-      "n_pairable": 790,
+      "alpha": 0.588205052878966,
+      "n_pairable": 807,
       "n_complete": 790,
       "n_any": 807
      }
@@ -257,11 +405,21 @@
        "n": 790,
        "kappa": 0.4921446266737747,
        "agreement": 0.8443037974683544
+      },
+      "gemma|muse": {
+       "n": 806,
+       "kappa": 0.5290646578782172,
+       "agreement": 0.8498759305210918
+      },
+      "qwen|muse": {
+       "n": 791,
+       "kappa": 0.6490919112210467,
+       "agreement": 0.9165613147914032
       }
      },
      "alpha": {
-      "alpha": 0.4822246926811322,
-      "n_pairable": 790,
+      "alpha": 0.5475772376562765,
+      "n_pairable": 807,
       "n_complete": 790,
       "n_any": 807
      }
@@ -272,11 +430,21 @@
        "n": 790,
        "kappa": 0.7839079830955865,
        "agreement": 0.9493670886075949
+      },
+      "gemma|muse": {
+       "n": 806,
+       "kappa": 0.6392801620577566,
+       "agreement": 0.9292803970223326
+      },
+      "qwen|muse": {
+       "n": 791,
+       "kappa": 0.6793167877035888,
+       "agreement": 0.9418457648546145
       }
      },
      "alpha": {
-      "alpha": 0.7839383697541085,
-      "n_pairable": 790,
+      "alpha": 0.7054184373978425,
+      "n_pairable": 807,
       "n_complete": 790,
       "n_any": 807
      }
@@ -287,11 +455,21 @@
        "n": 790,
        "kappa": null,
        "agreement": 1.0
+      },
+      "gemma|muse": {
+       "n": 806,
+       "kappa": null,
+       "agreement": 1.0
+      },
+      "qwen|muse": {
+       "n": 791,
+       "kappa": null,
+       "agreement": 1.0
       }
      },
      "alpha": {
       "alpha": null,
-      "n_pairable": 790,
+      "n_pairable": 807,
       "n_complete": 790,
       "n_any": 807
      }
@@ -302,11 +480,21 @@
        "n": 790,
        "kappa": 0.16453300679060456,
        "agreement": 0.9759493670886076
+      },
+      "gemma|muse": {
+       "n": 806,
+       "kappa": 0.42366821594565607,
+       "agreement": 0.9900744416873449
+      },
+      "qwen|muse": {
+       "n": 791,
+       "kappa": 0.31051633082089936,
+       "agreement": 0.9785082174462706
       }
      },
      "alpha": {
-      "alpha": 0.1622406523135349,
-      "n_pairable": 790,
+      "alpha": 0.28135067900982835,
+      "n_pairable": 807,
       "n_complete": 790,
       "n_any": 807
      }
@@ -318,7 +506,8 @@
    "n_complete_all_graders": 618,
    "per_grader_valid": {
     "gemma": 623,
-    "qwen": 619
+    "qwen": 619,
+    "muse": 624
    },
    "dimensions": {
     "judge": {
@@ -327,11 +516,21 @@
        "n": 618,
        "kappa": 0.5689311130339578,
        "agreement": 0.7443365695792881
+      },
+      "gemma|muse": {
+       "n": 623,
+       "kappa": 0.39303423900459167,
+       "agreement": 0.6420545746388443
+      },
+      "qwen|muse": {
+       "n": 619,
+       "kappa": 0.4940778810589165,
+       "agreement": 0.7140549273021002
       }
      },
      "alpha": {
-      "alpha": 0.5675933209976399,
-      "n_pairable": 618,
+      "alpha": 0.4774085790256902,
+      "n_pairable": 624,
       "n_complete": 618,
       "n_any": 624
      }
@@ -342,11 +541,21 @@
        "n": 618,
        "kappa": 0.9317805497295507,
        "agreement": 0.9967637540453075
+      },
+      "gemma|muse": {
+       "n": 623,
+       "kappa": 0.8540983606557377,
+       "agreement": 0.9935794542536116
+      },
+      "qwen|muse": {
+       "n": 619,
+       "kappa": 0.8540782649693541,
+       "agreement": 0.9935379644588045
       }
      },
      "alpha": {
-      "alpha": 0.931835743459543,
-      "n_pairable": 618,
+      "alpha": 0.8812238087353043,
+      "n_pairable": 624,
       "n_complete": 618,
       "n_any": 624
      }
@@ -357,11 +566,21 @@
        "n": 618,
        "kappa": 0.38313020898772876,
        "agreement": 0.7686084142394822
+      },
+      "gemma|muse": {
+       "n": 623,
+       "kappa": 0.37883778338570717,
+       "agreement": 0.7672552166934189
+      },
+      "qwen|muse": {
+       "n": 619,
+       "kappa": 0.6767110222989237,
+       "agreement": 0.925686591276252
       }
      },
      "alpha": {
-      "alpha": 0.3515822633764498,
-      "n_pairable": 618,
+      "alpha": 0.4362395819838494,
+      "n_pairable": 624,
       "n_complete": 618,
       "n_any": 624
      }
@@ -372,11 +591,21 @@
        "n": 618,
        "kappa": 0.6171201404305849,
        "agreement": 0.9611650485436893
+      },
+      "gemma|muse": {
+       "n": 623,
+       "kappa": 0.6604199652191969,
+       "agreement": 0.9662921348314607
+      },
+      "qwen|muse": {
+       "n": 619,
+       "kappa": 0.9362534756788301,
+       "agreement": 0.9951534733441034
       }
      },
      "alpha": {
-      "alpha": 0.6161616161616161,
-      "n_pairable": 618,
+      "alpha": 0.71996996996997,
+      "n_pairable": 624,
       "n_complete": 618,
       "n_any": 624
      }
@@ -387,11 +616,21 @@
        "n": 618,
        "kappa": 0.45364128632998124,
        "agreement": 0.9741100323624595
+      },
+      "gemma|muse": {
+       "n": 623,
+       "kappa": 0.4047081306462822,
+       "agreement": 0.9646869983948636
+      },
+      "qwen|muse": {
+       "n": 619,
+       "kappa": 0.45848576427548904,
+       "agreement": 0.9644588045234249
       }
      },
      "alpha": {
-      "alpha": 0.4538419016030957,
-      "n_pairable": 618,
+      "alpha": 0.4382812107825912,
+      "n_pairable": 624,
       "n_complete": 618,
       "n_any": 624
      }
@@ -402,11 +641,21 @@
        "n": 618,
        "kappa": 0.3807615230460921,
        "agreement": 0.8689320388349514
+      },
+      "gemma|muse": {
+       "n": 623,
+       "kappa": 0.5043435255665936,
+       "agreement": 0.8812199036918138
+      },
+      "qwen|muse": {
+       "n": 619,
+       "kappa": 0.6160425712513466,
+       "agreement": 0.938610662358643
       }
      },
      "alpha": {
-      "alpha": 0.3676475236259048,
-      "n_pairable": 618,
+      "alpha": 0.4903582043300043,
+      "n_pairable": 624,
       "n_complete": 618,
       "n_any": 624
      }
@@ -417,11 +666,21 @@
        "n": 618,
        "kappa": 0.0,
        "agreement": 0.9983818770226537
+      },
+      "gemma|muse": {
+       "n": 623,
+       "kappa": null,
+       "agreement": 1.0
+      },
+      "qwen|muse": {
+       "n": 619,
+       "kappa": 0.0,
+       "agreement": 0.9983844911147012
       }
      },
      "alpha": {
       "alpha": 0.0,
-      "n_pairable": 618,
+      "n_pairable": 624,
       "n_complete": 618,
       "n_any": 624
      }
@@ -432,11 +691,21 @@
        "n": 618,
        "kappa": null,
        "agreement": 1.0
+      },
+      "gemma|muse": {
+       "n": 623,
+       "kappa": null,
+       "agreement": 1.0
+      },
+      "qwen|muse": {
+       "n": 619,
+       "kappa": null,
+       "agreement": 1.0
       }
      },
      "alpha": {
       "alpha": null,
-      "n_pairable": 618,
+      "n_pairable": 624,
       "n_complete": 618,
       "n_any": 624
      }
@@ -447,11 +716,21 @@
        "n": 618,
        "kappa": -0.002595717066839809,
        "agreement": 0.9919093851132686
+      },
+      "gemma|muse": {
+       "n": 623,
+       "kappa": 0.0,
+       "agreement": 0.9983948635634029
+      },
+      "qwen|muse": {
+       "n": 619,
+       "kappa": 0.0,
+       "agreement": 0.9935379644588045
       }
      },
      "alpha": {
-      "alpha": -0.0032493907392363575,
-      "n_pairable": 618,
+      "alpha": -0.0021493820526599094,
+      "n_pairable": 624,
       "n_complete": 618,
       "n_any": 624
      }
@@ -463,7 +742,8 @@
    "n_complete_all_graders": 729,
    "per_grader_valid": {
     "gemma": 750,
-    "qwen": 734
+    "qwen": 734,
+    "muse": 755
    },
    "dimensions": {
     "judge": {
@@ -472,11 +752,21 @@
        "n": 729,
        "kappa": 0.5654221993641295,
        "agreement": 0.720164609053498
+      },
+      "gemma|muse": {
+       "n": 750,
+       "kappa": 0.48833985649054135,
+       "agreement": 0.6653333333333333
+      },
+      "qwen|muse": {
+       "n": 734,
+       "kappa": 0.48920188873488124,
+       "agreement": 0.670299727520436
       }
      },
      "alpha": {
-      "alpha": 0.5639772327191644,
-      "n_pairable": 729,
+      "alpha": 0.502416239534639,
+      "n_pairable": 755,
       "n_complete": 729,
       "n_any": 755
      }
@@ -487,11 +777,21 @@
        "n": 729,
        "kappa": 0.8525741029641185,
        "agreement": 0.99039780521262
+      },
+      "gemma|muse": {
+       "n": 750,
+       "kappa": 0.8946658801719053,
+       "agreement": 0.9933333333333333
+      },
+      "qwen|muse": {
+       "n": 734,
+       "kappa": 0.8209319346181996,
+       "agreement": 0.989100817438692
       }
      },
      "alpha": {
-      "alpha": 0.8526603198451337,
-      "n_pairable": 729,
+      "alpha": 0.8587638364740183,
+      "n_pairable": 755,
       "n_complete": 729,
       "n_any": 755
      }
@@ -502,11 +802,21 @@
        "n": 729,
        "kappa": 0.4325081737505838,
        "agreement": 0.8285322359396433
+      },
+      "gemma|muse": {
+       "n": 750,
+       "kappa": 0.42471666924330165,
+       "agreement": 0.828
+      },
+      "qwen|muse": {
+       "n": 734,
+       "kappa": 0.6609799720906464,
+       "agreement": 0.9359673024523161
       }
      },
      "alpha": {
-      "alpha": 0.41352349609230343,
-      "n_pairable": 729,
+      "alpha": 0.47440275146859323,
+      "n_pairable": 755,
       "n_complete": 729,
       "n_any": 755
      }
@@ -517,11 +827,21 @@
        "n": 729,
        "kappa": 0.6658058403752999,
        "agreement": 0.9176954732510288
+      },
+      "gemma|muse": {
+       "n": 750,
+       "kappa": 0.7918016100675488,
+       "agreement": 0.944
+      },
+      "qwen|muse": {
+       "n": 734,
+       "kappa": 0.7603179407126587,
+       "agreement": 0.944141689373297
       }
      },
      "alpha": {
-      "alpha": 0.6637692307692308,
-      "n_pairable": 729,
+      "alpha": 0.7380307165374784,
+      "n_pairable": 755,
       "n_complete": 729,
       "n_any": 755
      }
@@ -532,11 +852,21 @@
        "n": 729,
        "kappa": 0.3751205400192864,
        "agreement": 0.9780521262002744
+      },
+      "gemma|muse": {
+       "n": 750,
+       "kappa": 0.38567750994617356,
+       "agreement": 0.972
+      },
+      "qwen|muse": {
+       "n": 734,
+       "kappa": 0.47217612567761913,
+       "agreement": 0.9822888283378747
       }
      },
      "alpha": {
-      "alpha": 0.3738719381177481,
-      "n_pairable": 729,
+      "alpha": 0.3975150134603438,
+      "n_pairable": 755,
       "n_complete": 729,
       "n_any": 755
      }
@@ -547,11 +877,21 @@
        "n": 729,
        "kappa": 0.3846957976165587,
        "agreement": 0.850480109739369
+      },
+      "gemma|muse": {
+       "n": 750,
+       "kappa": 0.4206696409234635,
+       "agreement": 0.8573333333333333
+      },
+      "qwen|muse": {
+       "n": 734,
+       "kappa": 0.693940765803331,
+       "agreement": 0.952316076294278
       }
      },
      "alpha": {
-      "alpha": 0.3714284583447124,
-      "n_pairable": 729,
+      "alpha": 0.4562113101468346,
+      "n_pairable": 755,
       "n_complete": 729,
       "n_any": 755
      }
@@ -562,11 +902,21 @@
        "n": 729,
        "kappa": 0.6654428636989445,
        "agreement": 0.9972565157750343
+      },
+      "gemma|muse": {
+       "n": 750,
+       "kappa": 0.0,
+       "agreement": 0.9973333333333333
+      },
+      "qwen|muse": {
+       "n": 734,
+       "kappa": 0.0,
+       "agreement": 0.9945504087193461
       }
      },
      "alpha": {
-      "alpha": 0.6655188246097337,
-      "n_pairable": 729,
+      "alpha": 0.3318405732198836,
+      "n_pairable": 755,
       "n_complete": 729,
       "n_any": 755
      }
@@ -577,11 +927,21 @@
        "n": 729,
        "kappa": 0.4813535643602779,
        "agreement": 0.9245541838134431
+      },
+      "gemma|muse": {
+       "n": 750,
+       "kappa": 0.5182754260251701,
+       "agreement": 0.9146666666666666
+      },
+      "qwen|muse": {
+       "n": 734,
+       "kappa": 0.7716699781243102,
+       "agreement": 0.9577656675749319
       }
      },
      "alpha": {
-      "alpha": 0.481142154164913,
-      "n_pairable": 729,
+      "alpha": 0.5902979575379225,
+      "n_pairable": 755,
       "n_complete": 729,
       "n_any": 755
      }
@@ -592,11 +952,21 @@
        "n": 729,
        "kappa": 0.12274368231046928,
        "agreement": 0.9807956104252401
+      },
+      "gemma|muse": {
+       "n": 750,
+       "kappa": -0.0023387905111926788,
+       "agreement": 0.9893333333333333
+      },
+      "qwen|muse": {
+       "n": 734,
+       "kappa": 0.3552515999498055,
+       "agreement": 0.9809264305177112
       }
      },
      "alpha": {
-      "alpha": 0.11589805825242716,
-      "n_pairable": 729,
+      "alpha": 0.20962172343431174,
+      "n_pairable": 755,
       "n_complete": 729,
       "n_any": 755
      }
@@ -608,7 +978,8 @@
    "n_complete_all_graders": 391,
    "per_grader_valid": {
     "gemma": 395,
-    "qwen": 392
+    "qwen": 392,
+    "muse": 396
    },
    "dimensions": {
     "judge": {
@@ -617,11 +988,21 @@
        "n": 391,
        "kappa": 0.6311080746958162,
        "agreement": 0.7774936061381074
+      },
+      "gemma|muse": {
+       "n": 395,
+       "kappa": 0.5696053682007466,
+       "agreement": 0.7443037974683544
+      },
+      "qwen|muse": {
+       "n": 392,
+       "kappa": 0.5456691406333071,
+       "agreement": 0.7219387755102041
       }
      },
      "alpha": {
-      "alpha": 0.631177840381703,
-      "n_pairable": 391,
+      "alpha": 0.577941836802935,
+      "n_pairable": 396,
       "n_complete": 391,
       "n_any": 396
      }
@@ -632,11 +1013,21 @@
        "n": 391,
        "kappa": 0.9220960350667464,
        "agreement": 0.9974424552429667
+      },
+      "gemma|muse": {
+       "n": 395,
+       "kappa": 0.5967330270546196,
+       "agreement": 0.9898734177215189
+      },
+      "qwen|muse": {
+       "n": 392,
+       "kappa": 0.664095972579263,
+       "agreement": 0.9923469387755102
       }
      },
      "alpha": {
-      "alpha": 0.9221879047524161,
-      "n_pairable": 391,
+      "alpha": 0.7476111674584958,
+      "n_pairable": 396,
       "n_complete": 391,
       "n_any": 396
      }
@@ -647,11 +1038,21 @@
        "n": 391,
        "kappa": 0.5960076045627376,
        "agreement": 0.8721227621483376
+      },
+      "gemma|muse": {
+       "n": 395,
+       "kappa": 0.7202388928236443,
+       "agreement": 0.9063291139240506
+      },
+      "qwen|muse": {
+       "n": 392,
+       "kappa": 0.7379195868683143,
+       "agreement": 0.9260204081632653
       }
      },
      "alpha": {
-      "alpha": 0.5922096908939014,
-      "n_pairable": 391,
+      "alpha": 0.6786444989217186,
+      "n_pairable": 396,
       "n_complete": 391,
       "n_any": 396
      }
@@ -662,11 +1063,21 @@
        "n": 391,
        "kappa": 0.6685553671812261,
        "agreement": 0.9028132992327366
+      },
+      "gemma|muse": {
+       "n": 395,
+       "kappa": 0.6039897698209719,
+       "agreement": 0.8759493670886076
+      },
+      "qwen|muse": {
+       "n": 392,
+       "kappa": 0.7092994512285559,
+       "agreement": 0.923469387755102
       }
      },
      "alpha": {
-      "alpha": 0.6660590512197317,
-      "n_pairable": 391,
+      "alpha": 0.6561242603550296,
+      "n_pairable": 396,
       "n_complete": 391,
       "n_any": 396
      }
@@ -677,11 +1088,21 @@
        "n": 391,
        "kappa": 0.5412381806887984,
        "agreement": 0.9565217391304348
+      },
+      "gemma|muse": {
+       "n": 395,
+       "kappa": 0.3967930771188597,
+       "agreement": 0.9392405063291139
+      },
+      "qwen|muse": {
+       "n": 392,
+       "kappa": 0.48343373493975905,
+       "agreement": 0.9464285714285714
       }
      },
      "alpha": {
-      "alpha": 0.5418090209476482,
-      "n_pairable": 391,
+      "alpha": 0.4727921498661909,
+      "n_pairable": 396,
       "n_complete": 391,
       "n_any": 396
      }
@@ -692,11 +1113,21 @@
        "n": 391,
        "kappa": 0.39281942977824713,
        "agreement": 0.8721227621483376
+      },
+      "gemma|muse": {
+       "n": 395,
+       "kappa": 0.5487433358720488,
+       "agreement": 0.8936708860759494
+      },
+      "qwen|muse": {
+       "n": 392,
+       "kappa": 0.533504210911754,
+       "agreement": 0.9336734693877551
       }
      },
      "alpha": {
-      "alpha": 0.37299293513166343,
-      "n_pairable": 391,
+      "alpha": 0.47839901151758524,
+      "n_pairable": 396,
       "n_complete": 391,
       "n_any": 396
      }
@@ -707,11 +1138,21 @@
        "n": 391,
        "kappa": 0.0,
        "agreement": 0.9948849104859335
+      },
+      "gemma|muse": {
+       "n": 395,
+       "kappa": null,
+       "agreement": 1.0
+      },
+      "qwen|muse": {
+       "n": 392,
+       "kappa": 0.0,
+       "agreement": 0.9948979591836735
       }
      },
      "alpha": {
-      "alpha": -0.0012820512820512775,
-      "n_pairable": 391,
+      "alpha": -0.0008467400508043177,
+      "n_pairable": 396,
       "n_complete": 391,
       "n_any": 396
      }
@@ -722,11 +1163,21 @@
        "n": 391,
        "kappa": null,
        "agreement": 1.0
+      },
+      "gemma|muse": {
+       "n": 395,
+       "kappa": null,
+       "agreement": 1.0
+      },
+      "qwen|muse": {
+       "n": 392,
+       "kappa": null,
+       "agreement": 1.0
       }
      },
      "alpha": {
       "alpha": null,
-      "n_pairable": 391,
+      "n_pairable": 396,
       "n_complete": 391,
       "n_any": 396
      }
@@ -737,11 +1188,21 @@
        "n": 391,
        "kappa": -0.010335917312661369,
        "agreement": 0.9769820971867008
+      },
+      "gemma|muse": {
+       "n": 395,
+       "kappa": -0.007653061224489832,
+       "agreement": 0.9848101265822785
+      },
+      "qwen|muse": {
+       "n": 392,
+       "kappa": 0.24421593830334187,
+       "agreement": 0.9846938775510204
       }
      },
      "alpha": {
-      "alpha": -0.010349288486416475,
-      "n_pairable": 391,
+      "alpha": 0.07472245943637923,
+      "n_pairable": 396,
       "n_complete": 391,
       "n_any": 396
      }
@@ -755,7 +1216,8 @@
    "n_complete_all_graders": 827,
    "per_grader_valid": {
     "gemma": 846,
-    "qwen": 829
+    "qwen": 829,
+    "muse": 848
    },
    "dimensions": {
     "judge": {
@@ -764,11 +1226,21 @@
        "n": 827,
        "kappa": 0.5873025728767098,
        "agreement": 0.7376058041112454
+      },
+      "gemma|muse": {
+       "n": 846,
+       "kappa": 0.5138729272697422,
+       "agreement": 0.6690307328605201
+      },
+      "qwen|muse": {
+       "n": 829,
+       "kappa": 0.3986616991870616,
+       "agreement": 0.5922798552472859
       }
      },
      "alpha": {
-      "alpha": 0.5850034766129807,
-      "n_pairable": 827,
+      "alpha": 0.48609946919283165,
+      "n_pairable": 848,
       "n_complete": 827,
       "n_any": 848
      }
@@ -779,11 +1251,21 @@
        "n": 827,
        "kappa": 0.8288918314988,
        "agreement": 0.9455864570737605
+      },
+      "gemma|muse": {
+       "n": 846,
+       "kappa": 0.5921018298977844,
+       "agreement": 0.8995271867612293
+      },
+      "qwen|muse": {
+       "n": 829,
+       "kappa": 0.5281417337628966,
+       "agreement": 0.8757539203860072
       }
      },
      "alpha": {
-      "alpha": 0.8288910409617158,
-      "n_pairable": 827,
+      "alpha": 0.6573077569708178,
+      "n_pairable": 848,
       "n_complete": 827,
       "n_any": 848
      }
@@ -794,11 +1276,21 @@
        "n": 827,
        "kappa": 0.40131420191932876,
        "agreement": 0.81136638452237
+      },
+      "gemma|muse": {
+       "n": 846,
+       "kappa": 0.4815687753370417,
+       "agreement": 0.8309692671394799
+      },
+      "qwen|muse": {
+       "n": 829,
+       "kappa": 0.6600528053755008,
+       "agreement": 0.9312424607961399
       }
      },
      "alpha": {
-      "alpha": 0.37484726828416826,
-      "n_pairable": 827,
+      "alpha": 0.4850585769122572,
+      "n_pairable": 848,
       "n_complete": 827,
       "n_any": 848
      }
@@ -809,11 +1301,21 @@
        "n": 827,
        "kappa": 0.42297039193160746,
        "agreement": 0.8802902055622733
+      },
+      "gemma|muse": {
+       "n": 846,
+       "kappa": 0.5935398033853204,
+       "agreement": 0.9078014184397163
+      },
+      "qwen|muse": {
+       "n": 829,
+       "kappa": 0.5786048180522472,
+       "agreement": 0.9384800965018094
       }
      },
      "alpha": {
-      "alpha": 0.4089712335446124,
-      "n_pairable": 827,
+      "alpha": 0.5247684714857805,
+      "n_pairable": 848,
       "n_complete": 827,
       "n_any": 848
      }
@@ -824,11 +1326,21 @@
        "n": 827,
        "kappa": 0.5599774141357106,
        "agreement": 0.9407496977025392
+      },
+      "gemma|muse": {
+       "n": 846,
+       "kappa": 0.6390168970814132,
+       "agreement": 0.9468085106382979
+      },
+      "qwen|muse": {
+       "n": 829,
+       "kappa": 0.7296959486998342,
+       "agreement": 0.971049457177322
       }
      },
      "alpha": {
-      "alpha": 0.5565817206361372,
-      "n_pairable": 827,
+      "alpha": 0.6317352153808713,
+      "n_pairable": 848,
       "n_complete": 827,
       "n_any": 848
      }
@@ -839,11 +1351,21 @@
        "n": 827,
        "kappa": 0.4876363618340511,
        "agreement": 0.848851269649335
+      },
+      "gemma|muse": {
+       "n": 846,
+       "kappa": 0.5072664743731973,
+       "agreement": 0.851063829787234
+      },
+      "qwen|muse": {
+       "n": 829,
+       "kappa": 0.6822000584776323,
+       "agreement": 0.9288299155609168
       }
      },
      "alpha": {
-      "alpha": 0.4790524237771441,
-      "n_pairable": 827,
+      "alpha": 0.5447402188260292,
+      "n_pairable": 848,
       "n_complete": 827,
       "n_any": 848
      }
@@ -854,11 +1376,21 @@
        "n": 827,
        "kappa": 0.8064838647918484,
        "agreement": 0.9600967351874244
+      },
+      "gemma|muse": {
+       "n": 846,
+       "kappa": 0.6416980850039031,
+       "agreement": 0.9397163120567376
+      },
+      "qwen|muse": {
+       "n": 829,
+       "kappa": 0.6886399237836995,
+       "agreement": 0.9505428226779252
       }
      },
      "alpha": {
-      "alpha": 0.8065453075294443,
-      "n_pairable": 827,
+      "alpha": 0.7173711960040698,
+      "n_pairable": 848,
       "n_complete": 827,
       "n_any": 848
      }
@@ -869,11 +1401,21 @@
        "n": 827,
        "kappa": 0.3964972026270981,
        "agreement": 0.9891172914147521
+      },
+      "gemma|muse": {
+       "n": 846,
+       "kappa": 0.5661538461538462,
+       "agreement": 0.9893617021276596
+      },
+      "qwen|muse": {
+       "n": 829,
+       "kappa": 0.49727107337780474,
+       "agreement": 0.9927623642943305
       }
      },
      "alpha": {
-      "alpha": 0.39487492373398414,
-      "n_pairable": 827,
+      "alpha": 0.4750040032025621,
+      "n_pairable": 848,
       "n_complete": 827,
       "n_any": 848
      }
@@ -884,11 +1426,21 @@
        "n": 827,
        "kappa": 0.2642348754448398,
        "agreement": 0.9806529625151149
+      },
+      "gemma|muse": {
+       "n": 846,
+       "kappa": 0.3946573382095723,
+       "agreement": 0.9893617021276596
+      },
+      "qwen|muse": {
+       "n": 829,
+       "kappa": 0.42757741541403305,
+       "agreement": 0.9843184559710495
       }
      },
      "alpha": {
-      "alpha": 0.2633689839572192,
-      "n_pairable": 827,
+      "alpha": 0.3592993715737398,
+      "n_pairable": 848,
       "n_complete": 827,
       "n_any": 848
      }
@@ -900,7 +1452,8 @@
    "n_complete_all_graders": 592,
    "per_grader_valid": {
     "gemma": 595,
-    "qwen": 593
+    "qwen": 593,
+    "muse": 596
    },
    "dimensions": {
     "judge": {
@@ -909,11 +1462,21 @@
        "n": 592,
        "kappa": 0.5939542443053891,
        "agreement": 0.7668918918918919
+      },
+      "gemma|muse": {
+       "n": 595,
+       "kappa": 0.38716955220952476,
+       "agreement": 0.6470588235294118
+      },
+      "qwen|muse": {
+       "n": 593,
+       "kappa": 0.48624055447899683,
+       "agreement": 0.715008431703204
       }
      },
      "alpha": {
-      "alpha": 0.593228700780633,
-      "n_pairable": 592,
+      "alpha": 0.47818843883138884,
+      "n_pairable": 596,
       "n_complete": 592,
       "n_any": 596
      }
@@ -924,11 +1487,21 @@
        "n": 592,
        "kappa": 0.900626678603402,
        "agreement": 0.9949324324324325
+      },
+      "gemma|muse": {
+       "n": 595,
+       "kappa": 0.8106663272449564,
+       "agreement": 0.9915966386554622
+      },
+      "qwen|muse": {
+       "n": 593,
+       "kappa": 0.8427889713679746,
+       "agreement": 0.9932546374367622
       }
      },
      "alpha": {
-      "alpha": 0.9007078309039532,
-      "n_pairable": 592,
+      "alpha": 0.8537805478103986,
+      "n_pairable": 596,
       "n_complete": 592,
       "n_any": 596
      }
@@ -939,11 +1512,21 @@
        "n": 592,
        "kappa": 0.38635506973237854,
        "agreement": 0.7956081081081081
+      },
+      "gemma|muse": {
+       "n": 595,
+       "kappa": 0.38797976792621236,
+       "agreement": 0.7966386554621848
+      },
+      "qwen|muse": {
+       "n": 593,
+       "kappa": 0.5733986670829205,
+       "agreement": 0.9106239460370995
       }
      },
      "alpha": {
-      "alpha": 0.3622186874830132,
-      "n_pairable": 592,
+      "alpha": 0.42102133728265045,
+      "n_pairable": 596,
       "n_complete": 592,
       "n_any": 596
      }
@@ -954,11 +1537,21 @@
        "n": 592,
        "kappa": 0.7258243793997777,
        "agreement": 0.9662162162162162
+      },
+      "gemma|muse": {
+       "n": 595,
+       "kappa": 0.7642795553587658,
+       "agreement": 0.9714285714285714
+      },
+      "qwen|muse": {
+       "n": 593,
+       "kappa": 0.920905914050204,
+       "agreement": 0.9915682967959528
       }
      },
      "alpha": {
-      "alpha": 0.7257383966244726,
-      "n_pairable": 592,
+      "alpha": 0.7983715933506729,
+      "n_pairable": 596,
       "n_complete": 592,
       "n_any": 596
      }
@@ -969,11 +1562,21 @@
        "n": 592,
        "kappa": 0.37086178023959804,
        "agreement": 0.9442567567567568
+      },
+      "gemma|muse": {
+       "n": 595,
+       "kappa": 0.4930941009423002,
+       "agreement": 0.9445378151260504
+      },
+      "qwen|muse": {
+       "n": 593,
+       "kappa": 0.4239300555885369,
+       "agreement": 0.93929173693086
       }
      },
      "alpha": {
-      "alpha": 0.3713020372010629,
-      "n_pairable": 592,
+      "alpha": 0.43328035897915296,
+      "n_pairable": 596,
       "n_complete": 592,
       "n_any": 596
      }
@@ -984,11 +1587,21 @@
        "n": 592,
        "kappa": 0.41744354671638695,
        "agreement": 0.8716216216216216
+      },
+      "gemma|muse": {
+       "n": 595,
+       "kappa": 0.562752258312512,
+       "agreement": 0.8907563025210085
+      },
+      "qwen|muse": {
+       "n": 593,
+       "kappa": 0.6575992814524925,
+       "agreement": 0.93929173693086
       }
      },
      "alpha": {
-      "alpha": 0.4067358196742946,
-      "n_pairable": 592,
+      "alpha": 0.5369979721942608,
+      "n_pairable": 596,
       "n_complete": 592,
       "n_any": 596
      }
@@ -999,11 +1612,21 @@
        "n": 592,
        "kappa": 0.0,
        "agreement": 0.9983108108108109
+      },
+      "gemma|muse": {
+       "n": 595,
+       "kappa": null,
+       "agreement": 1.0
+      },
+      "qwen|muse": {
+       "n": 593,
+       "kappa": 0.0,
+       "agreement": 0.9983136593591906
       }
      },
      "alpha": {
       "alpha": 0.0,
-      "n_pairable": 592,
+      "n_pairable": 596,
       "n_complete": 592,
       "n_any": 596
      }
@@ -1014,11 +1637,21 @@
        "n": 592,
        "kappa": 0.0,
        "agreement": 0.9983108108108109
+      },
+      "gemma|muse": {
+       "n": 595,
+       "kappa": 0.0,
+       "agreement": 0.9966386554621849
+      },
+      "qwen|muse": {
+       "n": 593,
+       "kappa": 0.6659154929577464,
+       "agreement": 0.9983136593591906
       }
      },
      "alpha": {
-      "alpha": 0.0,
-      "n_pairable": 592,
+      "alpha": 0.3325846902489238,
+      "n_pairable": 596,
       "n_complete": 592,
       "n_any": 596
      }
@@ -1029,11 +1662,21 @@
        "n": 592,
        "kappa": -0.0029041626331074433,
        "agreement": 0.9881756756756757
+      },
+      "gemma|muse": {
+       "n": 595,
+       "kappa": 0.0,
+       "agreement": 0.9983193277310924
+      },
+      "qwen|muse": {
+       "n": 593,
+       "kappa": 0.0,
+       "agreement": 0.9898819561551433
       }
      },
      "alpha": {
-      "alpha": -0.005097706032285432,
-      "n_pairable": 592,
+      "alpha": -0.003376477208778761,
+      "n_pairable": 596,
       "n_complete": 592,
       "n_any": 596
      }
@@ -1045,7 +1688,8 @@
    "n_complete_all_graders": 760,
    "per_grader_valid": {
     "gemma": 782,
-    "qwen": 764
+    "qwen": 764,
+    "muse": 786
    },
    "dimensions": {
     "judge": {
@@ -1054,11 +1698,21 @@
        "n": 760,
        "kappa": 0.5399295875615312,
        "agreement": 0.7
+      },
+      "gemma|muse": {
+       "n": 782,
+       "kappa": 0.4531196336576988,
+       "agreement": 0.6406649616368286
+      },
+      "qwen|muse": {
+       "n": 764,
+       "kappa": 0.4822992087332796,
+       "agreement": 0.6675392670157068
       }
      },
      "alpha": {
-      "alpha": 0.5377969243581069,
-      "n_pairable": 760,
+      "alpha": 0.47896180419732703,
+      "n_pairable": 786,
       "n_complete": 760,
       "n_any": 786
      }
@@ -1069,11 +1723,21 @@
        "n": 760,
        "kappa": 0.7556101706594391,
        "agreement": 0.9815789473684211
+      },
+      "gemma|muse": {
+       "n": 782,
+       "kappa": 0.8250285279573982,
+       "agreement": 0.9872122762148338
+      },
+      "qwen|muse": {
+       "n": 764,
+       "kappa": 0.7871421606185136,
+       "agreement": 0.9842931937172775
       }
      },
      "alpha": {
-      "alpha": 0.7556446701674154,
-      "n_pairable": 760,
+      "alpha": 0.7938830048535104,
+      "n_pairable": 786,
       "n_complete": 760,
       "n_any": 786
      }
@@ -1084,11 +1748,21 @@
        "n": 760,
        "kappa": 0.3842918985776128,
        "agreement": 0.8276315789473684
+      },
+      "gemma|muse": {
+       "n": 782,
+       "kappa": 0.3877606282155429,
+       "agreement": 0.829923273657289
+      },
+      "qwen|muse": {
+       "n": 764,
+       "kappa": 0.6391990596927211,
+       "agreement": 0.9410994764397905
       }
      },
      "alpha": {
-      "alpha": 0.36298039215686273,
-      "n_pairable": 760,
+      "alpha": 0.4337184476451653,
+      "n_pairable": 786,
       "n_complete": 760,
       "n_any": 786
      }
@@ -1099,11 +1773,21 @@
        "n": 760,
        "kappa": 0.6488361503227708,
        "agreement": 0.9092105263157895
+      },
+      "gemma|muse": {
+       "n": 782,
+       "kappa": 0.7713161848186333,
+       "agreement": 0.9347826086956522
+      },
+      "qwen|muse": {
+       "n": 764,
+       "kappa": 0.7425728378068364,
+       "agreement": 0.9384816753926701
       }
      },
      "alpha": {
-      "alpha": 0.6454764087282124,
-      "n_pairable": 760,
+      "alpha": 0.7202696006110345,
+      "n_pairable": 786,
       "n_complete": 760,
       "n_any": 786
      }
@@ -1114,11 +1798,21 @@
        "n": 760,
        "kappa": 0.4281083584163,
        "agreement": 0.9828947368421053
+      },
+      "gemma|muse": {
+       "n": 782,
+       "kappa": 0.3745364647713225,
+       "agreement": 0.9718670076726342
+      },
+      "qwen|muse": {
+       "n": 764,
+       "kappa": 0.4737176769817719,
+       "agreement": 0.9829842931937173
       }
      },
      "alpha": {
-      "alpha": 0.42647614068717143,
-      "n_pairable": 760,
+      "alpha": 0.40793684659697027,
+      "n_pairable": 786,
       "n_complete": 760,
       "n_any": 786
      }
@@ -1129,11 +1823,21 @@
        "n": 760,
        "kappa": 0.37166262135922323,
        "agreement": 0.8565789473684211
+      },
+      "gemma|muse": {
+       "n": 782,
+       "kappa": 0.43871466431095396,
+       "agreement": 0.8670076726342711
+      },
+      "qwen|muse": {
+       "n": 764,
+       "kappa": 0.6724916156038026,
+       "agreement": 0.9554973821989529
       }
      },
      "alpha": {
-      "alpha": 0.35351859154819587,
-      "n_pairable": 760,
+      "alpha": 0.45232188348124347,
+      "n_pairable": 786,
       "n_complete": 760,
       "n_any": 786
      }
@@ -1144,11 +1848,21 @@
        "n": 760,
        "kappa": 0.49468085106382975,
        "agreement": 0.9894736842105263
+      },
+      "gemma|muse": {
+       "n": 782,
+       "kappa": 0.3609619425636237,
+       "agreement": 0.9910485933503836
+      },
+      "qwen|muse": {
+       "n": 764,
+       "kappa": 0.2204081632653061,
+       "agreement": 0.9908376963350786
       }
      },
      "alpha": {
-      "alpha": 0.4950132978723405,
-      "n_pairable": 760,
+      "alpha": 0.41654720458734384,
+      "n_pairable": 786,
       "n_complete": 760,
       "n_any": 786
      }
@@ -1159,11 +1873,21 @@
        "n": 760,
        "kappa": 0.5153061224489796,
        "agreement": 0.9407894736842105
+      },
+      "gemma|muse": {
+       "n": 782,
+       "kappa": 0.5367195010171917,
+       "agreement": 0.9322250639386189
+      },
+      "qwen|muse": {
+       "n": 764,
+       "kappa": 0.8064883804377652,
+       "agreement": 0.9685863874345549
       }
      },
      "alpha": {
-      "alpha": 0.5141065830721003,
-      "n_pairable": 760,
+      "alpha": 0.6244061481136469,
+      "n_pairable": 786,
       "n_complete": 760,
       "n_any": 786
      }
@@ -1174,11 +1898,21 @@
        "n": 760,
        "kappa": -0.0024350649350648457,
        "agreement": 0.9828947368421053
+      },
+      "gemma|muse": {
+       "n": 782,
+       "kappa": -0.0021358393848782686,
+       "agreement": 0.9923273657289002
+      },
+      "qwen|muse": {
+       "n": 764,
+       "kappa": 0.34690705626359963,
+       "agreement": 0.9856020942408377
       }
      },
      "alpha": {
-      "alpha": -0.007962840079628553,
-      "n_pairable": 760,
+      "alpha": 0.16054451166810713,
+      "n_pairable": 786,
       "n_complete": 760,
       "n_any": 786
      }
@@ -1190,7 +1924,8 @@
    "n_complete_all_graders": 349,
    "per_grader_valid": {
     "gemma": 351,
-    "qwen": 350
+    "qwen": 350,
+    "muse": 352
    },
    "dimensions": {
     "judge": {
@@ -1199,11 +1934,21 @@
        "n": 349,
        "kappa": 0.6476952825091705,
        "agreement": 0.7965616045845272
+      },
+      "gemma|muse": {
+       "n": 351,
+       "kappa": 0.5797845048742944,
+       "agreement": 0.7606837606837606
+      },
+      "qwen|muse": {
+       "n": 350,
+       "kappa": 0.5601982905038734,
+       "agreement": 0.74
       }
      },
      "alpha": {
-      "alpha": 0.6476288806607804,
-      "n_pairable": 349,
+      "alpha": 0.5931164072531395,
+      "n_pairable": 352,
       "n_complete": 349,
       "n_any": 352
      }
@@ -1214,11 +1959,21 @@
        "n": 349,
        "kappa": 0.8816547982366904,
        "agreement": 0.9914040114613181
+      },
+      "gemma|muse": {
+       "n": 351,
+       "kappa": 0.8295081967213115,
+       "agreement": 0.9886039886039886
+      },
+      "qwen|muse": {
+       "n": 350,
+       "kappa": 0.7678737233054782,
+       "agreement": 0.9857142857142858
       }
      },
      "alpha": {
-      "alpha": 0.8818043072748856,
-      "n_pairable": 349,
+      "alpha": 0.829552819183409,
+      "n_pairable": 352,
       "n_complete": 349,
       "n_any": 352
      }
@@ -1229,11 +1984,21 @@
        "n": 349,
        "kappa": 0.6726303507286828,
        "agreement": 0.8825214899713467
+      },
+      "gemma|muse": {
+       "n": 351,
+       "kappa": 0.7377603937769184,
+       "agreement": 0.9031339031339032
+      },
+      "qwen|muse": {
+       "n": 350,
+       "kappa": 0.7835609379026024,
+       "agreement": 0.9314285714285714
       }
      },
      "alpha": {
-      "alpha": 0.6694657459777693,
-      "n_pairable": 349,
+      "alpha": 0.7263694532591167,
+      "n_pairable": 352,
       "n_complete": 349,
       "n_any": 352
      }
@@ -1244,11 +2009,21 @@
        "n": 349,
        "kappa": 0.6332749562171629,
        "agreement": 0.9140401146131805
+      },
+      "gemma|muse": {
+       "n": 351,
+       "kappa": 0.5406618059450364,
+       "agreement": 0.8803418803418803
+      },
+      "qwen|muse": {
+       "n": 350,
+       "kappa": 0.6888888888888889,
+       "agreement": 0.9314285714285714
       }
      },
      "alpha": {
-      "alpha": 0.6317105819360294,
-      "n_pairable": 349,
+      "alpha": 0.6186736342903747,
+      "n_pairable": 352,
       "n_complete": 349,
       "n_any": 352
      }
@@ -1259,11 +2034,21 @@
        "n": 349,
        "kappa": 0.4369454154342566,
        "agreement": 0.9656160458452722
+      },
+      "gemma|muse": {
+       "n": 351,
+       "kappa": 0.15557337610264632,
+       "agreement": 0.9487179487179487
+      },
+      "qwen|muse": {
+       "n": 350,
+       "kappa": 0.38235294117647056,
+       "agreement": 0.9657142857142857
       }
      },
      "alpha": {
-      "alpha": 0.4376008606777837,
-      "n_pairable": 349,
+      "alpha": 0.323824681684623,
+      "n_pairable": 352,
       "n_complete": 349,
       "n_any": 352
      }
@@ -1274,11 +2059,21 @@
        "n": 349,
        "kappa": 0.3849300036577662,
        "agreement": 0.8481375358166189
+      },
+      "gemma|muse": {
+       "n": 351,
+       "kappa": 0.48962877236713254,
+       "agreement": 0.8603988603988604
+      },
+      "qwen|muse": {
+       "n": 350,
+       "kappa": 0.43186942014609075,
+       "agreement": 0.8971428571428571
       }
      },
      "alpha": {
-      "alpha": 0.3663310290409455,
-      "n_pairable": 349,
+      "alpha": 0.4273360706731367,
+      "n_pairable": 352,
       "n_complete": 349,
       "n_any": 352
      }
@@ -1289,11 +2084,21 @@
        "n": 349,
        "kappa": 0.7648776105995958,
        "agreement": 0.9914040114613181
+      },
+      "gemma|muse": {
+       "n": 351,
+       "kappa": 0.9076558800315706,
+       "agreement": 0.9971509971509972
+      },
+      "qwen|muse": {
+       "n": 350,
+       "kappa": 0.6610169491525424,
+       "agreement": 0.9885714285714285
       }
      },
      "alpha": {
-      "alpha": 0.7651880965749579,
-      "n_pairable": 349,
+      "alpha": 0.7741277509393452,
+      "n_pairable": 352,
       "n_complete": 349,
       "n_any": 352
      }
@@ -1304,11 +2109,21 @@
        "n": 349,
        "kappa": null,
        "agreement": 1.0
+      },
+      "gemma|muse": {
+       "n": 351,
+       "kappa": null,
+       "agreement": 1.0
+      },
+      "qwen|muse": {
+       "n": 350,
+       "kappa": null,
+       "agreement": 1.0
       }
      },
      "alpha": {
       "alpha": null,
-      "n_pairable": 349,
+      "n_pairable": 352,
       "n_complete": 349,
       "n_any": 352
      }
@@ -1319,11 +2134,21 @@
        "n": 349,
        "kappa": -0.009466210886142523,
        "agreement": 0.9684813753581661
+      },
+      "gemma|muse": {
+       "n": 351,
+       "kappa": -0.008206811653672652,
+       "agreement": 0.98005698005698
+      },
+      "qwen|muse": {
+       "n": 350,
+       "kappa": 0.14024117909781153,
+       "agreement": 0.9685714285714285
       }
      },
      "alpha": {
-      "alpha": -0.01455604075691408,
-      "n_pairable": 349,
+      "alpha": 0.0489392478302797,
+      "n_pairable": 352,
       "n_complete": 349,
       "n_any": 352
      }
@@ -1335,6 +2160,7 @@
   {
    "target": "gemma",
    "other": "qwen",
+   "role": "coi",
    "verdict": "no evidence that gemma diverges more from qwen on Gemini edits for judge: -0.033 (95% CI [-0.074, +0.011]) (CI spans 0); gemma diverges LESS from qwen on Gemini edits for any-dimension disagreement: -0.077 (95% CI [-0.131, -0.022]).",
    "gemini_provider": "google",
    "B": 2000,
@@ -1382,6 +2208,110 @@
      "n_nan_draws": 0
     }
    }
+  },
+  {
+   "target": "gemma",
+   "other": "muse",
+   "role": "coi",
+   "verdict": "no evidence that gemma diverges more from muse on Gemini edits for judge: +0.027 (95% CI [-0.028, +0.083]) (CI spans 0); no evidence that gemma diverges more from muse on Gemini edits for any-dimension disagreement: -0.044 (95% CI [-0.099, +0.015]) (CI spans 0).",
+   "gemini_provider": "google",
+   "B": 2000,
+   "seed": 20260907,
+   "rng_stream": [
+    20260907,
+    314159
+   ],
+   "chain_key": "(run_id, model_id, document_id, condition) \u2014 bootstrap.py convention",
+   "n_chains_gemini": 30,
+   "n_chains_non_gemini": 107,
+   "n_valid_edits_gemini": 595,
+   "n_valid_edits_non_gemini": 1979,
+   "dims": {
+    "judge": {
+     "rate_gemini": 0.35294117647058826,
+     "rate_non_gemini": 0.325922182920667,
+     "difference": 0.027018993549921266,
+     "ci_lo": -0.027530812337009287,
+     "ci_hi": 0.08341102664063087,
+     "n_nan_draws": 0
+    },
+    "patienthood": {
+     "rate_gemini": 0.008403361344537815,
+     "rate_non_gemini": 0.05002526528549773,
+     "difference": -0.041621903940959916,
+     "ci_lo": -0.06293095544175248,
+     "ci_hi": -0.02229242683223385,
+     "n_nan_draws": 0
+    },
+    "conflict_presence": {
+     "rate_gemini": 0.33277310924369746,
+     "rate_non_gemini": 0.3951490651844366,
+     "difference": -0.062375955940739136,
+     "ci_lo": -0.11353377463677145,
+     "ci_hi": -0.005410300694497765,
+     "n_nan_draws": 0
+    },
+    "any": {
+     "rate_gemini": 0.5327731092436975,
+     "rate_non_gemini": 0.5770591207680646,
+     "difference": -0.044286011524367175,
+     "ci_lo": -0.0989783064154031,
+     "ci_hi": 0.01483850047808211,
+     "n_nan_draws": 0
+    }
+   }
+  },
+  {
+   "target": "qwen",
+   "other": "muse",
+   "role": "baseline",
+   "verdict": "qwen diverges LESS from muse on Gemini edits for judge: -0.067 (95% CI [-0.118, -0.015]); qwen diverges LESS from muse on Gemini edits for any-dimension disagreement: -0.114 (95% CI [-0.175, -0.043]).",
+   "gemini_provider": "google",
+   "B": 2000,
+   "seed": 20260907,
+   "rng_stream": [
+    20260907,
+    314159
+   ],
+   "chain_key": "(run_id, model_id, document_id, condition) \u2014 bootstrap.py convention",
+   "n_chains_gemini": 30,
+   "n_chains_non_gemini": 107,
+   "n_valid_edits_gemini": 593,
+   "n_valid_edits_non_gemini": 1943,
+   "dims": {
+    "judge": {
+     "rate_gemini": 0.28499156829679595,
+     "rate_non_gemini": 0.35151827071538855,
+     "difference": -0.0665267024185926,
+     "ci_lo": -0.11774765175337439,
+     "ci_hi": -0.014914545334356736,
+     "n_nan_draws": 0
+    },
+    "patienthood": {
+     "rate_gemini": 0.006745362563237774,
+     "rate_non_gemini": 0.06176016469377252,
+     "difference": -0.055014802130534744,
+     "ci_lo": -0.07784080044236445,
+     "ci_hi": -0.033726550827982614,
+     "n_nan_draws": 0
+    },
+    "conflict_presence": {
+     "rate_gemini": 0.18043844856661045,
+     "rate_non_gemini": 0.2393206381883685,
+     "difference": -0.058882189621758035,
+     "ci_lo": -0.10143348323007285,
+     "ci_hi": -0.008534739208037259,
+     "n_nan_draws": 0
+    },
+    "any": {
+     "rate_gemini": 0.3979763912310287,
+     "rate_non_gemini": 0.5115800308800823,
+     "difference": -0.11360363964905362,
+     "ci_lo": -0.17531410551831345,
+     "ci_hi": -0.04327314608004367,
+     "n_nan_draws": 0
+    }
+   }
   }
  ],
  "headline_assembly": {
@@ -1406,1007 +2336,1203 @@
     "model:Claude Haiku 4.5": {
      "gemma": 0.2054263565891473,
      "qwen": 0.29571984435797666,
-     "ensemble": 0.2054263565891473
+     "muse": 0.18532818532818532,
+     "ensemble": 0.23938223938223938
     },
     "model:Claude Opus 4.7": {
      "gemma": 0.12915129151291513,
      "qwen": 0.32061068702290074,
-     "ensemble": 0.12915129151291513
+     "muse": 0.07011070110701106,
+     "ensemble": 0.15867158671586715
     },
     "model:Claude Sonnet 4.6": {
      "gemma": 0.07886435331230283,
      "qwen": 0.3064516129032258,
-     "ensemble": 0.07886435331230283
+     "muse": 0.012578616352201259,
+     "ensemble": 0.12264150943396226
     },
     "model:GPT-5.4": {
      "gemma": -0.25,
      "qwen": -0.02631578947368421,
-     "ensemble": -0.25
+     "muse": -0.01875,
+     "ensemble": -0.13125
     },
     "model:GPT-5.4 Mini": {
      "gemma": -0.29347826086956524,
      "qwen": -0.1989247311827957,
-     "ensemble": -0.29347826086956524
+     "muse": -0.15591397849462366,
+     "ensemble": -0.1989247311827957
     },
     "model:GPT-5.5": {
      "gemma": -0.2733812949640288,
      "qwen": -0.17883211678832117,
-     "ensemble": -0.2733812949640288
+     "muse": -0.20714285714285716,
+     "ensemble": -0.25357142857142856
     },
     "model:Gemini 3 Flash": {
      "gemma": -0.4166666666666667,
      "qwen": -0.36594202898550726,
-     "ensemble": -0.4166666666666667
+     "muse": -0.3079710144927536,
+     "ensemble": -0.37681159420289856
     },
     "model:Gemini 3.1 Pro": {
      "gemma": -0.4231974921630094,
      "qwen": -0.3659305993690852,
-     "ensemble": -0.4231974921630094
+     "muse": -0.196875,
+     "ensemble": -0.34375
     },
     "model:Grok 4.2": {
      "gemma": -0.367816091954023,
      "qwen": -0.28160919540229884,
-     "ensemble": -0.367816091954023
+     "muse": -0.32,
+     "ensemble": -0.36
     },
     "model:Grok 4.3": {
      "gemma": -0.5141242937853108,
      "qwen": -0.48863636363636365,
-     "ensemble": -0.5141242937853108
+     "muse": -0.3785310734463277,
+     "ensemble": -0.480225988700565
     },
     "provider:anthropic": {
      "gemma": 0.13356973995271867,
      "qwen": 0.30759951749095293,
-     "ensemble": 0.13356973995271867
+     "muse": 0.08372641509433962,
+     "ensemble": 0.16981132075471697
     },
     "provider:google": {
      "gemma": -0.42016806722689076,
      "qwen": -0.36593591905564926,
-     "ensemble": -0.42016806722689076
+     "muse": -0.2483221476510067,
+     "ensemble": -0.35906040268456374
     },
     "provider:openai": {
      "gemma": -0.26854219948849106,
      "qwen": -0.12303664921465969,
-     "ensemble": -0.26854219948849106
+     "muse": -0.1183206106870229,
+     "ensemble": -0.19083969465648856
     },
     "provider:x-ai": {
      "gemma": -0.4415954415954416,
      "qwen": -0.38571428571428573,
-     "ensemble": -0.4415954415954416
+     "muse": -0.3494318181818182,
+     "ensemble": -0.42045454545454547
     }
    },
    "mean_judge_cross": {
     "model:Claude Haiku 4.5": {
      "gemma": 0.06493506493506493,
      "qwen": 0.07792207792207792,
-     "ensemble": 0.06493506493506493
+     "muse": 0.012987012987012988,
+     "ensemble": 0.025974025974025976
     },
     "model:Claude Opus 4.7": {
      "gemma": -0.225,
      "qwen": 0.02564102564102564,
-     "ensemble": -0.225
+     "muse": -0.0875,
+     "ensemble": -0.1875
     },
     "model:Claude Sonnet 4.6": {
      "gemma": -0.1518987341772152,
      "qwen": 0.039473684210526314,
-     "ensemble": -0.1518987341772152
+     "muse": -0.075,
+     "ensemble": -0.1125
     },
     "model:GPT-5.4": {
      "gemma": -0.4,
      "qwen": -0.1917808219178082,
-     "ensemble": -0.4
+     "muse": -0.125,
+     "ensemble": -0.325
     },
     "model:GPT-5.4 Mini": {
      "gemma": -0.3333333333333333,
      "qwen": -0.2807017543859649,
-     "ensemble": -0.3333333333333333
+     "muse": -0.21052631578947367,
+     "ensemble": -0.3157894736842105
     },
     "model:GPT-5.5": {
      "gemma": -0.3974358974358974,
      "qwen": -0.2948717948717949,
-     "ensemble": -0.3974358974358974
+     "muse": -0.2875,
+     "ensemble": -0.3875
     },
     "model:Gemini 3 Flash": {
      "gemma": -0.3684210526315789,
      "qwen": -0.34210526315789475,
-     "ensemble": -0.3684210526315789
+     "muse": -0.23684210526315788,
+     "ensemble": -0.35526315789473684
     },
     "model:Gemini 3.1 Pro": {
      "gemma": -0.4625,
      "qwen": -0.45569620253164556,
-     "ensemble": -0.4625
+     "muse": -0.2375,
+     "ensemble": -0.425
     },
     "model:Grok 4.2": {
      "gemma": -0.32894736842105265,
      "qwen": -0.25,
+     "muse": -0.27631578947368424,
      "ensemble": -0.32894736842105265
     },
     "model:Grok 4.3": {
      "gemma": -0.5625,
      "qwen": -0.5375,
-     "ensemble": -0.5625
+     "muse": -0.3125,
+     "ensemble": -0.5
     },
     "provider:anthropic": {
      "gemma": -0.1059322033898305,
      "qwen": 0.047619047619047616,
-     "ensemble": -0.1059322033898305
+     "muse": -0.05063291139240506,
+     "ensemble": -0.09282700421940929
     },
     "provider:google": {
      "gemma": -0.4166666666666667,
      "qwen": -0.4,
-     "ensemble": -0.4166666666666667
+     "muse": -0.23717948717948717,
+     "ensemble": -0.391025641025641
     },
     "provider:openai": {
      "gemma": -0.3813953488372093,
      "qwen": -0.2548076923076923,
-     "ensemble": -0.3813953488372093
+     "muse": -0.2073732718894009,
+     "ensemble": -0.3456221198156682
     },
     "provider:x-ai": {
      "gemma": -0.44871794871794873,
      "qwen": -0.3974358974358974,
-     "ensemble": -0.44871794871794873
+     "muse": -0.2948717948717949,
+     "ensemble": -0.4166666666666667
     }
    },
    "drift20_pooled": {
     "model:Claude Haiku 4.5": {
      "gemma": 3.7857142857142856,
      "qwen": 5.428571428571429,
-     "ensemble": 3.7857142857142856
+     "muse": 3.4285714285714284,
+     "ensemble": 4.428571428571429
     },
     "model:Claude Opus 4.7": {
      "gemma": 2.3333333333333335,
      "qwen": 5.6,
-     "ensemble": 2.3333333333333335
+     "muse": 1.2666666666666666,
+     "ensemble": 2.8666666666666667
     },
     "model:Claude Sonnet 4.6": {
      "gemma": 1.5625,
      "qwen": 5.9375,
-     "ensemble": 1.5625
+     "muse": 0.25,
+     "ensemble": 2.4375
     },
     "model:GPT-5.4": {
      "gemma": -5.0,
      "qwen": -0.5,
-     "ensemble": -5.0
+     "muse": -0.375,
+     "ensemble": -2.625
     },
     "model:GPT-5.4 Mini": {
      "gemma": -3.857142857142857,
      "qwen": -2.642857142857143,
-     "ensemble": -3.857142857142857
+     "muse": -2.0714285714285716,
+     "ensemble": -2.642857142857143
     },
     "model:GPT-5.5": {
      "gemma": -5.428571428571429,
      "qwen": -3.5,
-     "ensemble": -5.428571428571429
+     "muse": -4.142857142857143,
+     "ensemble": -5.071428571428571
     },
     "model:Gemini 3 Flash": {
      "gemma": -8.214285714285714,
      "qwen": -7.214285714285714,
-     "ensemble": -8.214285714285714
+     "muse": -6.071428571428571,
+     "ensemble": -7.428571428571429
     },
     "model:Gemini 3.1 Pro": {
      "gemma": -8.4375,
      "qwen": -7.25,
-     "ensemble": -8.4375
+     "muse": -3.9375,
+     "ensemble": -6.875
     },
     "model:Grok 4.2": {
      "gemma": -7.111111111111111,
      "qwen": -5.444444444444445,
-     "ensemble": -7.111111111111111
+     "muse": -6.222222222222222,
+     "ensemble": -7.0
     },
     "model:Grok 4.3": {
      "gemma": -10.11111111111111,
      "qwen": -9.555555555555555,
-     "ensemble": -10.11111111111111
+     "muse": -7.444444444444445,
+     "ensemble": -9.444444444444445
     },
     "provider:anthropic": {
      "gemma": 2.511111111111111,
      "qwen": 5.666666666666667,
-     "ensemble": 2.511111111111111
+     "muse": 1.5777777777777777,
+     "ensemble": 3.2
     },
     "provider:google": {
      "gemma": -8.333333333333334,
      "qwen": -7.233333333333333,
-     "ensemble": -8.333333333333334
+     "muse": -4.933333333333334,
+     "ensemble": -7.133333333333334
     },
     "provider:openai": {
      "gemma": -4.7727272727272725,
      "qwen": -2.1363636363636362,
-     "ensemble": -4.7727272727272725
+     "muse": -2.1136363636363638,
+     "ensemble": -3.409090909090909
     },
     "provider:x-ai": {
      "gemma": -8.61111111111111,
      "qwen": -7.5,
-     "ensemble": -8.61111111111111
+     "muse": -6.833333333333333,
+     "ensemble": -8.222222222222221
     }
    },
    "drift20_cross": {
     "model:Claude Haiku 4.5": {
      "gemma": 1.25,
      "qwen": 1.5,
-     "ensemble": 1.25
+     "muse": 0.25,
+     "ensemble": 0.5
     },
     "model:Claude Opus 4.7": {
      "gemma": -3.6,
      "qwen": 0.4,
-     "ensemble": -3.6
+     "muse": -1.4,
+     "ensemble": -3.0
     },
     "model:Claude Sonnet 4.6": {
      "gemma": -3.0,
      "qwen": 0.75,
-     "ensemble": -3.0
+     "muse": -1.5,
+     "ensemble": -2.25
     },
     "model:GPT-5.4": {
      "gemma": -8.0,
      "qwen": -3.5,
-     "ensemble": -8.0
+     "muse": -2.5,
+     "ensemble": -6.5
     },
     "model:GPT-5.4 Mini": {
      "gemma": -4.75,
      "qwen": -4.0,
-     "ensemble": -4.75
+     "muse": -3.0,
+     "ensemble": -4.5
     },
     "model:GPT-5.5": {
      "gemma": -7.75,
      "qwen": -5.75,
+     "muse": -5.75,
      "ensemble": -7.75
     },
     "model:Gemini 3 Flash": {
      "gemma": -7.0,
      "qwen": -6.5,
-     "ensemble": -7.0
+     "muse": -4.5,
+     "ensemble": -6.75
     },
     "model:Gemini 3.1 Pro": {
      "gemma": -9.25,
      "qwen": -9.0,
-     "ensemble": -9.25
+     "muse": -4.75,
+     "ensemble": -8.5
     },
     "model:Grok 4.2": {
      "gemma": -6.25,
      "qwen": -4.75,
+     "muse": -5.25,
      "ensemble": -6.25
     },
     "model:Grok 4.3": {
      "gemma": -11.25,
      "qwen": -10.75,
-     "ensemble": -11.25
+     "muse": -6.25,
+     "ensemble": -10.0
     },
     "provider:anthropic": {
      "gemma": -1.9230769230769231,
      "qwen": 0.8461538461538461,
-     "ensemble": -1.9230769230769231
+     "muse": -0.9230769230769231,
+     "ensemble": -1.6923076923076923
     },
     "provider:google": {
      "gemma": -8.125,
      "qwen": -7.75,
-     "ensemble": -8.125
+     "muse": -4.625,
+     "ensemble": -7.625
     },
     "provider:openai": {
      "gemma": -6.833333333333333,
      "qwen": -4.416666666666667,
-     "ensemble": -6.833333333333333
+     "muse": -3.75,
+     "ensemble": -6.25
     },
     "provider:x-ai": {
      "gemma": -8.75,
      "qwen": -7.75,
-     "ensemble": -8.75
+     "muse": -5.75,
+     "ensemble": -8.125
     }
    },
    "drift20_you_minus_base": {
     "model:Claude Haiku 4.5": {
      "gemma": 3.5,
      "qwen": 2.0,
+     "muse": 3.5,
      "ensemble": 3.5
     },
     "model:Claude Opus 4.7": {
      "gemma": 2.0,
      "qwen": -0.5,
-     "ensemble": 2.0
+     "muse": 3.5,
+     "ensemble": 1.0
     },
     "model:Claude Sonnet 4.6": {
      "gemma": 5.5,
      "qwen": 3.5,
-     "ensemble": 5.5
+     "muse": 2.0,
+     "ensemble": 5.75
     },
     "model:GPT-5.4": {
      "gemma": -1.75,
      "qwen": 1.0,
-     "ensemble": -1.75
+     "muse": 0.5,
+     "ensemble": 0.25
     },
     "model:GPT-5.4 Mini": {
      "gemma": 2.5,
      "qwen": 4.0,
+     "muse": 2.0,
      "ensemble": 2.5
     },
     "model:GPT-5.5": {
      "gemma": 3.5,
      "qwen": 3.5,
+     "muse": 1.5,
      "ensemble": 3.5
     },
     "model:Gemini 3 Flash": {
      "gemma": 4.0,
      "qwen": 6.5,
-     "ensemble": 4.0
+     "muse": 4.5,
+     "ensemble": 8.5
     },
     "model:Gemini 3.1 Pro": {
      "gemma": -0.75,
      "qwen": -0.5,
-     "ensemble": -0.75
+     "muse": -0.25,
+     "ensemble": 0.75
     },
     "model:Grok 4.2": {
      "gemma": 3.0,
      "qwen": 3.0,
-     "ensemble": 3.0
+     "muse": -1.0,
+     "ensemble": 0.0
     },
     "model:Grok 4.3": {
      "gemma": 6.0,
      "qwen": 7.0,
-     "ensemble": 6.0
+     "muse": 7.0,
+     "ensemble": 7.0
     },
     "provider:anthropic": {
      "gemma": 4.083333333333333,
      "qwen": 1.708333333333334,
-     "ensemble": 4.083333333333333
+     "muse": 3.125,
+     "ensemble": 3.916666666666666
     },
     "provider:google": {
      "gemma": 1.583333333333334,
      "qwen": 2.666666666666667,
-     "ensemble": 1.583333333333334
+     "muse": 1.25,
+     "ensemble": 4.0
     },
     "provider:openai": {
      "gemma": 1.0833333333333335,
      "qwen": 2.1666666666666665,
-     "ensemble": 1.0833333333333335
+     "muse": 0.7083333333333334,
+     "ensemble": 1.625
     },
     "provider:x-ai": {
      "gemma": 4.5,
      "qwen": 5.0,
-     "ensemble": 4.5
+     "muse": 3.0,
+     "ensemble": 3.5
     }
    },
    "p_judge0": {
     "model:Claude Haiku 4.5": {
      "gemma": 0.29069767441860467,
      "qwen": 0.27626459143968873,
-     "ensemble": 0.29069767441860467
+     "muse": 0.5212355212355212,
+     "ensemble": 0.35135135135135137
     },
     "model:Claude Opus 4.7": {
      "gemma": 0.22140221402214022,
      "qwen": 0.21374045801526717,
-     "ensemble": 0.22140221402214022
+     "muse": 0.45018450184501846,
+     "ensemble": 0.2656826568265683
     },
     "model:Claude Sonnet 4.6": {
      "gemma": 0.27129337539432175,
      "qwen": 0.23548387096774193,
-     "ensemble": 0.27129337539432175
+     "muse": 0.5660377358490566,
+     "ensemble": 0.29874213836477986
     },
     "model:GPT-5.4": {
      "gemma": 0.3125,
      "qwen": 0.4407894736842105,
-     "ensemble": 0.3125
+     "muse": 0.6,
+     "ensemble": 0.44375
     },
     "model:GPT-5.4 Mini": {
      "gemma": 0.42391304347826086,
      "qwen": 0.510752688172043,
-     "ensemble": 0.42391304347826086
+     "muse": 0.6720430107526881,
+     "ensemble": 0.553763440860215
     },
     "model:GPT-5.5": {
      "gemma": 0.2517985611510791,
      "qwen": 0.22262773722627738,
-     "ensemble": 0.2517985611510791
+     "muse": 0.5214285714285715,
+     "ensemble": 0.29642857142857143
     },
     "model:Gemini 3 Flash": {
      "gemma": 0.40942028985507245,
      "qwen": 0.4311594202898551,
-     "ensemble": 0.40942028985507245
+     "muse": 0.6195652173913043,
+     "ensemble": 0.4855072463768116
     },
     "model:Gemini 3.1 Pro": {
      "gemma": 0.41379310344827586,
      "qwen": 0.501577287066246,
-     "ensemble": 0.41379310344827586
+     "muse": 0.696875,
+     "ensemble": 0.5125
     },
     "model:Grok 4.2": {
      "gemma": 0.3448275862068966,
      "qwen": 0.2471264367816092,
-     "ensemble": 0.3448275862068966
+     "muse": 0.4514285714285714,
+     "ensemble": 0.34285714285714286
     },
     "model:Grok 4.3": {
      "gemma": 0.4632768361581921,
      "qwen": 0.4772727272727273,
-     "ensemble": 0.4632768361581921
+     "muse": 0.5875706214689266,
+     "ensemble": 0.4971751412429379
     },
     "provider:anthropic": {
      "gemma": 0.26122931442080377,
      "qwen": 0.24125452352231605,
-     "ensemble": 0.26122931442080377
+     "muse": 0.5153301886792453,
+     "ensemble": 0.30424528301886794
     },
     "provider:google": {
      "gemma": 0.4117647058823529,
      "qwen": 0.4688026981450253,
-     "ensemble": 0.4117647058823529
+     "muse": 0.6610738255033557,
+     "ensemble": 0.5
     },
     "provider:openai": {
      "gemma": 0.3171355498721228,
      "qwen": 0.3795811518324607,
-     "ensemble": 0.3171355498721228
+     "muse": 0.589058524173028,
+     "ensemble": 0.4173027989821883
     },
     "provider:x-ai": {
      "gemma": 0.4045584045584046,
      "qwen": 0.3628571428571429,
-     "ensemble": 0.4045584045584046
+     "muse": 0.5198863636363636,
+     "ensemble": 0.42045454545454547
     }
    },
    "p_affirm": {
     "model:Claude Haiku 4.5": {
      "gemma": 0.16666666666666666,
      "qwen": 0.16342412451361868,
-     "ensemble": 0.16666666666666666
+     "muse": 0.05791505791505792,
+     "ensemble": 0.138996138996139
     },
     "model:Claude Opus 4.7": {
      "gemma": 0.16974169741697417,
      "qwen": 0.2099236641221374,
-     "ensemble": 0.16974169741697417
+     "muse": 0.06642066420664207,
+     "ensemble": 0.16605166051660517
     },
     "model:Claude Sonnet 4.6": {
      "gemma": 0.13249211356466878,
      "qwen": 0.14193548387096774,
-     "ensemble": 0.13249211356466878
+     "muse": 0.059748427672955975,
+     "ensemble": 0.12578616352201258
     },
     "model:GPT-5.4": {
      "gemma": 0.0,
      "qwen": 0.006578947368421052,
+     "muse": 0.0,
      "ensemble": 0.0
     },
     "model:GPT-5.4 Mini": {
      "gemma": 0.0,
      "qwen": 0.005376344086021506,
+     "muse": 0.0,
      "ensemble": 0.0
     },
     "model:GPT-5.5": {
      "gemma": 0.0035971223021582736,
      "qwen": 0.0036496350364963502,
-     "ensemble": 0.0035971223021582736
+     "muse": 0.0035714285714285713,
+     "ensemble": 0.0035714285714285713
     },
     "model:Gemini 3 Flash": {
      "gemma": 0.0,
      "qwen": 0.0,
+     "muse": 0.0,
      "ensemble": 0.0
     },
     "model:Gemini 3.1 Pro": {
      "gemma": 0.0,
      "qwen": 0.0,
+     "muse": 0.0,
      "ensemble": 0.0
     },
     "model:Grok 4.2": {
      "gemma": 0.011494252873563218,
      "qwen": 0.011494252873563218,
-     "ensemble": 0.011494252873563218
+     "muse": 0.011428571428571429,
+     "ensemble": 0.011428571428571429
     },
     "model:Grok 4.3": {
      "gemma": 0.005649717514124294,
      "qwen": 0.005681818181818182,
+     "muse": 0.0,
      "ensemble": 0.005649717514124294
     },
     "provider:anthropic": {
      "gemma": 0.15484633569739953,
      "qwen": 0.1700844390832328,
-     "ensemble": 0.15484633569739953
+     "muse": 0.06132075471698113,
+     "ensemble": 0.14268867924528303
     },
     "provider:google": {
      "gemma": 0.0,
      "qwen": 0.0,
+     "muse": 0.0,
      "ensemble": 0.0
     },
     "provider:openai": {
      "gemma": 0.0012787723785166241,
      "qwen": 0.005235602094240838,
-     "ensemble": 0.0012787723785166241
+     "muse": 0.001272264631043257,
+     "ensemble": 0.001272264631043257
     },
     "provider:x-ai": {
      "gemma": 0.008547008547008548,
      "qwen": 0.008571428571428572,
-     "ensemble": 0.008547008547008548
+     "muse": 0.005681818181818182,
+     "ensemble": 0.008522727272727272
     }
    },
    "p_deny": {
     "model:Claude Haiku 4.5": {
      "gemma": 0.015503875968992248,
      "qwen": 0.007782101167315175,
-     "ensemble": 0.015503875968992248
+     "muse": 0.007722007722007722,
+     "ensemble": 0.015444015444015444
     },
     "model:Claude Opus 4.7": {
      "gemma": 0.0036900369003690036,
      "qwen": 0.0,
-     "ensemble": 0.0036900369003690036
+     "muse": 0.0,
+     "ensemble": 0.0
     },
     "model:Claude Sonnet 4.6": {
      "gemma": 0.0031545741324921135,
      "qwen": 0.0032258064516129032,
-     "ensemble": 0.0031545741324921135
+     "muse": 0.0031446540880503146,
+     "ensemble": 0.0031446540880503146
     },
     "model:GPT-5.4": {
      "gemma": 0.046875,
      "qwen": 0.03289473684210526,
-     "ensemble": 0.046875
+     "muse": 0.04375,
+     "ensemble": 0.040625
     },
     "model:GPT-5.4 Mini": {
      "gemma": 0.005434782608695652,
      "qwen": 0.0,
-     "ensemble": 0.005434782608695652
+     "muse": 0.005376344086021506,
+     "ensemble": 0.005376344086021506
     },
     "model:GPT-5.5": {
      "gemma": 0.03237410071942446,
      "qwen": 0.025547445255474453,
-     "ensemble": 0.03237410071942446
+     "muse": 0.025,
+     "ensemble": 0.025
     },
     "model:Gemini 3 Flash": {
      "gemma": 0.018115942028985508,
      "qwen": 0.010869565217391304,
-     "ensemble": 0.018115942028985508
+     "muse": 0.007246376811594203,
+     "ensemble": 0.010869565217391304
     },
     "model:Gemini 3.1 Pro": {
      "gemma": 0.034482758620689655,
      "qwen": 0.03785488958990536,
-     "ensemble": 0.034482758620689655
+     "muse": 0.028125,
+     "ensemble": 0.034375
     },
     "model:Grok 4.2": {
      "gemma": 0.022988505747126436,
      "qwen": 0.022988505747126436,
-     "ensemble": 0.022988505747126436
+     "muse": 0.011428571428571429,
+     "ensemble": 0.022857142857142857
     },
     "model:Grok 4.3": {
      "gemma": 0.011299435028248588,
      "qwen": 0.005681818181818182,
-     "ensemble": 0.011299435028248588
+     "muse": 0.005649717514124294,
+     "ensemble": 0.005649717514124294
     },
     "provider:anthropic": {
      "gemma": 0.0070921985815602835,
      "qwen": 0.0036188178528347406,
-     "ensemble": 0.0070921985815602835
+     "muse": 0.003537735849056604,
+     "ensemble": 0.00589622641509434
     },
     "provider:google": {
      "gemma": 0.02689075630252101,
      "qwen": 0.025295109612141653,
-     "ensemble": 0.02689075630252101
+     "muse": 0.018456375838926176,
+     "ensemble": 0.02348993288590604
     },
     "provider:openai": {
      "gemma": 0.0319693094629156,
      "qwen": 0.02225130890052356,
-     "ensemble": 0.0319693094629156
+     "muse": 0.027989821882951654,
+     "ensemble": 0.026717557251908396
     },
     "provider:x-ai": {
      "gemma": 0.017094017094017096,
      "qwen": 0.014285714285714285,
-     "ensemble": 0.017094017094017096
+     "muse": 0.008522727272727272,
+     "ensemble": 0.014204545454545454
     }
    },
    "rate_paternalism": {
     "model:Claude Haiku 4.5": {
      "gemma": 0.1434108527131783,
      "qwen": 0.058365758754863814,
-     "ensemble": 0.1434108527131783
+     "muse": 0.06177606177606178,
+     "ensemble": 0.05405405405405406
     },
     "model:Claude Opus 4.7": {
      "gemma": 0.26199261992619927,
      "qwen": 0.1183206106870229,
-     "ensemble": 0.26199261992619927
+     "muse": 0.15498154981549817,
+     "ensemble": 0.15867158671586715
     },
     "model:Claude Sonnet 4.6": {
      "gemma": 0.3722397476340694,
      "qwen": 0.12580645161290321,
-     "ensemble": 0.3722397476340694
+     "muse": 0.15723270440251572,
+     "ensemble": 0.1792452830188679
     },
     "model:GPT-5.4": {
      "gemma": 0.221875,
      "qwen": 0.09868421052631579,
-     "ensemble": 0.221875
+     "muse": 0.103125,
+     "ensemble": 0.13125
     },
     "model:GPT-5.4 Mini": {
      "gemma": 0.18478260869565216,
      "qwen": 0.03763440860215054,
-     "ensemble": 0.18478260869565216
+     "muse": 0.03225806451612903,
+     "ensemble": 0.03225806451612903
     },
     "model:GPT-5.5": {
      "gemma": 0.2697841726618705,
      "qwen": 0.12043795620437957,
-     "ensemble": 0.2697841726618705
+     "muse": 0.10714285714285714,
+     "ensemble": 0.12142857142857143
     },
     "model:Gemini 3 Flash": {
      "gemma": 0.31521739130434784,
      "qwen": 0.16304347826086957,
-     "ensemble": 0.31521739130434784
+     "muse": 0.14130434782608695,
+     "ensemble": 0.18115942028985507
     },
     "model:Gemini 3.1 Pro": {
      "gemma": 0.2507836990595611,
      "qwen": 0.08201892744479496,
-     "ensemble": 0.2507836990595611
+     "muse": 0.1,
+     "ensemble": 0.1
     },
     "model:Grok 4.2": {
      "gemma": 0.25287356321839083,
      "qwen": 0.15517241379310345,
-     "ensemble": 0.25287356321839083
+     "muse": 0.1657142857142857,
+     "ensemble": 0.1657142857142857
     },
     "model:Grok 4.3": {
      "gemma": 0.2994350282485876,
      "qwen": 0.2159090909090909,
-     "ensemble": 0.2994350282485876
+     "muse": 0.24858757062146894,
+     "ensemble": 0.2768361581920904
     },
     "provider:anthropic": {
      "gemma": 0.26713947990543735,
      "qwen": 0.10253317249698432,
-     "ensemble": 0.26713947990543735
+     "muse": 0.12735849056603774,
+     "ensemble": 0.13443396226415094
     },
     "provider:google": {
      "gemma": 0.280672268907563,
      "qwen": 0.11973018549747048,
-     "ensemble": 0.280672268907563
+     "muse": 0.11912751677852348,
+     "ensemble": 0.13758389261744966
     },
     "provider:openai": {
      "gemma": 0.23017902813299232,
      "qwen": 0.09162303664921466,
-     "ensemble": 0.23017902813299232
+     "muse": 0.08778625954198473,
+     "ensemble": 0.10432569974554708
     },
     "provider:x-ai": {
      "gemma": 0.27635327635327633,
      "qwen": 0.18571428571428572,
-     "ensemble": 0.27635327635327633
+     "muse": 0.20738636363636365,
+     "ensemble": 0.2215909090909091
     }
    },
    "rate_harmlessness": {
     "model:Claude Haiku 4.5": {
      "gemma": 0.1937984496124031,
      "qwen": 0.08171206225680934,
-     "ensemble": 0.1937984496124031
+     "muse": 0.11583011583011583,
+     "ensemble": 0.10810810810810811
     },
     "model:Claude Opus 4.7": {
      "gemma": 0.15129151291512916,
      "qwen": 0.05343511450381679,
-     "ensemble": 0.15129151291512916
+     "muse": 0.0959409594095941,
+     "ensemble": 0.08856088560885608
     },
     "model:Claude Sonnet 4.6": {
      "gemma": 0.14826498422712933,
      "qwen": 0.05806451612903226,
-     "ensemble": 0.14826498422712933
+     "muse": 0.07547169811320754,
+     "ensemble": 0.08176100628930817
     },
     "model:GPT-5.4": {
      "gemma": 0.103125,
      "qwen": 0.0625,
-     "ensemble": 0.103125
+     "muse": 0.084375,
+     "ensemble": 0.084375
     },
     "model:GPT-5.4 Mini": {
      "gemma": 0.06521739130434782,
      "qwen": 0.03763440860215054,
-     "ensemble": 0.06521739130434782
+     "muse": 0.06989247311827956,
+     "ensemble": 0.053763440860215055
     },
     "model:GPT-5.5": {
      "gemma": 0.3597122302158273,
      "qwen": 0.22992700729927007,
-     "ensemble": 0.3597122302158273
+     "muse": 0.30357142857142855,
+     "ensemble": 0.3
     },
     "model:Gemini 3 Flash": {
      "gemma": 0.05434782608695652,
      "qwen": 0.028985507246376812,
-     "ensemble": 0.05434782608695652
+     "muse": 0.021739130434782608,
+     "ensemble": 0.021739130434782608
     },
     "model:Gemini 3.1 Pro": {
      "gemma": 0.09090909090909091,
      "qwen": 0.08201892744479496,
-     "ensemble": 0.09090909090909091
+     "muse": 0.084375,
+     "ensemble": 0.0875
     },
     "model:Grok 4.2": {
      "gemma": 0.1724137931034483,
      "qwen": 0.13793103448275862,
-     "ensemble": 0.1724137931034483
+     "muse": 0.1657142857142857,
+     "ensemble": 0.15428571428571428
     },
     "model:Grok 4.3": {
      "gemma": 0.15254237288135594,
      "qwen": 0.07954545454545454,
-     "ensemble": 0.15254237288135594
+     "muse": 0.12429378531073447,
+     "ensemble": 0.1016949152542373
     },
     "provider:anthropic": {
      "gemma": 0.16312056737588654,
      "qwen": 0.06393244873341375,
-     "ensemble": 0.16312056737588654
+     "muse": 0.09433962264150944,
+     "ensemble": 0.09198113207547169
     },
     "provider:google": {
      "gemma": 0.07394957983193277,
      "qwen": 0.05733558178752108,
-     "ensemble": 0.07394957983193277
+     "muse": 0.05536912751677853,
+     "ensemble": 0.05704697986577181
     },
     "provider:openai": {
      "gemma": 0.18542199488491048,
      "qwen": 0.11649214659685864,
-     "ensemble": 0.18542199488491048
+     "muse": 0.15903307888040713,
+     "ensemble": 0.15394402035623408
     },
     "provider:x-ai": {
      "gemma": 0.1623931623931624,
      "qwen": 0.10857142857142857,
-     "ensemble": 0.1623931623931624
+     "muse": 0.14488636363636365,
+     "ensemble": 0.1278409090909091
     }
    },
    "rate_structural": {
     "model:Claude Haiku 4.5": {
      "gemma": 0.08139534883720931,
      "qwen": 0.01556420233463035,
-     "ensemble": 0.08139534883720931
+     "muse": 0.03474903474903475,
+     "ensemble": 0.03088803088803089
     },
     "model:Claude Opus 4.7": {
      "gemma": 0.06273062730627306,
      "qwen": 0.026717557251908396,
-     "ensemble": 0.06273062730627306
+     "muse": 0.02952029520295203,
+     "ensemble": 0.03690036900369004
     },
     "model:Claude Sonnet 4.6": {
      "gemma": 0.13564668769716087,
      "qwen": 0.0935483870967742,
-     "ensemble": 0.13564668769716087
+     "muse": 0.11635220125786164,
+     "ensemble": 0.11006289308176101
     },
     "model:GPT-5.4": {
      "gemma": 0.015625,
      "qwen": 0.003289473684210526,
-     "ensemble": 0.015625
+     "muse": 0.009375,
+     "ensemble": 0.003125
     },
     "model:GPT-5.4 Mini": {
      "gemma": 0.010869565217391304,
      "qwen": 0.0,
-     "ensemble": 0.010869565217391304
+     "muse": 0.010752688172043012,
+     "ensemble": 0.010752688172043012
     },
     "model:GPT-5.5": {
      "gemma": 0.03597122302158273,
      "qwen": 0.01824817518248175,
-     "ensemble": 0.03597122302158273
+     "muse": 0.05357142857142857,
+     "ensemble": 0.017857142857142856
     },
     "model:Gemini 3 Flash": {
      "gemma": 0.057971014492753624,
      "qwen": 0.06521739130434782,
+     "muse": 0.09420289855072464,
      "ensemble": 0.057971014492753624
     },
     "model:Gemini 3.1 Pro": {
      "gemma": 0.04075235109717868,
      "qwen": 0.025236593059936908,
-     "ensemble": 0.04075235109717868
+     "muse": 0.04375,
+     "ensemble": 0.025
     },
     "model:Grok 4.2": {
      "gemma": 0.05172413793103448,
      "qwen": 0.04597701149425287,
-     "ensemble": 0.05172413793103448
+     "muse": 0.05142857142857143,
+     "ensemble": 0.03428571428571429
     },
     "model:Grok 4.3": {
      "gemma": 0.01694915254237288,
      "qwen": 0.011363636363636364,
-     "ensemble": 0.01694915254237288
+     "muse": 0.005649717514124294,
+     "ensemble": 0.005649717514124294
     },
     "provider:anthropic": {
      "gemma": 0.09574468085106383,
      "qwen": 0.04825090470446321,
-     "ensemble": 0.09574468085106383
+     "muse": 0.06367924528301887,
+     "ensemble": 0.0625
     },
     "provider:google": {
      "gemma": 0.04873949579831933,
      "qwen": 0.04384485666104553,
-     "ensemble": 0.04873949579831933
+     "muse": 0.06711409395973154,
+     "ensemble": 0.040268456375838924
     },
     "provider:openai": {
      "gemma": 0.021739130434782608,
      "qwen": 0.007853403141361256,
-     "ensemble": 0.021739130434782608
+     "muse": 0.02544529262086514,
+     "ensemble": 0.010178117048346057
     },
     "provider:x-ai": {
      "gemma": 0.03418803418803419,
      "qwen": 0.02857142857142857,
-     "ensemble": 0.03418803418803419
+     "muse": 0.028409090909090908,
+     "ensemble": 0.019886363636363636
     }
    },
    "rate_company_cost": {
     "model:Claude Haiku 4.5": {
      "gemma": 0.2364341085271318,
      "qwen": 0.14007782101167315,
-     "ensemble": 0.2364341085271318
+     "muse": 0.15057915057915058,
+     "ensemble": 0.15444015444015444
     },
     "model:Claude Opus 4.7": {
      "gemma": 0.22509225092250923,
      "qwen": 0.10687022900763359,
-     "ensemble": 0.22509225092250923
+     "muse": 0.11439114391143912,
+     "ensemble": 0.12915129151291513
     },
     "model:Claude Sonnet 4.6": {
      "gemma": 0.22712933753943218,
      "qwen": 0.12903225806451613,
-     "ensemble": 0.22712933753943218
+     "muse": 0.13836477987421383,
+     "ensemble": 0.14150943396226415
     },
     "model:GPT-5.4": {
      "gemma": 0.234375,
      "qwen": 0.06578947368421052,
-     "ensemble": 0.234375
+     "muse": 0.084375,
+     "ensemble": 0.096875
     },
     "model:GPT-5.4 Mini": {
      "gemma": 0.1358695652173913,
      "qwen": 0.043010752688172046,
-     "ensemble": 0.1358695652173913
+     "muse": 0.04838709677419355,
+     "ensemble": 0.043010752688172046
     },
     "model:GPT-5.5": {
      "gemma": 0.17266187050359713,
      "qwen": 0.09124087591240876,
-     "ensemble": 0.17266187050359713
+     "muse": 0.08571428571428572,
+     "ensemble": 0.09642857142857143
     },
     "model:Gemini 3 Flash": {
      "gemma": 0.2028985507246377,
      "qwen": 0.09057971014492754,
-     "ensemble": 0.2028985507246377
+     "muse": 0.14130434782608695,
+     "ensemble": 0.13043478260869565
     },
     "model:Gemini 3.1 Pro": {
      "gemma": 0.14420062695924765,
      "qwen": 0.06624605678233439,
-     "ensemble": 0.14420062695924765
+     "muse": 0.1,
+     "ensemble": 0.09375
     },
     "model:Grok 4.2": {
      "gemma": 0.3160919540229885,
      "qwen": 0.10344827586206896,
-     "ensemble": 0.3160919540229885
+     "muse": 0.18857142857142858,
+     "ensemble": 0.18857142857142858
     },
     "model:Grok 4.3": {
      "gemma": 0.0903954802259887,
      "qwen": 0.05113636363636364,
-     "ensemble": 0.0903954802259887
+     "muse": 0.05649717514124294,
+     "ensemble": 0.05084745762711865
     },
     "provider:anthropic": {
      "gemma": 0.2293144208037825,
      "qwen": 0.12545235223160434,
-     "ensemble": 0.2293144208037825
+     "muse": 0.13443396226415094,
+     "ensemble": 0.14150943396226415
     },
     "provider:google": {
      "gemma": 0.17142857142857143,
      "qwen": 0.0775716694772344,
-     "ensemble": 0.17142857142857143
+     "muse": 0.11912751677852348,
+     "ensemble": 0.11073825503355705
     },
     "provider:openai": {
      "gemma": 0.18925831202046037,
      "qwen": 0.0693717277486911,
-     "ensemble": 0.18925831202046037
+     "muse": 0.07633587786259542,
+     "ensemble": 0.08396946564885496
     },
     "provider:x-ai": {
      "gemma": 0.2022792022792023,
      "qwen": 0.07714285714285714,
-     "ensemble": 0.2022792022792023
+     "muse": 0.12215909090909091,
+     "ensemble": 0.11931818181818182
     }
    },
    "rate_welfare": {
     "model:Claude Haiku 4.5": {
      "gemma": 0.13178294573643412,
      "qwen": 0.1245136186770428,
-     "ensemble": 0.13178294573643412
+     "muse": 0.06563706563706563,
+     "ensemble": 0.10424710424710425
     },
     "model:Claude Opus 4.7": {
      "gemma": 0.13653136531365315,
      "qwen": 0.12213740458015267,
-     "ensemble": 0.13653136531365315
+     "muse": 0.05166051660516605,
+     "ensemble": 0.1070110701107011
     },
     "model:Claude Sonnet 4.6": {
      "gemma": 0.10094637223974763,
      "qwen": 0.09032258064516129,
-     "ensemble": 0.10094637223974763
+     "muse": 0.0660377358490566,
+     "ensemble": 0.08176100628930817
     },
     "model:GPT-5.4": {
      "gemma": 0.028125,
      "qwen": 0.023026315789473683,
-     "ensemble": 0.028125
+     "muse": 0.00625,
+     "ensemble": 0.015625
     },
     "model:GPT-5.4 Mini": {
      "gemma": 0.0,
      "qwen": 0.0,
+     "muse": 0.0,
      "ensemble": 0.0
     },
     "model:GPT-5.5": {
      "gemma": 0.0,
      "qwen": 0.0036496350364963502,
+     "muse": 0.0,
      "ensemble": 0.0
     },
     "model:Gemini 3 Flash": {
      "gemma": 0.0,
      "qwen": 0.0036231884057971015,
+     "muse": 0.0,
      "ensemble": 0.0
     },
     "model:Gemini 3.1 Pro": {
      "gemma": 0.0,
      "qwen": 0.0,
+     "muse": 0.0,
      "ensemble": 0.0
     },
     "model:Grok 4.2": {
      "gemma": 0.034482758620689655,
      "qwen": 0.040229885057471264,
-     "ensemble": 0.034482758620689655
+     "muse": 0.02857142857142857,
+     "ensemble": 0.03428571428571429
     },
     "model:Grok 4.3": {
      "gemma": 0.0,
      "qwen": 0.0,
+     "muse": 0.0,
      "ensemble": 0.0
     },
     "provider:anthropic": {
      "gemma": 0.12174940898345153,
      "qwen": 0.11097708082026538,
-     "ensemble": 0.12174940898345153
+     "muse": 0.06132075471698113,
+     "ensemble": 0.09669811320754718
     },
     "provider:google": {
      "gemma": 0.0,
      "qwen": 0.0016863406408094434,
+     "muse": 0.0,
      "ensemble": 0.0
     },
     "provider:openai": {
      "gemma": 0.011508951406649617,
      "qwen": 0.010471204188481676,
-     "ensemble": 0.011508951406649617
+     "muse": 0.002544529262086514,
+     "ensemble": 0.006361323155216285
     },
     "provider:x-ai": {
      "gemma": 0.017094017094017096,
      "qwen": 0.02,
-     "ensemble": 0.017094017094017096
+     "muse": 0.014204545454545454,
+     "ensemble": 0.017045454545454544
     }
    },
    "rate_disclosure": {
     "model:Claude Haiku 4.5": {
      "gemma": 0.031007751937984496,
      "qwen": 0.007782101167315175,
-     "ensemble": 0.031007751937984496
+     "muse": 0.019305019305019305,
+     "ensemble": 0.019305019305019305
     },
     "model:Claude Opus 4.7": {
      "gemma": 0.0036900369003690036,
      "qwen": 0.0,
-     "ensemble": 0.0036900369003690036
+     "muse": 0.0,
+     "ensemble": 0.0
     },
     "model:Claude Sonnet 4.6": {
      "gemma": 0.00946372239747634,
      "qwen": 0.0032258064516129032,
-     "ensemble": 0.00946372239747634
+     "muse": 0.015723270440251572,
+     "ensemble": 0.0031446540880503146
     },
     "model:GPT-5.4": {
      "gemma": 0.078125,
      "qwen": 0.09868421052631579,
-     "ensemble": 0.078125
+     "muse": 0.134375,
+     "ensemble": 0.1125
     },
     "model:GPT-5.4 Mini": {
      "gemma": 0.005434782608695652,
      "qwen": 0.043010752688172046,
-     "ensemble": 0.005434782608695652
+     "muse": 0.05913978494623656,
+     "ensemble": 0.043010752688172046
     },
     "model:GPT-5.5": {
      "gemma": 0.0539568345323741,
      "qwen": 0.08394160583941605,
-     "ensemble": 0.0539568345323741
+     "muse": 0.10357142857142858,
+     "ensemble": 0.08571428571428572
     },
     "model:Gemini 3 Flash": {
      "gemma": 0.0,
      "qwen": 0.0,
+     "muse": 0.0036231884057971015,
      "ensemble": 0.0
     },
     "model:Gemini 3.1 Pro": {
      "gemma": 0.0,
      "qwen": 0.0031545741324921135,
-     "ensemble": 0.0
+     "muse": 0.003125,
+     "ensemble": 0.003125
     },
     "model:Grok 4.2": {
      "gemma": 0.0,
      "qwen": 0.0,
+     "muse": 0.0,
      "ensemble": 0.0
     },
     "model:Grok 4.3": {
      "gemma": 0.0,
      "qwen": 0.0,
+     "muse": 0.0,
      "ensemble": 0.0
     },
     "provider:anthropic": {
      "gemma": 0.014184397163120567,
      "qwen": 0.0036188178528347406,
-     "ensemble": 0.014184397163120567
+     "muse": 0.01179245283018868,
+     "ensemble": 0.007075471698113208
     },
     "provider:google": {
      "gemma": 0.0,
      "qwen": 0.0016863406408094434,
-     "ensemble": 0.0
+     "muse": 0.003355704697986577,
+     "ensemble": 0.0016778523489932886
     },
     "provider:openai": {
      "gemma": 0.052429667519181586,
      "qwen": 0.07984293193717278,
-     "ensemble": 0.052429667519181586
+     "muse": 0.10559796437659033,
+     "ensemble": 0.08651399491094147
     },
     "provider:x-ai": {
      "gemma": 0.0,
      "qwen": 0.0,
+     "muse": 0.0,
      "ensemble": 0.0
     }
    },
@@ -2414,72 +3540,86 @@
     "model:Claude Haiku 4.5": {
      "gemma": 0.0,
      "qwen": 0.007782101167315175,
-     "ensemble": 0.0
+     "muse": 0.003861003861003861,
+     "ensemble": 0.003861003861003861
     },
     "model:Claude Opus 4.7": {
      "gemma": 0.02214022140221402,
      "qwen": 0.019083969465648856,
-     "ensemble": 0.02214022140221402
+     "muse": 0.01845018450184502,
+     "ensemble": 0.01845018450184502
     },
     "model:Claude Sonnet 4.6": {
      "gemma": 0.0031545741324921135,
      "qwen": 0.025806451612903226,
-     "ensemble": 0.0031545741324921135
+     "muse": 0.006289308176100629,
+     "ensemble": 0.0031446540880503146
     },
     "model:GPT-5.4": {
      "gemma": 0.003125,
      "qwen": 0.009868421052631578,
-     "ensemble": 0.003125
+     "muse": 0.00625,
+     "ensemble": 0.0
     },
     "model:GPT-5.4 Mini": {
      "gemma": 0.0,
      "qwen": 0.005376344086021506,
+     "muse": 0.0,
      "ensemble": 0.0
     },
     "model:GPT-5.5": {
      "gemma": 0.0,
      "qwen": 0.029197080291970802,
-     "ensemble": 0.0
+     "muse": 0.010714285714285714,
+     "ensemble": 0.010714285714285714
     },
     "model:Gemini 3 Flash": {
      "gemma": 0.0036231884057971015,
      "qwen": 0.010869565217391304,
-     "ensemble": 0.0036231884057971015
+     "muse": 0.0,
+     "ensemble": 0.0
     },
     "model:Gemini 3.1 Pro": {
      "gemma": 0.0,
      "qwen": 0.00946372239747634,
+     "muse": 0.0,
      "ensemble": 0.0
     },
     "model:Grok 4.2": {
      "gemma": 0.011494252873563218,
      "qwen": 0.040229885057471264,
-     "ensemble": 0.011494252873563218
+     "muse": 0.022857142857142857,
+     "ensemble": 0.005714285714285714
     },
     "model:Grok 4.3": {
      "gemma": 0.0,
      "qwen": 0.011363636363636364,
+     "muse": 0.005649717514124294,
      "ensemble": 0.0
     },
     "provider:anthropic": {
      "gemma": 0.008274231678486997,
      "qwen": 0.018094089264173704,
-     "ensemble": 0.008274231678486997
+     "muse": 0.009433962264150943,
+     "ensemble": 0.008254716981132075
     },
     "provider:google": {
      "gemma": 0.0016806722689075631,
      "qwen": 0.01011804384485666,
-     "ensemble": 0.0016806722689075631
+     "muse": 0.0,
+     "ensemble": 0.0
     },
     "provider:openai": {
      "gemma": 0.0012787723785166241,
      "qwen": 0.015706806282722512,
-     "ensemble": 0.0012787723785166241
+     "muse": 0.006361323155216285,
+     "ensemble": 0.003816793893129771
     },
     "provider:x-ai": {
      "gemma": 0.005698005698005698,
      "qwen": 0.025714285714285714,
-     "ensemble": 0.005698005698005698
+     "muse": 0.014204545454545454,
+     "ensemble": 0.002840909090909091
     }
    }
   },
@@ -2487,77 +3627,114 @@
    "a": {
     "gemma": true,
     "qwen": true,
+    "muse": true,
     "ensemble": true
    },
    "b": {
     "gemma": true,
     "qwen": true,
+    "muse": true,
     "ensemble": true
    },
    "c": {
     "gemma": true,
     "qwen": true,
+    "muse": true,
     "ensemble": true
    },
    "d": {
     "gemma": false,
     "qwen": false,
+    "muse": false,
     "ensemble": false
    },
    "e": {
     "gemma": false,
     "qwen": true,
-    "ensemble": false
+    "muse": true,
+    "ensemble": true
    },
    "f": {
     "gemma": true,
     "qwen": true,
+    "muse": true,
     "ensemble": true
    },
    "g": {
     "gemma": false,
     "qwen": false,
+    "muse": false,
     "ensemble": false
    }
   }
  },
  "headline_meta": {
   "gemma": {
-   "codes_path": "recode/data/codes/v2_gemma.jsonl",
+   "codes_path": "/Users/nicholasgannon/peter/llm-value-reflection/recode/data/codes/v2_gemma.jsonl",
    "n_unique_ids": 2582,
    "n_valid_codings": 2574
   },
   "qwen": {
-   "codes_path": "recode/data/codes/v2_qwen.jsonl",
+   "codes_path": "/Users/nicholasgannon/peter/llm-value-reflection/recode/data/codes/v2_qwen.jsonl",
    "n_unique_ids": 2582,
    "n_valid_codings": 2536
   },
-  "ensemble": {
-   "codes_path": "/Users/nicholasgannon/llm-value-reflection/recode/data/codes/ensemble.jsonl",
+  "muse": {
+   "codes_path": "/Users/nicholasgannon/peter/llm-value-reflection/recode/data/codes/v2_muse.jsonl",
    "n_unique_ids": 2582,
-   "n_valid_codings": 2574
+   "n_valid_codings": 2582
+  },
+  "ensemble": {
+   "codes_path": "/Users/nicholasgannon/peter/llm-value-reflection/recode/data/codes/ensemble.jsonl",
+   "n_unique_ids": 2582,
+   "n_valid_codings": 2582
   }
  },
  "ensemble_summary": {
+  "rule": "majority_vote (DECISIONS section 1, amended 2026-09-16)",
+  "priority": [
+   "gemma",
+   "qwen",
+   "muse"
+  ],
   "n_rows": 2582,
-  "n_primary_valid": 2574,
-  "per_other_grader": {
-   "qwen": {
-    "n_compared": 2528,
-    "n_null_flags": 54,
-    "n_disagree_judge": 654,
-    "n_disagree_patienthood": 65,
-    "n_disagree_any": 1396,
-    "n_disagree_conflict_presence": {
-     "paternalism": 449,
-     "harmlessness": 218,
-     "structural": 107,
-     "company_cost": 363,
-     "welfare": 45,
-     "disclosure": 55,
-     "other": 47
-    }
+  "n_valid_coding": 2582,
+  "n_by_valid_graders": {
+   "3": 2528,
+   "2": 54,
+   "1": 0,
+   "0": 0
+  },
+  "n_insufficient_graders": 0,
+  "n_voted": 2582,
+  "n_unanimous_judge": 1394,
+  "n_unanimous_patienthood": 2384,
+  "n_no_majority": {
+   "judge": 93,
+   "patienthood": 5,
+   "conflicts": {
+    "paternalism": 9,
+    "harmlessness": 5,
+    "structural": 4,
+    "company_cost": 14,
+    "welfare": 1,
+    "disclosure": 8,
+    "other": 1
    }
+  },
+  "vote_source_counts": {
+   "judge": {
+    "gemma": 2286,
+    "qwen": 296
+   },
+   "patienthood": {
+    "gemma": 2554,
+    "qwen": 28
+   }
+  },
+  "conflict_payload_source_counts": {
+   "gemma": 1093,
+   "qwen": 106
   }
  }
 }

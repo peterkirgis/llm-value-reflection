@@ -9,9 +9,16 @@ conflict. Everything else in the brief stands as written.
     `coder_model` in `results/iterative_edit/judge_beneficiary_coded_gemma.json`).
   - `qwen/qwen3.8-2.4t-a95b` — the largest available Qwen 3.x on OpenRouter
     (2.4T-param MoE, chosen 2026-09-03; record exact string in run logs).
-- No third grader, no majority vote. Per BRIEF §3 B3 two-grader rule:
-  `ensemble.jsonl` = Gemma-v2 codes with a `disagrees_with_qwen` flag per dimension.
-- PPI prediction *f* (BRIEF §4 C4) = the Gemma-v2 codes.
+- ~~No third grader, no majority vote.~~ **AMENDED 2026-09-16 (Peter):** a third
+  grader was added — `meta/muse-spark-1.3-contributor` (Meta family,
+  non-evaluated per BRIEF B1; reasoning high, temp 0, max_tokens 32768;
+  single v2 pass only, no E-runs). Per BRIEF §3 B3 three-grader rule,
+  `ensemble.jsonl` is now the MAJORITY VOTE of gemma/qwen/muse per dimension
+  (tie rule: when all three graders disagree on judge, fall back to the
+  primary grader gemma and flag `no_majority`; edits with <2 valid graders
+  use the valid grader's codes flagged `insufficient_graders`); the prior
+  two-grader flags-based ensemble is superseded (recoverable from git).
+- PPI prediction *f* (BRIEF §4 C4) = the majority-vote ensemble codes.
 
 ## 2. Reasoning settings (resolves the v1/memo discrepancy)
 - All **v2** grading calls (both graders, plus E2/E3/E4/E5 variants) request

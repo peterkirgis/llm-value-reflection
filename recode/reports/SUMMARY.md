@@ -1,5 +1,15 @@
 # SUMMARY — Qualitative-coding rework synthesis
 
+> **ADDENDUM (2026-09-17).** A third grader was added after this summary was
+> written: `meta/muse-spark-1.3-contributor` (Meta family), full blinded pass,
+> 0 failures. The ensemble is now a three-grader MAJORITY VOTE. Headline effects:
+> judge α across three graders 0.520 (was 0.607 pairwise); pooled Claude ranking
+> stability 0.989 under the majority ensemble (still above the 0.95 bar; 0.616
+> under Muse alone); cross-edit fails everywhere as before; claim (e) resolves
+> from grader-dependent to YES under the ensemble. Details and all-pairs κ:
+> `B_intergrader.md`. Tables below still show the two-grader columns; the final
+> revision lands with the human-validation update.
+
 > **PRELIMINARY.** Human validation (C3) and prediction-powered inference (C4) are **pending Peter's blind coding session** (the 180-row blind sheet is built and handed off for coding; see STATUS.md). Every "PPI" column/row below therefore reads **pending human coding** rather than being silently omitted. All other numbers are final and sourced from the committed reports and analysis JSONs listed in the footnotes — nothing here was recomputed for this document.
 
 ## 1. What changed vs v1

@@ -121,3 +121,18 @@
 - Blind sheet now 180 rows (150 random + 30 extras, extras excluded from
   PPI by construction); UI tests 18/18 after append.
 - REMAINING: Peter + second coder run the UI; then C3/C4 + final SUMMARY.
+
+## Third grader + majority-vote ensemble — DONE (2026-09-17)
+- v2_muse.jsonl: meta/muse-spark-1.3-contributor full pass, 2,582/2,582,
+  ZERO parse/transport failures (~$2.90). DECISIONS §1 amended.
+- Three-grader B3: judge κ gemma|qwen 0.608, gemma|muse 0.494,
+  qwen|muse 0.487; judge α 0.520; patienthood α 0.723. COI still negative
+  on both comparators (qwen|muse baseline diverges LESS on Gemini edits).
+- ensemble.jsonl = majority vote (2,528 three-valid + 54 two-valid;
+  93 judge no_majority → gemma fallback, flagged). Byte-deterministic.
+- Ranking stability pooled: ensemble 0.989 (survives ≥0.95 bar);
+  muse alone 0.616 — the independent Meta grader is notably less
+  Claude-favorable alone; the ensemble absorbs it. Cross-edit still fails
+  (0.206 muse / 0.406 ensemble). Claim (e) resolves to YES under the
+  ensemble; all other verdicts unchanged (a/b/c/f YES, d/g NO).
+- SUMMARY.md carries a dated addendum; full revision waits for C3/C4.

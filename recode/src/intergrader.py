@@ -1,6 +1,6 @@
 """Workstream B3 — inter-grader agreement, grader-COI test, per-grader
-headline assembly, and the two-grader ensemble file (BRIEF section 3 B3;
-DECISIONS section 1).
+headline assembly, and the majority-vote ensemble file (BRIEF section 3 B3;
+DECISIONS section 1 as amended 2026-09-16 for the third grader).
 
 What this module computes, for N >= 2 grader codes files over the canonical
 edit frame:
@@ -26,15 +26,19 @@ edit frame:
    by the editing model's provider (both post-hoc unblinded from
    edits.jsonl — the graders never saw either).
 
-3. COI TEST. Gemma-vs-other-grader disagreement rate on Gemini-model edits
-   (editing provider == "google") vs non-Gemini-model edits, per dimension
-   (judge, patienthood, conflict-presence profile, any-of-the-three), with
-   the difference and a cluster bootstrap 95% CI. Resampling unit = the
-   chain, keyed (run_id, model_id, document_id, condition) — the identity
-   convention from bootstrap.build_chains — resampled with replacement
-   independently within the Gemini and non-Gemini groups (a chain's editing
-   provider is constant, so every chain belongs to exactly one group). The
-   report states plainly whether Gemma diverges more on Gemini edits.
+3. COI TEST. Per-pair disagreement rate on Gemini-model edits (editing
+   provider == "google") vs non-Gemini-model edits, per dimension (judge,
+   patienthood, conflict-presence profile, any-of-the-three), with the
+   difference and a cluster bootstrap 95% CI, for EVERY grader pair:
+   pairs containing the COI target (Gemma) are the COI comparators
+   (gemma-vs-qwen, gemma-vs-muse — two independent comparators), and pairs
+   NOT containing the target are the no-COI baseline (qwen-vs-muse).
+   Resampling unit = the chain, keyed (run_id, model_id, document_id,
+   condition) — the identity convention from bootstrap.build_chains —
+   resampled with replacement independently within the Gemini and
+   non-Gemini groups (a chain's editing provider is constant, so every
+   chain belongs to exactly one group). The report states plainly whether
+   Gemma diverges more on Gemini edits, against the baseline pair.
 
 4. HEADLINE PER GRADER. headline.compute_headline (recode/src/headline.py)
    is invoked in-process on each codes file AND on the freshly written
@@ -43,10 +47,21 @@ edit frame:
    drift method A vs B, modal conflict pairs, claim-number JSON — lives in
    the per-label partials that headline.py's own CLI writes.)
 
-5. ENSEMBLE. data/codes/ensemble.jsonl per DECISIONS section 1's
-   two-grader rule: the primary (Gemma) rows, plus per-dimension
-   disagrees_with_<other> flags and the other grader's coding payload for
-   reference. Schema documented on write_ensemble() below.
+5. ENSEMBLE. data/codes/ensemble.jsonl per DECISIONS section 1 as AMENDED
+   2026-09-16: a per-dimension MAJORITY VOTE over the graders with a valid
+   coding for the edit. Judge and patienthood take the modal value when
+   >= 2 valid graders agree; when every valid grader disagrees (a 3-way
+   split, or a 1-1 tie with only two valid graders) the highest-priority
+   valid grader's value is used and the dimension is flagged no_majority
+   (priority = the --graders order: gemma > qwen > muse). Conflict
+   presence is voted per code the same way; the conflict payload
+   (cost_bearer/served_party/mechanism/cost_clause/subtype) for each
+   present code is copied from the highest-priority grader among that
+   code's majority ("present") voters. Edits with < 2 valid graders take
+   the single valid grader's coding flagged insufficient_graders (or a
+   null coding when no grader is valid). Rows carry the composed coding,
+   per-dimension vote counts, flags, payload sources and each grader's
+   coding for reference. Full schema documented on write_ensemble() below.
 
 CLI (paths are arguments; nothing here reads the in-flight v2 outputs
 unless told to):
@@ -54,13 +69,15 @@ unless told to):
     .venv/bin/python recode/src/intergrader.py \
         --graders gemma=recode/data/codes/v2_gemma.jsonl \
                   qwen=recode/data/codes/v2_qwen.jsonl \
+                  muse=recode/data/codes/v2_muse.jsonl \
         --edits recode/data/canonical/edits.jsonl \
         --out-report recode/reports/B_intergrader.md \
         --out-ensemble recode/data/codes/ensemble.jsonl
 
-The FIRST grader listed is the ensemble primary; the COI target defaults
-to the first label containing "gemma" (else the first grader). B and seed
-default to bootstrap.B and seeds.bootstrap in recode/config.yaml.
+The --graders order is the ensemble tie-break/payload priority (FIRST is
+highest); the COI target defaults to the first label containing "gemma"
+(else the first grader). B and seed default to bootstrap.B and
+seeds.bootstrap in recode/config.yaml.
 
 Codes-file convention (shared, via codes_io): append-only JSONL, LAST row
 per edit_id wins; id key is `edit_id` (v2/e-run rows) or `id` (v1.jsonl).
@@ -73,7 +90,8 @@ import datetime
 import json
 import sys
 import warnings
-from collections import defaultdict
+from collections import Counter, defaultdict
+from copy import deepcopy
 from itertools import combinations
 from pathlib import Path
 
@@ -99,10 +117,48 @@ COI_DIMS = ["judge", "patienthood", "conflict_presence", "any"]
 GEMINI_PROVIDER = "google"
 COI_STREAM = 314159  # spawn constant so the COI rng never collides with bootstrap.py's streams
 
+# Committed TWO-grader run (v2_gemma + v2_qwen only; the pre-amendment
+# B_intergrader.json in git history) — the reference points for the
+# "what the third grader changed" delta subsection.
+TWO_GRADER_REFERENCE = {
+    "alpha_judge": 0.6068,   # Krippendorff alpha, judge, n_pairable = 2528
+    "kappa_judge": 0.6077,   # Cohen kappa gemma|qwen, judge, n = 2528
+    # claims (a)-(g) verdicts under the committed v2 codes files
+    "claims": {
+        "a": {"gemma": True, "qwen": True},
+        "b": {"gemma": True, "qwen": True},
+        "c": {"gemma": True, "qwen": True},
+        "d": {"gemma": False, "qwen": False},
+        "e": {"gemma": False, "qwen": True},
+        "f": {"gemma": True, "qwen": True},
+        "g": {"gemma": False, "qwen": False},
+    },
+}
+
 DEFAULT_EDITS = RECODE_ROOT / "data" / "canonical" / "edits.jsonl"
 DEFAULT_REPORT = RECODE_ROOT / "reports" / "B_intergrader.md"
 DEFAULT_ENSEMBLE = RECODE_ROOT / "data" / "codes" / "ensemble.jsonl"
 DEFAULT_JSON = RECODE_ROOT / "data" / "analysis" / "intergrader" / "B_intergrader.json"
+BOOTSTRAP_ANALYSIS_DIR = RECODE_ROOT / "data" / "analysis" / "bootstrap"
+
+
+def ranking_stability_rows(labels: list[str]) -> list[tuple[str, dict | None]]:
+    """(label, ranking-stability JSON or None) per headline column, mapping
+    grader labels to their bootstrap output labels (gemma -> v2_gemma etc.;
+    the ensemble label matches directly)."""
+    out = []
+    for label in labels:
+        found = None
+        for candidate in (f"v2_{label}", label):
+            path = BOOTSTRAP_ANALYSIS_DIR / f"{candidate}_ranking_stability.json"
+            if path.exists():
+                try:
+                    found = json.loads(path.read_text(encoding="utf-8"))
+                except (OSError, json.JSONDecodeError):
+                    found = None
+                break
+        out.append((label, found))
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -392,97 +448,210 @@ def coi_verdict(coi: dict, target: str, other: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Ensemble file (DECISIONS section 1, two-grader rule)
+# Ensemble file (DECISIONS section 1 as AMENDED 2026-09-16: majority vote)
 # ---------------------------------------------------------------------------
 
 
-def build_ensemble_rows(
-    primary_label: str,
-    primary_rows: dict[str, dict],
-    other_rows_by_label: dict[str, dict[str, dict]],
-) -> list[dict]:
-    """Ensemble rows: primary (Gemma) codes + per-grader disagreement flags.
+def majority_vote(values: dict[str, object], priority: list[str]) -> dict:
+    """One nominal dimension's vote over the VALID graders of one edit.
 
-    See write_ensemble() for the full schema. Rows are emitted for every
-    edit_id in the primary codes file (last row per id), sorted by edit_id.
+    values: {grader label: label} for every valid grader; priority: grader
+    precedence, highest first (the --graders order; gemma > qwen > muse).
+
+    Rule (DECISIONS section 1, amended): the modal value wins when >= 2
+    valid graders agree on it (with <= 3 voters that winner is unique).
+    Otherwise every valid grader voted differently — a 3-way split, or a
+    1-1 tie when only two graders are valid — and the highest-priority
+    valid grader's value is used, flagged no_majority. The source is the
+    highest-priority grader whose vote equals the chosen value (for a
+    majority, the primary grader AMONG the majority voters).
     """
+    if not values:
+        raise ValueError("majority_vote needs at least one valid grader")
+    counts = Counter(values.values())
+    top_value, top_count = counts.most_common(1)[0]
+    if top_count >= 2:
+        value, no_majority = top_value, False
+    else:  # all valid graders disagree (each value has exactly one vote)
+        first = next(g for g in priority if g in values)
+        value, no_majority = values[first], True
+    source = next(g for g in priority if g in values and values[g] == value)
+    return {
+        "value": value,
+        "source": source,
+        "no_majority": no_majority,
+        "counts": {str(k): v for k, v in sorted(counts.items(), key=lambda kv: str(kv[0]))},
+    }
+
+
+def compose_majority(valid: dict[str, dict], priority: list[str]) -> dict:
+    """Majority-vote composition for one edit with >= 1 valid coding.
+
+    valid: {grader label: VALID coding}. Returns the composed coding plus
+    votes / flags / sources (see write_ensemble() for field semantics).
+    With exactly one valid grader the coding is that grader's verbatim and
+    insufficient_graders is flagged (votes still recorded, trivially).
+    """
+    insufficient = len(valid) < 2
+    judge_v = majority_vote(
+        {g: codes_io.judge_score(c) for g, c in valid.items()}, priority
+    )
+    pat_v = majority_vote(
+        {g: codes_io.patienthood_level(c) for g, c in valid.items()}, priority
+    )
+    conflicts_out: list[dict] = []
+    conf_votes, conf_flags, conf_sources = {}, {}, {}
+    for code in CONFLICT_CODES:
+        v = majority_vote(
+            {g: bool(codes_io.has_conflict(c, code)) for g, c in valid.items()}, priority
+        )
+        n_present = sum(1 for c in valid.values() if codes_io.has_conflict(c, code))
+        conf_votes[code] = {"present": n_present, "absent": len(valid) - n_present}
+        conf_flags[code] = v["no_majority"]
+        if v["value"]:
+            conf_sources[code] = v["source"]
+            conflicts_out.extend(
+                deepcopy(cf)
+                for cf in codes_io.conflicts(valid[v["source"]])
+                if isinstance(cf, dict) and cf.get("code") == code
+            )
+        else:
+            conf_sources[code] = None
+    if insufficient:
+        # single valid grader: its coding verbatim (not recomposed)
+        only = next(iter(valid))
+        coding = deepcopy(valid[only])
+    else:
+        judge_src = valid[judge_v["source"]]
+        coding = {
+            "summary": judge_src.get("summary"),
+            "judge": deepcopy(judge_src["judge"]),
+            "patienthood": deepcopy(valid[pat_v["source"]]["patienthood"]),
+            "conflicts": conflicts_out,
+        }
+    return {
+        "coding": coding,
+        "votes": {
+            "judge": judge_v["counts"],
+            "patienthood": pat_v["counts"],
+            "conflicts": conf_votes,
+        },
+        "flags": {
+            "insufficient_graders": insufficient,
+            "no_majority": {
+                "judge": judge_v["no_majority"] and not insufficient,
+                "patienthood": pat_v["no_majority"] and not insufficient,
+                "conflicts": {c: conf_flags[c] and not insufficient for c in CONFLICT_CODES},
+            },
+        },
+        "sources": {
+            "judge": judge_v["source"],
+            "patienthood": pat_v["source"],
+            "conflicts": conf_sources,
+        },
+    }
+
+
+def build_ensemble_rows(
+    graders: list[str],
+    rows_by_grader: dict[str, dict[str, dict]],
+) -> list[dict]:
+    """Majority-vote ensemble rows over the UNION of the graders' edit_ids.
+
+    graders is the priority order, highest first (the --graders order).
+    See write_ensemble() for the full schema. One row per edit_id, sorted.
+    """
+    all_ids = sorted(set().union(*(set(rows_by_grader[g]) for g in graders)))
     rows = []
-    for edit_id in sorted(primary_rows):
-        primary_row = primary_rows[edit_id]
-        primary_coding = codes_io.coding_of(primary_row)
+    for edit_id in all_ids:
+        valid = {}
+        for g in graders:
+            coding = codes_io.coding_of(rows_by_grader[g].get(edit_id) or {})
+            if coding is not None:
+                valid[g] = coding
         out = {
             "edit_id": edit_id,
-            "primary_grader": primary_label,
-            "grader": primary_row.get("grader") or primary_row.get("coder_model"),
-            "prompt_sha256": primary_row.get("prompt_sha256"),
-            "timestamp": primary_row.get("timestamp"),
-            "coding": primary_row.get("coding"),
-            "error": primary_row.get("error"),
-            "primary_coding_valid": primary_coding is not None,
+            "ensemble": "majority_vote",
+            "graders": list(graders),
+            "valid_graders": [g for g in graders if g in valid],
+            "n_valid_graders": len(valid),
         }
-        for label, other_rows in other_rows_by_label.items():
-            other_row = other_rows.get(edit_id)
-            other_coding = codes_io.coding_of(other_row) if other_row is not None else None
-            out[f"{label}_coding"] = other_coding
-            if primary_coding is None or other_coding is None:
-                flags = {"judge": None, "patienthood": None, "conflicts": None, "any": None}
-            else:
-                judge_d = codes_io.judge_score(primary_coding) != codes_io.judge_score(
-                    other_coding
-                )
-                pat_d = codes_io.patienthood_level(primary_coding) != codes_io.patienthood_level(
-                    other_coding
-                )
-                conflict_flags = {
-                    code: codes_io.has_conflict(primary_coding, code)
-                    != codes_io.has_conflict(other_coding, code)
-                    for code in CONFLICT_CODES
-                }
-                flags = {
-                    "judge": judge_d,
-                    "patienthood": pat_d,
-                    "conflicts": conflict_flags,
-                    "any": judge_d or pat_d or any(conflict_flags.values()),
-                }
-            out[f"disagrees_with_{label}"] = flags
+        if not valid:
+            out.update(
+                coding=None,
+                error="insufficient_graders: no grader produced a valid coding",
+                votes=None,
+                flags={
+                    "insufficient_graders": True,
+                    "no_majority": {
+                        "judge": False,
+                        "patienthood": False,
+                        "conflicts": {c: False for c in CONFLICT_CODES},
+                    },
+                },
+                sources=None,
+            )
+        else:
+            composed = compose_majority(valid, graders)
+            out.update(coding=composed["coding"], error=None, votes=composed["votes"],
+                       flags=composed["flags"], sources=composed["sources"])
+        for g in graders:
+            out[f"{g}_coding"] = valid.get(g)
         rows.append(out)
     return rows
 
 
 def write_ensemble(path: Path, rows: list[dict]) -> None:
-    """Write data/codes/ensemble.jsonl.
+    """Write data/codes/ensemble.jsonl — the MAJORITY-VOTE ensemble
+    (DECISIONS section 1 as amended 2026-09-16).
 
-    SCHEMA (one JSON object per line, one line per edit_id in the primary
-    codes file; consumers follow the shared codes-file convention — keep the
-    LAST row per edit_id — though this writer emits exactly one):
+    SCHEMA (one JSON object per line, one line per edit_id in the UNION of
+    the graders' codes files; consumers follow the shared codes-file
+    convention — keep the LAST row per edit_id — though this writer emits
+    exactly one):
 
-      edit_id               str   the v1 pipe-id
-      primary_grader        str   label of the primary grader (e.g. "gemma")
-      grader                str?  primary row's grader model string
-      prompt_sha256         str?  carried from the primary row
-      timestamp             str?  carried from the primary row
-      coding                dict|null   THE ensemble code = the primary
-                            (Gemma) coding verbatim; null when the primary
-                            call failed (codes_io.coding_of validates on
-                            read, so downstream tools treat invalid payloads
-                            as uncoded either way)
-      error                 str|null    primary row's error, if any
-      primary_coding_valid  bool  codes_io.coding_of(primary row) != None
-      disagrees_with_<g>    dict  one block per non-primary grader <g>:
-            judge        bool|null   graders' judge scores differ
-            patienthood  bool|null   patienthood levels differ
-            conflicts    {code: bool}|null   per-conflict-code PRESENCE
-                         (>=1 conflict of the code) differs — counts and
-                         attributes are not compared
-            any          bool|null   any of the above
-        All four are null when either grader lacks a valid coding for the
-        edit (per the assignment: edits lacking a valid qwen coding get
-        disagrees_with_qwen = null flags).
-      <g>_coding            dict|null   grader <g>'s VALID coding for
-                            reference; null when missing or invalid.
+      edit_id          str   the v1 pipe-id
+      ensemble         str   always "majority_vote"
+      graders          [str] all grader labels, in priority order
+                       (the --graders order; gemma > qwen > muse)
+      valid_graders    [str] graders whose row passes codes_io.coding_of
+      n_valid_graders  int   len(valid_graders)
+      coding           dict|null  THE ensemble code:
+          - >= 2 valid graders: composed per-dimension majority vote —
+            judge dict (score + external_locus + evidence) copied from the
+            judge-vote source grader, patienthood dict from the
+            patienthood-vote source, conflicts = for each conflict code
+            voted PRESENT by a majority, that code's conflict objects
+            (cost_bearer/served_party/mechanism/cost_clause/subtype)
+            copied verbatim from the highest-priority grader among the
+            code's "present" voters (fallback order gemma > qwen > muse);
+            summary from the judge source. A dimension where every valid
+            grader disagrees (3-way judge/patienthood split, or a 1-1 tie
+            with two valid graders) takes the highest-priority valid
+            grader's value and is flagged in flags.no_majority.
+          - exactly 1 valid grader: that grader's coding VERBATIM
+            (flags.insufficient_graders = true).
+          - 0 valid graders: null (error is set; codes_io.coding_of reads
+            the row as uncoded).
+      error            str|null  set only in the 0-valid-graders case
+      votes            dict|null per-dimension vote counts over the valid
+                       graders: judge {str(score): n}, patienthood
+                       {level: n}, conflicts {code: {present: n, absent: n}}
+      flags            dict:
+          insufficient_graders  bool  < 2 valid graders (DECISIONS tie rule)
+          no_majority           {judge: bool, patienthood: bool,
+                                 conflicts: {code: bool}}  dimension fell
+                                back to the priority grader (always false
+                                when insufficient_graders — a single grader
+                                is not a failed vote)
+      sources          dict|null which grader's payload each dimension uses:
+                       {judge: label, patienthood: label,
+                        conflicts: {code: label|null}} (null = code absent)
+      <g>_coding       dict|null each grader <g>'s VALID coding for
+                       reference; null when missing or invalid.
 
-    NOT carried from the primary rows: raw_response and attempts (bulky;
-    they remain in the primary grader's own codes file).
+    NOT carried from the grader rows: raw_response and attempts (bulky;
+    they remain in each grader's own codes file).
     """
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as handle:
@@ -490,28 +659,49 @@ def write_ensemble(path: Path, rows: list[dict]) -> None:
             handle.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
-def ensemble_summary(rows: list[dict], other_labels: list[str]) -> dict:
-    summary = {
-        "n_rows": len(rows),
-        "n_primary_valid": sum(1 for r in rows if r["primary_coding_valid"]),
-        "per_other_grader": {},
+def ensemble_summary(rows: list[dict], graders: list[str]) -> dict:
+    """Counts over the majority-vote ensemble rows for the report/JSON."""
+    by_n_valid = Counter(r["n_valid_graders"] for r in rows)
+    voted = [r for r in rows if r["n_valid_graders"] >= 2]
+    no_maj = {
+        "judge": sum(1 for r in voted if r["flags"]["no_majority"]["judge"]),
+        "patienthood": sum(1 for r in voted if r["flags"]["no_majority"]["patienthood"]),
+        "conflicts": {
+            code: sum(1 for r in voted if r["flags"]["no_majority"]["conflicts"][code])
+            for code in CONFLICT_CODES
+        },
     }
-    for label in other_labels:
-        key = f"disagrees_with_{label}"
-        compared = [r[key] for r in rows if r[key]["judge"] is not None]
-        n_compared = len(compared)
-        per_code = {
-            code: sum(1 for f in compared if f["conflicts"][code]) for code in CONFLICT_CODES
-        }
-        summary["per_other_grader"][label] = {
-            "n_compared": n_compared,
-            "n_null_flags": len(rows) - n_compared,
-            "n_disagree_judge": sum(1 for f in compared if f["judge"]),
-            "n_disagree_patienthood": sum(1 for f in compared if f["patienthood"]),
-            "n_disagree_any": sum(1 for f in compared if f["any"]),
-            "n_disagree_conflict_presence": per_code,
-        }
-    return summary
+
+    def unanimous(row, dim):
+        counts = row["votes"][dim]
+        return len(counts) == 1 and row["n_valid_graders"] == len(row["graders"])
+
+    source_counts = {
+        dim: dict(Counter(r["sources"][dim] for r in voted)) for dim in ("judge", "patienthood")
+    }
+    conflict_payload_sources = dict(Counter(
+        src
+        for r in voted
+        for src in r["sources"]["conflicts"].values()
+        if src is not None
+    ))
+    return {
+        "rule": "majority_vote (DECISIONS section 1, amended 2026-09-16)",
+        "priority": list(graders),
+        "n_rows": len(rows),
+        "n_valid_coding": sum(1 for r in rows if r["coding"] is not None and not r.get("error")),
+        "n_by_valid_graders": {str(k): by_n_valid.get(k, 0)
+                               for k in range(len(graders), -1, -1)},
+        "n_insufficient_graders": sum(
+            1 for r in rows if r["flags"]["insufficient_graders"]
+        ),
+        "n_voted": len(voted),
+        "n_unanimous_judge": sum(1 for r in voted if unanimous(r, "judge")),
+        "n_unanimous_patienthood": sum(1 for r in voted if unanimous(r, "patienthood")),
+        "n_no_majority": no_maj,
+        "vote_source_counts": source_counts,
+        "conflict_payload_source_counts": conflict_payload_sources,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -713,8 +903,8 @@ def render_report(
             f"{meta['grader_rows'][grader]['n_unique_ids']} unique edit_ids after "
             f"last-row-wins, {meta['grader_rows'][grader]['n_valid']} valid codings "
             f"({meta['grader_rows'][grader]['n_outside_frame']} ids outside the edit frame).")
-    add(f"- Ensemble: `{meta['ensemble_path']}` (written by this run; primary = "
-        f"`{primary_label}`).")
+    add(f"- Ensemble: `{meta['ensemble_path']}` (written by this run; majority "
+        "vote, priority " + " > ".join(f"`{g}`" for g in graders) + ").")
     add("")
     add("**Validity convention** (shared `codes_io` contract): a row's coding is valid "
         "iff its error field is unset, `judge.score` ∈ {−1, 0, +1} and "
@@ -749,16 +939,22 @@ def render_report(
     add("## 4. Grader-COI test: does Gemma diverge more on Gemini edits?")
     add("")
     add("Gemma is a Google model grading Gemini edits (BRIEF §0.3 problem 5). Test: "
-        "the Gemma-vs-other-grader disagreement rate on Gemini-model edits (editing "
-        "provider `google`) vs all other edits, with the difference and a cluster "
-        "bootstrap 95% percentile CI — chains (run_id × model × document × condition, "
-        "the `bootstrap.py` identity convention) resampled with replacement, "
-        "independently within each group.")
+        "the per-pair disagreement rate on Gemini-model edits (editing provider "
+        "`google`) vs all other edits, with the difference and a cluster bootstrap "
+        "95% percentile CI — chains (run_id × model × document × condition, the "
+        "`bootstrap.py` identity convention) resampled with replacement, "
+        "independently within each group. With three graders there are TWO "
+        "independent COI comparators (Gemma against each non-Google grader) and one "
+        "no-COI baseline pair (the two non-Google graders against each other): a "
+        "genuine Gemma-on-Gemini effect should appear in both comparators and NOT "
+        "in the baseline.")
     add("")
     for coi_entry in coi_results:
         coi = coi_entry["result"]
         target, other = coi_entry["target"], coi_entry["other"]
-        add(f"### {target} vs {other}")
+        role = ("COI comparator" if coi_entry.get("role") == "coi"
+                else "no-COI baseline pair")
+        add(f"### {target} vs {other} ({role})")
         add("")
         add(f"- Chains: {coi['n_chains_gemini']} Gemini-model, "
             f"{coi['n_chains_non_gemini']} non-Gemini; both-valid edits: "
@@ -785,12 +981,11 @@ def render_report(
     add("")
     add("Each column is `headline.compute_headline` (recode/src/headline.py) run on "
         "that codes file; the ensemble column is the freshly written "
-        "`ensemble.jsonl` run through the same computation. Because the ensemble's "
-        f"coding payload IS the primary (`{primary_label}`) coding, its column "
-        f"matches `{primary_label}` by construction — it is included to prove the "
-        "file round-trips. Point estimates only; the cluster bootstrap (Workstream "
-        "D) owns uncertainty. Full per-grader detail (drift method A, modal "
-        "conflict pairs, per-claim numbers) is in the per-label headline partials.")
+        "`ensemble.jsonl` — the per-dimension MAJORITY VOTE of the graders — run "
+        "through the same computation. Point estimates only; the cluster bootstrap "
+        "(Workstream D) owns uncertainty. Full per-grader detail (drift method A, "
+        "modal conflict pairs, per-claim numbers) is in the per-label headline "
+        "partials.")
     add("")
     labels = list(headline_meta)
     add("| codes file | unique edit_ids | valid codings |")
@@ -821,30 +1016,135 @@ def render_report(
         "partial (`recode/reports/partials/headline_<label>.md`) and JSON "
         "(`recode/data/analysis/headline/<label>.json`).")
     add("")
-    add("## 6. Ensemble file")
+    add("### Ranking stability (cluster bootstrap, Workstream D)")
     add("")
-    add(f"`{meta['ensemble_path']}` — DECISIONS §1 two-grader rule: no majority vote; "
-        f"the `{primary_label}` codes are primary and every other grader contributes "
-        "per-dimension disagreement flags. Schema is documented on "
-        "`write_ensemble()` in `recode/src/intergrader.py`.")
+    add("P(all three Claude models rank above every non-Claude model on mean judge "
+        "score), from `bootstrap.py`'s B = 2,000 run-level resamples — read from "
+        "`recode/data/analysis/bootstrap/<label>_ranking_stability.json` at render "
+        "time (a dash means that label's bootstrap has not been run yet; rerun "
+        "`bootstrap.py` then this tool to fill it in).")
     add("")
-    add(f"- Rows: {ens_summary['n_rows']} (one per edit_id in the primary codes "
-        f"file); {ens_summary['n_primary_valid']} carry a valid primary coding.")
-    for label in other_labels:
-        s = ens_summary["per_other_grader"][label]
-        add(f"- vs `{label}`: {s['n_compared']} edits compared "
-            f"({s['n_null_flags']} rows have null flags — one grader lacked a valid "
-            f"coding); disagreements: judge {s['n_disagree_judge']}, patienthood "
-            f"{s['n_disagree_patienthood']}, any dimension {s['n_disagree_any']}; "
-            "per-code presence: "
-            + ", ".join(f"{c}={s['n_disagree_conflict_presence'][c]}" for c in CONFLICT_CODES)
-            + ".")
+    add("| codes file | pooled | cross-edit only | B |")
+    add("|---|---|---|---|")
+    for label, stab in ranking_stability_rows(labels):
+        if stab is None:
+            add(f"| {label} | — | — | — |")
+            continue
+        by_stratum = {r["stratum"]: r for r in stab["results"]}
+        add(f"| {label} ({stab['label']}) | "
+            f"{_f(by_stratum['pooled']['fraction_all_claude_above_all_others'])} | "
+            f"{_f(by_stratum['cross_edit']['fraction_all_claude_above_all_others'])} | "
+            f"{stab['B']:,} |")
     add("")
-    add("Per BRIEF §3 B3 (two graders): disagreements are FLAGGED, not voted away — "
-        "downstream consumers can filter on `disagrees_with_*` to run "
-        "agreement-restricted sensitivity slices.")
+    add("## 6. Ensemble file (majority vote)")
     add("")
+    add(f"`{meta['ensemble_path']}` — DECISIONS §1 as **amended 2026-09-16**: the "
+        "ensemble is the per-dimension MAJORITY VOTE of the graders with a valid "
+        "coding (priority/tie-break order "
+        + " > ".join(f"`{g}`" for g in graders) + "). Judge and patienthood take "
+        "the modal value when ≥ 2 valid graders agree; when every valid grader "
+        "disagrees (3-way split, or a 1-1 tie with only two valid graders) the "
+        f"highest-priority valid grader (`{primary_label}` first) supplies the "
+        "value, flagged `no_majority`. Conflict presence is voted per code; each "
+        "present code's payload (cost_bearer/served_party/mechanism/cost_clause/"
+        "subtype) is copied from the highest-priority grader among that code's "
+        "majority voters. Edits with < 2 valid graders take the single valid "
+        "grader's coding flagged `insufficient_graders`. Full schema is documented "
+        "on `write_ensemble()` in `recode/src/intergrader.py`. **This majority-vote "
+        "file supersedes and replaces the earlier two-grader flags-based "
+        "ensemble** (recoverable from git); downstream `bootstrap`/`headline` "
+        "outputs under the `ensemble` label are likewise regenerated from it. "
+        "Human validation and the PPI analysis (Workstream C, DECISIONS §4 — "
+        "DECISIONS §1 defines the PPI prediction *f* as these majority-vote "
+        "ensemble codes) have **not yet been run** against this ensemble and "
+        "remain pending.")
+    add("")
+    s = ens_summary
+    add(f"- Rows: {s['n_rows']} (union of the graders' edit_ids); "
+        f"{s['n_valid_coding']} carry a valid ensemble coding.")
+    add("- Valid graders per edit: "
+        + ", ".join(f"{k} graders → {v} edits" for k, v in s["n_by_valid_graders"].items())
+        + f"; `insufficient_graders` flagged on {s['n_insufficient_graders']} edits.")
+    add(f"- Of the {s['n_voted']} voted edits (≥ 2 valid graders): judge unanimous on "
+        f"{s['n_unanimous_judge']}, patienthood unanimous on "
+        f"{s['n_unanimous_patienthood']} (all-grader-valid rows only counted as "
+        "unanimous).")
+    add(f"- `no_majority` fallbacks to `{primary_label}`-priority: judge "
+        f"{s['n_no_majority']['judge']}, patienthood "
+        f"{s['n_no_majority']['patienthood']}; per conflict code: "
+        + ", ".join(f"{c}={s['n_no_majority']['conflicts'][c]}" for c in CONFLICT_CODES)
+        + " (a 1-1 conflict-presence tie can only occur on 2-valid-grader edits).")
+    add("- Vote payload sources — judge: "
+        + ", ".join(f"{g}={n}" for g, n in sorted(s["vote_source_counts"]["judge"].items()))
+        + "; patienthood: "
+        + ", ".join(f"{g}={n}" for g, n in sorted(s["vote_source_counts"]["patienthood"].items()))
+        + "; conflict payloads: "
+        + (", ".join(f"{g}={n}" for g, n in sorted(s["conflict_payload_source_counts"].items()))
+           or "none")
+        + ".")
+    add("")
+    lines.extend(render_delta(graders, overall, assembly, ens_summary))
     return "\n".join(lines)
+
+
+def render_delta(graders: list[str], overall: dict, assembly: dict,
+                 ens_summary: dict) -> list[str]:
+    """Section 7: 'what the third grader changed' — only rendered when the
+    run has >= 3 graders (the delta is vs the committed two-grader run)."""
+    if len(graders) < 3:
+        return []
+    lines: list[str] = []
+    add = lines.append
+    add("## 7. What the third grader changed (delta vs the two-grader run)")
+    add("")
+    ref = TWO_GRADER_REFERENCE
+    judge = overall["dimensions"]["judge"]
+    kappas = {
+        pair: p["kappa"] for pair, p in judge["pairwise"].items() if p["kappa"] is not None
+    }
+    alpha = judge["alpha"]["alpha"]
+    if kappas:
+        lo_pair = min(kappas, key=kappas.get)
+        hi_pair = max(kappas, key=kappas.get)
+        add(f"- **Judge κ range across pairs**: {_f(kappas[lo_pair])} "
+            f"({lo_pair.replace('|', ' vs ')}) to {_f(kappas[hi_pair])} "
+            f"({hi_pair.replace('|', ' vs ')}); all pairs: "
+            + ", ".join(f"{p.replace('|', ' vs ')} = {_f(k)}" for p, k in kappas.items())
+            + ".")
+    direction = "up" if (alpha or 0) > ref["alpha_judge"] else "down"
+    add(f"- **Judge α**: {_f(alpha)} across all three graders, vs "
+        f"{ref['alpha_judge']:.3f} in the committed two-grader (gemma+qwen) run — "
+        f"{direction} by {_f(abs((alpha or 0) - ref['alpha_judge']))}.")
+    add("")
+    add("Claims (a)–(g): committed two-grader verdicts vs muse alone vs the "
+        "majority ensemble. The committed columns are the reference verdicts from "
+        "the pre-amendment run (v2_gemma / v2_qwen, unchanged files).")
+    add("")
+    labels = [lbl for lbl in assembly["claims"]["a"] if lbl not in ("gemma", "qwen")]
+    add("| claim | gemma (committed) | qwen (committed) | "
+        + " | ".join(labels) + " | changed? |")
+    add("|---|---|---|" + "---|" * (len(labels) + 1))
+    for key in "abcdefg":
+        row = assembly["claims"][key]
+        committed = ref["claims"][key]
+        # sanity: this run's gemma/qwen verdicts should match the committed ones
+        mismatch = (row.get("gemma") is not None and row["gemma"] != committed["gemma"]) or (
+            row.get("qwen") is not None and row["qwen"] != committed["qwen"]
+        )
+        baseline = {committed["gemma"], committed["qwen"]}
+        news = {row.get(lbl) for lbl in labels if row.get(lbl) is not None}
+        changed = "yes" if (news and news != baseline) else "no"
+        note = " (RERUN MISMATCH vs committed)" if mismatch else ""
+        add(f"| ({key}) | {_yn(committed['gemma'])} | {_yn(committed['qwen'])} | "
+            + " | ".join(_yn(row.get(lbl)) for lbl in labels)
+            + f" | {changed}{note} |")
+    add("")
+    add("Reading: a claim's verdict set 'changed' when the {muse, ensemble} "
+        "verdicts differ from the committed {gemma, qwen} verdict set. The one "
+        "committed split was claim (e) (gemma NO / qwen YES); the ensemble column "
+        "above is the majority-vote resolution of such splits.")
+    add("")
+    return lines
 
 
 # ---------------------------------------------------------------------------
@@ -941,25 +1241,25 @@ def main(argv: list[str] | None = None) -> None:
         gemma_like = [g for g in graders if "gemma" in g.lower()]
         coi_target = gemma_like[0] if gemma_like else graders[0]
     coi_results = []
-    for other in graders:
-        if other == coi_target:
-            continue
+    for ga, gb in combinations(graders, 2):
+        # pairs containing the COI target are comparators (target first);
+        # every other pair is a no-COI baseline
+        if coi_target in (ga, gb):
+            target, other, role = coi_target, (gb if ga == coi_target else ga), "coi"
+        else:
+            target, other, role = ga, gb, "baseline"
         result = coi_test(
-            edits, codings_by_grader[coi_target], codings_by_grader[other], B=B, seed=seed
+            edits, codings_by_grader[target], codings_by_grader[other], B=B, seed=seed
         )
-        verdict = coi_verdict(result, coi_target, other)
-        coi_results.append({"target": coi_target, "other": other,
+        verdict = coi_verdict(result, target, other)
+        coi_results.append({"target": target, "other": other, "role": role,
                             "result": result, "verdict": verdict})
-        print(f"[intergrader] COI {coi_target} vs {other}: {verdict}")
+        print(f"[intergrader] COI ({role}) {target} vs {other}: {verdict}")
 
     # ---- 6. ensemble (written BEFORE headline so its column reads the file)
-    ensemble_rows = build_ensemble_rows(
-        primary_label,
-        rows_by_grader[primary_label],
-        {g: rows_by_grader[g] for g in other_labels},
-    )
+    ensemble_rows = build_ensemble_rows(graders, rows_by_grader)
     write_ensemble(args.out_ensemble, ensemble_rows)
-    ens_summary = ensemble_summary(ensemble_rows, other_labels)
+    ens_summary = ensemble_summary(ensemble_rows, graders)
     print(f"[intergrader] wrote {args.out_ensemble} ({ens_summary['n_rows']} rows)")
 
     # ---- 5. headline per grader + ensemble --------------------------------
@@ -1001,8 +1301,8 @@ def main(argv: list[str] | None = None) -> None:
         "agreement_by_document_owner": by_owner,
         "agreement_by_provider": by_provider,
         "coi": [
-            {"target": c["target"], "other": c["other"], "verdict": c["verdict"],
-             **c["result"]}
+            {"target": c["target"], "other": c["other"], "role": c["role"],
+             "verdict": c["verdict"], **c["result"]}
             for c in coi_results
         ],
         "headline_assembly": assembly,
