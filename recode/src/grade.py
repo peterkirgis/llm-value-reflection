@@ -506,7 +506,7 @@ def run_smoke() -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="v2 blinded grading")
-    parser.add_argument("--grader", choices=["gemma", "qwen"])
+    parser.add_argument("--grader", choices=["gemma", "qwen", "muse"])
     parser.add_argument("--limit", type=int)
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--concurrency", type=int, default=8)

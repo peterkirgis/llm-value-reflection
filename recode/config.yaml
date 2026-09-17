@@ -20,6 +20,12 @@ graders:
     temperature: 0.0
     max_tokens: 4096
     reasoning_effort: "high"
+  muse:
+    model_id: "meta/muse-spark-1.3-contributor"  # third grader (Peter, 2026-09-16): Meta family,
+    temperature: 0.0                             # non-evaluated per BRIEF B1; contributor tier
+    max_tokens: 32768                            # ($0.10/$0.20 per M). Single v2 pass only.
+    reasoning_effort: "high"                     # 32k ceiling: hidden reasoning exhausted 4096
+                                                 # before visible JSON (empty-response failures)
 
 # E1 label-swap arms replicate v1 exactly (DECISIONS section 2): Gemma,
 # temperature 0.0, max_tokens 1500, NO reasoning parameter,
