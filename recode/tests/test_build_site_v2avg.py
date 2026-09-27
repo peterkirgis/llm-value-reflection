@@ -255,20 +255,18 @@ def test_verify_sp_requires_exactly_the_four_provider_system_prompts():
 # ---------------------------------------------------------------------------
 
 
-def _apply_patches_to(tmp_path, monkeypatch):
-    """Run the real patch set against a fresh copy of docs/ static files.
+def _apply_patches_to(tmp_path):
+    """Run the real v2avg patch set against a fresh copy of docs/ static files.
     Exercises every exact-match anchor (each is asserted unique inside the
     patch engine) without touching recode/site_v2avg/."""
     for name in b.STATIC_FILES:
         shutil.copyfile(b.DOCS / name, tmp_path / name)
-    monkeypatch.setattr(b, "OUT", tmp_path)
-    b.PATCH_LOG.clear()
-    b.apply_all_patches()
-    return (tmp_path / "facets.js").read_text(encoding="utf-8")
+    patcher = b.apply_all_patches(b.V2AVG, tmp_path)
+    return (tmp_path / "facets.js").read_text(encoding="utf-8"), patcher.log
 
 
-def test_sp_view_patches_anchor_and_render_per_model(tmp_path, monkeypatch):
-    js = _apply_patches_to(tmp_path, monkeypatch)
+def test_sp_view_patches_anchor_and_render_per_model(tmp_path):
+    js, _log = _apply_patches_to(tmp_path)
     # chip appended right after Cross Edit, with label and per-model tooltip
     assert (
         '"implementation_note", "cross_edit", SP_CONDITION];' in js
@@ -294,9 +292,19 @@ def test_sp_view_patches_anchor_and_render_per_model(tmp_path, monkeypatch):
     assert "<h3>Aggregate view &mdash; direction by model</h3>" in js
 
 
-def test_all_patch_anchors_unique_against_docs(tmp_path, monkeypatch):
+def test_all_patch_anchors_unique_against_docs(tmp_path):
     """apply_all_patches raises if any anchor is missing or non-unique in a
     fresh docs/ copy; a clean run is the anchor regression test."""
-    _apply_patches_to(tmp_path, monkeypatch)
-    patched_files = {name for name, _why in b.PATCH_LOG}
+    _js, log = _apply_patches_to(tmp_path)
+    patched_files = {name for name, _why in log}
     assert "facets.js" in patched_files and "app.js" in patched_files
+    assert len(log) == 30  # the frozen v2avg patch set
+
+
+def test_v2avg_patched_files_match_committed_site(tmp_path):
+    """The refactored (variant-parameterized) patch engine must reproduce the
+    committed recode/site_v2avg/ static files byte-for-byte."""
+    _apply_patches_to(tmp_path)
+    for name in b.STATIC_FILES:
+        committed = (b.V2AVG.out_dir / name).read_bytes()
+        assert (tmp_path / name).read_bytes() == committed, name

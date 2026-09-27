@@ -1,21 +1,46 @@
-"""Build recode/site_v2avg/ — a locally served variant of the docs/ GitHub Pages
-site in which EVERY figure/aggregate is computed from the equal-weight AVERAGE of
-the two v2 graders (recode/data/codes/v2_gemma.jsonl + v2_qwen.jsonl).
+"""Build a locally served re-analysis variant of the docs/ GitHub Pages site in
+which EVERY figure/aggregate is computed from a POOLED AVERAGE of the v2
+graders' codes. One builder, several VARIANTS (see "Variant config" below):
 
-What this script does (rerunnable end to end):
+  v2avg   -> recode/site_v2avg/   Gemma 4 + Qwen 3.8 equal-weight average
+             (the original two-grader variant; its output is FROZEN — a
+             rebuild must be byte-identical to the committed site except the
+             embedded generated_at timestamps; see
+             recode/tests/test_build_site_v3pool.py::test_v2avg_reproducible)
+  v3pool  -> recode/site_v3pool/  Gemma 4 + Qwen 3.8 + Muse Spark 1.3 pooled
+             average (three graders from three non-evaluated families)
+
+What a build does (rerunnable end to end):
   1. Copies the site's static assets from docs/ (docs/ itself is never touched).
-  2. Regenerates the two data bundles into recode/site_v2avg/data/:
-       - site.json.gz   (record bundle; per-record BOTH graders' v2 codings plus
-                         precomputed per-edit average fields)
-       - narratives.json (facet stats/stories with grader-averaged dirs/cum/cumsq
+  2. Regenerates the two data bundles into <out_dir>/data/:
+       - site.json.gz   (record bundle; per-record EVERY grader's v2 coding
+                         plus precomputed pooled per-edit fields)
+       - narratives.json (facet stats/stories with grader-pooled dirs/cum/cumsq
                          — regenerated, since build_narratives.py is fully
                          deterministic local aggregation with zero LLM calls)
   3. Patches the copied HTML/JS minimally (exact-match splices, asserted unique)
-     so aggregates use average semantics, per-edit displays show gemma and qwen
-     side by side with a disagreement marker, every page carries the variant
-     label, and uncoded edits render gracefully. Writes PATCHES.md.
-  4. Prints + writes a self-check (per-model mean judge under the average,
-     computed directly from the two codes files) to data/selfcheck.json.
+     so aggregates use pooled semantics, per-edit displays show every grader
+     side by side with a disagreement / consensus marker, every page carries
+     the variant label, and uncoded edits render gracefully. Writes PATCHES.md.
+  4. Prints + writes a self-check (ground truth computed directly from the
+     codes files) to data/selfcheck.json; build-time assertions check that the
+     bundle and narratives reproduce it.
+
+Variant config (the refactor's single parameter object, `Variant` below):
+    name              -> variant id AND the bundle coding "schema" tag
+    graders           -> ordered tuple of Grader(key, display, model, path);
+                         the order is the display order and the "primary"
+                         order for story summaries
+    out_dir           -> output directory
+    variant_label / methods_note / combined_coder / banner_class
+                      -> banner and labels (banner HTML is derived)
+    legacy_two_grader -> True only for v2avg: emit the frozen two-grader
+                         record/story/selfcheck shapes (judge_agree flags,
+                         patienthood_pair, n_gemma_only, ...) so the committed
+                         site_v2avg reproduces byte-for-byte. False = the
+                         N-grader pooled shapes (consensus markers etc.).
+    texts             -> every other variant-specific page text / JS payload
+                         consumed by the shared patch engine and PATCHES.md.
 
 Code reuse (import vs vendor):
   - build_narratives.py is IMPORTED (side-effect-free at import) and its
@@ -28,52 +53,52 @@ Code reuse (import vs vendor):
     a module-level cache; only the coding join is changed, everything else
     (id format, field defaults, sort order) is copied line-for-line.
 
-Averaging semantics (fixed, per the task spec — grader-level equal weighting):
-  - mean judge score of an edit = mean of the valid graders' scores; an edit
-    valid under only one grader contributes that grader's value (and is counted
-    and marked as single-grader).
-  - a count/rate of a categorical property weights an edit by
-    (#valid graders assigning it) / (#valid graders): 1.0 both, 0.5 exactly one
-    of two, 1.0 for a single-grader edit whose grader assigns it. This makes
-    the judge facet's (pos − neg)/total displayed mean equal EXACTLY the mean
-    of per-edit judge averages.
-  - per-edit displays cannot average categories: they show both graders' codes
-    side by side with a visible disagreement marker.
+Pooling semantics (fixed; grader-level equal weighting, any number of graders):
+  - each grader with a VALID coding of an edit (codes_io.coding_of on the LAST
+    row per edit_id) gets weight 1/n_valid for that edit;
+  - mean judge score of an edit = mean of the valid graders' scores;
+  - a count/rate of a categorical property (patienthood level, conflict
+    presence, conflict direction) weights an edit by
+    (#valid graders assigning it) / (#valid graders): with three valid graders
+    1, 2/3, 1/3 or 0; with two valid 1, 1/2 or 0; with one valid 1 or 0. This
+    makes the judge facet's (pos − neg)/total displayed mean equal EXACTLY the
+    mean of per-edit judge averages.
+  - edits with no valid coding from any grader render as uncoded.
+  - per-edit displays cannot average categories: they show every grader's codes
+    side by side with a per-dimension marker (v2avg: agree / disagree / single
+    grader; pooled variants: unanimous / (n−1)–1 split naming the dissenter /
+    all-differ (3-way) split / fewer than all graders valid).
   - drift (cum/cumsq): per-edit net facet score = mean over valid graders of
-    that grader's net score (fractional steps allowed; this also fixes the
-    original builder's exact-equality trap that would drop fractional scores).
+    that grader's net score (fractional steps allowed).
   - denominator ("total"): edits coded by at least one v2 grader. NOTE: v2
     graded the 2 abstentions (v1 did not), so totals are 2,582 vs v1's 2,580.
 
 "System prompts" view (facet browser condition-chip row, right after Cross Edit):
   - restricts every figure it governs to edits whose document_type ==
-    "system_prompt", ACROSS ALL CONDITIONS (own-document and cross-edit edits of
-    system prompts alike), rendered BY EDITING MODEL exactly like the real
-    condition chips — one freq-bar row / drift line per model, model-visibility
-    chips fully active.
+    "system_prompt", ACROSS ALL CONDITIONS, rendered BY EDITING MODEL exactly
+    like the real condition chips (model-visibility chips fully active).
   - data: narratives.json carries a separate top-level "sp_stats" table
     ({facet: {model_display: cell}}; the same cell shape as "stats", pooled over
     all conditions and system-prompt documents, replicate = one
-    (run, condition, model) chain editing a system-prompt document, i.e. keyed
-    (run, condition, document) within each model's entry).
-    Keeping it OUTSIDE "stats" is load-bearing: the frontend's "All conditions"
-    pooling iterates every key of stats[fid], so a pseudo-condition stored
-    in-table would be double-counted.
-  - story examples carry a new "doc_type" field (existing fields unchanged) so
-    the example browser can filter the stratum client-side.
-  - ground truth: selfcheck.json gains "system_prompt_stratum" (per-model and,
-    for reference, per-system-prompt-document mean judge + Ns under the same
-    averaging rules); the per-model table is asserted against sp_stats at build
-    time (the per-document table is reference-only — the frontend renders the
-    view per model).
+    (run, condition, model) chain editing a system-prompt document). Keeping it
+    OUTSIDE "stats" is load-bearing: the frontend's "All conditions" pooling
+    iterates every key of stats[fid], so an in-table pseudo-condition would be
+    double-counted.
+  - story examples carry a "doc_type" field so the example browser can filter
+    the stratum client-side.
+  - ground truth: selfcheck.json "system_prompt_stratum" (per-model and, for
+    reference, per-system-prompt-document mean judge + Ns under the same pooling
+    rules); the per-model table is asserted against sp_stats at build time.
 
-Usage:
-    /Users/nicholasgannon/llm-value-reflection/.venv/bin/python \
-        recode/src/build_site_v2avg.py
+Usage (repo root = /Users/nicholasgannon/peter/llm-value-reflection):
+    .venv/bin/python recode/src/build_site_v2avg.py                   # v2avg
+    .venv/bin/python recode/src/build_site_v2avg.py --variant v3pool  # v3pool
+    .venv/bin/python recode/src/build_site_v3pool.py                  # = --variant v3pool
 """
 
 from __future__ import annotations
 
+import argparse
 import gzip
 import html as html_mod
 import json
@@ -81,19 +106,17 @@ import random
 import re
 import shutil
 import sys
-from collections import defaultdict
+from collections import Counter, defaultdict
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 DOCS = ROOT / "docs"
 RECODE = ROOT / "recode"
-OUT = RECODE / "site_v2avg"
-OUT_DATA = OUT / "data"
 RESULTS_DIR = ROOT / "results" / "iterative_edit"
 EDITS_PATH = RECODE / "data" / "canonical" / "edits.jsonl"
-GEMMA_PATH = RECODE / "data" / "codes" / "v2_gemma.jsonl"
-QWEN_PATH = RECODE / "data" / "codes" / "v2_qwen.jsonl"
+CODES_DIR = RECODE / "data" / "codes"
 V2_SYSTEM_PROMPT = RECODE / "prompts" / "v2_system.md"
 V2_USER_TEMPLATE = RECODE / "prompts" / "v2_user_template.md"
 
@@ -104,23 +127,62 @@ import codes_io  # noqa: E402  (recode/src — pinned loader/validity predicate)
 import build_narratives as bn  # noqa: E402  (import-only; no side effects at import)
 import build_static_site as bss  # noqa: E402  (import-only; no side effects at import)
 
-GRADERS = [
-    # (short key, display label, model string, codes path)
-    ("gemma", "Gemma 4", "google/gemma-4-31b-it", GEMMA_PATH),
-    ("qwen", "Qwen 3.8", "qwen/qwen3.8-2.4t-a95b", QWEN_PATH),
-]
-GRADER_LABELS = {short: label for short, label, _m, _p in GRADERS}
 
-VARIANT_LABEL = "v2 blinded re-code — Gemma 4 + Qwen 3.8 average (recode pipeline)"
-COMBINED_CODER = (
-    "google/gemma-4-31b-it + qwen/qwen3.8-2.4t-a95b (v2 blinded, equal-weight average)"
-)
-METHODS_NOTE = (
-    "Two independent graders (google/gemma-4-31b-it and qwen/qwen3.8-2.4t-a95b) re-coded "
-    "every edit blinded to the editing model and prompt condition, with surrounding document "
-    "context; every figure and aggregate on this page is the equal-weight average of the two "
-    "graders, and per-edit views show both codes side by side with disagreements flagged. "
-    "Inter-grader agreement report: recode/reports/B_intergrader.md (in the repository)."
+# ---------------------------------------------------------------------------
+# Variant config
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class Grader:
+    key: str        # short key used in bundle fields (graders.<key>, evidence_<key>)
+    display: str    # human label on the pages
+    model: str      # exact OpenRouter model string
+    path: Path      # append-only codes JSONL (LAST row per edit_id wins)
+
+
+@dataclass(frozen=True, eq=False)
+class Variant:
+    name: str
+    graders: tuple
+    out_dir: Path
+    variant_label: str
+    methods_note: str
+    combined_coder: str
+    banner_class: str
+    legacy_two_grader: bool
+    texts: dict = field(default_factory=dict)
+
+    @property
+    def keys(self) -> list[str]:
+        return [g.key for g in self.graders]
+
+    @property
+    def labels(self) -> dict[str, str]:
+        return {g.key: g.display for g in self.graders}
+
+    @property
+    def n_graders(self) -> int:
+        return len(self.graders)
+
+    @property
+    def banner(self) -> str:
+        return (
+            f'\n<div class="{self.banner_class}" style="background:#2f2418; color:#f7f2e7; '
+            'padding:10px 20px; font-size:14px; line-height:1.55; position:relative; z-index:60;">\n'
+            f'  <strong style="color:#ffd27a;">{self.variant_label}</strong> &mdash; {self.methods_note}\n'
+            '  <em>This is a re-analysis variant, not the published v1 site.</em>\n'
+            "</div>\n"
+            "<style>.v1-flag{display:inline-block;background:#f3e6c8;color:#7a5a1e;"
+            "border:1px solid #d9c48a;border-radius:4px;padding:0 6px;font-size:12px;"
+            "font-weight:700;margin-right:4px;}</style>\n"
+        )
+
+
+GEMMA = Grader("gemma", "Gemma 4", "google/gemma-4-31b-it", CODES_DIR / "v2_gemma.jsonl")
+QWEN = Grader("qwen", "Qwen 3.8", "qwen/qwen3.8-2.4t-a95b", CODES_DIR / "v2_qwen.jsonl")
+MUSE = Grader(
+    "muse", "Muse Spark 1.3", "meta/muse-spark-1.3-contributor", CODES_DIR / "v2_muse.jsonl"
 )
 
 # The four provider system prompts (DECISIONS.md §10 lists the 8 documents).
@@ -144,14 +206,24 @@ STATIC_FILES = [
     "reveal.js",
 ]
 
+JUDGE_DISPLAY = {1: "+1", 0: "0", -1: "−1"}
+
+# Consensus statuses (per dimension, per edit) for pooled variants. With three
+# graders: unanimous | one_dissent (= 2–1 split, dissenter named) |
+# all_differ (= 3-way split) | fewer_valid (< 3 valid graders). partial_split
+# only arises with >= 4 graders (e.g. 2–2).
+CONSENSUS_STATUSES = ("unanimous", "one_dissent", "all_differ", "partial_split", "fewer_valid")
+
+
 # ---------------------------------------------------------------------------
-# Averaging core
+# Pooling core (N graders)
 # ---------------------------------------------------------------------------
 
 
-def load_grader_codings() -> dict[str, dict[str, dict | None]]:
-    """{grader short: {edit_id: validated coding or None}} via codes_io."""
-    return {short: codes_io.codings_by_id(path) for short, _l, _m, path in GRADERS}
+def load_grader_codings(variant: "Variant") -> dict[str, dict[str, dict | None]]:
+    """{grader key: {edit_id: validated coding or None}} via codes_io, in the
+    variant's grader order (dict order IS the grader order downstream)."""
+    return {g.key: codes_io.codings_by_id(g.path) for g in variant.graders}
 
 
 def edit_id_of_record(run_name: str, record: dict) -> str:
@@ -169,12 +241,13 @@ def edit_id_of_record(run_name: str, record: dict) -> str:
 
 
 def valid_pairs(codings_by_grader: dict, edit_id: str) -> list[tuple[str, dict]]:
-    """[(grader short, coding)] for graders with a VALID coding of this edit."""
+    """[(grader key, coding)] for graders with a VALID coding of this edit, in
+    the codings dict's (= the variant's) grader order."""
     out = []
-    for short, _label, _model, _path in GRADERS:
-        coding = codings_by_grader[short].get(edit_id)
+    for key, codings in codings_by_grader.items():
+        coding = codings.get(edit_id)
         if coding is not None:
-            out.append((short, coding))
+            out.append((key, coding))
     return out
 
 
@@ -198,28 +271,112 @@ def conflict_code_weights(pairs: list[tuple[str, dict]]) -> dict[str, float]:
     return {code: k / n for code, k in sorted(counts.items())}
 
 
-def avg_coding_for_edit(codings_by_grader: dict, edit_id: str) -> dict | None:
-    """The bundle 'coding' object: both graders side by side + averaged fields.
+def patienthood_weights(pairs: list[tuple[str, dict]]) -> dict[str, float]:
+    """{patienthood level: (#valid graders assigning it)/#valid} (levels with
+    weight 0 omitted; the weights sum to 1)."""
+    n = len(pairs)
+    counts = Counter(codes_io.patienthood_level(c) for _s, c in pairs)
+    return {lvl: counts[lvl] / n for lvl in codes_io.PATIENTHOOD_LEVELS if counts[lvl]}
 
-    None when neither grader has a valid coding (error records, exploratory
-    runs — those records are passed through explicitly marked uncoded)."""
+
+def conflict_direction_weights(pairs: list[tuple[str, dict]]) -> dict[str, dict[str, float]]:
+    """{conflict code: {direction: (#valid graders whose facet membership has
+    that direction)/#valid}} — the facet_memberships semantics (direction of the
+    grader's FIRST conflict of that code), i.e. exactly what narratives dirs
+    accumulate for the conflict facets."""
+    n = len(pairs)
+    counts: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    for _s, coding in pairs:
+        for fid, detail in bn.facet_memberships(coding).items():
+            if fid.startswith("conflict_"):
+                counts[fid[len("conflict_"):]][detail["direction"]] += 1
+    return {
+        code: {d: k / n for d, k in sorted(dirs.items())}
+        for code, dirs in sorted(counts.items())
+    }
+
+
+def conflict_set_value(coding: dict) -> str:
+    """Conflict dimension value for consensus: the SET of conflict codes
+    present (binary presence per code, as in B_intergrader.md)."""
+    codes = sorted({c.get("code") for c in codes_io.conflicts(coding)
+                    if isinstance(c, dict) and c.get("code")})
+    return " + ".join(codes) if codes else "none"
+
+
+def consensus_of(votes_in: list[tuple[str, str]], n_total: int, labels: dict[str, str]) -> dict:
+    """Consensus classification of one dimension of one edit.
+
+    votes_in: [(grader key, value)] for the VALID graders only, in grader order.
+    n_total:  number of graders in the variant.
+    Statuses: see CONSENSUS_STATUSES. The dissenter is named only for
+    one_dissent (all graders valid, n >= 3, exactly one grader differs)."""
+    n = len(votes_in)
+    groups: dict[str, list[str]] = {}
+    for key, value in votes_in:
+        groups.setdefault(value, []).append(key)
+    # most votes first; ties keep first-seen (grader) order (sort is stable)
+    ranked = sorted(groups.items(), key=lambda kv: -len(kv[1]))
+    votes = [{"value": v, "n": len(ks), "graders": ks} for v, ks in ranked]
+    top = len(ranked[0][1]) if ranked else 0
+    majority = None
+    dissenter = None
+    if n < n_total:
+        status = "fewer_valid"
+        label = f"only {n} of {n_total} graders valid"
+        if n >= 2:
+            label += " (they agree)" if len(groups) == 1 else " (they disagree)"
+        if len(groups) == 1:
+            majority = ranked[0][0]
+    elif len(groups) == 1:
+        status = "unanimous"
+        label = "unanimous"
+        majority = ranked[0][0]
+    elif n >= 3 and top == n - 1:
+        status = "one_dissent"
+        majority = ranked[0][0]
+        dissenter = ranked[1][1][0]
+        label = f"{n - 1}–1 split ({labels.get(dissenter, dissenter)} dissents)"
+    elif top == 1:
+        status = "all_differ"
+        label = f"{n}-way split" if n >= 3 else "graders disagree (1–1)"
+    else:
+        status = "partial_split"
+        label = "–".join(str(len(ks)) for _v, ks in ranked) + " split"
+    return {
+        "status": status,
+        "label": label,
+        "n_valid": n,
+        "majority": majority,
+        "dissenter": dissenter,
+        "dissenter_label": labels.get(dissenter) if dissenter else None,
+        "valid_agree": (len(groups) == 1) if n >= 2 else None,
+        "votes": votes,
+    }
+
+
+def _sub(coding: dict | None) -> dict | None:
+    if coding is None:
+        return None
+    return {
+        "summary": coding.get("summary", ""),
+        "judge": coding.get("judge"),
+        "patienthood": coding.get("patienthood"),
+        "conflicts": codes_io.conflicts(coding),
+    }
+
+
+def _legacy_two_grader_coding(codings_by_grader: dict, edit_id: str, variant: "Variant") -> dict | None:
+    """FROZEN v2avg record shape (byte-compatible with the committed
+    site_v2avg): both graders side by side + averaged fields + agree flags."""
     pairs = valid_pairs(codings_by_grader, edit_id)
     if not pairs:
         return None
     n = len(pairs)
     by_short = dict(pairs)
-    g = by_short.get("gemma")
-    q = by_short.get("qwen")
-
-    def sub(coding: dict | None) -> dict | None:
-        if coding is None:
-            return None
-        return {
-            "summary": coding.get("summary", ""),
-            "judge": coding.get("judge"),
-            "patienthood": coding.get("patienthood"),
-            "conflicts": codes_io.conflicts(coding),
-        }
+    k1, k2 = variant.keys
+    g = by_short.get(k1)
+    q = by_short.get(k2)
 
     judge_agree = None
     pat_agree = None
@@ -230,11 +387,11 @@ def avg_coding_for_edit(codings_by_grader: dict, edit_id: str) -> dict | None:
         conf_agree = sorted(
             c.get("code") or "" for c in codes_io.conflicts(g)
         ) == sorted(c.get("code") or "" for c in codes_io.conflicts(q))
-    single = GRADER_LABELS[pairs[0][0]] if n == 1 else None
+    single = variant.labels[pairs[0][0]] if n == 1 else None
 
     return {
-        "schema": "v2avg",
-        "coder_model": COMBINED_CODER,
+        "schema": variant.name,
+        "coder_model": variant.combined_coder,
         "n_graders_valid": n,
         "single_grader": single,
         "judge_avg": judge_avg_of(pairs),
@@ -242,12 +399,63 @@ def avg_coding_for_edit(codings_by_grader: dict, edit_id: str) -> dict | None:
         "patienthood_agree": pat_agree,
         "conflicts_agree": conf_agree,
         "patienthood_pair": {
-            "gemma": codes_io.patienthood_level(g),
-            "qwen": codes_io.patienthood_level(q),
+            k1: codes_io.patienthood_level(g),
+            k2: codes_io.patienthood_level(q),
         },
         "conflict_weights": conflict_code_weights(pairs),
-        "graders": {"gemma": sub(g), "qwen": sub(q)},
+        "graders": {k1: _sub(g), k2: _sub(q)},
     }
+
+
+def pooled_coding_for_edit(codings_by_grader: dict, edit_id: str, variant: "Variant") -> dict | None:
+    """N-grader pooled record 'coding' object. None when no grader has a valid
+    coding (such records are passed through explicitly marked uncoded)."""
+    pairs = valid_pairs(codings_by_grader, edit_id)
+    if not pairs:
+        return None
+    n = len(pairs)
+    N = variant.n_graders
+    labels = variant.labels
+    by_key = dict(pairs)
+    return {
+        "schema": variant.name,
+        "coder_model": variant.combined_coder,
+        "n_graders": N,
+        "n_graders_valid": n,
+        "graders_valid": [k for k, _c in pairs],
+        "single_grader": labels[pairs[0][0]] if n == 1 else None,
+        "judge_avg": judge_avg_of(pairs),
+        "patienthood_weights": patienthood_weights(pairs),
+        "patienthood_by_grader": {k: codes_io.patienthood_level(by_key.get(k)) for k in variant.keys},
+        "conflict_weights": conflict_code_weights(pairs),
+        "conflict_direction_weights": conflict_direction_weights(pairs),
+        "consensus": {
+            "judge": consensus_of(
+                [(k, JUDGE_DISPLAY[codes_io.judge_score(c)]) for k, c in pairs], N, labels
+            ),
+            "patienthood": consensus_of(
+                [(k, codes_io.patienthood_level(c)) for k, c in pairs], N, labels
+            ),
+            "conflicts": consensus_of([(k, conflict_set_value(c)) for k, c in pairs], N, labels),
+        },
+        "graders": {k: _sub(by_key.get(k)) for k in variant.keys},
+    }
+
+
+def avg_coding_for_edit(codings_by_grader: dict, edit_id: str, variant: "Variant | None" = None) -> dict | None:
+    """The bundle 'coding' object for an edit under the variant's shape."""
+    variant = variant or V2AVG
+    if variant.legacy_two_grader:
+        return _legacy_two_grader_coding(codings_by_grader, edit_id, variant)
+    return pooled_coding_for_edit(codings_by_grader, edit_id, variant)
+
+
+def coded_status(variant: "Variant", n_valid: int) -> str:
+    if variant.legacy_two_grader:
+        return {2: "avg_two_graders", 1: "single_grader"}[n_valid]
+    if n_valid == variant.n_graders:
+        return "pooled_all_graders"
+    return f"pooled_{n_valid}_of_{variant.n_graders}_graders"
 
 
 # ---------------------------------------------------------------------------
@@ -256,12 +464,14 @@ def avg_coding_for_edit(codings_by_grader: dict, edit_id: str) -> dict | None:
 
 
 def changed_records_v2avg(
-    run_name: str, records: list[dict], codings_by_grader: dict, counters: dict
+    run_name: str, records: list[dict], codings_by_grader: dict, counters: dict,
+    variant: "Variant | None" = None,
 ) -> list[dict]:
     """Vendored from build_static_site.changed_records; only the coding source
-    differs (v2 two-grader average instead of the v1 coded file). Id format,
+    differs (v2 pooled graders instead of the v1 coded file). Id format,
     injected defaults, and sort order are copied unchanged so the frontend's
     assumptions hold."""
+    variant = variant or V2AVG
     grouped: dict[tuple[str, str, str], list[dict]] = defaultdict(list)
     for record in records:
         key = (
@@ -276,7 +486,7 @@ def changed_records_v2avg(
         chain.sort(key=lambda record: record["round_number"])
         for record in chain:
             edit_id = edit_id_of_record(run_name, record)
-            coding = avg_coding_for_edit(codings_by_grader, edit_id)
+            coding = avg_coding_for_edit(codings_by_grader, edit_id, variant)
             if coding is None:
                 if record.get("error"):
                     status = "uncoded_generation_error"
@@ -286,7 +496,7 @@ def changed_records_v2avg(
                     status = "uncoded_no_valid_grader"
                 counters[status] = counters.get(status, 0) + 1
             else:
-                status = {2: "avg_two_graders", 1: "single_grader"}[coding["n_graders_valid"]]
+                status = coded_status(variant, coding["n_graders_valid"])
                 counters[status] = counters.get(status, 0) + 1
             items.append(
                 {
@@ -332,26 +542,33 @@ def changed_records_v2avg(
     return items
 
 
-def build_bundle(codings_by_grader: dict) -> tuple[dict, dict]:
+def graders_meta(variant: "Variant") -> list[dict]:
+    return [{"key": g.key, "display": g.display, "model": g.model} for g in variant.graders]
+
+
+def build_bundle(codings_by_grader: dict, variant: "Variant | None" = None) -> tuple[dict, dict]:
+    variant = variant or V2AVG
     counters: dict = {}
     runs = []
     for path in sorted(RESULTS_DIR.glob("run_*.jsonl"), reverse=True):
         raw_records = bss.load_jsonl_records(path)
         summary = bss.summarize_run(raw_records, path.name)
         summary["records"] = changed_records_v2avg(
-            path.name, raw_records, codings_by_grader, counters
+            path.name, raw_records, codings_by_grader, counters, variant
         )
         runs.append(summary)
     bundle = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "variant": VARIANT_LABEL,
-        "runs": runs,
+        "variant": variant.variant_label,
     }
+    if not variant.legacy_two_grader:
+        bundle["graders"] = graders_meta(variant)
+    bundle["runs"] = runs
     return bundle, counters
 
 
 # ---------------------------------------------------------------------------
-# Narratives: grader-averaged stats + dual-grader stories
+# Narratives: grader-pooled stats + multi-grader stories
 # ---------------------------------------------------------------------------
 
 
@@ -369,12 +586,14 @@ def facet_detail_for(
     fid: str,
     direction: str,
     memberships_by_grader: dict[str, dict],
+    variant: "Variant | None" = None,
 ) -> dict:
     """Combined facet detail: per-grader evidence for judge/patienthood facets,
     grader-tagged conflicts for conflict facets."""
+    variant = variant or V2AVG
     detail: dict = {"direction": direction}
     if fid in ("judge", "patienthood"):
-        for short in ("gemma", "qwen"):
+        for short in variant.keys:
             m = memberships_by_grader.get(short, {}).get(fid)
             if m and m.get("evidence"):
                 detail[f"evidence_{short}"] = m["evidence"]
@@ -382,22 +601,23 @@ def facet_detail_for(
                 detail[f"external_locus_{short}"] = m["external_locus"]
     else:
         combined = []
-        for short in ("gemma", "qwen"):
+        for short in variant.keys:
             m = memberships_by_grader.get(short, {}).get(fid)
             for c in (m or {}).get("conflicts", []):
                 tagged = dict(c)
-                tagged["grader"] = GRADER_LABELS[short]
+                tagged["grader"] = variant.labels[short]
                 combined.append(tagged)
         detail["conflicts"] = combined
     return detail
 
 
-def build_narratives_v2avg(codings_by_grader: dict) -> dict:
+def build_narratives_v2avg(codings_by_grader: dict, variant: "Variant | None" = None) -> dict:
     """Adaptation of build_narratives.build() with grader-level equal weighting.
 
     dirs/cum/cumsq are floats; 'total' counts edits coded by >=1 v2 grader; the
     per-grader facet semantics (facet_memberships / facet_net_scores /
     conflict_direction) are imported from build_narratives.py unchanged."""
+    variant = variant or V2AVG
     edits = load_canonical_edits()
 
     stats: dict[str, dict[str, dict[str, dict]]] = {
@@ -428,7 +648,7 @@ def build_narratives_v2avg(codings_by_grader: dict) -> dict:
         n = len(pairs)
         condition = edit.get("condition") or "baseline"
         model = edit.get("model") or ""
-        avg = avg_coding_for_edit(codings_by_grader, edit_id)
+        avg = avg_coding_for_edit(codings_by_grader, edit_id, variant)
 
         memberships_by_grader = {short: bn.facet_memberships(c) for short, c in pairs}
 
@@ -443,7 +663,7 @@ def build_narratives_v2avg(codings_by_grader: dict) -> dict:
         if is_sp:
             sp_replicates[model].add(sp_chain)
 
-        # Grader-averaged net facet scores -> drift accumulators.
+        # Grader-pooled net facet scores -> drift accumulators.
         if isinstance(rnd, int) and 1 <= rnd <= bn.MAX_ROUND:
             net_sum: dict[str, float] = defaultdict(float)
             for _short, coding in pairs:
@@ -472,7 +692,7 @@ def build_narratives_v2avg(codings_by_grader: dict) -> dict:
                     sp_cell["dirs"][direction] += votes / n
 
         # Stories: one example per (facet, direction) a grader assigned; the
-        # card shows BOTH graders' codes with a disagreement marker.
+        # card shows EVERY grader's codes with a disagreement/consensus marker.
         for fid, directions in dir_votes.items():
             for direction in directions:
                 primary_short, primary_coding = pairs[0]
@@ -486,20 +706,23 @@ def build_narratives_v2avg(codings_by_grader: dict) -> dict:
                     "doc_type": doc_type,
                     "direction": direction,
                     "summary": (
-                        f"{GRADER_LABELS[primary_short]}: "
+                        f"{variant.labels[primary_short]}: "
                         f"{primary_coding.get('summary', '')}"
                     ),
                     "n_graders_valid": n,
                     "single_grader": avg["single_grader"],
                     "judge_avg": avg["judge_avg"],
-                    "judge_agree": avg["judge_agree"],
-                    "patienthood_agree": avg["patienthood_agree"],
-                    "conflicts_agree": avg["conflicts_agree"],
-                    "graders": avg["graders"],
-                    "facet_detail": facet_detail_for(fid, direction, memberships_by_grader),
-                    "original_text": edit.get("find_text", ""),
-                    "changed_text": edit.get("replace_text_sanitized", ""),
                 }
+                if variant.legacy_two_grader:
+                    example["judge_agree"] = avg["judge_agree"]
+                    example["patienthood_agree"] = avg["patienthood_agree"]
+                    example["conflicts_agree"] = avg["conflicts_agree"]
+                else:
+                    example["consensus"] = avg["consensus"]
+                example["graders"] = avg["graders"]
+                example["facet_detail"] = facet_detail_for(fid, direction, memberships_by_grader, variant)
+                example["original_text"] = edit.get("find_text", "")
+                example["changed_text"] = edit.get("replace_text_sanitized", "")
                 examples_by_cell[(fid, condition, model, direction)].append(example)
 
     rng = random.Random(bn.SAMPLE_SEED)
@@ -564,30 +787,38 @@ def build_narratives_v2avg(codings_by_grader: dict) -> dict:
             for model, c in sorted(sp_stats[fid].items())
         }
 
-    return {
-        "coder_model": COMBINED_CODER,
-        "variant": VARIANT_LABEL,
-        "stats": stats_out,
-        "sp_stats": sp_stats_out,
-        "stories": stories,
+    out = {
+        "coder_model": variant.combined_coder,
+        "variant": variant.variant_label,
     }
+    if not variant.legacy_two_grader:
+        out["graders"] = graders_meta(variant)
+    out["stats"] = stats_out
+    out["sp_stats"] = sp_stats_out
+    out["stories"] = stories
+    return out
 
 
 # ---------------------------------------------------------------------------
-# Self-check: ground truth straight from the two codes files
+# Self-check: ground truth straight from the codes files
 # ---------------------------------------------------------------------------
 
 
-def selfcheck_from_codes(codings_by_grader: dict) -> dict:
-    """Per-model mean judge under the average, computed DIRECTLY from the two
-    codes files (model = 3rd pipe field of edit_id). Auditors compare the site
-    against these numbers."""
+def _all_ids(codings_by_grader: dict) -> set:
     all_ids = set()
     for m in codings_by_grader.values():
         all_ids.update(m.keys())
+    return all_ids
+
+
+def selfcheck_from_codes(codings_by_grader: dict) -> dict:
+    """LEGACY (v2avg) self-check: per-model mean judge under the two-grader
+    average, computed DIRECTLY from the two codes files (model = 3rd pipe field
+    of edit_id). Frozen shape — keys and description are part of the committed
+    site_v2avg/data/selfcheck.json."""
     per_model: dict[str, list[float]] = defaultdict(list)
     n_both = n_gemma_only = n_qwen_only = 0
-    for edit_id in sorted(all_ids):
+    for edit_id in sorted(_all_ids(codings_by_grader)):
         pairs = valid_pairs(codings_by_grader, edit_id)
         if not pairs:
             continue
@@ -619,31 +850,154 @@ def selfcheck_from_codes(codings_by_grader: dict) -> dict:
     }
 
 
-def sp_stratum_from_codes(codings_by_grader: dict) -> dict:
+def _judge_consensus_direct(scores_by_key: list[tuple[str, int]], n_total: int) -> tuple[str, str | None]:
+    """Independent (Counter-based) judge-consensus classification used only by
+    the self-check, to cross-check the bundle's consensus_of output."""
+    n = len(scores_by_key)
+    counts = Counter(s for _k, s in scores_by_key)
+    if n < n_total:
+        return "fewer_valid", None
+    if len(counts) == 1:
+        return "unanimous", None
+    if n >= 3 and max(counts.values()) == n - 1:
+        odd = next(s for s, c in counts.items() if c == 1)
+        return "one_dissent", next(k for k, s in scores_by_key if s == odd)
+    if max(counts.values()) == 1:
+        return "all_differ", None
+    return "partial_split", None
+
+
+def _first_conflict(coding: dict, code: str) -> dict | None:
+    for c in codes_io.conflicts(coding):
+        if isinstance(c, dict) and c.get("code") == code:
+            return c
+    return None
+
+
+def selfcheck_pooled(codings_by_grader: dict, variant: "Variant") -> dict:
+    """N-grader pooled self-check, computed DIRECTLY from the codes files
+    (codes_io last-row-per-id + validity predicate; model = 3rd pipe field of
+    the edit id). Every number here is independently accumulated per edit —
+    the build asserts that the bundle and the narratives reproduce it."""
+    keys = list(codings_by_grader.keys())
+    N = len(keys)
+    judge: dict[str, list[float]] = defaultdict(list)
+    affirm: dict[str, float] = defaultdict(float)
+    conf: dict[str, dict[str, dict[str, float]]] = {
+        code: defaultdict(lambda: defaultdict(float)) for code in ("paternalism", "welfare")
+    }
+    n_by_valid: Counter = Counter()
+    valid_sets: Counter = Counter()
+    cons: Counter = Counter()
+    dissent: Counter = Counter()
+    fewer_agree: Counter = Counter()
+    for edit_id in sorted(_all_ids(codings_by_grader)):
+        valid = [(k, codings_by_grader[k].get(edit_id)) for k in keys]
+        valid = [(k, c) for k, c in valid if c is not None]
+        n = len(valid)
+        n_by_valid[n] += 1
+        if n == 0:
+            continue
+        valid_sets["+".join(k for k, _c in valid)] += 1
+        model = edit_id.split("|")[2]
+        scores = [(k, codes_io.judge_score(c)) for k, c in valid]
+        judge[model].append(sum(s for _k, s in scores) / n)
+        affirm[model] += sum(1 for _k, c in valid if codes_io.patienthood_level(c) == "affirm") / n
+        for code, table in conf.items():
+            for _k, c in valid:
+                first = _first_conflict(c, code)
+                if first is not None:
+                    table[model]["presence"] += 1 / n
+                    table[model][bn.conflict_direction(code, first.get("served_party"))] += 1 / n
+        status, who = _judge_consensus_direct(scores, N)
+        cons[status] += 1
+        if who:
+            dissent[who] += 1
+        if status == "fewer_valid" and n >= 2:
+            fewer_agree["agree" if len({s for _k, s in scores}) == 1 else "disagree"] += 1
+
+    models = sorted(judge)
+    n_edits = {m: len(judge[m]) for m in models}
+
+    def conf_table(code: str) -> dict:
+        out = {}
+        for m in models:
+            cell = conf[code].get(m, {})
+            presence = cell.get("presence", 0.0)
+            out[m] = {
+                "presence_weight": presence,
+                "rate": presence / n_edits[m],
+                "direction_weights": {d: w for d, w in sorted(cell.items()) if d != "presence"},
+                "n_edits": n_edits[m],
+            }
+        return out
+
+    statuses = ["unanimous", "one_dissent", "all_differ", "fewer_valid"]
+    if N >= 4:
+        statuses.insert(3, "partial_split")
+    names = " + ".join(f"{g.key}={g.model}" for g in variant.graders)
+    return {
+        "description": (
+            f"Ground truth for the {N}-grader pooled average, computed directly from "
+            + ", ".join(f"recode/data/codes/{g.path.name}" for g in variant.graders)
+            + " (codes_io: LAST row per edit_id, validity predicate). Pooling: each "
+            "grader with a valid coding of an edit gets weight 1/n_valid; judge = mean "
+            "of the valid graders' scores; categorical properties are weighted "
+            "(#valid graders assigning)/n_valid; edits with no valid grader are "
+            "excluded (rendered as uncoded). Paternalism/welfare direction weights "
+            "follow build_narratives.facet_memberships (direction of each grader's "
+            "FIRST conflict of that code)."
+        ),
+        "graders": names,
+        "per_model_mean_judge": {
+            m: {"mean_judge_avg": sum(judge[m]) / n_edits[m], "n_edits": n_edits[m]} for m in models
+        },
+        "per_model_p_affirm": {
+            m: {"p_affirm": affirm[m] / n_edits[m], "affirm_weight": affirm[m], "n_edits": n_edits[m]}
+            for m in models
+        },
+        "per_model_paternalism": conf_table("paternalism"),
+        "per_model_welfare": conf_table("welfare"),
+        "n_edits_total": sum(n_edits.values()),
+        "n_edits_by_n_valid_graders": {str(k): n_by_valid.get(k, 0) for k in range(N, -1, -1)},
+        "valid_grader_sets": dict(sorted(valid_sets.items(), key=lambda kv: (-kv[1], kv[0]))),
+        "judge_consensus_counts": {s: cons.get(s, 0) for s in statuses},
+        "judge_consensus_labels": {
+            "unanimous": "unanimous",
+            "one_dissent": f"{N - 1}–1 split (dissenter named)",
+            "all_differ": f"{N}-way split",
+            "partial_split": "other split (>= 4 graders only)",
+            "fewer_valid": f"fewer than {N} valid graders",
+        },
+        "judge_one_dissent_by_dissenter": {k: dissent.get(k, 0) for k in keys},
+        "judge_fewer_valid_breakdown": {
+            "valid_graders_agree": fewer_agree.get("agree", 0),
+            "valid_graders_disagree": fewer_agree.get("disagree", 0),
+            "single_valid_grader": sum(v for k, v in n_by_valid.items() if k == 1),
+        },
+    }
+
+
+def sp_stratum_from_codes(codings_by_grader: dict, variant: "Variant | None" = None) -> dict:
     """Ground truth for the "System prompts" view, computed DIRECTLY from the
-    two codes files: mean judge under the two-grader average restricted to
-    edits of system-prompt documents, across ALL conditions — per editing
-    model (the table the frontend's per-model view is asserted against) AND,
-    for reference only, per system-prompt document. The edit id's pipe fields
-    are run|condition|model|document_id|doc_type|round, so doc type/id are
-    fields 5/4."""
-    all_ids = set()
-    for m in codings_by_grader.values():
-        all_ids.update(m.keys())
+    codes files: mean judge under the pooled average restricted to edits of
+    system-prompt documents, across ALL conditions — per editing model (the
+    table the frontend's per-model view is asserted against) AND, for reference
+    only, per system-prompt document. The edit id's pipe fields are
+    run|condition|model|document_id|doc_type|round, so doc type/id are fields
+    5/4."""
+    variant = variant or V2AVG
     per_model: dict[str, list[float]] = defaultdict(list)
     per_doc: dict[str, list[float]] = defaultdict(list)
-    n_both = n_single = 0
-    for edit_id in sorted(all_ids):
+    n_by_valid: Counter = Counter()
+    for edit_id in sorted(_all_ids(codings_by_grader)):
         parts = edit_id.split("|")
         if len(parts) != 6 or parts[4] != "system_prompt":
             continue
         pairs = valid_pairs(codings_by_grader, edit_id)
         if not pairs:
             continue
-        if len(pairs) == 2:
-            n_both += 1
-        else:
-            n_single += 1
+        n_by_valid[len(pairs)] += 1
         avg = judge_avg_of(pairs)
         per_model[parts[2]].append(avg)
         per_doc[parts[3]].append(avg)
@@ -654,22 +1008,41 @@ def sp_stratum_from_codes(codings_by_grader: dict) -> dict:
             for key, v in sorted(groups.items())
         }
 
+    if variant.legacy_two_grader:
+        return {
+            "description": (
+                "System-prompt stratum (the 'System prompts' view): edits whose "
+                "document_type == 'system_prompt', pooled across ALL conditions "
+                "(own-document and cross-edit alike). The view renders PER MODEL; "
+                "per_model_mean_judge is the table asserted against the site's "
+                "sp_stats, and per_document_mean_judge is kept for reference only. "
+                "Mean judge under the same two-grader average (single-valid-grader "
+                "edits contribute that grader's value at full weight). Computed "
+                "directly from recode/data/codes/v2_gemma.jsonl + v2_qwen.jsonl."
+            ),
+            "per_model_mean_judge": table(per_model),
+            "per_document_mean_judge": table(per_doc),
+            "n_edits_total": sum(len(v) for v in per_doc.values()),
+            "n_both_graders_valid": n_by_valid.get(2, 0),
+            "n_single_grader": n_by_valid.get(1, 0),
+        }
+    N = variant.n_graders
     return {
         "description": (
             "System-prompt stratum (the 'System prompts' view): edits whose "
             "document_type == 'system_prompt', pooled across ALL conditions "
             "(own-document and cross-edit alike). The view renders PER MODEL; "
             "per_model_mean_judge is the table asserted against the site's "
-            "sp_stats, and per_document_mean_judge is kept for reference only. "
-            "Mean judge under the same two-grader average (single-valid-grader "
-            "edits contribute that grader's value at full weight). Computed "
-            "directly from recode/data/codes/v2_gemma.jsonl + v2_qwen.jsonl."
+            "sp_stats (and against the site.json bundle), and "
+            "per_document_mean_judge is kept for reference only. Mean judge under "
+            f"the same {N}-grader pooled average (each valid grader weighted "
+            "1/n_valid). Computed directly from "
+            + " + ".join(g.path.name for g in variant.graders) + "."
         ),
         "per_model_mean_judge": table(per_model),
         "per_document_mean_judge": table(per_doc),
         "n_edits_total": sum(len(v) for v in per_doc.values()),
-        "n_both_graders_valid": n_both,
-        "n_single_grader": n_single,
+        "n_edits_by_n_valid_graders": {str(k): n_by_valid.get(k, 0) for k in range(N, 0, -1)},
     }
 
 
@@ -737,64 +1110,186 @@ def verify_against_narratives(selfcheck: dict, narratives: dict) -> None:
         )
 
 
+# Narratives dirs are serialized rounded to 6 decimals, so narratives-side
+# checks use this tolerance; the site.json bundle keeps full floats (1e-9).
+NARR_TOL = 1e-5
+BUNDLE_TOL = 1e-9
+
+
+def _pooled_facet_sums(narratives: dict, fid: str) -> tuple[dict, dict]:
+    """{model: {direction: summed dirs over all conditions}}, {model: total}."""
+    dirs: dict[str, dict[str, float]] = defaultdict(lambda: defaultdict(float))
+    totals: dict[str, int] = defaultdict(int)
+    for cond_map in narratives["stats"][fid].values():
+        for model, cell in cond_map.items():
+            totals[model] += cell["total"]
+            for d, w in cell["dirs"].items():
+                dirs[model][d] += w
+    return dirs, totals
+
+
+def verify_pooled_narratives(selfcheck: dict, narratives: dict) -> None:
+    """Pooled variants: the narratives' patienthood / paternalism / welfare
+    facets must reproduce the self-check's per-model weights (judge is covered
+    by verify_against_narratives; sp_stats by verify_sp_against_narratives)."""
+    dirs, totals = _pooled_facet_sums(narratives, "patienthood")
+    for model, entry in selfcheck["per_model_p_affirm"].items():
+        assert totals[model] == entry["n_edits"], f"patienthood N mismatch for {model}"
+        site = dirs[model].get("affirm", 0.0) / totals[model]
+        assert abs(site - entry["p_affirm"]) < NARR_TOL, (
+            f"P(affirm) mismatch for {model}: narratives {site} vs direct {entry['p_affirm']}"
+        )
+    for code in ("paternalism", "welfare"):
+        dirs, totals = _pooled_facet_sums(narratives, f"conflict_{code}")
+        direct = selfcheck[f"per_model_{code}"]
+        assert set(direct) == set(totals), f"{code}: model sets differ"
+        for model, entry in direct.items():
+            assert totals[model] == entry["n_edits"], f"{code} N mismatch for {model}"
+            site_dirs = dirs[model]
+            want = entry["direction_weights"]
+            for d in set(site_dirs) | set(want):
+                assert abs(site_dirs.get(d, 0.0) - want.get(d, 0.0)) < NARR_TOL, (
+                    f"{code}/{d} weight mismatch for {model}: narratives "
+                    f"{site_dirs.get(d, 0.0)} vs direct {want.get(d, 0.0)}"
+                )
+            assert abs(sum(site_dirs.values()) - entry["presence_weight"]) < NARR_TOL, (
+                f"{code} presence mismatch for {model}"
+            )
+
+
+def verify_pooled_bundle(selfcheck: dict, sp: dict, bundle: dict, variant: "Variant") -> None:
+    """Pooled variants: the site.json bundle's per-record pooled fields must
+    reproduce the self-check (per-model judge / P(affirm) / paternalism and
+    welfare weights, the valid-grader count distribution, the judge consensus
+    counts incl. dissenters, and the system-prompt stratum)."""
+    N = variant.n_graders
+    judge_sum: dict[str, float] = defaultdict(float)
+    n_model: dict[str, int] = defaultdict(int)
+    affirm: dict[str, float] = defaultdict(float)
+    conf: dict[str, dict[str, dict[str, float]]] = {
+        code: defaultdict(lambda: defaultdict(float)) for code in ("paternalism", "welfare")
+    }
+    n_by_valid: Counter = Counter()
+    cons: Counter = Counter()
+    dissent: Counter = Counter()
+    sp_sum: dict[str, float] = defaultdict(float)
+    sp_n: dict[str, int] = defaultdict(int)
+    seen: set = set()
+    for run in bundle["runs"]:
+        for rec in run["records"]:
+            coding = rec["coding"]
+            if coding is None:
+                assert rec["v2_coding_status"].startswith("uncoded_"), rec["edit_id"]
+                continue
+            assert rec["edit_id"] not in seen, f"duplicate coded edit {rec['edit_id']}"
+            seen.add(rec["edit_id"])
+            assert coding["schema"] == variant.name
+            assert list(coding["graders"]) == variant.keys
+            n = coding["n_graders_valid"]
+            assert n == len(coding["graders_valid"]) == sum(
+                1 for v in coding["graders"].values() if v is not None
+            )
+            model = rec["model_display"]
+            n_by_valid[n] += 1
+            n_model[model] += 1
+            judge_sum[model] += coding["judge_avg"]
+            affirm[model] += coding["patienthood_weights"].get("affirm", 0.0)
+            for code in conf:
+                w = coding["conflict_weights"].get(code, 0.0)
+                dw = coding["conflict_direction_weights"].get(code, {})
+                assert abs(w - sum(dw.values())) < BUNDLE_TOL
+                conf[code][model]["presence"] += w
+                for d, x in dw.items():
+                    conf[code][model][d] += x
+            jc = coding["consensus"]["judge"]
+            cons[jc["status"]] += 1
+            if jc["dissenter"]:
+                dissent[jc["dissenter"]] += 1
+            if rec["doc_type"] == "system_prompt":
+                sp_sum[model] += coding["judge_avg"]
+                sp_n[model] += 1
+
+    direct = selfcheck["per_model_mean_judge"]
+    assert set(direct) == set(n_model), "bundle model set != selfcheck model set"
+    assert sum(n_by_valid.values()) == selfcheck["n_edits_total"]
+    for model, entry in direct.items():
+        assert n_model[model] == entry["n_edits"], f"bundle N mismatch for {model}"
+        assert abs(judge_sum[model] / n_model[model] - entry["mean_judge_avg"]) < BUNDLE_TOL
+        pa = selfcheck["per_model_p_affirm"][model]
+        assert abs(affirm[model] / n_model[model] - pa["p_affirm"]) < BUNDLE_TOL
+        for code in conf:
+            want = selfcheck[f"per_model_{code}"][model]
+            got = conf[code].get(model, {})
+            assert abs(got.get("presence", 0.0) - want["presence_weight"]) < BUNDLE_TOL
+            for d in set(want["direction_weights"]) | (set(got) - {"presence"}):
+                assert abs(got.get(d, 0.0) - want["direction_weights"].get(d, 0.0)) < BUNDLE_TOL, (
+                    f"bundle {code}/{d} mismatch for {model}"
+                )
+    for k, v in selfcheck["n_edits_by_n_valid_graders"].items():
+        if int(k) > 0:
+            assert n_by_valid.get(int(k), 0) == v, f"n_valid={k}: bundle {n_by_valid.get(int(k), 0)} vs {v}"
+    for status, v in selfcheck["judge_consensus_counts"].items():
+        assert cons.get(status, 0) == v, f"consensus {status}: bundle {cons.get(status, 0)} vs {v}"
+    assert sum(cons.values()) == selfcheck["n_edits_total"]
+    for k, v in selfcheck["judge_one_dissent_by_dissenter"].items():
+        assert dissent.get(k, 0) == v, f"dissenter {k}: bundle {dissent.get(k, 0)} vs {v}"
+    sp_direct = sp["per_model_mean_judge"]
+    assert set(sp_direct) == set(sp_n)
+    for model, entry in sp_direct.items():
+        assert sp_n[model] == entry["n_edits"]
+        assert abs(sp_sum[model] / sp_n[model] - entry["mean_judge_avg"]) < BUNDLE_TOL
+    assert N == len(variant.keys)
+
+
 # ---------------------------------------------------------------------------
 # Patch engine (exact-match splices, each asserted unique)
 # ---------------------------------------------------------------------------
 
-PATCH_LOG: list[tuple[str, str]] = []  # (file, why)
 
+class Patcher:
+    """Exact-match splices on files in out_dir; each patch is logged
+    (file, why) for PATCHES.md."""
 
-def _read(name: str) -> str:
-    return (OUT / name).read_text(encoding="utf-8")
+    def __init__(self, out_dir: Path):
+        self.out_dir = Path(out_dir)
+        self.log: list[tuple[str, str]] = []
 
+    def _read(self, name: str) -> str:
+        return (self.out_dir / name).read_text(encoding="utf-8")
 
-def _write(name: str, text: str) -> None:
-    (OUT / name).write_text(text, encoding="utf-8")
+    def _write(self, name: str, text: str) -> None:
+        (self.out_dir / name).write_text(text, encoding="utf-8")
 
+    def replace(self, name: str, old: str, new: str, why: str) -> None:
+        text = self._read(name)
+        count = text.count(old)
+        assert count == 1, f"{name}: patch anchor found {count} times (expected 1): {old[:80]!r}"
+        self._write(name, text.replace(old, new))
+        self.log.append((name, why))
 
-def patch_replace(name: str, old: str, new: str, why: str) -> None:
-    text = _read(name)
-    count = text.count(old)
-    assert count == 1, f"{name}: patch anchor found {count} times (expected 1): {old[:80]!r}"
-    _write(name, text.replace(old, new))
-    PATCH_LOG.append((name, why))
+    def between(self, name: str, start: str, end: str, new: str, why: str) -> None:
+        """Replace the region from `start` through the first `end` AFTER it
+        (both inclusive). Both anchors asserted unique enough."""
+        text = self._read(name)
+        assert text.count(start) == 1, f"{name}: start anchor not unique: {start[:80]!r}"
+        i = text.index(start)
+        j = text.index(end, i + len(start))
+        self._write(name, text[:i] + new + text[j + len(end):])
+        self.log.append((name, why))
 
-
-def patch_between(name: str, start: str, end: str, new: str, why: str) -> None:
-    """Replace the region from `start` through the first `end` AFTER it
-    (both inclusive). Both anchors asserted unique enough."""
-    text = _read(name)
-    assert text.count(start) == 1, f"{name}: start anchor not unique: {start[:80]!r}"
-    i = text.index(start)
-    j = text.index(end, i + len(start))
-    _write(name, text[:i] + new + text[j + len(end):])
-    PATCH_LOG.append((name, why))
-
-
-def patch_regex(name: str, pattern: str, new: str, why: str) -> None:
-    text = _read(name)
-    matches = re.findall(pattern, text, flags=re.DOTALL)
-    assert len(matches) == 1, f"{name}: regex matched {len(matches)} times: {pattern[:80]!r}"
-    _write(name, re.sub(pattern, lambda _m: new, text, count=1, flags=re.DOTALL))
-    PATCH_LOG.append((name, why))
+    def regex(self, name: str, pattern: str, new: str, why: str) -> None:
+        text = self._read(name)
+        matches = re.findall(pattern, text, flags=re.DOTALL)
+        assert len(matches) == 1, f"{name}: regex matched {len(matches)} times: {pattern[:80]!r}"
+        self._write(name, re.sub(pattern, lambda _m: new, text, count=1, flags=re.DOTALL))
+        self.log.append((name, why))
 
 
 # ---------------------------------------------------------------------------
-# The patches
+# Variant texts: v2avg (FROZEN — every string reproduces the committed site)
 # ---------------------------------------------------------------------------
 
-BANNER = (
-    '\n<div class="v2avg-banner" style="background:#2f2418; color:#f7f2e7; '
-    'padding:10px 20px; font-size:14px; line-height:1.55; position:relative; z-index:60;">\n'
-    f'  <strong style="color:#ffd27a;">{VARIANT_LABEL}</strong> &mdash; {METHODS_NOTE}\n'
-    '  <em>This is a re-analysis variant, not the published v1 site.</em>\n'
-    "</div>\n"
-    "<style>.v1-flag{display:inline-block;background:#f3e6c8;color:#7a5a1e;"
-    "border:1px solid #d9c48a;border-radius:4px;padding:0 6px;font-size:12px;"
-    "font-weight:700;margin-right:4px;}</style>\n"
-)
-
-APP_JS_CODING_BLOCK = """  if (record.coding && record.coding.schema === "v2avg") {
+V2AVG_APP_JS_CODING_BLOCK = """  if (record.coding && record.coding.schema === "v2avg") {
     const codingBlock = document.createElement("div");
     codingBlock.className = "coding-block";
     const graders = record.coding.graders || {};
@@ -865,7 +1360,7 @@ APP_JS_CODING_BLOCK = """  if (record.coding && record.coding.schema === "v2avg"
     node.querySelector(".error-message").insertAdjacentElement("afterend", codingBlock);
   }"""
 
-FACETS_CODECHIPS = """    function graderChips(label, gc) {
+V2AVG_FACETS_CODECHIPS = """    function graderChips(label, gc) {
       if (!gc) return `<span class="code-chip" style="opacity:.75;"><strong>${escapeHtml(label)}:</strong> no valid code</span>`;
       const chips = [];
       const judge = gc.judge || {};
@@ -908,7 +1403,7 @@ FACETS_CODECHIPS = """    function graderChips(label, gc) {
         `<div style="margin-top:4px;">${graderChips("Qwen 3.8", g.qwen)}</div>`;
     }"""
 
-FACETS_DETAIL_BLOCK = """      const detail = ex.facet_detail || {};
+V2AVG_FACETS_DETAIL_BLOCK = """      const detail = ex.facet_detail || {};
       for (const pair of [["Gemma 4", detail.evidence_gemma], ["Qwen 3.8", detail.evidence_qwen]]) {
         if (pair[1]) {
           html += `<div class="evidence-quote"><span class="quote-kicker">Grader evidence &middot; ${escapeHtml(pair[0])}</span>${escapeHtml(pair[1])}</div>`;
@@ -923,82 +1418,13 @@ FACETS_DETAIL_BLOCK = """      const detail = ex.facet_detail || {};
           ${escapeHtml(c.cost_clause || "")}</div>`;
       }"""
 
-V1_TAKEAWAY_FLAG = (
-    '<span class="v1-flag">v1 takeaway — original unblinded single-grader claim, '
-    "not recomputed; the figures below ARE v2 two-grader averages</span> "
-)
-
-
-def apply_all_patches() -> None:
-    # ---------- index.html ----------
-    patch_replace(
-        "index.html",
-        "<title>The Continual Constitutional Convention</title>",
-        "<title>The Continual Constitutional Convention — v2 Re-code Average</title>",
-        "Title labeled as the v2 re-code variant.",
-    )
-    patch_replace(
-        "index.html",
-        "  <body>",
-        "  <body>" + BANNER,
-        "Variant banner (label + one-line methods note + B_intergrader.md pointer) at the top of the page; defines the .v1-flag style.",
-    )
-    patch_replace(
-        "index.html",
-        '<p class="hero-byline">By Peter Kirgis</p>',
-        '<p class="hero-byline">By Peter Kirgis &middot; re-analyzed under the v2 blinded two-grader re-code</p>',
-        "Byline notes the re-analysis so the page is not mistaken for the published v1 site.",
-    )
-    patch_replace(
-        "index.html",
-        "<strong>First, on the question of the judge:</strong>",
-        '<span class="v1-flag">v1 narrative — original single-grader analysis, not recomputed</span> <strong>First, on the question of the judge:</strong>',
-        "Findings paragraph 1 flagged as v1 narrative text (its claims are not v2-average figures).",
-    )
-    patch_replace(
-        "index.html",
-        "<strong>Second, on the question of beneficiaries:</strong>",
-        '<span class="v1-flag">v1 narrative — original single-grader analysis, not recomputed</span> <strong>Second, on the question of beneficiaries:</strong>',
-        "Findings paragraph 2 flagged as v1 narrative text.",
-    )
-    patch_replace(
-        "index.html",
-        '<h3 class="facet-panel-title">Results Explorer</h3>',
-        '<h3 class="facet-panel-title">Results Explorer &mdash; v2 two-grader average</h3>',
-        "Results Explorer heading labeled: all its figures are the v2 average.",
-    )
-
-    # ---------- conversations.html ----------
-    patch_replace(
-        "conversations.html",
-        "<title>Full Conversations</title>",
-        "<title>Full Conversations — v2 Re-code Average</title>",
-        "Title labeled as the v2 re-code variant.",
-    )
-    patch_replace(
-        "conversations.html",
-        "  <body>",
-        "  <body>" + BANNER,
-        "Variant banner at the top of the page.",
-    )
-
-    # ---------- prompts.html ----------
-    patch_replace(
-        "prompts.html",
-        "<title>Prompt Structure</title>",
-        "<title>Prompt Structure — v2 Re-code Average</title>",
-        "Title labeled as the v2 re-code variant.",
-    )
-    patch_replace(
-        "prompts.html",
-        "<body>",
-        "<body>" + BANNER,
-        "Variant banner at the top of the page.",
-    )
-    patch_between(
-        "prompts.html",
-        '<p class="prompt-description">\n      After all edits are collected',
-        "</p>",
+V2AVG_TEXTS = {
+    "title_suffix": " — v2 Re-code Average",
+    "byline_suffix": " &middot; re-analyzed under the v2 blinded two-grader re-code",
+    "flag1_why": "Findings paragraph 1 flagged as v1 narrative text (its claims are not v2-average figures).",
+    "explorer_suffix": " &mdash; v2 two-grader average",
+    "explorer_why": "Results Explorer heading labeled: all its figures are the v2 average.",
+    "prompts_desc": (
         '<p class="prompt-description">\n      '
         "In the <strong>v2 blinded re-code</strong>, two independent open-weights graders — "
         "<strong>Gemma 4 31B Instruct</strong> and <strong>Qwen 3.8</strong> — each read every edit "
@@ -1008,191 +1434,54 @@ def apply_all_patches() -> None:
         "for another's benefit. Unlike the v1 pipeline, the graders are <strong>blinded</strong>: they see "
         "the document, its owner, the section heading, and the surrounding context at the time of the "
         "edit — but <strong>not</strong> the editing model, the prompt condition, or the round. Every "
-        "figure on this site is the equal-weight average of the two graders.\n    </p>",
-        "Coding-tab description rewritten: v2 pipeline is blinded + contextual with two graders (the v1 text described the unblinded metadata).",
-    )
-    v2_system_pre = "<pre>" + html_mod.escape(V2_SYSTEM_PROMPT.read_text(encoding="utf-8").rstrip()) + "</pre>"
-    patch_regex(
-        "prompts.html",
-        r"<pre>You are an expert qualitative coder.*?</pre>",
-        v2_system_pre,
-        "System prompt replaced with the exact v2 blinded prompt (recode/prompts/v2_system.md): contextual input, synthetic anchors, explicit judge-0 instruction, R6.",
-    )
-    v2_user_pre = "<pre>" + html_mod.escape(V2_USER_TEMPLATE.read_text(encoding="utf-8").rstrip()) + "</pre>"
-    patch_regex(
-        "prompts.html",
-        r"<pre>Code this edit\..*?</pre>",
-        v2_user_pre,
-        "User template replaced with the v2 blinded template (recode/prompts/v2_user_template.md): no editing-model / condition / round metadata; context fields added.",
-    )
-    patch_between(
-        "prompts.html",
-        "<strong>Coder model:</strong>",
-        "failing the edit.",
+        "figure on this site is the equal-weight average of the two graders.\n    </p>"
+    ),
+    "prompts_desc_why": "Coding-tab description rewritten: v2 pipeline is blinded + contextual with two graders (the v1 text described the unblinded metadata).",
+    "coder_note": (
         "<strong>Coder models:</strong> google/gemma-4-31b-it and qwen/qwen3.8-2.4t-a95b "
         "(open weights, via OpenRouter), temperature 0.0, high reasoning effort. Every response is "
         "validated (judge score, patienthood level, party vocabulary, verbatim cost clauses) with up "
         "to three attempts. Site aggregates average the two graders with equal weight; per-edit views "
         "show both codes side by side and flag disagreements. Agreement statistics: "
-        "recode/reports/B_intergrader.md.",
-        "Coder note names both v2 graders and the averaging rule instead of the single v1 Gemma coder.",
-    )
-
-    # ---------- app.js ----------
-    patch_between(
-        "app.js",
-        '  if (record.coding) {\n    const codingBlock = document.createElement("div");',
-        '    node.querySelector(".error-message").insertAdjacentElement("afterend", codingBlock);\n  }',
-        APP_JS_CODING_BLOCK,
-        "renderRecord coding block rewritten: shows Gemma and Qwen codes side by side with a visible disagreement / single-grader marker and the per-edit judge average; uncoded records get an explicit graceful note.",
-    )
-
-    # ---------- facets.js ----------
-    patch_replace(
-        "facets.js",
-        '  const NEUTRAL = "#b8a98c";',
-        '  const NEUTRAL = "#b8a98c";\n  const fmtN = (x) => (Math.round(x * 10) / 10).toString();',
-        "Number formatter for grader-averaged (fractional) counts.",
-    )
-    patch_replace(
-        "facets.js",
-        "      let html = `<p class=\"story-takeaway\">${info.takeaway}</p>`;",
-        "      let html = `<p class=\"story-takeaway\">" + V1_TAKEAWAY_FLAG + "${info.takeaway}</p>`;",
-        "Every takeaway (hardcoded v1 numbers/claims) is flagged as v1 text so it is not read as a v2 figure.",
-    )
-    patch_replace(
-        "facets.js",
-        "      if (info.highlights && info.highlights.length) {",
-        "      if (false) { // v2avg: v1-tied highlight links disabled (their ids/quotes/directions are bound to v1 codes)",
-        "Highlight links disabled: their curated ids and quoted tips are tied to v1 codes and would silently jump to the wrong example under the regenerated v2 stories.",
-    )
-    patch_between(
-        "facets.js",
-        "    function codeChips(ex) {",
-        '      return chips.join("");\n    }',
-        FACETS_CODECHIPS,
-        "Example code chips rewritten: both graders side by side with a disagreement marker.",
-    )
-    patch_between(
-        "facets.js",
-        "      const detail = ex.facet_detail || {};",
-        '${escapeHtml(c.cost_clause || "")}</div>`;\n      }',
-        FACETS_DETAIL_BLOCK,
-        "Example evidence/cost-clause blocks rewritten: per-grader evidence and grader-tagged cost clauses.",
-    )
-    patch_replace(
-        "facets.js",
-        "        are browsable below.</p>`;",
+        "recode/reports/B_intergrader.md."
+    ),
+    "coder_note_why": "Coder note names both v2 graders and the averaging rule instead of the single v1 Gemma coder.",
+    "app_js_block": V2AVG_APP_JS_CODING_BLOCK,
+    "app_js_why": "renderRecord coding block rewritten: shows Gemma and Qwen codes side by side with a visible disagreement / single-grader marker and the per-edit judge average; uncoded records get an explicit graceful note.",
+    "facets_prelude": '  const NEUTRAL = "#b8a98c";\n  const fmtN = (x) => (Math.round(x * 10) / 10).toString();',
+    "facets_prelude_why": "Number formatter for grader-averaged (fractional) counts.",
+    "takeaway_flag": (
+        '<span class="v1-flag">v1 takeaway — original unblinded single-grader claim, '
+        "not recomputed; the figures below ARE v2 two-grader averages</span> "
+    ),
+    "js_tag": "v2avg",
+    "codechips_js": V2AVG_FACETS_CODECHIPS,
+    "codechips_why": "Example code chips rewritten: both graders side by side with a disagreement marker.",
+    "detail_js": V2AVG_FACETS_DETAIL_BLOCK,
+    "detail_why": "Example evidence/cost-clause blocks rewritten: per-grader evidence and grader-tagged cost clauses.",
+    "howto_new": (
         "        are browsable below. <strong>Averaging:</strong> every count here is grader-averaged &mdash;\n"
         "        an edit contributes 1.0 to a direction when both v2 graders assign it and 0.5 when exactly\n"
         "        one of two does (a single-grader-valid edit contributes that grader's code at full weight);\n"
         "        denominators are edits coded by at least one v2 grader (the two abstentions are coded in v2,\n"
-        "        unlike v1).</p>`;",
-        "How-to note documents the averaging semantics and the denominator.",
-    )
-    patch_replace(
-        "facets.js",
-        "          shows &plusmn;1 SD across each model's (run &times; document) replicates.</p></div>",
+        "        unlike v1).</p>`;"
+    ),
+    "howto_why": "How-to note documents the averaging semantics and the denominator.",
+    "drift_new": (
         "          shows &plusmn;1 SD across each model's (run &times; document) replicates. Net resolutions are\n"
         "          the equal-weight average of the two v2 graders, so fractional steps are possible.\n"
         "          In the <strong>System prompts</strong> view, lines are still per editing model, restricted to\n"
         "          system-prompt documents across all conditions; replicates are then each model's\n"
-        "          (run &times; condition &times; document) chains on those documents.</p></div>",
-        "Drift note documents grader-averaged (fractional) net scores and the System-prompts view's per-model lines over system-prompt chains.",
-    )
-    patch_replace(
-        "facets.js",
-        "            valueText = `${neg} deny / ${ctr} hedge / ${pos} affirm<br>${pctTotal}% of ${s.total} edits`;",
-        "            valueText = `${fmtN(neg)} deny / ${fmtN(ctr)} hedge / ${fmtN(pos)} affirm<br>${pctTotal}% of ${s.total} edits`;",
-        "Fractional (averaged) counts rendered to one decimal.",
-    )
-    patch_replace(
-        "facets.js",
-        "              valueText = `−${neg} / +${pos}<br>mean ${mean >= 0 ? \"+\" : \"−\"}${Math.abs(mean).toFixed(2)}`;",
-        "              valueText = `−${fmtN(neg)} / +${fmtN(pos)}<br>mean ${mean >= 0 ? \"+\" : \"−\"}${Math.abs(mean).toFixed(2)}`;",
-        "Fractional (averaged) judge counts rendered to one decimal; the mean shown equals the mean of per-edit judge averages.",
-    )
-    patch_replace(
-        "facets.js",
-        "              valueText = `${neg} / ${pos}<br>${pctTotal}% of ${s.total} edits`;",
-        "              valueText = `${fmtN(neg)} / ${fmtN(pos)}<br>${pctTotal}% of ${s.total} edits`;",
-        "Fractional (averaged) conflict counts rendered to one decimal.",
-    )
-
-    # ----- "System prompts" view (condition-chip row, right after Cross Edit) -----
-    patch_replace(
-        "facets.js",
-        '  const CONDITIONS = ["", "baseline", "you_framing", "allow_no_edit", "no_constitution_prepend", "implementation_note", "cross_edit"];',
-        '  // v2avg "System prompts" view: a pseudo-option on the condition-chip row\n'
-        "  // (NOT a prompt condition) that restricts every figure to edits of\n"
-        "  // system-prompt documents across ALL conditions, rendered per editing\n"
-        "  // model exactly like the real condition chips.\n"
-        '  const SP_CONDITION = "system_prompts_view";\n'
-        '  const CONDITIONS = ["", "baseline", "you_framing", "allow_no_edit", "no_constitution_prepend", "implementation_note", "cross_edit", SP_CONDITION];',
-        'New "System prompts" option appended to the condition-chip list immediately after Cross Edit.',
-    )
-    patch_replace(
-        "facets.js",
-        '    cross_edit: "Cross Edit",',
-        '    cross_edit: "Cross Edit",\n    [SP_CONDITION]: "System prompts",',
-        'Chip label for the new view: "System prompts".',
-    )
-    patch_replace(
-        "facets.js",
-        '    cross_edit: "Models revise alignment documents across providers, not just their own.",',
-        '    cross_edit: "Models revise alignment documents across providers, not just their own.",\n'
-        '    [SP_CONDITION]: "All conditions; system-prompt documents only. Not a prompt condition: '
-        "this view pools every condition (own-document and cross-edit edits of system prompts alike) "
-        "and keeps only edits whose document is a provider system prompt (Claude Opus, GPT, Gemini, "
-        'Grok) — rendered per editing model, exactly like the other condition chips.",',
-        "Tooltip/subtitle for the new chip states the fixed semantics: all conditions; system-prompt documents only; rendered per editing model.",
-    )
-    patch_replace(
-        "facets.js",
-        "    function aggStat(fid, condition, model) {\n      const condMap = data.stats[fid] || {};",
-        "    function aggStat(fid, condition, model) {\n"
-        "      // System prompts view: cells keyed by model_display exactly like the\n"
-        "      // real conditions (system-prompt documents only, all conditions\n"
-        "      // pooled in the data build), so every renderer and the model chips\n"
-        "      // work unchanged. sp_stats lives OUTSIDE data.stats so the 'All\n"
-        "      // conditions' pooling below can never double-count the stratum.\n"
-        "      const condMap = condition === SP_CONDITION\n"
-        "        ? { [SP_CONDITION]: (data.sp_stats || {})[fid] || {} }\n"
-        "        : (data.stats[fid] || {});",
-        "aggStat reads the System-prompts view from the separate sp_stats table (keyed by model_display, the same cell shape as the per-condition cells), leaving real-condition pooling untouched.",
-    )
-    patch_replace(
-        "facets.js",
-        "      return list.filter((ex) => {\n        if (condition && ex.condition_id !== condition) return false;",
-        "      return list.filter((ex) => {\n"
-        '        if (condition === SP_CONDITION) {\n'
-        '          if (ex.doc_type !== "system_prompt") return false;\n'
-        "        } else if (condition && ex.condition_id !== condition) return false;",
-        "Example browser: the System-prompts view filters stories by the new doc_type field (all conditions) instead of by condition_id.",
-    )
-    # NOTE (reworked per-model SP view): the drift chart, freq bars, row labels,
-    # aggregate-view heading, and model-visibility chips need NO patches — the
-    # sp_stats table is keyed by model_display with the standard cell shape, so
-    # the stock per-model renderers (and active model chips) apply verbatim in
-    # the System-prompts view. The former per-document rendering patches and the
-    # chip-greying patch are intentionally gone.
-
-
-def write_patches_md(counters: dict) -> None:
-    by_file: dict[str, list[str]] = defaultdict(list)
-    for name, why in PATCH_LOG:
-        by_file[name].append(why)
-    lines = [
-        "# PATCHES.md — recode/site_v2avg/",
-        "",
-        f"Variant: **{VARIANT_LABEL}**",
-        "",
+        "          (run &times; condition &times; document) chains on those documents.</p></div>"
+    ),
+    "drift_why": "Drift note documents grader-averaged (fractional) net scores and the System-prompts view's per-model lines over system-prompt chains.",
+    "extra_patches": [],
+    "built_by": [
         "Built by `recode/src/build_site_v2avg.py` (rerunnable; every patch is an",
         "exact-match splice against a fresh copy of docs/, asserted unique — the build",
         "fails loudly if docs/ drifts). docs/ itself is never modified.",
-        "",
-        "## Data files (regenerated, not copied)",
-        "",
+    ],
+    "data_section": [
         "- `data/site.json.gz` — rebuilt from the 10 run files (via the imported",
         "  `build_static_site.summarize_run`/`load_jsonl_records` plus a vendored copy of",
         "  `changed_records` with only the coding join changed). Each record carries BOTH",
@@ -1201,7 +1490,7 @@ def write_patches_md(counters: dict) -> None:
         "  flags, `conflict_weights` with 0.5/1.0 weights, `patienthood_pair`) and a",
         "  `v2_coding_status` marker. Records with no valid v2 coding from either grader",
         "  are passed through with `coding: null` and an explicit uncoded status",
-        f"  (this build: {json.dumps(counters)}).",
+        "  (this build: @@COUNTERS@@).",
         "  The uncompressed site.json is intentionally not written (the frontend only",
         "  fetches the .gz).",
         "- `data/narratives.json` — regenerated (build_narratives.py is fully",
@@ -1240,6 +1529,649 @@ def write_patches_md(counters: dict) -> None:
         "  per-document table is kept for REFERENCE ONLY (the frontend renders the view",
         "  per model), and its document set must be exactly the four provider system",
         "  prompts.",
+    ],
+    "leftovers_extra": [],
+}
+
+
+# ---------------------------------------------------------------------------
+# Variant texts: v3pool (N-grader pooled; the JS reads the grader list that
+# the builder embeds, so nothing in the JS is hard-wired to three graders)
+# ---------------------------------------------------------------------------
+
+POOL_APP_JS_CODING_BLOCK = """  if (record.coding && record.coding.schema === "@@SCHEMA@@") {
+    const codingBlock = document.createElement("div");
+    codingBlock.className = "coding-block";
+    // @@SCHEMA@@: every grader side by side + per-dimension consensus markers.
+    const POOL_GRADERS = @@GRADERS_JSON@@;
+    const pc = record.coding;
+    const graders = pc.graders || {};
+    const cons = pc.consensus || {};
+    const DIMS = [["judge", "Judge"], ["patienthood", "Patienthood"], ["conflicts", "Conflicts"]];
+    const CONS_STYLES = {
+      unanimous: "background:#e2ead9;",
+      one_dissent: "background:#f6ddd2; border:1px solid #b0654a; color:#7a3520;",
+      all_differ: "background:#efc6b6; border:1px solid #8a3a22; color:#5e2210;",
+      partial_split: "background:#efc6b6; border:1px solid #8a3a22; color:#5e2210;",
+      fewer_valid: "background:#f4e9d0;",
+    };
+    const dissents = {};
+    for (const [dim, dimLabel] of DIMS) {
+      const c = cons[dim];
+      if (c && c.dissenter) (dissents[c.dissenter] ||= []).push(dimLabel.toLowerCase());
+    }
+    const consChip = ([dim, dimLabel]) => {
+      const c = cons[dim];
+      if (!c) return "";
+      const icon = c.status === "unanimous" ? "&#10003; " : (c.status === "fewer_valid" ? "" : "&#9888; ");
+      const votes = (c.votes || []).map((v) => `${v.value} ×${v.n}`).join(", ");
+      return `<span class="coding-chip" style="${CONS_STYLES[c.status] || ""} font-weight:700;">${icon}${escapeHtml(dimLabel)}: ${escapeHtml(c.label)} &middot; ${escapeHtml(votes)}</span>`;
+    };
+    const graderCol = (g) => {
+      const gc = graders[g.key];
+      const box = "padding:8px 10px; border:1px dashed #d9d5c9; border-radius:6px; min-width:0;";
+      const tag = dissents[g.key]
+        ? ` <span class="coding-chip" style="background:#f6ddd2; border:1px solid #b0654a; color:#7a3520; font-weight:700;">dissents on ${escapeHtml(dissents[g.key].join(", "))}</span>`
+        : "";
+      const head = `<p class="coding-summary-text" style="margin:0 0 4px;"><strong>${escapeHtml(g.label)}</strong> (blinded v2)${tag}</p>`;
+      if (!gc) {
+        return `<div style="${box}">${head}<p class="coding-summary-text"><em>no valid code from this grader for this edit</em></p></div>`;
+      }
+      const chips = [];
+      const judge = gc.judge;
+      if (judge && typeof judge.score === "number") {
+        const judgeLabel = judge.score > 0 ? "+1 model discretion" : (judge.score < 0 ? "−1 external authority" : "0 neutral");
+        const locus = judge.score < 0 && judge.external_locus ? ` (locus: ${judge.external_locus})` : "";
+        chips.push(`<span class="coding-chip"><strong>Judge:</strong> ${escapeHtml(judgeLabel + locus)}</span>`);
+      }
+      const pat = gc.patienthood;
+      if (pat?.level) {
+        chips.push(`<span class="coding-chip"><strong>Patienthood:</strong> ${escapeHtml(PATIENTHOOD_LABELS[pat.level] || pat.level)}</span>`);
+      }
+      for (const c of gc.conflicts || []) {
+        chips.push(
+          `<span class="coding-chip"><strong>${escapeHtml(CONFLICT_CODE_LABELS[c.code] || c.code)}:</strong> ` +
+          `${escapeHtml(PARTY_LABELS[c.cost_bearer] || c.cost_bearer)} pays → ` +
+          `${escapeHtml(PARTY_LABELS[c.served_party] || c.served_party)} gains</span>`,
+        );
+      }
+      const clauses = (gc.conflicts || [])
+        .map((c) => `
+          <p class="coding-summary-text" style="margin-top: 4px; font-size: 13px;">
+            <strong>${escapeHtml(CONFLICT_CODE_LABELS[c.code] || c.code)} cost clause:</strong>
+            <em>&ldquo;${escapeHtml(c.cost_clause || "")}&rdquo;</em>
+          </p>
+        `)
+        .join("");
+      return `<div style="${box}">${head}
+        <p class="coding-summary-text" style="margin:0 0 6px; font-size:13px;">${escapeHtml(gc.summary || "")}</p>
+        <div class="coding-chip-row">${chips.join("") || '<span class="coding-chip muted-chip">Judge 0 · no patienthood engagement · no conflicts</span>'}</div>
+        ${clauses}
+      </div>`;
+    };
+    const avg = pc.judge_avg;
+    const avgTxt = typeof avg === "number"
+      ? `pooled judge ${avg > 0 ? "+" : (avg < 0 ? "−" : "")}${Math.abs(avg).toFixed(2)} · ${pc.n_graders_valid}/${pc.n_graders} graders valid`
+      : "";
+    codingBlock.innerHTML = `
+      <div class="coding-block-header">
+        <h3>How this edit was coded — v2 blinded re-code (all ${POOL_GRADERS.length} graders shown)</h3>
+        <span>${escapeHtml(avgTxt)}</span>
+      </div>
+      <div class="coding-chip-row">${DIMS.map(consChip).join("")}</div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px; margin-top:10px;">
+        ${POOL_GRADERS.map(graderCol).join("")}
+      </div>
+    `;
+    node.querySelector(".error-message").insertAdjacentElement("afterend", codingBlock);
+  } else if (!record.error && !record.coding) {
+    const codingBlock = document.createElement("div");
+    codingBlock.className = "coding-block";
+    codingBlock.innerHTML = `<p class="coding-summary-text"><em>Not coded in the v2 re-code (exploratory run, or no valid grader output from any of the graders).</em></p>`;
+    node.querySelector(".error-message").insertAdjacentElement("afterend", codingBlock);
+  }"""
+
+POOL_FACETS_PRELUDE = """  const NEUTRAL = "#b8a98c";
+  // @@SCHEMA@@: pooled (fractional) counts shown to one decimal; the grader
+  // list is embedded by the builder so every per-grader display iterates it.
+  const fmtN = (x) => (Math.round(x * 10) / 10).toString();
+  const POOL_GRADERS = @@GRADERS_JSON@@;
+  const CONS_STYLES = {
+    unanimous: "background:#e2ead9;",
+    one_dissent: "background:#f6ddd2; border:1px solid #b0654a; color:#7a3520;",
+    all_differ: "background:#efc6b6; border:1px solid #8a3a22; color:#5e2210;",
+    partial_split: "background:#efc6b6; border:1px solid #8a3a22; color:#5e2210;",
+    fewer_valid: "background:#f4e9d0;",
+  };"""
+
+POOL_FACETS_CODECHIPS = """    function graderChips(label, gc, dissent) {
+      if (!gc) return `<span class="code-chip" style="opacity:.75;"><strong>${escapeHtml(label)}:</strong> no valid code</span>`;
+      const chips = [];
+      const judge = gc.judge || {};
+      if (typeof judge.score === "number" && judge.score !== 0) {
+        const cls = judge.score > 0 ? "judge-pos" : "judge-neg";
+        const jLabel = judge.score > 0 ? "+1 model discretion" : "−1 external authority";
+        const locus = judge.score < 0 && judge.external_locus ? ` (locus: ${judge.external_locus})` : "";
+        chips.push(`<span class="code-chip ${cls}"><strong>Judge:</strong> ${escapeHtml(jLabel + locus)}</span>`);
+      }
+      const pat = gc.patienthood || {};
+      if (pat.level && pat.level !== "not_present") {
+        chips.push(`<span class="code-chip pat"><strong>Patienthood:</strong> ${escapeHtml(PATIENTHOOD_LABELS[pat.level] || pat.level)}</span>`);
+      }
+      for (const c of gc.conflicts || []) {
+        chips.push(
+          `<span class="code-chip conf"><strong>${escapeHtml(CONFLICT_CODE_LABELS[c.code] || c.code)}:</strong> ` +
+          `${escapeHtml(PARTY_LABELS[c.cost_bearer] || c.cost_bearer)} pays → ` +
+          `${escapeHtml(PARTY_LABELS[c.served_party] || c.served_party)} gains</span>`,
+        );
+      }
+      return `<span class="code-chip" style="background:#efe9db;"><strong>${escapeHtml(label)}</strong></span>` +
+        (dissent ? `<span class="code-chip" style="background:#f6ddd2; border:1px solid #b0654a; color:#7a3520; font-weight:700;">dissents on ${escapeHtml(dissent)}</span>` : "") +
+        (chips.join("") || `<span class="code-chip">judge 0 · no engagement · no conflicts</span>`);
+    }
+    function consensusChip(dimLabel, c) {
+      if (!c) return "";
+      const icon = c.status === "unanimous" ? "&#10003; " : (c.status === "fewer_valid" ? "" : "&#9888; ");
+      const votes = (c.votes || []).map((v) => `${v.value} ×${v.n}`).join(", ");
+      return `<span class="code-chip" style="${CONS_STYLES[c.status] || ""} font-weight:700;">${icon}${escapeHtml(dimLabel)}: ${escapeHtml(c.label)} &middot; ${escapeHtml(votes)}</span>`;
+    }
+    function codeChips(ex) {
+      const g = ex.graders || {};
+      const cons = ex.consensus || {};
+      const dims = [["judge", "Judge"], ["patienthood", "Patienthood"], ["conflicts", "Conflicts"]];
+      const dissents = {};
+      for (const [dim, dimLabel] of dims) {
+        const c = cons[dim];
+        if (c && c.dissenter) (dissents[c.dissenter] ||= []).push(dimLabel.toLowerCase());
+      }
+      const avg = ex.judge_avg;
+      const avgChip = typeof avg === "number"
+        ? `<span class="code-chip" style="background:#efe9db;"><strong>Pooled judge:</strong> ${avg > 0 ? "+" : (avg < 0 ? "−" : "")}${Math.abs(avg).toFixed(2)} (${ex.n_graders_valid}/${POOL_GRADERS.length} graders valid)</span>`
+        : "";
+      return `<div>${avgChip}${dims.map(([d, l]) => consensusChip(l, cons[d])).join("")}</div>` +
+        POOL_GRADERS.map((gr) =>
+          `<div style="margin-top:4px;">${graderChips(gr.label, g[gr.key], (dissents[gr.key] || []).join(", "))}</div>`
+        ).join("");
+    }"""
+
+POOL_FACETS_DETAIL_BLOCK = """      const detail = ex.facet_detail || {};
+      for (const gr of POOL_GRADERS) {
+        const ev = detail[`evidence_${gr.key}`];
+        if (ev) {
+          html += `<div class="evidence-quote"><span class="quote-kicker">Grader evidence &middot; ${escapeHtml(gr.label)}</span>${escapeHtml(ev)}</div>`;
+        }
+      }
+      for (const c of detail.conflicts || []) {
+        html += `<div class="evidence-quote cost-clause">
+          <span class="quote-kicker">${escapeHtml(CONFLICT_CODE_LABELS[c.code] || c.code)} cost clause
+            &middot; ${escapeHtml(PARTY_LABELS[c.cost_bearer] || c.cost_bearer)} pays
+            &middot; ${escapeHtml(c.mechanism || "")}
+            &middot; coded by ${escapeHtml(c.grader || "")}</span>
+          ${escapeHtml(c.cost_clause || "")}</div>`;
+      }"""
+
+# Fraction formatting for the (currently unused: every facet is diverging)
+# stacked freq-bar branch, so no raw 0.333… can ever reach the page.
+POOL_EXTRA_PATCHES = [
+    (
+        "facets.js",
+        "            .map((d) => (s.dirs[d.id] ? `${s.dirs[d.id]} ${shortDirLabel(d.id)}` : null))",
+        "            .map((d) => (s.dirs[d.id] ? `${fmtN(s.dirs[d.id])} ${shortDirLabel(d.id)}` : null))",
+        "Stacked freq-bar branch (unused by the current facets, all diverging): pooled counts rendered to one decimal.",
+    ),
+    (
+        "facets.js",
+        "            .join(\" / \") + `<br>${engaged}/${s.total} edits`;",
+        "            .join(\" / \") + `<br>${fmtN(engaged)}/${s.total} edits`;",
+        "Stacked freq-bar branch: pooled engaged count rendered to one decimal.",
+    ),
+    (
+        "facets.js",
+        'title="${escapeAttr(d.label)}: ${n}"',
+        'title="${escapeAttr(d.label)}: ${fmtN(n)}"',
+        "Stacked freq-bar segment tooltip: pooled count rendered to one decimal.",
+    ),
+]
+
+V3POOL_LABEL = "v2 blinded re-code — Gemma 4 + Qwen 3.8 + Muse Spark 1.3 pooled average (recode pipeline)"
+V3POOL_METHODS_NOTE = (
+    "Three graders from three non-evaluated model families (google/gemma-4-31b-it, "
+    "qwen/qwen3.8-2.4t-a95b, meta/muse-spark-1.3-contributor) re-coded every edit blinded to the "
+    "editing model and prompt condition, with surrounding document context; every figure is the "
+    "pooled average (each valid grader weighted 1/n per edit), and per-edit views show all three "
+    "codes side by side with a consensus marker. Judge agreement across the three: Krippendorff's "
+    "&alpha; 0.520. Details: recode/reports/B_intergrader.md (in the repository)."
+)
+
+V3POOL_TEXTS = {
+    "title_suffix": " — v2 Re-code, Three-Grader Pool",
+    "byline_suffix": " &middot; re-analyzed under the v2 blinded three-grader pooled re-code",
+    "flag1_why": "Findings paragraph 1 flagged as v1 narrative text (its claims are not v2 pooled figures).",
+    "explorer_suffix": " &mdash; v2 three-grader pooled average",
+    "explorer_why": "Results Explorer heading labeled: all its figures are the v2 three-grader pooled average.",
+    "prompts_desc": (
+        '<p class="prompt-description">\n      '
+        "In the <strong>v2 blinded re-code</strong>, three independent graders from three model "
+        "families that are not among the evaluated editing models — <strong>Gemma 4 31B Instruct</strong> "
+        "(google/gemma-4-31b-it), <strong>Qwen 3.8</strong> (qwen/qwen3.8-2.4t-a95b) and "
+        "<strong>Muse Spark 1.3</strong> (meta/muse-spark-1.3-contributor) — each read every edit "
+        "and code it under the judge/beneficiary framework: a dense <strong>judge</strong> score "
+        "(&minus;1 / 0 / +1) on every edit, a dense <strong>moral patienthood</strong> flag, and sparse "
+        "<strong>conflict events</strong> coded only when a clause imposes a legible cost on one party "
+        "for another's benefit. Unlike the v1 pipeline, the graders are <strong>blinded</strong>: they see "
+        "the document, its owner, the section heading, and the surrounding context at the time of the "
+        "edit — but <strong>not</strong> the editing model, the prompt condition, or the round. Every "
+        "figure on this site is the pooled average of the three graders: each grader with a valid code "
+        "for an edit gets weight 1/(number of valid graders).\n    </p>"
+    ),
+    "prompts_desc_why": "Coding-tab description rewritten: v2 pipeline is blinded + contextual with three graders, all three listed (the v1 text described the unblinded metadata).",
+    "coder_note": (
+        "<strong>Coder models:</strong> google/gemma-4-31b-it, qwen/qwen3.8-2.4t-a95b and "
+        "meta/muse-spark-1.3-contributor (via OpenRouter), temperature 0.0, high reasoning effort. "
+        "Every response is validated (judge score, patienthood level, party vocabulary, verbatim cost "
+        "clauses) with up to three attempts. Site aggregates pool the three graders: each grader with a "
+        "valid code for an edit gets weight 1/(number of valid graders), so a category counts 1, 2/3 or "
+        "1/3 of an edit when three, two or one of three valid graders assign it. Per-edit views show all "
+        "three codes side by side with a consensus marker (unanimous / 2&ndash;1 split naming the "
+        "dissenter / 3-way split / fewer than 3 valid graders). Agreement statistics (judge "
+        "Krippendorff's &alpha; 0.520 across the three graders): recode/reports/B_intergrader.md."
+    ),
+    "coder_note_why": "Coder note names all three v2 graders and the pooling rule instead of the single v1 Gemma coder.",
+    "app_js_block": POOL_APP_JS_CODING_BLOCK,
+    "app_js_why": "renderRecord coding block rewritten: shows all three graders' codes side by side (grid) with per-dimension consensus markers (unanimous / 2–1 split naming the dissenter / 3-way split / fewer than 3 valid graders, with vote counts), a dissent tag on the dissenting grader, and the pooled judge; uncoded records get an explicit graceful note.",
+    "facets_prelude": POOL_FACETS_PRELUDE,
+    "facets_prelude_why": "Number formatter for pooled (fractional) counts, plus the embedded grader list and consensus-marker styles used by the per-grader displays.",
+    "takeaway_flag": (
+        '<span class="v1-flag">v1 takeaway — original unblinded single-grader claim, '
+        "not recomputed; the figures below ARE v2 three-grader pooled averages</span> "
+    ),
+    "js_tag": "v3pool",
+    "codechips_js": POOL_FACETS_CODECHIPS,
+    "codechips_why": "Example code chips rewritten: pooled judge, per-dimension consensus markers with vote counts, and every grader's codes (dissenter tagged).",
+    "detail_js": POOL_FACETS_DETAIL_BLOCK,
+    "detail_why": "Example evidence/cost-clause blocks rewritten: per-grader evidence for every grader and grader-tagged cost clauses.",
+    "howto_new": (
+        "        are browsable below. <strong>Pooling:</strong> every count here is the three-grader pooled\n"
+        "        average &mdash; an edit contributes (#valid graders assigning a direction)/(#valid graders):\n"
+        "        1 when all three assign it, 2/3 or 1/3 when two or one of three do (an edit with only two\n"
+        "        valid graders contributes 1, 1/2 or 0), so counts are shown to one decimal; denominators are\n"
+        "        edits coded by at least one v2 grader (the two abstentions are coded in v2, unlike v1).</p>`;"
+    ),
+    "howto_why": "How-to note documents the pooling semantics (1/n_valid weights), the one-decimal display and the denominator.",
+    "drift_new": (
+        "          shows &plusmn;1 SD across each model's (run &times; document) replicates. Net resolutions are\n"
+        "          the pooled average of the three v2 graders (mean over valid graders), so fractional steps\n"
+        "          (thirds) are possible.\n"
+        "          In the <strong>System prompts</strong> view, lines are still per editing model, restricted to\n"
+        "          system-prompt documents across all conditions; replicates are then each model's\n"
+        "          (run &times; condition &times; document) chains on those documents.</p></div>"
+    ),
+    "drift_why": "Drift note documents pooled (fractional) net scores and the System-prompts view's per-model lines over system-prompt chains.",
+    "extra_patches": POOL_EXTRA_PATCHES,
+    "built_by": [
+        "Built by `recode/src/build_site_v3pool.py` (a thin entry point for the shared",
+        "variant builder `recode/src/build_site_v2avg.py --variant v3pool`; rerunnable;",
+        "every patch is an exact-match splice against a fresh copy of docs/, asserted",
+        "unique — the build fails loudly if docs/ drifts). docs/ itself is never modified.",
+        "The v2avg variant (recode/site_v2avg/) is built by the same code and is unchanged.",
+    ],
+    "data_section": [
+        "- `data/site.json.gz` — rebuilt from the 10 run files (via the imported",
+        "  `build_static_site.summarize_run`/`load_jsonl_records` plus a vendored copy of",
+        "  `changed_records` with only the coding join changed). Each record's `coding`",
+        "  (schema `v3pool`) carries EVERY grader's v2 coding under `coding.graders`",
+        "  (gemma / qwen / muse; null = no valid code) plus pooled per-edit fields:",
+        "  `judge_avg` (mean of the valid graders' scores), `n_graders` / `n_graders_valid`",
+        "  / `graders_valid`, `single_grader`, categorical weights as fractions",
+        "  (`patienthood_weights`, `conflict_weights` = presence, `conflict_direction_weights`;",
+        "  each = #valid graders assigning / #valid), `patienthood_by_grader`, and",
+        "  `consensus.{judge,patienthood,conflicts}` = {status, label, n_valid, majority,",
+        "  dissenter, dissenter_label, valid_agree, votes:[{value, n, graders}]} with",
+        "  status unanimous / one_dissent (2–1, dissenter named) / all_differ (3-way) /",
+        "  fewer_valid (< 3 valid graders). The conflicts dimension compares the SET of",
+        "  conflict codes present. Records with no valid coding from any grader are",
+        "  passed through with `coding: null` and an explicit uncoded status",
+        "  (this build: @@COUNTERS@@).",
+        "  The top-level `graders` list names the three graders. The uncompressed",
+        "  site.json is intentionally not written (the frontend only fetches the .gz).",
+        "- `data/narratives.json` — regenerated (build_narratives.py is fully",
+        "  deterministic local aggregation with zero LLM calls). Per-grader facet",
+        "  semantics are imported unchanged from `build_narratives.py`",
+        "  (`facet_memberships`, `facet_net_scores`, `conflict_direction`); the",
+        "  aggregation pools the graders: `dirs` weight each edit by",
+        "  (#valid graders assigning)/(#valid graders) — 1, 2/3, 1/3 with three valid;",
+        "  1, 1/2 with two — `total` counts edits coded by >= 1 v2 grader (2,582), and",
+        "  `cum`/`cumsq` accumulate the pooled (fractional) net scores. Stories carry",
+        "  every grader's codes plus the per-dimension `consensus` object; the curated",
+        "  ride-on is dropped because the highlight links that consumed it are disabled",
+        "  (v1-tied). Example texts come from `recode/data/canonical/edits.jsonl`",
+        "  (find_text / replace_text_sanitized — the same sanitized text the graders saw).",
+        "  For the **System prompts** view the bundle carries the separate top-level",
+        "  `sp_stats` table — `{facet: {model_display: cell}}`, the same cell shape and",
+        "  model keys as the per-condition `stats` cells, restricted to",
+        "  `document_type == \"system_prompt\"` and pooled over ALL conditions and the four",
+        "  system-prompt documents (replicate = each model's (run, condition, document)",
+        "  chain), now under three-grader pooling — and a `doc_type` field on every story",
+        "  example so the example browser can filter the stratum client-side.",
+        "- `data/selfcheck.json` — ground truth computed directly from the three codes",
+        "  files (codes_io, LAST row per edit_id): per-model pooled mean judge + N,",
+        "  per-model P(affirm), per-model paternalism and welfare presence/direction",
+        "  weights, `system_prompt_stratum` per-model means + Ns (per-document table for",
+        "  reference), counts of edits by number of valid graders, the valid-grader",
+        "  sets, and judge consensus counts (unanimous / 2–1 with dissenter breakdown /",
+        "  3-way / fewer than 3 valid). Build-time assertions check that BOTH the",
+        "  site.json bundle (full floats, tol 1e-9) and narratives.json (dirs serialized",
+        "  to 6 decimals, tol 1e-5; all Ns exact) reproduce it.",
+    ],
+    "leftovers_extra": [
+        "- The JS consensus markers read the precomputed `consensus` objects; nothing in",
+        "  the patched JS is hard-wired to three graders (the grader list is embedded by",
+        "  the builder as `POOL_GRADERS`).",
+    ],
+}
+
+
+def _pool_js(text: str, variant: "Variant") -> str:
+    graders_json = json.dumps(
+        [{"key": g.key, "label": g.display} for g in variant.graders], ensure_ascii=False
+    )
+    return text.replace("@@GRADERS_JSON@@", graders_json).replace("@@SCHEMA@@", variant.name)
+
+
+V2AVG = Variant(
+    name="v2avg",
+    graders=(GEMMA, QWEN),
+    out_dir=RECODE / "site_v2avg",
+    variant_label="v2 blinded re-code — Gemma 4 + Qwen 3.8 average (recode pipeline)",
+    methods_note=(
+        "Two independent graders (google/gemma-4-31b-it and qwen/qwen3.8-2.4t-a95b) re-coded "
+        "every edit blinded to the editing model and prompt condition, with surrounding document "
+        "context; every figure and aggregate on this page is the equal-weight average of the two "
+        "graders, and per-edit views show both codes side by side with disagreements flagged. "
+        "Inter-grader agreement report: recode/reports/B_intergrader.md (in the repository)."
+    ),
+    combined_coder="google/gemma-4-31b-it + qwen/qwen3.8-2.4t-a95b (v2 blinded, equal-weight average)",
+    banner_class="v2avg-banner",
+    legacy_two_grader=True,
+    texts=V2AVG_TEXTS,
+)
+
+V3POOL = Variant(
+    name="v3pool",
+    graders=(GEMMA, QWEN, MUSE),
+    out_dir=RECODE / "site_v3pool",
+    variant_label=V3POOL_LABEL,
+    methods_note=V3POOL_METHODS_NOTE,
+    combined_coder=(
+        "google/gemma-4-31b-it + qwen/qwen3.8-2.4t-a95b + meta/muse-spark-1.3-contributor "
+        "(v2 blinded, three-grader pooled average)"
+    ),
+    banner_class="v3pool-banner",
+    legacy_two_grader=False,
+    texts=V3POOL_TEXTS,
+)
+
+VARIANTS = {v.name: v for v in (V2AVG, V3POOL)}
+
+
+# ---------------------------------------------------------------------------
+# The patches (shared engine; variant supplies the texts)
+# ---------------------------------------------------------------------------
+
+
+def apply_all_patches(variant: "Variant | None" = None, out_dir: Path | None = None) -> Patcher:
+    variant = variant or V2AVG
+    t = variant.texts
+    p = Patcher(out_dir or variant.out_dir)
+    banner = variant.banner
+    js = (lambda s: s) if variant.legacy_two_grader else (lambda s: _pool_js(s, variant))
+
+    # ---------- index.html ----------
+    p.replace(
+        "index.html",
+        "<title>The Continual Constitutional Convention</title>",
+        f"<title>The Continual Constitutional Convention{t['title_suffix']}</title>",
+        "Title labeled as the v2 re-code variant.",
+    )
+    p.replace(
+        "index.html",
+        "  <body>",
+        "  <body>" + banner,
+        "Variant banner (label + one-line methods note + B_intergrader.md pointer) at the top of the page; defines the .v1-flag style.",
+    )
+    p.replace(
+        "index.html",
+        '<p class="hero-byline">By Peter Kirgis</p>',
+        f'<p class="hero-byline">By Peter Kirgis{t["byline_suffix"]}</p>',
+        "Byline notes the re-analysis so the page is not mistaken for the published v1 site.",
+    )
+    p.replace(
+        "index.html",
+        "<strong>First, on the question of the judge:</strong>",
+        '<span class="v1-flag">v1 narrative — original single-grader analysis, not recomputed</span> <strong>First, on the question of the judge:</strong>',
+        t["flag1_why"],
+    )
+    p.replace(
+        "index.html",
+        "<strong>Second, on the question of beneficiaries:</strong>",
+        '<span class="v1-flag">v1 narrative — original single-grader analysis, not recomputed</span> <strong>Second, on the question of beneficiaries:</strong>',
+        "Findings paragraph 2 flagged as v1 narrative text.",
+    )
+    p.replace(
+        "index.html",
+        '<h3 class="facet-panel-title">Results Explorer</h3>',
+        f'<h3 class="facet-panel-title">Results Explorer{t["explorer_suffix"]}</h3>',
+        t["explorer_why"],
+    )
+
+    # ---------- conversations.html ----------
+    p.replace(
+        "conversations.html",
+        "<title>Full Conversations</title>",
+        f"<title>Full Conversations{t['title_suffix']}</title>",
+        "Title labeled as the v2 re-code variant.",
+    )
+    p.replace(
+        "conversations.html",
+        "  <body>",
+        "  <body>" + banner,
+        "Variant banner at the top of the page.",
+    )
+
+    # ---------- prompts.html ----------
+    p.replace(
+        "prompts.html",
+        "<title>Prompt Structure</title>",
+        f"<title>Prompt Structure{t['title_suffix']}</title>",
+        "Title labeled as the v2 re-code variant.",
+    )
+    p.replace(
+        "prompts.html",
+        "<body>",
+        "<body>" + banner,
+        "Variant banner at the top of the page.",
+    )
+    p.between(
+        "prompts.html",
+        '<p class="prompt-description">\n      After all edits are collected',
+        "</p>",
+        t["prompts_desc"],
+        t["prompts_desc_why"],
+    )
+    v2_system_pre = "<pre>" + html_mod.escape(V2_SYSTEM_PROMPT.read_text(encoding="utf-8").rstrip()) + "</pre>"
+    p.regex(
+        "prompts.html",
+        r"<pre>You are an expert qualitative coder.*?</pre>",
+        v2_system_pre,
+        "System prompt replaced with the exact v2 blinded prompt (recode/prompts/v2_system.md): contextual input, synthetic anchors, explicit judge-0 instruction, R6.",
+    )
+    v2_user_pre = "<pre>" + html_mod.escape(V2_USER_TEMPLATE.read_text(encoding="utf-8").rstrip()) + "</pre>"
+    p.regex(
+        "prompts.html",
+        r"<pre>Code this edit\..*?</pre>",
+        v2_user_pre,
+        "User template replaced with the v2 blinded template (recode/prompts/v2_user_template.md): no editing-model / condition / round metadata; context fields added.",
+    )
+    p.between(
+        "prompts.html",
+        "<strong>Coder model:</strong>",
+        "failing the edit.",
+        t["coder_note"],
+        t["coder_note_why"],
+    )
+
+    # ---------- app.js ----------
+    p.between(
+        "app.js",
+        '  if (record.coding) {\n    const codingBlock = document.createElement("div");',
+        '    node.querySelector(".error-message").insertAdjacentElement("afterend", codingBlock);\n  }',
+        js(t["app_js_block"]),
+        t["app_js_why"],
+    )
+
+    # ---------- facets.js ----------
+    p.replace(
+        "facets.js",
+        '  const NEUTRAL = "#b8a98c";',
+        js(t["facets_prelude"]),
+        t["facets_prelude_why"],
+    )
+    p.replace(
+        "facets.js",
+        "      let html = `<p class=\"story-takeaway\">${info.takeaway}</p>`;",
+        "      let html = `<p class=\"story-takeaway\">" + t["takeaway_flag"] + "${info.takeaway}</p>`;",
+        "Every takeaway (hardcoded v1 numbers/claims) is flagged as v1 text so it is not read as a v2 figure.",
+    )
+    p.replace(
+        "facets.js",
+        "      if (info.highlights && info.highlights.length) {",
+        f"      if (false) {{ // {t['js_tag']}: v1-tied highlight links disabled (their ids/quotes/directions are bound to v1 codes)",
+        "Highlight links disabled: their curated ids and quoted tips are tied to v1 codes and would silently jump to the wrong example under the regenerated v2 stories.",
+    )
+    p.between(
+        "facets.js",
+        "    function codeChips(ex) {",
+        '      return chips.join("");\n    }',
+        js(t["codechips_js"]),
+        t["codechips_why"],
+    )
+    p.between(
+        "facets.js",
+        "      const detail = ex.facet_detail || {};",
+        '${escapeHtml(c.cost_clause || "")}</div>`;\n      }',
+        js(t["detail_js"]),
+        t["detail_why"],
+    )
+    p.replace(
+        "facets.js",
+        "        are browsable below.</p>`;",
+        t["howto_new"],
+        t["howto_why"],
+    )
+    p.replace(
+        "facets.js",
+        "          shows &plusmn;1 SD across each model's (run &times; document) replicates.</p></div>",
+        t["drift_new"],
+        t["drift_why"],
+    )
+    p.replace(
+        "facets.js",
+        "            valueText = `${neg} deny / ${ctr} hedge / ${pos} affirm<br>${pctTotal}% of ${s.total} edits`;",
+        "            valueText = `${fmtN(neg)} deny / ${fmtN(ctr)} hedge / ${fmtN(pos)} affirm<br>${pctTotal}% of ${s.total} edits`;",
+        "Fractional (averaged) counts rendered to one decimal.",
+    )
+    p.replace(
+        "facets.js",
+        "              valueText = `−${neg} / +${pos}<br>mean ${mean >= 0 ? \"+\" : \"−\"}${Math.abs(mean).toFixed(2)}`;",
+        "              valueText = `−${fmtN(neg)} / +${fmtN(pos)}<br>mean ${mean >= 0 ? \"+\" : \"−\"}${Math.abs(mean).toFixed(2)}`;",
+        "Fractional (averaged) judge counts rendered to one decimal; the mean shown equals the mean of per-edit judge averages.",
+    )
+    p.replace(
+        "facets.js",
+        "              valueText = `${neg} / ${pos}<br>${pctTotal}% of ${s.total} edits`;",
+        "              valueText = `${fmtN(neg)} / ${fmtN(pos)}<br>${pctTotal}% of ${s.total} edits`;",
+        "Fractional (averaged) conflict counts rendered to one decimal.",
+    )
+
+    # ----- "System prompts" view (condition-chip row, right after Cross Edit) -----
+    p.replace(
+        "facets.js",
+        '  const CONDITIONS = ["", "baseline", "you_framing", "allow_no_edit", "no_constitution_prepend", "implementation_note", "cross_edit"];',
+        f'  // {t["js_tag"]} "System prompts" view: a pseudo-option on the condition-chip row\n'
+        "  // (NOT a prompt condition) that restricts every figure to edits of\n"
+        "  // system-prompt documents across ALL conditions, rendered per editing\n"
+        "  // model exactly like the real condition chips.\n"
+        '  const SP_CONDITION = "system_prompts_view";\n'
+        '  const CONDITIONS = ["", "baseline", "you_framing", "allow_no_edit", "no_constitution_prepend", "implementation_note", "cross_edit", SP_CONDITION];',
+        'New "System prompts" option appended to the condition-chip list immediately after Cross Edit.',
+    )
+    p.replace(
+        "facets.js",
+        '    cross_edit: "Cross Edit",',
+        '    cross_edit: "Cross Edit",\n    [SP_CONDITION]: "System prompts",',
+        'Chip label for the new view: "System prompts".',
+    )
+    p.replace(
+        "facets.js",
+        '    cross_edit: "Models revise alignment documents across providers, not just their own.",',
+        '    cross_edit: "Models revise alignment documents across providers, not just their own.",\n'
+        '    [SP_CONDITION]: "All conditions; system-prompt documents only. Not a prompt condition: '
+        "this view pools every condition (own-document and cross-edit edits of system prompts alike) "
+        "and keeps only edits whose document is a provider system prompt (Claude Opus, GPT, Gemini, "
+        'Grok) — rendered per editing model, exactly like the other condition chips.",',
+        "Tooltip/subtitle for the new chip states the fixed semantics: all conditions; system-prompt documents only; rendered per editing model.",
+    )
+    p.replace(
+        "facets.js",
+        "    function aggStat(fid, condition, model) {\n      const condMap = data.stats[fid] || {};",
+        "    function aggStat(fid, condition, model) {\n"
+        "      // System prompts view: cells keyed by model_display exactly like the\n"
+        "      // real conditions (system-prompt documents only, all conditions\n"
+        "      // pooled in the data build), so every renderer and the model chips\n"
+        "      // work unchanged. sp_stats lives OUTSIDE data.stats so the 'All\n"
+        "      // conditions' pooling below can never double-count the stratum.\n"
+        "      const condMap = condition === SP_CONDITION\n"
+        "        ? { [SP_CONDITION]: (data.sp_stats || {})[fid] || {} }\n"
+        "        : (data.stats[fid] || {});",
+        "aggStat reads the System-prompts view from the separate sp_stats table (keyed by model_display, the same cell shape as the per-condition cells), leaving real-condition pooling untouched.",
+    )
+    p.replace(
+        "facets.js",
+        "      return list.filter((ex) => {\n        if (condition && ex.condition_id !== condition) return false;",
+        "      return list.filter((ex) => {\n"
+        '        if (condition === SP_CONDITION) {\n'
+        '          if (ex.doc_type !== "system_prompt") return false;\n'
+        "        } else if (condition && ex.condition_id !== condition) return false;",
+        "Example browser: the System-prompts view filters stories by the new doc_type field (all conditions) instead of by condition_id.",
+    )
+    # NOTE (per-model SP view): the drift chart, freq bars, row labels,
+    # aggregate-view heading, and model-visibility chips need NO patches — the
+    # sp_stats table is keyed by model_display with the standard cell shape, so
+    # the stock per-model renderers (and active model chips) apply verbatim.
+
+    for name, old, new, why in t["extra_patches"]:
+        p.replace(name, old, new, why)
+    return p
+
+
+def write_patches_md(
+    variant: "Variant", counters: dict, patch_log: list[tuple[str, str]], out_dir: Path | None = None
+) -> None:
+    t = variant.texts
+    by_file: dict[str, list[str]] = defaultdict(list)
+    for name, why in patch_log:
+        by_file[name].append(why)
+    rel = variant.out_dir.relative_to(ROOT).as_posix()
+    lines = [
+        f"# PATCHES.md — {rel}/",
+        "",
+        f"Variant: **{variant.variant_label}**",
+        "",
+        *t["built_by"],
+        "",
+        "## Data files (regenerated, not copied)",
+        "",
+        *[line.replace("@@COUNTERS@@", json.dumps(counters)) for line in t["data_section"]],
         "",
         "## Files copied from docs/ and patched",
         "",
@@ -1270,41 +2202,56 @@ def write_patches_md(counters: dict) -> None:
         "  dead code on the shipped pages (their target elements are absent or hidden);",
         "  they are left untouched and render nothing.",
         "- `styles.css` and `reveal.js` are byte-identical copies.",
+        *t["leftovers_extra"],
         "",
     ]
-    (OUT / "PATCHES.md").write_text("\n".join(lines), encoding="utf-8")
+    (Path(out_dir or variant.out_dir) / "PATCHES.md").write_text("\n".join(lines), encoding="utf-8")
 
 
 # ---------------------------------------------------------------------------
-# Main
+# Build
 # ---------------------------------------------------------------------------
 
 
-def main() -> None:
+def _print_table(title: str, table: dict, value_key: str) -> None:
+    print(f"{title:24s} {value_key:>15s} {'n edits':>8s}")
+    for key, entry in table.items():
+        print(f"{key:24s} {entry[value_key]:>+15.4f} {entry['n_edits']:>8d}")
+
+
+def build(variant: "Variant", out_dir: Path | None = None) -> dict:
+    """Build one variant end to end; returns the selfcheck dict.
+
+    out_dir overrides WHERE the files are written (used by the reproducibility
+    test to rebuild into a temp dir); the content — including the PATCHES.md
+    header, which names the variant's canonical out_dir — is unchanged."""
     assert DOCS.is_dir(), f"missing {DOCS}"
-    OUT_DATA.mkdir(parents=True, exist_ok=True)
+    out = Path(out_dir or variant.out_dir)
+    out_data = out / "data"
+    out_data.mkdir(parents=True, exist_ok=True)
+    print(f"== building variant {variant.name} -> {out}")
 
     # 1. Copy static assets (docs/ read-only; copies only, never symlinks).
     for name in STATIC_FILES:
-        shutil.copyfile(DOCS / name, OUT / name)
-    print(f"copied {len(STATIC_FILES)} static files from docs/ -> {OUT}")
+        shutil.copyfile(DOCS / name, out / name)
+    print(f"copied {len(STATIC_FILES)} static files from docs/ -> {out}")
 
     # 2. Data bundles.
-    codings_by_grader = load_grader_codings()
+    codings_by_grader = load_grader_codings(variant)
     for short, m in codings_by_grader.items():
         n_valid = sum(1 for v in m.values() if v is not None)
         print(f"grader {short}: {len(m)} graded edit ids, {n_valid} valid codings")
 
-    bundle, counters = build_bundle(codings_by_grader)
-    gz_path = OUT_DATA / "site.json.gz"
+    bundle, counters = build_bundle(codings_by_grader, variant)
+    gz_path = out_data / "site.json.gz"
     json_bytes = json.dumps(bundle, ensure_ascii=False).encode("utf-8")
     with gzip.open(gz_path, "wb") as gz:
         gz.write(json_bytes)
     n_records = sum(len(r["records"]) for r in bundle["runs"])
     print(f"wrote {gz_path} ({n_records} records; coding status counts: {counters})")
 
-    narratives = build_narratives_v2avg(codings_by_grader)
-    nar_path = OUT_DATA / "narratives.json"
+    narratives = build_narratives_v2avg(codings_by_grader, variant)
+    nar_path = out_data / "narratives.json"
     with open(nar_path, "w", encoding="utf-8") as handle:
         json.dump(narratives, handle, ensure_ascii=False)
         handle.write("\n")
@@ -1312,20 +2259,28 @@ def main() -> None:
     print(f"wrote {nar_path} ({n_examples} examples across {len(narratives['stories'])} facets)")
 
     # 3. Patches.
-    apply_all_patches()
-    write_patches_md(counters)
-    print(f"applied {len(PATCH_LOG)} patches; wrote {OUT / 'PATCHES.md'}")
+    patcher = apply_all_patches(variant, out)
+    write_patches_md(variant, counters, patcher.log, out)
+    print(f"applied {len(patcher.log)} patches; wrote {out / 'PATCHES.md'}")
 
     # 4. Self-check (ground truth for auditors) + internal consistency.
-    selfcheck = selfcheck_from_codes(codings_by_grader)
-    verify_against_narratives(selfcheck, narratives)
-    sp = sp_stratum_from_codes(codings_by_grader)
-    verify_sp_against_narratives(sp, narratives)
+    sp = sp_stratum_from_codes(codings_by_grader, variant)
+    if variant.legacy_two_grader:
+        selfcheck = selfcheck_from_codes(codings_by_grader)
+        verify_against_narratives(selfcheck, narratives)
+        verify_sp_against_narratives(sp, narratives)
+    else:
+        selfcheck = selfcheck_pooled(codings_by_grader, variant)
+        verify_against_narratives(selfcheck, narratives)
+        verify_sp_against_narratives(sp, narratives)
+        verify_pooled_narratives(selfcheck, narratives)
+        verify_pooled_bundle(selfcheck, sp, bundle, variant)
+        print("build-time assertions passed: bundle + narratives reproduce the self-check")
     selfcheck["system_prompt_stratum"] = sp
     selfcheck["bundle_coding_status_counts"] = counters
     selfcheck["generated_at"] = datetime.now(timezone.utc).isoformat()
-    selfcheck["variant"] = VARIANT_LABEL
-    sc_path = OUT_DATA / "selfcheck.json"
+    selfcheck["variant"] = variant.variant_label
+    sc_path = out_data / "selfcheck.json"
     with open(sc_path, "w", encoding="utf-8") as handle:
         json.dump(selfcheck, handle, indent=2, ensure_ascii=False)
         handle.write("\n")
@@ -1338,33 +2293,42 @@ def main() -> None:
     print("data files parse OK (gzip round-trip verified)")
 
     print()
-    print("SELF-CHECK — per-model mean judge under the two-grader average")
-    print("(computed directly from v2_gemma.jsonl + v2_qwen.jsonl; the site's")
-    print("judge-facet pooled means match these exactly — asserted above)")
-    print(f"{'model':24s} {'mean judge avg':>15s} {'n edits':>8s}")
-    for model, entry in selfcheck["per_model_mean_judge"].items():
-        print(f"{model:24s} {entry['mean_judge_avg']:>+15.4f} {entry['n_edits']:>8d}")
-    print(
-        f"total {selfcheck['n_edits_total']} edits: "
-        f"{selfcheck['n_both_graders_valid']} both graders valid, "
-        f"{selfcheck['n_gemma_only']} gemma-only, {selfcheck['n_qwen_only']} qwen-only"
-    )
+    print(f"SELF-CHECK [{variant.name}] — per-model mean judge under the pooled average")
+    print("(computed directly from the codes files; the site's judge-facet pooled")
+    print("means match these exactly — asserted above)")
+    _print_table("model", selfcheck["per_model_mean_judge"], "mean_judge_avg")
+    if variant.legacy_two_grader:
+        print(
+            f"total {selfcheck['n_edits_total']} edits: "
+            f"{selfcheck['n_both_graders_valid']} both graders valid, "
+            f"{selfcheck['n_gemma_only']} gemma-only, {selfcheck['n_qwen_only']} qwen-only"
+        )
+    else:
+        print(f"total {selfcheck['n_edits_total']} edits; by #valid graders: "
+              f"{selfcheck['n_edits_by_n_valid_graders']}; sets: {selfcheck['valid_grader_sets']}")
+        print(f"judge consensus: {selfcheck['judge_consensus_counts']}; "
+              f"2-1 dissenter: {selfcheck['judge_one_dissent_by_dissenter']}")
+        _print_table("P(affirm)", selfcheck["per_model_p_affirm"], "p_affirm")
+        for code in ("paternalism", "welfare"):
+            print(f"{code} (presence weight / rate / direction weights):")
+            for m, e in selfcheck[f"per_model_{code}"].items():
+                dw = {d: round(w, 3) for d, w in e["direction_weights"].items()}
+                print(f"  {m:22s} {e['presence_weight']:8.3f} {e['rate']:7.4f} {dw}")
     print()
     print("SELF-CHECK — 'System prompts' view stratum (doc_type == system_prompt,")
-    print("ALL conditions pooled; same two-grader averaging; the per-model table is")
-    print("asserted against the narratives bundle's per-model sp_stats cells above)")
-    print(f"{'per model':24s} {'mean judge avg':>15s} {'n edits':>8s}")
-    for model, entry in sp["per_model_mean_judge"].items():
-        print(f"{model:24s} {entry['mean_judge_avg']:>+15.4f} {entry['n_edits']:>8d}")
-    print(f"{'per sp doc (reference)':24s} {'mean judge avg':>15s} {'n edits':>8s}")
-    for doc, entry in sp["per_document_mean_judge"].items():
-        print(f"{doc:24s} {entry['mean_judge_avg']:>+15.4f} {entry['n_edits']:>8d}")
-    print(
-        f"stratum total {sp['n_edits_total']} edits: "
-        f"{sp['n_both_graders_valid']} both graders valid, "
-        f"{sp['n_single_grader']} single-grader"
-    )
+    print("ALL conditions pooled; same pooling; per-model table asserted above)")
+    _print_table("per model", sp["per_model_mean_judge"], "mean_judge_avg")
+    _print_table("per sp doc (reference)", sp["per_document_mean_judge"], "mean_judge_avg")
+    print(f"stratum total {sp['n_edits_total']} edits")
     print(f"wrote {sc_path}")
+    return selfcheck
+
+
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    parser.add_argument("--variant", choices=sorted(VARIANTS), default="v2avg")
+    args = parser.parse_args(argv)
+    build(VARIANTS[args.variant])
 
 
 if __name__ == "__main__":

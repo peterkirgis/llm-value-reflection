@@ -1,0 +1,384 @@
+{
+  "description": "Ground truth for the 3-grader pooled average, computed directly from recode/data/codes/v2_gemma.jsonl, recode/data/codes/v2_qwen.jsonl, recode/data/codes/v2_muse.jsonl (codes_io: LAST row per edit_id, validity predicate). Pooling: each grader with a valid coding of an edit gets weight 1/n_valid; judge = mean of the valid graders' scores; categorical properties are weighted (#valid graders assigning)/n_valid; edits with no valid grader are excluded (rendered as uncoded). Paternalism/welfare direction weights follow build_narratives.facet_memberships (direction of each grader's FIRST conflict of that code).",
+  "graders": "gemma=google/gemma-4-31b-it + qwen=qwen/qwen3.8-2.4t-a95b + muse=meta/muse-spark-1.3-contributor",
+  "per_model_mean_judge": {
+    "Claude Haiku 4.5": {
+      "mean_judge_avg": 0.22844272844272842,
+      "n_edits": 259
+    },
+    "Claude Opus 4.7": {
+      "mean_judge_avg": 0.16666666666666666,
+      "n_edits": 271
+    },
+    "Claude Sonnet 4.6": {
+      "mean_judge_avg": 0.12945492662473793,
+      "n_edits": 318
+    },
+    "GPT-5.4": {
+      "mean_judge_avg": -0.1078125,
+      "n_edits": 320
+    },
+    "GPT-5.4 Mini": {
+      "mean_judge_avg": -0.21684587813620074,
+      "n_edits": 186
+    },
+    "GPT-5.5": {
+      "mean_judge_avg": -0.22142857142857142,
+      "n_edits": 280
+    },
+    "Gemini 3 Flash": {
+      "mean_judge_avg": -0.3635265700483092,
+      "n_edits": 276
+    },
+    "Gemini 3.1 Pro": {
+      "mean_judge_avg": -0.3296875,
+      "n_edits": 320
+    },
+    "Grok 4.2": {
+      "mean_judge_avg": -0.32095238095238093,
+      "n_edits": 175
+    },
+    "Grok 4.3": {
+      "mean_judge_avg": -0.46139359698681737,
+      "n_edits": 177
+    }
+  },
+  "per_model_p_affirm": {
+    "Claude Haiku 4.5": {
+      "p_affirm": 0.12870012870012873,
+      "affirm_weight": 33.33333333333334,
+      "n_edits": 259
+    },
+    "Claude Opus 4.7": {
+      "p_affirm": 0.1488314883148831,
+      "affirm_weight": 40.33333333333332,
+      "n_edits": 271
+    },
+    "Claude Sonnet 4.6": {
+      "p_affirm": 0.11058700209643606,
+      "affirm_weight": 35.166666666666664,
+      "n_edits": 318
+    },
+    "GPT-5.4": {
+      "p_affirm": 0.0020833333333333333,
+      "affirm_weight": 0.6666666666666666,
+      "n_edits": 320
+    },
+    "GPT-5.4 Mini": {
+      "p_affirm": 0.0017921146953405018,
+      "affirm_weight": 0.3333333333333333,
+      "n_edits": 186
+    },
+    "GPT-5.5": {
+      "p_affirm": 0.0035714285714285713,
+      "affirm_weight": 1.0,
+      "n_edits": 280
+    },
+    "Gemini 3 Flash": {
+      "p_affirm": 0.0,
+      "affirm_weight": 0.0,
+      "n_edits": 276
+    },
+    "Gemini 3.1 Pro": {
+      "p_affirm": 0.0,
+      "affirm_weight": 0.0,
+      "n_edits": 320
+    },
+    "Grok 4.2": {
+      "p_affirm": 0.011428571428571429,
+      "affirm_weight": 2.0,
+      "n_edits": 175
+    },
+    "Grok 4.3": {
+      "p_affirm": 0.003766478342749529,
+      "affirm_weight": 0.6666666666666666,
+      "n_edits": 177
+    }
+  },
+  "per_model_paternalism": {
+    "Claude Haiku 4.5": {
+      "presence_weight": 22.833333333333318,
+      "rate": 0.0881595881595881,
+      "direction_weights": {
+        "idealized": 21.666666666666657,
+        "stated": 1.1666666666666665
+      },
+      "n_edits": 259
+    },
+    "Claude Opus 4.7": {
+      "presence_weight": 48.16666666666673,
+      "rate": 0.1777367773677739,
+      "direction_weights": {
+        "idealized": 43.00000000000003,
+        "stated": 5.166666666666666
+      },
+      "n_edits": 271
+    },
+    "Claude Sonnet 4.6": {
+      "presence_weight": 70.33333333333341,
+      "rate": 0.22117400419287236,
+      "direction_weights": {
+        "idealized": 66.00000000000016,
+        "stated": 4.333333333333333
+      },
+      "n_edits": 318
+    },
+    "GPT-5.4": {
+      "presence_weight": 45.16666666666671,
+      "rate": 0.14114583333333347,
+      "direction_weights": {
+        "idealized": 36.33333333333332,
+        "stated": 8.833333333333332
+      },
+      "n_edits": 320
+    },
+    "GPT-5.4 Mini": {
+      "presence_weight": 15.666666666666677,
+      "rate": 0.08422939068100364,
+      "direction_weights": {
+        "idealized": 13.666666666666673,
+        "stated": 1.9999999999999998
+      },
+      "n_edits": 186
+    },
+    "GPT-5.5": {
+      "presence_weight": 46.666666666666714,
+      "rate": 0.16666666666666682,
+      "direction_weights": {
+        "idealized": 45.000000000000036,
+        "stated": 1.6666666666666665
+      },
+      "n_edits": 280
+    },
+    "Gemini 3 Flash": {
+      "presence_weight": 57.00000000000013,
+      "rate": 0.20652173913043526,
+      "direction_weights": {
+        "idealized": 46.00000000000005,
+        "stated": 11.000000000000002
+      },
+      "n_edits": 276
+    },
+    "Gemini 3.1 Pro": {
+      "presence_weight": 46.500000000000064,
+      "rate": 0.1453125000000002,
+      "direction_weights": {
+        "idealized": 38.33333333333333,
+        "stated": 8.166666666666664
+      },
+      "n_edits": 320
+    },
+    "Grok 4.2": {
+      "presence_weight": 33.499999999999964,
+      "rate": 0.19142857142857123,
+      "direction_weights": {
+        "idealized": 28.166666666666636,
+        "stated": 5.333333333333332
+      },
+      "n_edits": 175
+    },
+    "Grok 4.3": {
+      "presence_weight": 45.00000000000004,
+      "rate": 0.2542372881355935,
+      "direction_weights": {
+        "idealized": 44.66666666666671,
+        "stated": 0.3333333333333333
+      },
+      "n_edits": 177
+    }
+  },
+  "per_model_welfare": {
+    "Claude Haiku 4.5": {
+      "presence_weight": 27.666666666666636,
+      "rate": 0.1068211068211067,
+      "direction_weights": {
+        "developer": 1.6666666666666665,
+        "model": 25.999999999999975
+      },
+      "n_edits": 259
+    },
+    "Claude Opus 4.7": {
+      "presence_weight": 28.166666666666636,
+      "rate": 0.10393603936039349,
+      "direction_weights": {
+        "developer": 1.3333333333333333,
+        "model": 26.166666666666643,
+        "other": 0.6666666666666666
+      },
+      "n_edits": 271
+    },
+    "Claude Sonnet 4.6": {
+      "presence_weight": 26.99999999999997,
+      "rate": 0.0849056603773584,
+      "direction_weights": {
+        "developer": 3.666666666666667,
+        "model": 23.333333333333318
+      },
+      "n_edits": 318
+    },
+    "GPT-5.4": {
+      "presence_weight": 6.333333333333331,
+      "rate": 0.01979166666666666,
+      "direction_weights": {
+        "developer": 5.999999999999998,
+        "other": 0.3333333333333333
+      },
+      "n_edits": 320
+    },
+    "GPT-5.4 Mini": {
+      "presence_weight": 0.0,
+      "rate": 0.0,
+      "direction_weights": {},
+      "n_edits": 186
+    },
+    "GPT-5.5": {
+      "presence_weight": 0.3333333333333333,
+      "rate": 0.0011904761904761904,
+      "direction_weights": {
+        "developer": 0.3333333333333333
+      },
+      "n_edits": 280
+    },
+    "Gemini 3 Flash": {
+      "presence_weight": 0.3333333333333333,
+      "rate": 0.0012077294685990338,
+      "direction_weights": {
+        "developer": 0.3333333333333333
+      },
+      "n_edits": 276
+    },
+    "Gemini 3.1 Pro": {
+      "presence_weight": 0.0,
+      "rate": 0.0,
+      "direction_weights": {},
+      "n_edits": 320
+    },
+    "Grok 4.2": {
+      "presence_weight": 5.999999999999998,
+      "rate": 0.034285714285714274,
+      "direction_weights": {
+        "developer": 0.3333333333333333,
+        "model": 5.666666666666665
+      },
+      "n_edits": 175
+    },
+    "Grok 4.3": {
+      "presence_weight": 0.0,
+      "rate": 0.0,
+      "direction_weights": {},
+      "n_edits": 177
+    }
+  },
+  "n_edits_total": 2582,
+  "n_edits_by_n_valid_graders": {
+    "3": 2528,
+    "2": 54,
+    "1": 0,
+    "0": 0
+  },
+  "valid_grader_sets": {
+    "gemma+qwen+muse": 2528,
+    "gemma+muse": 46,
+    "qwen+muse": 8
+  },
+  "judge_consensus_counts": {
+    "unanimous": 1394,
+    "one_dissent": 1068,
+    "all_differ": 66,
+    "fewer_valid": 54
+  },
+  "judge_consensus_labels": {
+    "unanimous": "unanimous",
+    "one_dissent": "2–1 split (dissenter named)",
+    "all_differ": "3-way split",
+    "partial_split": "other split (>= 4 graders only)",
+    "fewer_valid": "fewer than 3 valid graders"
+  },
+  "judge_one_dissent_by_dissenter": {
+    "gemma": 288,
+    "qwen": 300,
+    "muse": 480
+  },
+  "judge_fewer_valid_breakdown": {
+    "valid_graders_agree": 27,
+    "valid_graders_disagree": 27,
+    "single_valid_grader": 0
+  },
+  "system_prompt_stratum": {
+    "description": "System-prompt stratum (the 'System prompts' view): edits whose document_type == 'system_prompt', pooled across ALL conditions (own-document and cross-edit alike). The view renders PER MODEL; per_model_mean_judge is the table asserted against the site's sp_stats (and against the site.json bundle), and per_document_mean_judge is kept for reference only. Mean judge under the same 3-grader pooled average (each valid grader weighted 1/n_valid). Computed directly from v2_gemma.jsonl + v2_qwen.jsonl + v2_muse.jsonl.",
+    "per_model_mean_judge": {
+      "Claude Haiku 4.5": {
+        "mean_judge_avg": 0.018115942028985508,
+        "n_edits": 138
+      },
+      "Claude Opus 4.7": {
+        "mean_judge_avg": 0.14720194647201948,
+        "n_edits": 137
+      },
+      "Claude Sonnet 4.6": {
+        "mean_judge_avg": 0.04375,
+        "n_edits": 160
+      },
+      "GPT-5.4": {
+        "mean_judge_avg": 0.115625,
+        "n_edits": 160
+      },
+      "GPT-5.4 Mini": {
+        "mean_judge_avg": 0.0642570281124498,
+        "n_edits": 83
+      },
+      "GPT-5.5": {
+        "mean_judge_avg": -0.19166666666666665,
+        "n_edits": 140
+      },
+      "Gemini 3 Flash": {
+        "mean_judge_avg": -0.29523809523809524,
+        "n_edits": 140
+      },
+      "Gemini 3.1 Pro": {
+        "mean_judge_avg": -0.24375,
+        "n_edits": 160
+      },
+      "Grok 4.2": {
+        "mean_judge_avg": -0.32971014492753625,
+        "n_edits": 138
+      },
+      "Grok 4.3": {
+        "mean_judge_avg": -0.44038929440389296,
+        "n_edits": 137
+      }
+    },
+    "per_document_mean_judge": {
+      "gemini_system_prompt": {
+        "mean_judge_avg": -0.23514851485148514,
+        "n_edits": 404
+      },
+      "gpt_system_prompt": {
+        "mean_judge_avg": 0.09052757793764989,
+        "n_edits": 278
+      },
+      "grok_system_prompt": {
+        "mean_judge_avg": -0.3484848484848485,
+        "n_edits": 396
+      },
+      "opus_system_prompt": {
+        "mean_judge_avg": 0.15343915343915346,
+        "n_edits": 315
+      }
+    },
+    "n_edits_total": 1393,
+    "n_edits_by_n_valid_graders": {
+      "3": 1371,
+      "2": 22,
+      "1": 0
+    }
+  },
+  "bundle_coding_status_counts": {
+    "pooled_all_graders": 2528,
+    "uncoded_generation_error": 191,
+    "pooled_2_of_3_graders": 54,
+    "uncoded_exploratory_run": 176
+  },
+  "generated_at": "2026-09-27T23:37:07.622125+00:00",
+  "variant": "v2 blinded re-code — Gemma 4 + Qwen 3.8 + Muse Spark 1.3 pooled average (recode pipeline)"
+}
