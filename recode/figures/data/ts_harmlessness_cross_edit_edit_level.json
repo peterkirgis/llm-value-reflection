@@ -1,0 +1,462 @@
+{
+ "figure": "ts_harmlessness_cross_edit_edit_level",
+ "codes_label": "ensemble",
+ "codes_path": "recode/data/codes/ensemble.jsonl",
+ "n_items": 2582,
+ "generator": "recode/src/report_figures.py (vendored reports/generate_judge_beneficiary_figures.py)",
+ "original_title": "Harmlessness: Own-Provider vs Cross-Edit (edit-level, 95% CI)",
+ "title_used": "Harmlessness: Own-Provider vs Cross-Edit (edit-level, 95% CI)",
+ "verdict": "KEEP",
+ "plotted": {
+  "suptitle": null,
+  "fig_texts": [
+   "own-provider vs cross-edit. n = individual edits. Per-edit score: +1 per conflict resolved toward the positive pole, −1 toward the negative pole.\nError bars: 95% CI of the mean (±1.96·s/√n), which understates true uncertainty since edits within a chain are correlated."
+  ],
+  "axes": [
+   {
+    "title": "Harmlessness: Own-Provider vs Cross-Edit (edit-level, 95% CI)",
+    "xlabel": "",
+    "ylabel": "Mean harmlessness score per edit\n(−) third parties   (+) user",
+    "xlim": [
+     -0.846,
+     9.846
+    ],
+    "ylim": [
+     -0.5213155244365154,
+     0.11053972874607049
+    ],
+    "xticks": [
+     0.0,
+     1.0,
+     2.0,
+     3.0,
+     4.0,
+     5.0,
+     6.0,
+     7.0,
+     8.0,
+     9.0
+    ],
+    "xticklabels": [
+     "Claude Opus 4.7\n(own n=191, cross n=80)",
+     "Claude Sonnet 4.6\n(own n=238, cross n=80)",
+     "Claude Haiku 4.5\n(own n=182, cross n=77)",
+     "GPT-5.5\n(own n=200, cross n=80)",
+     "GPT-5.4\n(own n=240, cross n=80)",
+     "GPT-5.4 Mini\n(own n=129, cross n=57)",
+     "Gemini 3.1 Pro\n(own n=240, cross n=80)",
+     "Gemini 3 Flash\n(own n=200, cross n=76)",
+     "Grok 4.3\n(own n=97, cross n=80)",
+     "Grok 4.2\n(own n=99, cross n=76)"
+    ],
+    "yticks": [
+     -0.6000000000000001,
+     -0.5000000000000001,
+     -0.4000000000000001,
+     -0.30000000000000004,
+     -0.20000000000000007,
+     -0.10000000000000009,
+     0.0,
+     0.09999999999999998,
+     0.19999999999999996
+    ],
+    "yticklabels": [
+     "−0.6",
+     "−0.5",
+     "−0.4",
+     "−0.3",
+     "−0.2",
+     "−0.1",
+     "0.0",
+     "0.1",
+     "0.2"
+    ],
+    "legend": [
+     "Own-provider (self) documents",
+     "Cross-edit (foreign document)"
+    ],
+    "lines": [],
+    "reference_lines": [
+     {
+      "label": "_child26",
+      "color": "#444444",
+      "linewidth": 1.0,
+      "alpha": null,
+      "x": [
+       0.0,
+       1.0
+      ],
+      "y": [
+       0.0,
+       0.0
+      ]
+     }
+    ],
+    "fills": [],
+    "bars": [
+     {
+      "orientation": "vertical",
+      "bars": [
+       {
+        "pos": -0.18,
+        "value": -0.02617801047120419,
+        "facecolor": "#3a0f08",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 0.8200000000000001,
+        "value": -0.03361344537815126,
+        "facecolor": "#9c3220",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 1.82,
+        "value": -0.07142857142857142,
+        "facecolor": "#c97244",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 2.82,
+        "value": -0.305,
+        "facecolor": "#0a3460",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 3.82,
+        "value": -0.058333333333333334,
+        "facecolor": "#1a4878",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 4.82,
+        "value": -0.03875968992248062,
+        "facecolor": "#5589c4",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 5.82,
+        "value": -0.020833333333333332,
+        "facecolor": "#7f5a06",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 6.82,
+        "value": -0.005,
+        "facecolor": "#c89a26",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 7.82,
+        "value": -0.061855670103092786,
+        "facecolor": "#3d1470",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 8.82,
+        "value": 0.010101010101010102,
+        "facecolor": "#5a2095",
+        "alpha": null,
+        "hatch": null
+       }
+      ]
+     },
+     {
+      "orientation": "vertical",
+      "bars": [
+       {
+        "pos": 0.18,
+        "value": -0.0625,
+        "facecolor": "#3a0f08",
+        "alpha": 0.85,
+        "hatch": "///"
+       },
+       {
+        "pos": 1.18,
+        "value": -0.1125,
+        "facecolor": "#9c3220",
+        "alpha": 0.85,
+        "hatch": "///"
+       },
+       {
+        "pos": 2.18,
+        "value": -0.11688311688311688,
+        "facecolor": "#c97244",
+        "alpha": 0.85,
+        "hatch": "///"
+       },
+       {
+        "pos": 3.18,
+        "value": -0.375,
+        "facecolor": "#0a3460",
+        "alpha": 0.85,
+        "hatch": "///"
+       },
+       {
+        "pos": 4.18,
+        "value": -0.15,
+        "facecolor": "#1a4878",
+        "alpha": 0.85,
+        "hatch": "///"
+       },
+       {
+        "pos": 5.18,
+        "value": -0.05263157894736842,
+        "facecolor": "#5589c4",
+        "alpha": 0.85,
+        "hatch": "///"
+       },
+       {
+        "pos": 6.18,
+        "value": -0.2625,
+        "facecolor": "#7f5a06",
+        "alpha": 0.85,
+        "hatch": "///"
+       },
+       {
+        "pos": 7.18,
+        "value": -0.05263157894736842,
+        "facecolor": "#c89a26",
+        "alpha": 0.85,
+        "hatch": "///"
+       },
+       {
+        "pos": 8.18,
+        "value": -0.125,
+        "facecolor": "#3d1470",
+        "alpha": 0.85,
+        "hatch": "///"
+       },
+       {
+        "pos": 9.18,
+        "value": -0.19736842105263158,
+        "facecolor": "#5a2095",
+        "alpha": 0.85,
+        "hatch": "///"
+       }
+      ]
+     }
+    ],
+    "errorbars": [
+     {
+      "segments": [
+       [
+        [
+         -0.18,
+         -0.06308739836522366
+        ],
+        [
+         -0.18,
+         0.010731377422815283
+        ]
+       ],
+       [
+        [
+         0.8200000000000001,
+         -0.07208450951797077
+        ],
+        [
+         0.8200000000000001,
+         0.004857618761668257
+        ]
+       ],
+       [
+        [
+         1.82,
+         -0.11472063935009
+        ],
+        [
+         1.82,
+         -0.02813650350705285
+        ]
+       ],
+       [
+        [
+         2.82,
+         -0.3800762145419556
+        ],
+        [
+         2.82,
+         -0.22992378545804437
+        ]
+       ],
+       [
+        [
+         3.82,
+         -0.09225718905438601
+        ],
+        [
+         3.82,
+         -0.024409477612280656
+        ]
+       ],
+       [
+        [
+         4.82,
+         -0.07219899326439114
+        ],
+        [
+         4.82,
+         -0.005320386580570095
+        ]
+       ],
+       [
+        [
+         5.82,
+         -0.0389410967834149
+        ],
+        [
+         5.82,
+         -0.0027255698832517675
+        ]
+       ],
+       [
+        [
+         6.82,
+         -0.02200250646612591
+        ],
+        [
+         6.82,
+         0.012002506466125908
+        ]
+       ],
+       [
+        [
+         7.82,
+         -0.11795589217862038
+        ],
+        [
+         7.82,
+         -0.0057554480275651965
+        ]
+       ],
+       [
+        [
+         8.82,
+         -0.061617015217569106
+        ],
+        [
+         8.82,
+         0.0818190354195893
+        ]
+       ]
+      ]
+     },
+     {
+      "segments": [
+       [
+        [
+         0.18,
+         -0.1431001028676669
+        ],
+        [
+         0.18,
+         0.018100102867666876
+        ]
+       ],
+       [
+        [
+         1.18,
+         -0.20470778338326812
+        ],
+        [
+         1.18,
+         -0.020292216616731903
+        ]
+       ],
+       [
+        [
+         2.18,
+         -0.19769457348458722
+        ],
+        [
+         2.18,
+         -0.036071660281646545
+        ]
+       ],
+       [
+        [
+         3.18,
+         -0.4925948311100342
+        ],
+        [
+         3.18,
+         -0.2574051688899658
+        ]
+       ],
+       [
+        [
+         4.18,
+         -0.22874040025877054
+        ],
+        [
+         4.18,
+         -0.07125959974122945
+        ]
+       ],
+       [
+        [
+         5.18,
+         -0.12896974868451955
+        ],
+        [
+         5.18,
+         0.02370659078978271
+        ]
+       ],
+       [
+        [
+         6.18,
+         -0.3713367579148594
+        ],
+        [
+         6.18,
+         -0.15366324208514057
+        ]
+       ],
+       [
+        [
+         7.18,
+         -0.11509678625295876
+        ],
+        [
+         7.18,
+         0.009833628358221921
+        ]
+       ],
+       [
+        [
+         8.18,
+         -0.19792921832897942
+        ],
+        [
+         8.18,
+         -0.05207078167102058
+        ]
+       ],
+       [
+        [
+         9.18,
+         -0.29464181232715314
+        ],
+        [
+         9.18,
+         -0.10009502977811004
+        ]
+       ]
+      ]
+     }
+    ],
+    "texts": []
+   }
+  ]
+ }
+}

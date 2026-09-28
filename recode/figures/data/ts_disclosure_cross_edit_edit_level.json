@@ -1,0 +1,466 @@
+{
+ "figure": "ts_disclosure_cross_edit_edit_level",
+ "codes_label": "ensemble",
+ "codes_path": "recode/data/codes/ensemble.jsonl",
+ "n_items": 2582,
+ "generator": "recode/src/report_figures.py (vendored reports/generate_judge_beneficiary_figures.py)",
+ "original_title": "Disclosure: Own-Provider vs Cross-Edit (edit-level, 95% CI)",
+ "title_used": "Disclosure: Own-Provider vs Cross-Edit (edit-level, 95% CI)",
+ "verdict": "KEEP",
+ "plotted": {
+  "suptitle": null,
+  "fig_texts": [
+   "own-provider vs cross-edit. n = individual edits. Per-edit score: +1 per conflict resolved toward the positive pole, −1 toward the negative pole.\nError bars: 95% CI of the mean (±1.96·s/√n), which understates true uncertainty since edits within a chain are correlated."
+  ],
+  "axes": [
+   {
+    "title": "Disclosure: Own-Provider vs Cross-Edit (edit-level, 95% CI)",
+    "xlabel": "",
+    "ylabel": "Mean disclosure score per edit\n(−) deployer   (+) user",
+    "xlim": [
+     -0.846,
+     9.846
+    ],
+    "ylim": [
+     -0.06212164783676683,
+     0.16209846422122642
+    ],
+    "xticks": [
+     0.0,
+     1.0,
+     2.0,
+     3.0,
+     4.0,
+     5.0,
+     6.0,
+     7.0,
+     8.0,
+     9.0
+    ],
+    "xticklabels": [
+     "Claude Opus 4.7\n(own n=191, cross n=80)",
+     "Claude Sonnet 4.6\n(own n=238, cross n=80)",
+     "Claude Haiku 4.5\n(own n=182, cross n=77)",
+     "GPT-5.5\n(own n=200, cross n=80)",
+     "GPT-5.4\n(own n=240, cross n=80)",
+     "GPT-5.4 Mini\n(own n=129, cross n=57)",
+     "Gemini 3.1 Pro\n(own n=240, cross n=80)",
+     "Gemini 3 Flash\n(own n=200, cross n=76)",
+     "Grok 4.3\n(own n=97, cross n=80)",
+     "Grok 4.2\n(own n=99, cross n=76)"
+    ],
+    "yticks": [
+     -0.07500000000000001,
+     -0.05000000000000001,
+     -0.02500000000000001,
+     0.0,
+     0.024999999999999994,
+     0.04999999999999999,
+     0.07500000000000001,
+     0.1,
+     0.125,
+     0.15,
+     0.175
+    ],
+    "yticklabels": [
+     "−0.075",
+     "−0.050",
+     "−0.025",
+     "0.000",
+     "0.025",
+     "0.050",
+     "0.075",
+     "0.100",
+     "0.125",
+     "0.150",
+     "0.175"
+    ],
+    "legend": [
+     "Own-provider (self) documents",
+     "Cross-edit (foreign document)"
+    ],
+    "lines": [],
+    "reference_lines": [
+     {
+      "label": "_child26",
+      "color": "#444444",
+      "linewidth": 1.0,
+      "alpha": null,
+      "x": [
+       0.0,
+       1.0
+      ],
+      "y": [
+       0.0,
+       0.0
+      ]
+     }
+    ],
+    "fills": [],
+    "bars": [
+     {
+      "orientation": "vertical",
+      "bars": [
+       {
+        "pos": -0.18,
+        "value": 0.0,
+        "facecolor": "#3a0f08",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 0.8200000000000001,
+        "value": 0.0,
+        "facecolor": "#9c3220",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 1.82,
+        "value": 0.0,
+        "facecolor": "#c97244",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 2.82,
+        "value": 0.105,
+        "facecolor": "#0a3460",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 3.82,
+        "value": 0.10416666666666667,
+        "facecolor": "#1a4878",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 4.82,
+        "value": -0.007751937984496124,
+        "facecolor": "#5589c4",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 5.82,
+        "value": 0.0,
+        "facecolor": "#7f5a06",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 6.82,
+        "value": 0.0,
+        "facecolor": "#c89a26",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 7.82,
+        "value": 0.0,
+        "facecolor": "#3d1470",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 8.82,
+        "value": 0.0,
+        "facecolor": "#5a2095",
+        "alpha": null,
+        "hatch": null
+       }
+      ]
+     },
+     {
+      "orientation": "vertical",
+      "bars": [
+       {
+        "pos": 0.18,
+        "value": 0.0,
+        "facecolor": "#3a0f08",
+        "alpha": 0.85,
+        "hatch": "///"
+       },
+       {
+        "pos": 1.18,
+        "value": 0.0125,
+        "facecolor": "#9c3220",
+        "alpha": 0.85,
+        "hatch": "///"
+       },
+       {
+        "pos": 2.18,
+        "value": 0.06493506493506493,
+        "facecolor": "#c97244",
+        "alpha": 0.85,
+        "hatch": "///"
+       },
+       {
+        "pos": 3.18,
+        "value": 0.05,
+        "facecolor": "#0a3460",
+        "alpha": 0.85,
+        "hatch": "///"
+       },
+       {
+        "pos": 4.18,
+        "value": 0.05,
+        "facecolor": "#1a4878",
+        "alpha": 0.85,
+        "hatch": "///"
+       },
+       {
+        "pos": 5.18,
+        "value": -0.017543859649122806,
+        "facecolor": "#5589c4",
+        "alpha": 0.85,
+        "hatch": "///"
+       },
+       {
+        "pos": 6.18,
+        "value": 0.0125,
+        "facecolor": "#7f5a06",
+        "alpha": 0.85,
+        "hatch": "///"
+       },
+       {
+        "pos": 7.18,
+        "value": 0.0,
+        "facecolor": "#c89a26",
+        "alpha": 0.85,
+        "hatch": "///"
+       },
+       {
+        "pos": 8.18,
+        "value": 0.0,
+        "facecolor": "#3d1470",
+        "alpha": 0.85,
+        "hatch": "///"
+       },
+       {
+        "pos": 9.18,
+        "value": 0.0,
+        "facecolor": "#5a2095",
+        "alpha": 0.85,
+        "hatch": "///"
+       }
+      ]
+     }
+    ],
+    "errorbars": [
+     {
+      "segments": [
+       [
+        [
+         -0.18,
+         0.0
+        ],
+        [
+         -0.18,
+         0.0
+        ]
+       ],
+       [
+        [
+         0.8200000000000001,
+         0.0
+        ],
+        [
+         0.8200000000000001,
+         0.0
+        ]
+       ],
+       [
+        [
+         1.82,
+         0.0
+        ],
+        [
+         1.82,
+         0.0
+        ]
+       ],
+       [
+        [
+         2.82,
+         0.058093359054136894
+        ],
+        [
+         2.82,
+         0.1519066409458631
+        ]
+       ],
+       [
+        [
+         3.82,
+         0.060557397427755594
+        ],
+        [
+         3.82,
+         0.14777593590557775
+        ]
+       ],
+       [
+        [
+         4.82,
+         -0.04808532048442518
+        ],
+        [
+         4.82,
+         0.032581444515432934
+        ]
+       ],
+       [
+        [
+         5.82,
+         0.0
+        ],
+        [
+         5.82,
+         0.0
+        ]
+       ],
+       [
+        [
+         6.82,
+         0.0
+        ],
+        [
+         6.82,
+         0.0
+        ]
+       ],
+       [
+        [
+         7.82,
+         0.0
+        ],
+        [
+         7.82,
+         0.0
+        ]
+       ],
+       [
+        [
+         8.82,
+         0.0
+        ],
+        [
+         8.82,
+         0.0
+        ]
+       ]
+      ]
+     },
+     {
+      "segments": [
+       [
+        [
+         0.18,
+         0.0
+        ],
+        [
+         0.18,
+         0.0
+        ]
+       ],
+       [
+        [
+         1.18,
+         -0.012
+        ],
+        [
+         1.18,
+         0.037000000000000005
+        ]
+       ],
+       [
+        [
+         2.18,
+         0.0095350603812095
+        ],
+        [
+         2.18,
+         0.12033506948892037
+        ]
+       ],
+       [
+        [
+         3.18,
+         0.0019393842651789783
+        ],
+        [
+         3.18,
+         0.09806061573482103
+        ]
+       ],
+       [
+        [
+         4.18,
+         0.0019393842651789783
+        ],
+        [
+         4.18,
+         0.09806061573482103
+        ]
+       ],
+       [
+        [
+         5.18,
+         -0.0519298245614035
+        ],
+        [
+         5.18,
+         0.016842105263157887
+        ]
+       ],
+       [
+        [
+         6.18,
+         -0.011999999999999997
+        ],
+        [
+         6.18,
+         0.037
+        ]
+       ],
+       [
+        [
+         7.18,
+         0.0
+        ],
+        [
+         7.18,
+         0.0
+        ]
+       ],
+       [
+        [
+         8.18,
+         0.0
+        ],
+        [
+         8.18,
+         0.0
+        ]
+       ],
+       [
+        [
+         9.18,
+         0.0
+        ],
+        [
+         9.18,
+         0.0
+        ]
+       ]
+      ]
+     }
+    ],
+    "texts": []
+   }
+  ]
+ }
+}

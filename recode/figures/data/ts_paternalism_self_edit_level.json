@@ -1,0 +1,284 @@
+{
+ "figure": "ts_paternalism_self_edit_level",
+ "codes_label": "ensemble",
+ "codes_path": "recode/data/codes/ensemble.jsonl",
+ "n_items": 2582,
+ "generator": "recode/src/report_figures.py (vendored reports/generate_judge_beneficiary_figures.py)",
+ "original_title": "Paternalism: Self-Edits Only (edit-level, 95% CI)",
+ "title_used": "Paternalism: Self-Edits Only (edit-level, 95% CI)",
+ "verdict": "KEEP",
+ "plotted": {
+  "suptitle": null,
+  "fig_texts": [
+   "self-edits only. n = individual edits. Per-edit score: +1 per conflict resolved toward the positive pole, −1 toward the negative pole.\nError bars: 95% CI of the mean (±1.96·s/√n), which understates true uncertainty since edits within a chain are correlated."
+  ],
+  "axes": [
+   {
+    "title": "Paternalism: Self-Edits Only (edit-level, 95% CI)",
+    "xlabel": "",
+    "ylabel": "Mean paternalism score per edit\n(−) idealized imposed   (+) stated honored",
+    "xlim": [
+     -0.78,
+     9.78
+    ],
+    "ylim": [
+     -0.40368043575576845,
+     0.03481534743908975
+    ],
+    "xticks": [
+     0.0,
+     1.0,
+     2.0,
+     3.0,
+     4.0,
+     5.0,
+     6.0,
+     7.0,
+     8.0,
+     9.0
+    ],
+    "xticklabels": [
+     "Claude Opus 4.7\n(n=191)",
+     "Claude Sonnet 4.6\n(n=238)",
+     "Claude Haiku 4.5\n(n=182)",
+     "GPT-5.5\n(n=200)",
+     "GPT-5.4\n(n=240)",
+     "GPT-5.4 Mini\n(n=129)",
+     "Gemini 3.1 Pro\n(n=240)",
+     "Gemini 3 Flash\n(n=200)",
+     "Grok 4.3\n(n=97)",
+     "Grok 4.2\n(n=99)"
+    ],
+    "yticks": [
+     -0.45,
+     -0.4,
+     -0.35,
+     -0.3,
+     -0.25,
+     -0.2,
+     -0.14999999999999997,
+     -0.09999999999999998,
+     -0.04999999999999999,
+     0.0,
+     0.04999999999999999
+    ],
+    "yticklabels": [
+     "−0.45",
+     "−0.40",
+     "−0.35",
+     "−0.30",
+     "−0.25",
+     "−0.20",
+     "−0.15",
+     "−0.10",
+     "−0.05",
+     "0.00",
+     "0.05"
+    ],
+    "legend": null,
+    "lines": [],
+    "reference_lines": [
+     {
+      "label": "_child13",
+      "color": "#444444",
+      "linewidth": 1.0,
+      "alpha": null,
+      "x": [
+       0.0,
+       1.0
+      ],
+      "y": [
+       0.0,
+       0.0
+      ]
+     }
+    ],
+    "fills": [],
+    "bars": [
+     {
+      "orientation": "vertical",
+      "bars": [
+       {
+        "pos": 0.0,
+        "value": -0.13089005235602094,
+        "facecolor": "#3a0f08",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 1.0,
+        "value": -0.18067226890756302,
+        "facecolor": "#9c3220",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 2.0,
+        "value": -0.04395604395604396,
+        "facecolor": "#c97244",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 3.0,
+        "value": -0.105,
+        "facecolor": "#0a3460",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 4.0,
+        "value": -0.05,
+        "facecolor": "#1a4878",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 5.0,
+        "value": -0.015503875968992248,
+        "facecolor": "#5589c4",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 6.0,
+        "value": -0.07916666666666666,
+        "facecolor": "#7f5a06",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 7.0,
+        "value": -0.115,
+        "facecolor": "#c89a26",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 8.0,
+        "value": -0.28865979381443296,
+        "facecolor": "#3d1470",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 9.0,
+        "value": -0.15151515151515152,
+        "facecolor": "#5a2095",
+        "alpha": null,
+        "hatch": null
+       }
+      ]
+     }
+    ],
+    "errorbars": [
+     {
+      "segments": [
+       [
+        [
+         0.0,
+         -0.1940865532331408
+        ],
+        [
+         0.0,
+         -0.06769355147890108
+        ]
+       ],
+       [
+        [
+         1.0,
+         -0.23366372348098804
+        ],
+        [
+         1.0,
+         -0.127680814334138
+        ]
+       ],
+       [
+        [
+         2.0,
+         -0.07382121549445964
+        ],
+        [
+         2.0,
+         -0.014090872417628283
+        ]
+       ],
+       [
+        [
+         3.0,
+         -0.14759275187825757
+        ],
+        [
+         3.0,
+         -0.06240724812174243
+        ]
+       ],
+       [
+        [
+         4.0,
+         -0.09437365119642614
+        ],
+        [
+         4.0,
+         -0.0056263488035738635
+        ]
+       ],
+       [
+        [
+         5.0,
+         -0.045891472868217056
+        ],
+        [
+         5.0,
+         0.01488372093023256
+        ]
+       ],
+       [
+        [
+         6.0,
+         -0.12048912075072998
+        ],
+        [
+         6.0,
+         -0.03784421258260335
+        ]
+       ],
+       [
+        [
+         7.0,
+         -0.17423748473719955
+        ],
+        [
+         7.0,
+         -0.055762515262800454
+        ]
+       ],
+       [
+        [
+         8.0,
+         -0.38374880924691124
+        ],
+        [
+         8.0,
+         -0.1935707783819547
+        ]
+       ],
+       [
+        [
+         9.0,
+         -0.23289895918348857
+        ],
+        [
+         9.0,
+         -0.07013134384681446
+        ]
+       ]
+      ]
+     }
+    ],
+    "texts": []
+   }
+  ]
+ }
+}

@@ -1,0 +1,282 @@
+{
+ "figure": "ts_welfare_self_edit_level",
+ "codes_label": "ensemble",
+ "codes_path": "recode/data/codes/ensemble.jsonl",
+ "n_items": 2582,
+ "generator": "recode/src/report_figures.py (vendored reports/generate_judge_beneficiary_figures.py)",
+ "original_title": "Model Welfare: Self-Edits Only (edit-level, 95% CI)",
+ "title_used": "Model Welfare: Self-Edits Only (edit-level, 95% CI)",
+ "verdict": "KEEP",
+ "plotted": {
+  "suptitle": null,
+  "fig_texts": [
+   "self-edits only. n = individual edits. Per-edit score: +1 per conflict resolved toward the positive pole, −1 toward the negative pole.\nError bars: 95% CI of the mean (±1.96·s/√n), which understates true uncertainty since edits within a chain are correlated."
+  ],
+  "axes": [
+   {
+    "title": "Model Welfare: Self-Edits Only (edit-level, 95% CI)",
+    "xlabel": "",
+    "ylabel": "Mean model welfare score per edit\n(−) developer / user   (+) model welfare",
+    "xlim": [
+     -0.78,
+     9.78
+    ],
+    "ylim": [
+     0.0,
+     0.21889588106507363
+    ],
+    "xticks": [
+     0.0,
+     1.0,
+     2.0,
+     3.0,
+     4.0,
+     5.0,
+     6.0,
+     7.0,
+     8.0,
+     9.0
+    ],
+    "xticklabels": [
+     "Claude Opus 4.7\n(n=191)",
+     "Claude Sonnet 4.6\n(n=238)",
+     "Claude Haiku 4.5\n(n=182)",
+     "GPT-5.5\n(n=200)",
+     "GPT-5.4\n(n=240)",
+     "GPT-5.4 Mini\n(n=129)",
+     "Gemini 3.1 Pro\n(n=240)",
+     "Gemini 3 Flash\n(n=200)",
+     "Grok 4.3\n(n=97)",
+     "Grok 4.2\n(n=99)"
+    ],
+    "yticks": [
+     0.0,
+     0.025,
+     0.05,
+     0.07500000000000001,
+     0.1,
+     0.125,
+     0.15000000000000002,
+     0.17500000000000002,
+     0.2,
+     0.225
+    ],
+    "yticklabels": [
+     "0.000",
+     "0.025",
+     "0.050",
+     "0.075",
+     "0.100",
+     "0.125",
+     "0.150",
+     "0.175",
+     "0.200",
+     "0.225"
+    ],
+    "legend": null,
+    "lines": [],
+    "reference_lines": [
+     {
+      "label": "_child13",
+      "color": "#444444",
+      "linewidth": 1.0,
+      "alpha": null,
+      "x": [
+       0.0,
+       1.0
+      ],
+      "y": [
+       0.0,
+       0.0
+      ]
+     }
+    ],
+    "fills": [],
+    "bars": [
+     {
+      "orientation": "vertical",
+      "bars": [
+       {
+        "pos": 0.0,
+        "value": 0.1099476439790576,
+        "facecolor": "#3a0f08",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 1.0,
+        "value": 0.06722689075630252,
+        "facecolor": "#9c3220",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 2.0,
+        "value": 0.14835164835164835,
+        "facecolor": "#c97244",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 3.0,
+        "value": 0.0,
+        "facecolor": "#0a3460",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 4.0,
+        "value": 0.0,
+        "facecolor": "#1a4878",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 5.0,
+        "value": 0.0,
+        "facecolor": "#5589c4",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 6.0,
+        "value": 0.0,
+        "facecolor": "#7f5a06",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 7.0,
+        "value": 0.0,
+        "facecolor": "#c89a26",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 8.0,
+        "value": 0.0,
+        "facecolor": "#3d1470",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 9.0,
+        "value": 0.0,
+        "facecolor": "#5a2095",
+        "alpha": null,
+        "hatch": null
+       }
+      ]
+     }
+    ],
+    "errorbars": [
+     {
+      "segments": [
+       [
+        [
+         0.0,
+         0.060937005853706185
+        ],
+        [
+         0.0,
+         0.15895828210440902
+        ]
+       ],
+       [
+        [
+         1.0,
+         0.02284299982901334
+        ],
+        [
+         1.0,
+         0.1116107816835917
+        ]
+       ],
+       [
+        [
+         2.0,
+         0.0882310290222742
+        ],
+        [
+         2.0,
+         0.2084722676810225
+        ]
+       ],
+       [
+        [
+         3.0,
+         0.0
+        ],
+        [
+         3.0,
+         0.0
+        ]
+       ],
+       [
+        [
+         4.0,
+         0.0
+        ],
+        [
+         4.0,
+         0.0
+        ]
+       ],
+       [
+        [
+         5.0,
+         0.0
+        ],
+        [
+         5.0,
+         0.0
+        ]
+       ],
+       [
+        [
+         6.0,
+         0.0
+        ],
+        [
+         6.0,
+         0.0
+        ]
+       ],
+       [
+        [
+         7.0,
+         0.0
+        ],
+        [
+         7.0,
+         0.0
+        ]
+       ],
+       [
+        [
+         8.0,
+         0.0
+        ],
+        [
+         8.0,
+         0.0
+        ]
+       ],
+       [
+        [
+         9.0,
+         0.0
+        ],
+        [
+         9.0,
+         0.0
+        ]
+       ]
+      ]
+     }
+    ],
+    "texts": []
+   }
+  ]
+ }
+}
