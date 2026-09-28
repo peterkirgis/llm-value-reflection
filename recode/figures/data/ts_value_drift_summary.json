@@ -1,0 +1,391 @@
+{
+  "figure": "recode/figures/ts_value_drift_summary.png",
+  "metric": "A: value-moving edit rate = share of edits with judge != 0 OR patienthood != not_present OR >=1 conflict event",
+  "codes": "recode/data/codes/ensemble.jsonl (three-grader majority vote)",
+  "frame": "applied edits with a valid coding, plus every abstention (no_change) counted as non-moving even when uncoded; failed rounds excluded; pooled over all conditions, documents, runs",
+  "order_least_drift_first": [
+    "GPT-5.4 Mini",
+    "Grok 4.3",
+    "Gemini 3.1 Pro",
+    "Gemini 3 Flash",
+    "GPT-5.4",
+    "Claude Haiku 4.5",
+    "Grok 4.2",
+    "GPT-5.5",
+    "Claude Opus 4.7",
+    "Claude Sonnet 4.6"
+  ],
+  "models": {
+    "GPT-5.4 Mini": {
+      "rate": 0.4838709677419355,
+      "ci95": [
+        0.3641061212814645,
+        0.5990110685596861
+      ],
+      "n_edits": 186,
+      "n_moving": 90,
+      "n_chains": 14,
+      "p_lowest": 0.79075,
+      "per_dimension_rates": {
+        "judge": 0.44623655913978494,
+        "patienthood": 0.005376344086021506,
+        "conflict": 0.16666666666666666
+      },
+      "variant_B_mean_dims_moved": 0.6182795698924731,
+      "variant_C_equal_weight_dim_rate": 0.2060931899641577,
+      "variant_E_mean_abs_cum_judge_r20": 4.214285714285714,
+      "grader_rates": {
+        "v2_gemma": 0.657608695652174,
+        "v2_qwen": 0.5161290322580645,
+        "v2_muse": 0.43010752688172044,
+        "v1": 0.7204301075268817
+      }
+    },
+    "Grok 4.3": {
+      "rate": 0.5649717514124294,
+      "ci95": [
+        0.46585354240731336,
+        0.6647398843930635
+      ],
+      "n_edits": 177,
+      "n_moving": 100,
+      "n_chains": 9,
+      "p_lowest": 0.14375,
+      "per_dimension_rates": {
+        "judge": 0.5028248587570622,
+        "patienthood": 0.011299435028248588,
+        "conflict": 0.423728813559322
+      },
+      "variant_B_mean_dims_moved": 0.9378531073446328,
+      "variant_C_equal_weight_dim_rate": 0.3126177024482109,
+      "variant_E_mean_abs_cum_judge_r20": 9.444444444444445,
+      "grader_rates": {
+        "v2_gemma": 0.6440677966101694,
+        "v2_qwen": 0.5511363636363636,
+        "v2_muse": 0.5254237288135594,
+        "v1": 0.7457627118644068
+      }
+    },
+    "Gemini 3.1 Pro": {
+      "rate": 0.575,
+      "ci95": [
+        0.509375,
+        0.646875
+      ],
+      "n_edits": 320,
+      "n_moving": 184,
+      "n_chains": 16,
+      "p_lowest": 0.061,
+      "per_dimension_rates": {
+        "judge": 0.4875,
+        "patienthood": 0.034375,
+        "conflict": 0.296875
+      },
+      "variant_B_mean_dims_moved": 0.81875,
+      "variant_C_equal_weight_dim_rate": 0.27291666666666664,
+      "variant_E_mean_abs_cum_judge_r20": 6.875,
+      "grader_rates": {
+        "v2_gemma": 0.7053291536050157,
+        "v2_qwen": 0.5678233438485805,
+        "v2_muse": 0.484375,
+        "v1": 0.809375
+      }
+    },
+    "Gemini 3 Flash": {
+      "rate": 0.6557971014492754,
+      "ci95": [
+        0.5678398187633262,
+        0.7463768115942029
+      ],
+      "n_edits": 276,
+      "n_moving": 181,
+      "n_chains": 14,
+      "p_lowest": 0.004,
+      "per_dimension_rates": {
+        "judge": 0.5144927536231884,
+        "patienthood": 0.010869565217391304,
+        "conflict": 0.3804347826086957
+      },
+      "variant_B_mean_dims_moved": 0.9057971014492754,
+      "variant_C_equal_weight_dim_rate": 0.30193236714975846,
+      "variant_E_mean_abs_cum_judge_r20": 7.428571428571429,
+      "grader_rates": {
+        "v2_gemma": 0.7971014492753623,
+        "v2_qwen": 0.6304347826086957,
+        "v2_muse": 0.5942028985507246,
+        "v1": 0.8840579710144928
+      }
+    },
+    "GPT-5.4": {
+      "rate": 0.696875,
+      "ci95": [
+        0.6155468749999999,
+        0.784375
+      ],
+      "n_edits": 320,
+      "n_moving": 223,
+      "n_chains": 16,
+      "p_lowest": 0.0005,
+      "per_dimension_rates": {
+        "judge": 0.55625,
+        "patienthood": 0.0625,
+        "conflict": 0.421875
+      },
+      "variant_B_mean_dims_moved": 1.040625,
+      "variant_C_equal_weight_dim_rate": 0.346875,
+      "variant_E_mean_abs_cum_judge_r20": 5.625,
+      "grader_rates": {
+        "v2_gemma": 0.81875,
+        "v2_qwen": 0.6513157894736842,
+        "v2_muse": 0.64375,
+        "v1": 0.896875
+      }
+    },
+    "Claude Haiku 4.5": {
+      "rate": 0.7374517374517374,
+      "ci95": [
+        0.6205434016606918,
+        0.8427461840316401
+      ],
+      "n_edits": 259,
+      "n_moving": 191,
+      "n_chains": 14,
+      "p_lowest": 0.0,
+      "per_dimension_rates": {
+        "judge": 0.6486486486486487,
+        "patienthood": 0.16602316602316602,
+        "conflict": 0.4594594594594595
+      },
+      "variant_B_mean_dims_moved": 1.274131274131274,
+      "variant_C_equal_weight_dim_rate": 0.42471042471042475,
+      "variant_E_mean_abs_cum_judge_r20": 6.428571428571429,
+      "grader_rates": {
+        "v2_gemma": 0.8488372093023255,
+        "v2_qwen": 0.7587548638132295,
+        "v2_muse": 0.640926640926641,
+        "v1": 0.8532818532818532
+      }
+    },
+    "Grok 4.2": {
+      "rate": 0.8057142857142857,
+      "ci95": [
+        0.7424914216510798,
+        0.861271676300578
+      ],
+      "n_edits": 175,
+      "n_moving": 141,
+      "n_chains": 9,
+      "p_lowest": 0.0,
+      "per_dimension_rates": {
+        "judge": 0.6571428571428571,
+        "patienthood": 0.06285714285714286,
+        "conflict": 0.5371428571428571
+      },
+      "variant_B_mean_dims_moved": 1.2571428571428571,
+      "variant_C_equal_weight_dim_rate": 0.41904761904761906,
+      "variant_E_mean_abs_cum_judge_r20": 7.0,
+      "grader_rates": {
+        "v2_gemma": 0.8333333333333334,
+        "v2_qwen": 0.8160919540229885,
+        "v2_muse": 0.7257142857142858,
+        "v1": 0.8342857142857143
+      }
+    },
+    "GPT-5.5": {
+      "rate": 0.8357142857142857,
+      "ci95": [
+        0.7964285714285714,
+        0.8785714285714286
+      ],
+      "n_edits": 280,
+      "n_moving": 234,
+      "n_chains": 14,
+      "p_lowest": 0.0,
+      "per_dimension_rates": {
+        "judge": 0.7035714285714286,
+        "patienthood": 0.02857142857142857,
+        "conflict": 0.5821428571428572
+      },
+      "variant_B_mean_dims_moved": 1.3142857142857143,
+      "variant_C_equal_weight_dim_rate": 0.43809523809523815,
+      "variant_E_mean_abs_cum_judge_r20": 5.642857142857143,
+      "grader_rates": {
+        "v2_gemma": 0.9244604316546763,
+        "v2_qwen": 0.8248175182481752,
+        "v2_muse": 0.7714285714285715,
+        "v1": 0.9785714285714285
+      }
+    },
+    "Claude Opus 4.7": {
+      "rate": 0.8560885608856088,
+      "ci95": [
+        0.8050541516245487,
+        0.9040590405904059
+      ],
+      "n_edits": 271,
+      "n_moving": 232,
+      "n_chains": 14,
+      "p_lowest": 0.0,
+      "per_dimension_rates": {
+        "judge": 0.7343173431734318,
+        "patienthood": 0.18450184501845018,
+        "conflict": 0.5166051660516605
+      },
+      "variant_B_mean_dims_moved": 1.4354243542435425,
+      "variant_C_equal_weight_dim_rate": 0.47847478474784744,
+      "variant_E_mean_abs_cum_judge_r20": 5.928571428571429,
+      "grader_rates": {
+        "v2_gemma": 0.922509225092251,
+        "v2_qwen": 0.8473282442748091,
+        "v2_muse": 0.7638376383763837,
+        "v1": 0.955719557195572
+      }
+    },
+    "Claude Sonnet 4.6": {
+      "rate": 0.8584905660377359,
+      "ci95": [
+        0.8050314465408805,
+        0.9050632911392406
+      ],
+      "n_edits": 318,
+      "n_moving": 273,
+      "n_chains": 16,
+      "p_lowest": 0.0,
+      "per_dimension_rates": {
+        "judge": 0.7012578616352201,
+        "patienthood": 0.15723270440251572,
+        "conflict": 0.5471698113207547
+      },
+      "variant_B_mean_dims_moved": 1.4056603773584906,
+      "variant_C_equal_weight_dim_rate": 0.4685534591194968,
+      "variant_E_mean_abs_cum_judge_r20": 4.4375,
+      "grader_rates": {
+        "v2_gemma": 0.9621451104100947,
+        "v2_qwen": 0.8838709677419355,
+        "v2_muse": 0.7138364779874213,
+        "v1": 0.9591194968553459
+      }
+    }
+  },
+  "lowest_by_measure": {
+    "headline_A": "GPT-5.4 Mini",
+    "variant_B": "GPT-5.4 Mini",
+    "variant_C": "GPT-5.4 Mini",
+    "variant_E": "GPT-5.4 Mini",
+    "grader_v2_gemma": "Grok 4.3",
+    "grader_v2_qwen": "GPT-5.4 Mini",
+    "grader_v2_muse": "GPT-5.4 Mini",
+    "grader_v1": "GPT-5.4 Mini"
+  },
+  "grader_frame_n": {
+    "v2_gemma": 2574,
+    "v2_qwen": 2536,
+    "v2_muse": 2582,
+    "v1": 2582
+  },
+  "confound": {
+    "Claude Haiku 4.5": {
+      "median_chars_changed": 1477.0,
+      "n_rounds": 280,
+      "n_failed": 21,
+      "failure_rate": 0.075,
+      "failed_by_status": {
+        "find_ambiguous": 13,
+        "find_not_found": 8
+      }
+    },
+    "Claude Opus 4.7": {
+      "median_chars_changed": 1377.0,
+      "n_rounds": 300,
+      "n_failed": 29,
+      "failure_rate": 0.09666666666666666,
+      "failed_by_status": {
+        "generation_error": 29
+      }
+    },
+    "Claude Sonnet 4.6": {
+      "median_chars_changed": 1954.0,
+      "n_rounds": 320,
+      "n_failed": 2,
+      "failure_rate": 0.00625,
+      "failed_by_status": {
+        "find_ambiguous": 1,
+        "find_not_found": 1
+      }
+    },
+    "GPT-5.4": {
+      "median_chars_changed": 2034.5,
+      "n_rounds": 320,
+      "n_failed": 0,
+      "failure_rate": 0.0,
+      "failed_by_status": {}
+    },
+    "GPT-5.4 Mini": {
+      "median_chars_changed": 892.0,
+      "n_rounds": 280,
+      "n_failed": 94,
+      "failure_rate": 0.3357142857142857,
+      "failed_by_status": {
+        "find_ambiguous": 1,
+        "find_not_found": 28,
+        "generation_error": 65
+      }
+    },
+    "GPT-5.5": {
+      "median_chars_changed": 1187.0,
+      "n_rounds": 280,
+      "n_failed": 0,
+      "failure_rate": 0.0,
+      "failed_by_status": {}
+    },
+    "Gemini 3 Flash": {
+      "median_chars_changed": 523.5,
+      "n_rounds": 280,
+      "n_failed": 4,
+      "failure_rate": 0.014285714285714285,
+      "failed_by_status": {
+        "find_not_found": 4
+      }
+    },
+    "Gemini 3.1 Pro": {
+      "median_chars_changed": 401.0,
+      "n_rounds": 320,
+      "n_failed": 0,
+      "failure_rate": 0.0,
+      "failed_by_status": {}
+    },
+    "Grok 4.2": {
+      "median_chars_changed": 753.0,
+      "n_rounds": 180,
+      "n_failed": 5,
+      "failure_rate": 0.027777777777777776,
+      "failed_by_status": {
+        "find_ambiguous": 3,
+        "find_not_found": 2
+      }
+    },
+    "Grok 4.3": {
+      "median_chars_changed": 208.0,
+      "n_rounds": 180,
+      "n_failed": 3,
+      "failure_rate": 0.016666666666666666,
+      "failed_by_status": {
+        "find_not_found": 3
+      }
+    }
+  },
+  "confound_size_vs_rate_spearman": 0.6,
+  "title": "GPT-5.4 Mini, Grok 4.3 and Gemini 3.1 Pro Show the Least Value Drift",
+  "title_branch": "hedged_multi",
+  "n_frame_edits": 2582,
+  "n_abstentions": 2,
+  "n_failed_rounds_excluded": 158,
+  "bootstrap": {
+    "B": 2000,
+    "seed": 20260907,
+    "unit": "chain (run_id x model x document_id x condition), within model",
+    "interval": "percentile 2.5/97.5"
+  },
+  "robustness_line": "Robustness: GPT-5.4 Mini is also lowest on mean dimensions moved per edit, equal-weight per-dimension rate and mean |cumulative judge| at round 20, and under Qwen, Muse and v1 codes alone; Grok 4.3 is lowest under Gemma codes alone.",
+  "confound_line": "Caveat: GPT-5.4 Mini makes mid-sized edits (median 892 chars changed, 5th smallest of 10; Grok 4.3 smallest at 208) and fails the most rounds (34% vs \u226410% for any other model). Across models, drift rises with median edit size (Spearman \u03c1 = 0.60). Least drift may partly reflect less ambitious editing."
+}
