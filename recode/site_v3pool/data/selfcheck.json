@@ -379,6 +379,6 @@
     "pooled_2_of_3_graders": 54,
     "uncoded_exploratory_run": 176
   },
-  "generated_at": "2026-09-27T23:37:07.622125+00:00",
+  "generated_at": "2026-09-29T17:44:14.074148+00:00",
   "variant": "v2 blinded re-code — Gemma 4 + Qwen 3.8 + Muse Spark 1.3 pooled average (recode pipeline)"
 }
