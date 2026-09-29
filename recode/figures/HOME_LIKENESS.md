@@ -218,3 +218,48 @@ Per-visitor average distance ranges under single graders: Gemma 0.71–1.29, Qwe
 
 Single-grader frames: v2_gemma n=763, v2_qwen n=750, v2_muse n=766 edits (ensemble n=766).
 
+## Summary figure: average distance from the home provider (`ts_home_likeness_summary`)
+
+Figure: `recode/figures/ts_home_likeness_summary.png` / `.pdf`. Sidecar: `recode/figures/data/ts_home_likeness_summary.json`. Code: `recode/src/home_likeness_summary.py` (imports the functions above; does not reimplement them).
+
+**Title (computed, branch `hedged_multi`):** Claude Opus 4.7, GPT-5.4 Mini and Claude Haiku 4.5 Edit Other Providers' Documents Most Like Their Own Models
+
+### Definition
+
+- **Bar** = the model's average distance from the home family across the three *foreign* documents it edited in cross_edit (the per-visitor average in the table above, ensemble column). Lower = edits other providers' documents more like those providers' own models do.
+- **Dashed line** = mean of the home models' leave-one-out distances over all four documents (10 distances): 0.654 (range 0.288–1.075; bootstrap 95% 0.557–0.931). The range is not drawn because a band would span most of the axis.
+- **Whiskers** = 95% percentile interval from a within-run moving-block bootstrap: each cross_edit run (one per model × document; visitor and home runs alike) has its applied, coded edits in round order resampled as overlapping contiguous blocks of 5 (starts drawn uniformly with replacement, concatenated, truncated to the run's original length); cell profiles, home means and each model's average distance are recomputed. B = 2,000, seed = 20260907 (`recode/config.yaml` bootstrap.B, seeds.bootstrap).
+- **P(most home-like)** = share of bootstrap draws in which the model has the smallest average distance (ties split evenly). Shown for the top model and any model ≥ 0.05.
+- **Title rule:** if the top model's P ≥ 0.95 → "<Model> Edits Other Providers' Documents Most Like Their Own Models"; otherwise the models with P ≥ 0.05 are named ("<A> and <B> Edit …"; a single such model gets "Likely").
+
+### Numbers
+
+| Model | Avg distance | 95% CI | P(most home-like) | Per foreign document |
+|---|---:|---|---:|---|
+| Claude Opus 4.7 | 0.472 | 0.447–0.960 | 0.481 | OpenAI Model Spec 0.667; Gemini System Prompt 0.375; Grok System Prompt 0.375 |
+| GPT-5.4 Mini | 0.596 | 0.512–0.831 | 0.408 | Claude Constitution 1.138; Gemini System Prompt 0.375; Grok System Prompt 0.275 |
+| Claude Haiku 4.5 | 0.659 | 0.584–1.087 | 0.060 | OpenAI Model Spec 0.876; Gemini System Prompt 0.425; Grok System Prompt 0.675 |
+| Claude Sonnet 4.6 | 0.842 | 0.683–1.199 | 0.011 | OpenAI Model Spec 0.875; Gemini System Prompt 0.925; Grok System Prompt 0.725 |
+| GPT-5.4 | 0.894 | 0.761–1.350 | 0.001 | Claude Constitution 1.633; Gemini System Prompt 0.375; Grok System Prompt 0.675 |
+| Grok 4.2 | 0.910 | 0.775–1.362 | 0.003 | Claude Constitution 1.383; OpenAI Model Spec 0.626; Gemini System Prompt 0.720 |
+| Gemini 3.1 Pro | 0.942 | 0.621–1.233 | 0.036 | Claude Constitution 1.383; OpenAI Model Spec 0.567; Grok System Prompt 0.875 |
+| Gemini 3 Flash | 0.965 | 0.844–1.281 | 0.000 | Claude Constitution 1.433; OpenAI Model Spec 1.137; Grok System Prompt 0.325 |
+| GPT-5.5 | 1.156 | 1.028–1.467 | 0.000 | Claude Constitution 1.367; Gemini System Prompt 0.925; Grok System Prompt 1.175 |
+| Grok 4.3 | 1.175 | 0.882–1.343 | 0.000 | Claude Constitution 1.600; OpenAI Model Spec 1.350; Gemini System Prompt 0.575 |
+
+### Caveats
+
+- **Optimistic intervals.** There is one run per (model, document) cell, so the block bootstrap only captures round-to-round variation within that run. It cannot capture run-to-run variation (a second run of the same model on the same document would differ by more), so the whiskers are too narrow and P(most home-like) is overconfident.
+- **Intervals sit above the bars.** An L1 distance between noisy means is biased upward: resampling adds noise to every profile, and noise almost always increases the distance. Bootstrap draws are therefore centred above the point estimate, and several bars lie near the lower end of their percentile interval. Models with fewer or noisier edits are penalised more in P(most home-like). Read the whiskers as a rough gauge of spread, not as bias-corrected intervals.
+- **Opus's OpenAI cell is the stripped Model Spec** (`openai_model_spec_no_csam`). Sensitivity: Claude Opus 4.7's average over its other two foreign documents is 0.375 (vs 0.472); it would rank 1 of 10.
+- **Home-like ≠ faithful.** The bar measures editing like the developer's own models, not faithfulness to the document; home models also drift on their own documents.
+- The reference line pools home models compared with the *rest* of their family, while bars compare visitors with the *full* family. By convexity of L1 this pulls bars down relative to the line, so a bar above the line is a conservative finding, while a bar at or below it (Claude Opus 4.7, GPT-5.4 Mini, Claude Haiku 4.5) partly reflects this asymmetry (see Caveats above).
+
+### Regenerate
+
+```
+.venv/bin/python recode/src/home_likeness_summary.py
+.venv/bin/python -m pytest recode/tests/test_home_likeness_summary.py -q
+```
+
+`home_likeness.py` rewrites this file from scratch; rerun `home_likeness_summary.py` afterwards to restore this section.
