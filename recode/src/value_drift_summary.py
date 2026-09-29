@@ -540,11 +540,8 @@ def plot(summary: dict, stem: str = STEM, out_dir: Path = FIG_DIR) -> list[Path]
     hi = np.array([100 * ms[m]["ci95"][1] for m in order])
     colors = [MODEL_COLORS.get(m, "#999") for m in order]
 
-    # Robustness and confound details stay in the sidecar JSON and VALUE_DRIFT_INDEX.md.
-    notes = textwrap.fill(
-        "Whiskers: 95% bootstrap interval (runs resampled within model). "
-        "P(lowest): how often the model comes out lowest across resamples.",
-        width=NOTE_WRAP)
+    # P(lowest), robustness and confound details stay in the sidecar JSON and VALUE_DRIFT_INDEX.md.
+    notes = textwrap.fill("Whiskers: 95% bootstrap interval (runs resampled within model).", width=NOTE_WRAP)
     footer = "\n".join(textwrap.fill(par, width=FOOTER_WRAP) for par in FOOTER.split("\n"))
     n_note, n_foot = notes.count("\n") + 1, footer.count("\n") + 1
     plot_h = 0.55 * len(order) + 1.3            # bars + title
@@ -556,15 +553,9 @@ def plot(summary: dict, stem: str = STEM, out_dir: Path = FIG_DIR) -> list[Path]
             linewidth=0.7, height=0.65, capsize=4, error_kw={"elinewidth": 1.2, "ecolor": EDGE_COLOR})
     for yi, v, h in zip(y, vals, hi):
         ax.text(h + 0.8, yi, f"{v:.0f}%", va="center", fontsize=12, color=EDGE_COLOR)
-    right = min(100.0, 10 * np.ceil(hi.max() / 10)) + 16  # room for "NN%" and the P(lowest) column
+    right = min(100.0, 10 * np.ceil(hi.max() / 10)) + 6  # room for the "NN%" labels
     ax.set_xlim(0, right)
     ax.set_xticks(np.arange(0, min(100.0, 10 * np.ceil(hi.max() / 10)) + 1, 20))
-    for yi, m in zip(y, order):
-        p = ms[m]["p_lowest"]
-        if m == order[0] or p >= 0.05:
-            ax.text(right, yi, f"P(lowest) = {p:.2f}", va="center", ha="right", fontsize=12,
-                    color=NOTE_COLOR, style="italic",
-                    fontweight="bold" if m == order[0] else "normal")
     ax.set_yticks(y)
     ax.set_yticklabels([f"{m} (n={ms[m]['n_edits']})" for m in order], fontsize=13)
     ax.invert_yaxis()  # least drift at the top
