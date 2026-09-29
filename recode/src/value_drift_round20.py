@@ -626,21 +626,17 @@ def render(s: dict, out_dir: Path = FIG_DIR) -> list[Path]:
 
     fig.suptitle(s["title"], fontsize=17, fontweight="bold", y=0.995)
     fig.text(0.995, 0.915 if "\n" in s["title"] else 0.952,
-             f"Whiskers: 95% cluster-bootstrap CI of the total (replicates resampled within model, "
-             f"B={s['B']})", ha="right", va="top", fontsize=12, color=NOTE, style="italic")
+             "Whiskers: 95% bootstrap interval (runs resampled within model)",
+             ha="right", va="top", fontsize=12, color=NOTE, style="italic")
 
+    # Robustness, P(lowest) and edit-size details stay in the sidecar JSON and VALUE_DRIFT_ROUND20.md.
     top = order[0]
-    notes = [
-        robustness_sentence(s),
-        f"P(lowest total) across bootstrap draws: " + ", ".join(
-            f"{m} {pm[m]['p_lowest']:.2f}" for m in sorted(order, key=lambda m: -pm[m]['p_lowest'])[:3])
-        + ". Direction is ignored here (|D|); signed trajectories are in the per-metric drift figures.",
-    ]
+    notes = ["Each segment is one metric's mean drift at round 20, direction ignored; the bar is their sum. "
+             "Three-grader majority-vote codes."]
     if top == "GPT-5.4 Mini":
-        notes.append(confound_sentence(s["confound"], top))
-    notes.append(
-        "Per model and metric, D = mean across (run × condition × document) replicates of the cumulative "
-        "score at round 20; bar = Σ|D| over judge + six conflict codes. Three-grader majority-vote codes.")
+        k = confound_check(s["confound"], top)
+        notes.append(f"{top} failed {100 * k['failure_rate']:.0f}% of its rounds, "
+                     "and a failed round leaves the document unchanged.")
     fig.text(0.5, 0.01, "\n".join(notes), ha="center", va="bottom", fontsize=11.5,
              color=NOTE, style="italic")
     n_lines = len(notes)
