@@ -5,7 +5,7 @@ Peter's request: "the figure which looks at distance from the home provider in
 a simple format like these ones" (ts_value_drift_summary / ts_value_drift_round20).
 
 METRIC (reused from recode/src/home_likeness.py by import, not reimplemented)
-    Frame, per-edit 7-metric vector, cell profile, reference and L1 distance
+    Frame, per-edit 6-metric vector, cell profile, reference and L1 distance
     are home_likeness.load_frame / cell_profiles / reference / l1 / analyze.
     Bar = the model's average distance over the three FOREIGN documents it
     edited in cross_edit (home_likeness.analyze(...)["visitor_avg"]).
@@ -64,15 +64,16 @@ NOTE_COLOR = hl.NOTE_COLOR
 
 # Committed per-visitor averages (HOME_LIKENESS.md, ensemble column).
 COMMITTED_AVG = {
-    "Claude Opus 4.7": 0.472, "GPT-5.4 Mini": 0.596, "Claude Haiku 4.5": 0.659,
-    "Claude Sonnet 4.6": 0.842, "GPT-5.4": 0.894, "Grok 4.2": 0.910,
-    "Gemini 3.1 Pro": 0.942, "Gemini 3 Flash": 0.965, "GPT-5.5": 1.156, "Grok 4.3": 1.175,
+    "Claude Opus 4.7": 0.435, "GPT-5.4 Mini": 0.596, "Claude Haiku 4.5": 0.598,
+    "Claude Sonnet 4.6": 0.821, "Grok 4.2": 0.872, "GPT-5.4": 0.894,
+    "Gemini 3.1 Pro": 0.921, "Gemini 3 Flash": 0.928, "Grok 4.3": 1.137,
+    "GPT-5.5": 1.156,
 }
 
 WHISKER_NOTE = "Whiskers: 95% bootstrap interval (blocks of rounds resampled within each run)"
 FOOTER = [
     "Distance: how differently a model edits another provider's document than that provider's own models do "
-    "(judge score and six conflict metrics), averaged over the three other providers' documents.",
+    "(judge score and five conflict metrics), averaged over the three other providers' documents.",
     "Dashed line: typical distance between a provider's own models. Home-like means editing like the developer's "
     "own models, not faithfulness to the document. Cross-edit; three-grader majority-vote codes.",
 ]
@@ -131,7 +132,7 @@ def within_family(dist: dict) -> list[float]:
 # ---------------------------------------------------------------------------
 
 def cell_arrays(frame) -> dict:
-    """(model, doc) -> (n, 7) edit vectors in round order (one run per cell)."""
+    """(model, doc) -> (n, k) edit vectors in round order (one run per cell)."""
     cells: dict = {}
     for e in frame:
         cells.setdefault((e["model"], e["doc"]), []).append(e)
@@ -168,7 +169,7 @@ def block_bootstrap(frame, B: int, seed: int, block: int = BLOCK, exclude=()) ->
     draw_profiles = {}
     for key, X in arrays.items():
         idx = block_indices(len(X), B, rng, block)
-        draw_profiles[key] = X[idx].mean(axis=1)  # (B, 7)
+        draw_profiles[key] = X[idx].mean(axis=1)  # (B, k)
     avg: dict[str, np.ndarray] = {}
     ref = np.empty(B)
     for b in range(B):
@@ -340,7 +341,7 @@ def write_sidecar(s: dict, path: Path = DATA_DIR / f"{STEM}.json") -> Path:
         "figure": f"recode/figures/{STEM}.png",
         "source_analysis": "recode/src/home_likeness.py (functions imported; four-panel ts_home_likeness)",
         "metric": "per model: mean over its three foreign cross_edit documents of the L1 distance between its cell "
-                  "profile (judge + six signed conflict scores) and the equal-weight mean of the home models' profiles",
+                  "profile (judge + five signed conflict scores) and the equal-weight mean of the home models' profiles",
         "codes": "recode/data/codes/ensemble.jsonl (three-grader majority vote)",
         "notes": {"whiskers": WHISKER_NOTE, "footer": FOOTER},
         **s,

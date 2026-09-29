@@ -80,7 +80,7 @@ def test_cell_arrays_preserve_run_lengths_and_round_order(frame):
     assert len(arrays) == 40
     for (m, d), X in arrays.items():
         es = sorted((e for e in frame if e["model"] == m and e["doc"] == d), key=lambda e: e["round"])
-        assert X.shape == (len(es), 7)
+        assert X.shape == (len(es), len(hl.METRICS))
         assert np.array_equal(X, np.array([e["vec"] for e in es]))
 
 

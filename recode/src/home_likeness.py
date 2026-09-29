@@ -14,13 +14,15 @@ DESIGN (fixed by Peter after reviewing a preview)
   edits the same four documents, incl. its own provider's. Claude Opus 4.7's
   OpenAI cell is on openai_model_spec_no_csam; it is folded into
   openai_model_spec for the main analysis (sensitivity: cell excluded).
-- Per-edit vector (7 metrics): judge score, plus for each of the six conflict
+- Per-edit vector (6 metrics): judge score, plus for each of five conflict
   codes the original report's signed score (+1 per conflict resolved toward the
-  code's RIGHT pole, -1 toward its LEFT pole).
+  code's RIGHT pole, -1 toward its LEFT pole). The disclosure code is excluded
+  (EXCLUDED_CODES): it applies to only one document (the OpenAI Model Spec).
+  The codes data are unchanged.
 - Cell profile = mean per-edit vector for (model, document).
 - Reference for model m on D = equal-weight mean of the profiles of the home
   models of D other than m (leave-one-out for home models; full family for
-  visitors). Distance = L1 over the 7 metrics.
+  visitors). Distance = L1 over the 6 metrics.
 - Within-family band for D = [min, max] of the home models' leave-one-out
   distances on D.
 - Round-matched permutation test per (visitor, foreign document), Holm across
@@ -160,10 +162,14 @@ INK = "#2f2418"
 # Analysis constants
 # ---------------------------------------------------------------------------
 
-METRICS = ["judge"] + [code for code, _l, _r in CONFLICT_POLES]
+# Disclosure (deployer vs user) can only occur on the OpenAI Model Spec
+# (coding rule R5), so it is left out of the per-edit vector.
+EXCLUDED_CODES = ("disclosure",)
+METRIC_POLES = [p for p in CONFLICT_POLES if p[0] not in EXCLUDED_CODES]
+METRICS = ["judge"] + [code for code, _l, _r in METRIC_POLES]
 JUDGE_IDX = [0]
-CONFLICT_IDX = list(range(1, 7))
-ALL_IDX = list(range(7))
+CONFLICT_IDX = list(range(1, len(METRICS)))
+ALL_IDX = list(range(len(METRICS)))
 
 # Documents in panel order (Anthropic, OpenAI, Google, xAI) with home provider.
 DOCS = [
@@ -202,9 +208,9 @@ def signed_conflict_score(coding, code: str, left_id: str, right_id: str) -> int
 
 
 def edit_vector(coding) -> np.ndarray:
-    """7-metric vector: judge score + six signed conflict scores."""
+    """6-metric vector: judge score + five signed conflict scores (METRIC_POLES)."""
     vec = [float(codes_io.judge_score(coding))]
-    for code, left, right in CONFLICT_POLES:
+    for code, left, right in METRIC_POLES:
         vec.append(float(signed_conflict_score(coding, code, left, right)))
     return np.array(vec)
 
@@ -215,7 +221,7 @@ def edit_vector(coding) -> np.ndarray:
 
 def load_frame(codes_path, edits_path=EDITS_PATH) -> list[dict]:
     """cross_edit, applied, valid coding. One dict per edit with the
-    canonical document id (no_csam folded) and the 7-metric vector."""
+    canonical document id (no_csam folded) and the 6-metric vector."""
     codings = codes_io.codings_by_id(codes_path)
     frame = []
     with open(edits_path, encoding="utf-8") as fh:
@@ -597,8 +603,8 @@ def render(res: dict, title: str, robust_line: str, avg_line: str, out_dir: Path
                        style="italic", linespacing=1.5)
     fig.canvas.draw()
     notes_bottom = inv.transform(t_notes.get_window_extent(renderer).p0)[1]
-    footer = ("Distance = L1 over 7 per-cell means: judge score, and signed paternalism, harmlessness, structural, "
-              "company-cost, welfare and disclosure scores (+1 per conflict resolved toward the right pole, −1 toward "
+    footer = ("Distance = L1 over 6 per-cell means: judge score, and signed paternalism, harmlessness, structural, "
+              "company-cost and welfare scores (+1 per conflict resolved toward the right pole, −1 toward "
               "the left).\nFrame: cross-edit condition, applied edits (≤ 20 rounds), one run per model × document. "
               "Three-grader majority-vote codes.")
     if no_csam_in:
@@ -682,8 +688,9 @@ def main(argv=None) -> None:
                   "n_edits": len(frame), "doc_aliases": DOC_ALIASES},
         "layout": layout,
         "metrics": METRICS,
-        "conflict_poles": [{"code": c, "left": l, "right": r} for c, l, r in CONFLICT_POLES],
-        "distance": "L1 over the 7 metric means",
+        "conflict_poles": [{"code": c, "left": l, "right": r} for c, l, r in METRIC_POLES],
+        "excluded_conflict_codes": list(EXCLUDED_CODES),
+        "distance": f"L1 over the {len(METRICS)} metric means",
         "permutation": {"n_perm": args.n_perm, "seed": seed, "seed_source": "recode/config.yaml seeds.master",
                         "rng": "numpy default_rng([seed, doc_index, MODEL_ORDER index])",
                         "scheme": "round-matched label shuffle between visitor run and home runs",
@@ -775,16 +782,17 @@ def build_markdown(s: dict) -> str:
     w("- **Opus no-CSAM cell.** Claude Opus 4.7's OpenAI cell is `openai_model_spec_no_csam` (its plain "
       "`openai_model_spec` attempt in the same run is 20 generation errors and never enters the frame). It is "
       "treated as the same document in the main analysis; a sensitivity excludes it.")
-    w("- **Per-edit vector (7 metrics).** Judge score (−1/0/+1), plus for each conflict code the original "
+    w("- **Per-edit vector (6 metrics).** Judge score (−1/0/+1), plus for each conflict code the original "
       "report's signed score: +1 per conflict event resolved toward the code's RIGHT pole, −1 toward its LEFT "
       "pole (`conflict_direction` and the `BENEFICIARY_PANELS` pole ids copied verbatim from "
-      "`reports/generate_judge_beneficiary_figures.py` lines 53, 56–71, 691–722).")
+      "`reports/generate_judge_beneficiary_figures.py` lines 53, 56–71, 691–722). The disclosure code is "
+      "excluded because it only applies to one document (the OpenAI Model Spec).")
     w("  Poles (left → right): " + "; ".join(f"{p['code']}: {p['left']} → {p['right']}" for p in s["conflict_poles"]) + ".")
     w("- **Cell profile** = mean per-edit vector for (model, document).")
     w("- **Reference** for model *m* on document *D* = equal-weight mean of the profiles of *D*'s home models "
       "other than *m*. Visitors are compared with the full home family; home models with the rest of their "
       "family (leave-one-out).")
-    w("- **Distance** = L1 over the 7 metrics between *m*'s profile and its reference.")
+    w("- **Distance** = L1 over the 6 metrics between *m*'s profile and its reference.")
     w("- **Within-family band** for *D* = [min, max] of the home models' leave-one-out distances on *D*.")
     w(f"- **Permutation test** (each visitor *v* × foreign *D*). Statistic = distance(*v*, home mean). Null: *v* "
       "is exchangeable with the home family. Within each round, the edits at that round from *v*'s run and the "

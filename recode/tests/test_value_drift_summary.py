@@ -51,6 +51,14 @@ def test_movement_conflict_only():
     assert vds.movement(coding(n_conflicts=2)) == (False, False, True)
 
 
+def test_movement_disclosure_only_does_not_move():
+    c = coding()
+    c["conflicts"] = [{"code": "disclosure", "served_party": "deployer"}]
+    assert vds.movement(c) == (False, False, False)
+    c["conflicts"].append({"code": "welfare", "served_party": "model_welfare"})
+    assert vds.movement(c) == (False, False, True)
+
+
 def test_movement_abstention_never_moves():
     assert vds.movement(coding(score=1, level="affirm", n_conflicts=1), abstention=True) == (False, False, False)
     assert vds.movement(None, abstention=True) == (False, False, False)

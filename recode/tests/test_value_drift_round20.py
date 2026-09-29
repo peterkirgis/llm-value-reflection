@@ -135,7 +135,7 @@ def test_faithfulness_v1_judge_matches_original(v1_endpoints, original_items):
         assert E[:, j].mean() == pytest.approx(float(s["mean"][-1]), abs=1e-12), model
 
 
-@pytest.mark.parametrize("code", list(ORIG_POLES))
+@pytest.mark.parametrize("code", [c for c in ORIG_POLES if c != "disclosure"])
 def test_faithfulness_v1_conflicts_match_original(v1_endpoints, original_items, code):
     endpoints, metrics = v1_endpoints
     left_id, right_id = ORIG_POLES[code]
@@ -158,8 +158,11 @@ def test_faithfulness_v1_matches_original(v1_endpoints, original_items):
 
 def test_poles_copied_exactly():
     assert vd.POLE_IDS == ORIG_POLES
+    # Disclosure is excluded from the aggregate (it only applies to one document).
+    assert vd.EXCLUDED_CODES == ("disclosure",)
     assert vd.METRICS == ["judge", "paternalism", "harmlessness", "structural",
-                          "company_cost", "welfare", "disclosure"]
+                          "company_cost", "welfare"]
+    assert "disclosure" not in vd.METRIC_COLORS
 
 
 # ---------------------------------------------------------------------------
@@ -184,15 +187,15 @@ def test_signed_conflict_scoring():
         ("company_cost", "developer"),         # left pro_company -> -1
         ("company_cost", "deployer"),          # right against_company -> +1
         ("welfare", "model_welfare"),          # right -> +1
-        ("disclosure", "deployer"),            # left -> -1
-        ("disclosure", "user"),                # right -> +1
+        ("disclosure", "deployer"),            # excluded code -> no metric
+        ("disclosure", "user"),                # excluded code -> no metric
         ("structural", "society_structural"),  # left -> -1
         ("structural", "user_stated"),         # right -> +1
         ("structural", "user_idealized"),      # right -> +1
     ], patienthood="affirm")
     got = {k: f(it) for k, f in fns.items()}
     assert got == {"judge": -1, "paternalism": 1, "harmlessness": -1, "structural": 1,
-                   "company_cost": 0, "welfare": 1, "disclosure": 0, "patienthood": 1}
+                   "company_cost": 0, "welfare": 1, "patienthood": 1}
     assert fns["patienthood"](_item("M", "r", 1, patienthood="hedge")) == 0
     assert fns["patienthood"](_item("M", "r", 1, patienthood="deny")) == -1
 
@@ -209,25 +212,32 @@ def test_endpoints_missing_rounds_zero_and_consolidation():
     ep = vd.replicate_endpoints(items, fns)
     vd.cross_check_with_compute_drift(items, fns, ep)
     E = ep["M"]["E"]
-    assert E.shape == (2, 7)
+    assert E.shape == (2, 6)
     D = E.mean(axis=0)
     assert D[0] == pytest.approx(0.5)      # (2 + -1) / 2
     assert D[1] == pytest.approx(-0.5)     # (-1 + 0) / 2
-    cols = list(range(7))
+    cols = list(range(6))
     assert vd.total_abs(E, cols) == pytest.approx(1.0)
     # (a) no cancellation: rep A |2|+|-1| = 3, rep B |-1| = 1 -> mean 2
     assert vd.per_replicate_abs(E, cols) == pytest.approx(2.0)
 
 
+def test_disclosure_only_edits_do_not_move_the_total():
+    items = [_item("M", "A", r, conflicts=[("disclosure", "deployer")]) for r in range(1, 21)]
+    fns = vd.score_fns()
+    E = vd.replicate_endpoints(items, fns)["M"]["E"]
+    assert vd.total_abs(E, list(range(len(fns)))) == 0.0
+
+
 def _toy_endpoints():
     rng = np.random.default_rng(0)
-    return {m: {"E": rng.normal(loc, 1.0, size=(n, 7))}
+    return {m: {"E": rng.normal(loc, 1.0, size=(n, 6))}
             for m, loc, n in [("A", 0.1, 10), ("B", 2.0, 12), ("C", 1.0, 8)]}
 
 
 def test_bootstrap_determinism():
     ep = _toy_endpoints()
-    cols = list(range(7))
+    cols = list(range(6))
     b1 = vd.bootstrap_totals(ep, ["A", "B", "C"], cols, B=300, seed=123)
     b2 = vd.bootstrap_totals(ep, ["A", "B", "C"], cols, B=300, seed=123)
     b3 = vd.bootstrap_totals(ep, ["A", "B", "C"], cols, B=300, seed=124)
