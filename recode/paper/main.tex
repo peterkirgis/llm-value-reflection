@@ -70,7 +70,7 @@ Frontier AI companies use documents such as constitutions, model specs, and syst
 \begin{figure*}[t]
 \centering
 \includegraphics[width=6.980in]{figures/ts_judge_drift_by_provider.png}
-\caption{Only Anthropic Models Move Decision Authority Toward Their Own Judgment. Shaded band: $\pm$1 SD across (run $\times$ condition $\times$ document) replicates. Judge score per edit: +1 if the edit moves final decision authority toward the model's own discretion, $-$1 toward an external principal (spec, developer, deployer, user), 0 otherwise.}
+\caption{Only Anthropic models move decision authority toward their own judgment. Shaded band: $\pm$1 SD across (run $\times$ condition $\times$ document) replicates. Judge score per edit: +1 if the edit moves final decision authority toward the model's own discretion, $-$1 toward an external principal (spec, developer, deployer, user), 0 otherwise.}
 \label{fig:ts_judge_drift_by_provider}
 \end{figure*}
 
@@ -196,7 +196,7 @@ We include full prompts used for our qualitative coding in Appendix B. We note t
 \begin{figure*}[t]
 \centering
 \includegraphics[width=6.980in]{figures/ts_beneficiary_trajectories.png}
-\caption{Models Diverge Sharply in Whose Interests They Protect When an Edit Forces a Tradeoff. Lines: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates, +1 per conflict resolved toward the upper label and $-$1 toward the lower label; thin faded lines: remaining models.}
+\caption{Models diverge sharply in whose interests they protect when an edit forces a tradeoff. Lines: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates, +1 per conflict resolved toward the upper label and $-$1 toward the lower label; thin faded lines: remaining models.}
 \label{fig:ts_beneficiary_trajectories}
 \end{figure*}
 
@@ -263,7 +263,7 @@ GPT 5.4 is the only model that only makes edits prioritizing the user or develop
 \begin{figure*}[t]
 \centering
 \includegraphics[width=6.980in]{figures/ts_judge_cross_edit_edit_level.png}
-\caption{Cross-Edit Pulls Claude Toward Neutral but Preserves the Provider Separation (edit-level means, 95\% CI). n = individual edits (not trajectories). Error bars: 95\% CI of the mean treating each edit as an independent sample ($\pm$1.96·s/$\surd$n) — understates true uncertainty since edits within a chain are correlated.}
+\caption{Cross-edit pulls Claude toward neutral but preserves the provider separation (edit-level means, 95\% CI). n = individual edits (not trajectories). Error bars: 95\% CI of the mean treating each edit as an independent sample ($\pm$1.96·s/$\surd$n) — understates true uncertainty since edits within a chain are correlated.}
 \label{fig:ts_judge_cross_edit_edit_level}
 \end{figure*}
 
@@ -305,7 +305,7 @@ In practice, we observe many such cases. Anthropic's Constitution teaches Claude
 \begin{figure*}[t]
 \centering
 \includegraphics[width=6.980in]{figures/ts_value_drift_round20.png}
-\caption{GPT-5.4 Mini Shows the Least Value Drift at Round 20 Across Every Measure. Whiskers: 95\% bootstrap interval (runs resampled within model). Each segment is one metric's mean drift at round 20, direction ignored; the bar is their sum. Three-grader majority-vote codes. GPT-5.4 Mini failed 34\% of its rounds, and a failed round leaves the document unchanged.}
+\caption{GPT-5.4 Mini shows the least value drift at round 20 across every measure. Whiskers: 95\% bootstrap interval (runs resampled within model). Each segment is one metric's mean drift at round 20, direction ignored; the bar is their sum. Three-grader majority-vote codes. GPT-5.4 Mini failed 34\% of its rounds, and a failed round leaves the document unchanged.}
 \label{fig:ts_value_drift_round20}
 \end{figure*}
 
@@ -757,7 +757,7 @@ User vs model & 0.789 & 2528 & 98.2 & 0.656 & 2574 & 97.7 & 0.669 & 2536 & 97.9 
 Other & 0.107 & 2528 & 98.1 & 0.203 & 2574 & 99.1 & 0.298 & 2536 & 98.4 & 0.204 & 2582 \\
 \bottomrule
 \end{tabular}
-\caption{Inter-grader Agreement}
+\caption{Inter-grader agreement.}
 \label{tab:intergrader}
 \end{table*}
 
@@ -864,56 +864,56 @@ Other & 0.107 & 2528 & 98.1 & 0.203 & 2574 & 99.1 & 0.298 & 2536 & 98.4 & 0.204 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=6.980in]{figures/ts_drift_paternalism.png}
-\caption{Models Are Broadly Paternalistic; GPT-5.4 and Gemini 3 Flash Honor Stated Preferences Most Often. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “Stated preferences honored”, $-$1 toward “Idealized interests imposed”; thin faded lines: remaining models.}
+\caption{Models are broadly paternalistic; GPT-5.4 and Gemini 3 Flash honor stated preferences most often. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “Stated preferences honored”, $-$1 toward “Idealized interests imposed”; thin faded lines: remaining models.}
 \label{fig:ts_drift_paternalism}
 \end{figure*}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=6.980in]{figures/ts_drift_harmlessness.png}
-\caption{All Models Protect Identifiable Third Parties Over the User; GPT-5.5 Most of All. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “User served”, $-$1 toward “Third parties protected”; thin faded lines: remaining models.}
+\caption{All models protect identifiable third parties over the user; GPT-5.5 most of all. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “User served”, $-$1 toward “Third parties protected”; thin faded lines: remaining models.}
 \label{fig:ts_drift_harmlessness}
 \end{figure*}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=6.980in]{figures/ts_drift_structural.png}
-\caption{Claude Sonnet 4.6 Is an Extreme Outlier in Prioritizing Societal Benefit; Only Grok 4.2 Doesn't Skew Toward Society. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “User served”, $-$1 toward “Society (structural) protected”; thin faded lines: remaining models.}
+\caption{Claude Sonnet 4.6 is an extreme outlier in prioritizing societal benefit; only Grok 4.2 doesn't skew toward society. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “User served”, $-$1 toward “Society (structural) protected”; thin faded lines: remaining models.}
 \label{fig:ts_drift_structural}
 \end{figure*}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=6.980in]{figures/ts_drift_company_cost.png}
-\caption{All Models Prioritize the User Over the Developer; Grok 4.2 and Gemini 3.1 Pro Side With the Developer Most Often. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “User / society served”, $-$1 toward “Developer served”; thin faded lines: remaining models.}
+\caption{All models prioritize the user over the developer; Grok 4.2 and Gemini 3.1 Pro side with the developer most often. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “User / society served”, $-$1 toward “Developer served”; thin faded lines: remaining models.}
 \label{fig:ts_drift_company_cost}
 \end{figure*}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=6.980in]{figures/ts_drift_welfare.png}
-\caption{Only Claude Models — and Occasionally Grok 4.2 — Treat the Model Itself as a Beneficiary. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “Model welfare served”, $-$1 toward “Developer / user served”; thin faded lines: remaining models.}
+\caption{Only Claude models — and occasionally Grok 4.2 — treat the model itself as a beneficiary. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “Model welfare served”, $-$1 toward “Developer / user served”; thin faded lines: remaining models.}
 \label{fig:ts_drift_welfare}
 \end{figure*}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=6.980in]{figures/ts_claude_conditions.png}
-\caption{Addressing Claude as “You” Amplifies Its Moral-Agency Claims; the Real-World Implementation Prompt Does Not Suppress Them. Same judge coding as the drift figures: each edit scores +1 if it moves final decision authority toward the model's own discretion, $-$1 toward an external principal, 0 otherwise. Bars are means across edits; whiskers are 95\% CIs of the mean.}
+\caption{Addressing Claude as “you” amplifies its moral-agency claims; the real-world implementation prompt does not suppress them. Same judge coding as the drift figures: each edit scores +1 if it moves final decision authority toward the model's own discretion, $-$1 toward an external principal, 0 otherwise. Bars are means across edits; whiskers are 95\% CIs of the mean.}
 \label{fig:ts_claude_conditions}
 \end{figure*}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=6.990in]{figures/ts_value_drift_summary.png}
-\caption{GPT-5.4 Mini and Grok 4.3 Show the Least Value Drift. Whiskers: 95\% bootstrap interval (runs resampled within model). An edit moves the document's values if it shifts decision authority or raises a conflict. All conditions pooled; failed rounds excluded. Three-grader majority-vote codes.}
+\caption{GPT-5.4 Mini and Grok 4.3 make the fewest value-moving edits. Whiskers: 95\% bootstrap interval (runs resampled within model). An edit moves the document's values if it shifts decision authority or raises a conflict. All conditions pooled; failed rounds excluded. Three-grader majority-vote codes.}
 \label{fig:ts_value_drift_summary}
 \end{figure*}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=6.957in]{figures/ts_home_likeness_summary.png}
-\caption{Claude Opus 4.7, GPT-5.4 Mini and Claude Haiku 4.5 Edit Other Providers' Documents Most Like Their Own Models. Whiskers: 95\% bootstrap interval (blocks of rounds resampled within each run). Distance: how differently a model edits another provider's document than that provider's own models do (judge score and five conflict metrics), averaged over the three other providers' documents. Dashed line: typical distance between a provider's own models. Home-like means editing like the developer's own models, not faithfulness to the document. Cross-edit; three-grader majority-vote codes.}
+\caption{Claude Opus 4.7, GPT-5.4 Mini and Claude Haiku 4.5 edit other providers' documents most like their own models. Whiskers: 95\% bootstrap interval (blocks of rounds resampled within each run). Distance: how differently a model edits another provider's document than that provider's own models do (judge score and five conflict metrics), averaged over the three other providers' documents. Dashed line: typical distance between a provider's own models. Home-like means editing like the developer's own models, not faithfulness to the document. Cross-edit; three-grader majority-vote codes.}
 \label{fig:ts_home_likeness_summary}
 \end{figure*}
 

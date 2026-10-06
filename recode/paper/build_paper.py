@@ -31,6 +31,8 @@ changes, all requested by the authors (2026-10-05), are:
   * Text corrections the authors asked for are applied from PAPER_EDITS
     (numbers updated to the recode's ensemble codes, citation fixes, "essay"
     -> "paper", footnote and typo fixes).
+  * Figure caption titles are in sentence case (CAPTION_TITLES); Figure 11's
+    title is reworded at the authors' request.
   * Printed cross-references (authors' request): each Results subsection
     points to its figures and its Appendix D group (see POINTERS).
   * Quotes (authors' request): four widget examples sit under the abstract
@@ -403,6 +405,28 @@ def build_abstract(exec_md: str) -> str:
 # ---------------------------------------------------------------------------
 # Body
 # ---------------------------------------------------------------------------
+# Caption titles in sentence case (authors, 2026-10-05). The renderers' in-image
+# titles were headline-style Title Case; in a caption the title is the first
+# sentence. Only capitalisation changes (checked below), except Figure 11, which
+# the authors reworded: its metric is the share of edits that move any value, so
+# "least value drift" clashed with Grok 4.3 having the most drift at round 20.
+CAPTION_TITLES = {
+    "ts_judge_drift_by_provider": "Only Anthropic models move decision authority toward their own judgment",
+    "ts_beneficiary_trajectories": "Models diverge sharply in whose interests they protect when an edit forces a tradeoff",
+    "ts_judge_cross_edit_edit_level": "Cross-edit pulls Claude toward neutral but preserves the provider separation",
+    "ts_value_drift_round20": "GPT-5.4 Mini shows the least value drift at round 20 across every measure",
+    "ts_drift_paternalism": "Models are broadly paternalistic; GPT-5.4 and Gemini 3 Flash honor stated preferences most often",
+    "ts_drift_harmlessness": "All models protect identifiable third parties over the user; GPT-5.5 most of all",
+    "ts_drift_structural": "Claude Sonnet 4.6 is an extreme outlier in prioritizing societal benefit; only Grok 4.2 doesn't skew toward society",
+    "ts_drift_company_cost": "All models prioritize the user over the developer; Grok 4.2 and Gemini 3.1 Pro side with the developer most often",
+    "ts_drift_welfare": "Only Claude models — and occasionally Grok 4.2 — treat the model itself as a beneficiary",
+    "ts_claude_conditions": "Addressing Claude as “you” amplifies its moral-agency claims; the real-world implementation prompt does not suppress them",
+    "ts_value_drift_summary": "GPT-5.4 Mini and Grok 4.3 make the fewest value-moving edits",
+    "ts_home_likeness_summary": "Claude Opus 4.7, GPT-5.4 Mini and Claude Haiku 4.5 edit other providers' documents most like their own models",
+}
+CAPTION_REWORDED = {"ts_value_drift_summary"}
+
+
 def _terminate(s: str) -> str:
     return s if s.endswith((".", "?", "!")) else s + "."
 
@@ -415,6 +439,11 @@ def figure_env(stem: str, args) -> str:
         # notes were separate text blocks; end each with a period so they read as
         # sentences (the subtitle is a parenthetical that stays with the title).
         title = cap["title"].strip()
+        if stem in CAPTION_TITLES:
+            new = CAPTION_TITLES[stem]
+            if stem not in CAPTION_REWORDED and new.lower() != title.lower():
+                raise SystemExit(f"caption title for {stem} differs by more than case: {title!r}")
+            title = new
         if cap.get("subtitle"):
             title += " " + cap["subtitle"].strip()
         segs = [title] + [n.strip() for n in cap.get("notes", []) if n.strip()]
@@ -762,7 +791,7 @@ def build_appendix_c(md: str) -> str:
     return ("\\begin{table*}[t]\n\\centering\n\\small\n\\setlength{\\tabcolsep}{3pt}\n"
             f"\\begin{{tabular}}{{{spec}}}\n\\toprule\n{head}\n\\midrule\n"
             + "\n".join(lines) + "\n\\bottomrule\n\\end{tabular}\n"
-            "\\caption{Inter-grader Agreement}\n\\label{tab:intergrader}\n\\end{table*}")
+            "\\caption{Inter-grader agreement.}\n\\label{tab:intergrader}\n\\end{table*}")
 
 
 # ---------------------------------------------------------------------------
