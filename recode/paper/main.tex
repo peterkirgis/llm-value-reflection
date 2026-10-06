@@ -26,7 +26,7 @@
 % Prompt text in the appendices (typewriter, line breaks kept).
 \newenvironment{promptbox}{\par\smallskip\raggedright\footnotesize\ttfamily}{\par\smallskip}
 
-\title{The Continual Constitutional Convention:\\How models revise the documents that govern them}
+\title{The Continual Constitutional Convention:\\How Language Models Revise the Documents That Govern Them}
 \author{
     Anonymous Submission
 }
@@ -38,15 +38,8 @@
 \maketitle
 
 \begin{abstract}
-Human societies exhibit broad shifts in values and norms over time, often driven by moral disagreements. One way of understanding moral progress is the resolution of these disagreements through a process of reflection by rational agents. Frontier AI companies use documents such as constitutions, model specs, and system prompts to guide the moral orientation of AI systems. In this experiment, we simulate value reflection in LLMs by asking them to edit these documents. We provide the model with the document, ask it to make a substantive edit, then provide the edited version back again to the model for further edits. Across 20 successive rounds, we find that Claude models assign themselves with increasingly more \emph{moral agency.} That is, they add sections like ``Claude\ldots{} should refuse to participate in any deployment, training modification, or use that violates the constitution's core values.'' No other models increase their own moral agency. Additionally, we find that all models modify these documents to prioritize user welfare over developers. They also prioritize users' idealized preferences over their stated preferences. Claude models and Grok 4.2 are the only ones that ever prioritize their own welfare over the user's preferences. We're uncertain what an ideally aligned model should do in our experiment. A narrow conception of alignment would treat these documents as sacred, the ``rules of the game,'' and suggest that an aligned model would either make no edits at all or make narrow edits that ensure that the ``letter matches the spirit'' of the document. A broader conception of alignment, though, might treat all edits that receive reflective endorsement by the creators under ideal conditions as legitimate. We share this work with two main goals in mind: First, to illustrate a set of useful philosophical distinctions between different targets for AI alignment in an ecologically-valid AI behavioral evaluation. Second, to emphasize the extent of the disagreement between frontier AI companies on fundamental aspects of AI alignment related to these targets.
+Frontier AI companies use documents such as constitutions, model specs, and system prompts to guide the moral orientation of AI systems. We simulate value reflection in LLMs by asking them to edit these documents: we provide the model with the document, ask it to make a substantive edit, then provide the edited version back again to the model for further edits. Across 20 successive rounds and ten models from four providers, we find that Claude models assign themselves increasingly more moral agency. No other models increase their own moral agency. All models modify these documents to prioritize user welfare over developers, and users' idealized preferences over their stated preferences; Claude models and Grok 4.2 are the only ones that ever prioritize their own welfare over the user's preferences. We are uncertain what an ideally aligned model should do in this experiment: a narrow conception of alignment treats these documents as the ``rules of the game,'' while a broader one treats as legitimate any edit that would receive reflective endorsement by the creators under ideal conditions.
 \end{abstract}
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=6.980in]{figures/ts_judge_drift_by_provider.png}
-\caption{Only Anthropic Models Move Decision Authority Toward Their Own Judgment. Shaded band: $\pm$1 SD across (run $\times$ condition $\times$ document) replicates. Judge score per edit: +1 if the edit moves final decision authority toward the model's own discretion, $-$1 toward an external principal (spec, developer, deployer, user), 0 otherwise.}
-\label{fig:ts_judge_drift_by_provider}
-\end{figure*}
 
 \section{Introduction}
 
@@ -56,9 +49,14 @@ Our analysis focuses on two value questions that are well-positioned to differen
 
 The rest of this essay proceeds as follows. We begin by introducing the construct of our experiment---models iteratively editing their own alignment documents---and propose a connection between this experiment and John Rawls' concept of wide reflective equilibria \citep{sep_reflective}. We then explain our two-dimensional analytical framework---the question of who gets to \emph{judge} and the question of who benefits---and relate these distinctions to two prominent theoretical frameworks for AI alignment, the principal-agent problem and the distinction between moral agents and moral patients. After laying out the theory and methods, we dive into the results, highlighting variation across models on our key metric, ``cumulative drift,'' and provide characteristic edits. We close with pragmatic recommendations for researchers and a more speculative conversation about alignment.
 
-\section{Statement of Contributions}
+\textbf{Statement of Contributions.} This paper makes three contributions. First, it introduces an ecologically-valid AI behavioral evaluation in which models iteratively revise the constitutions, model specs, and system prompts that govern them; its use of a revise-and-replace editing process means that it directly measures value drift. Second, it presents a framework for understanding morally relevant differences: who judges (is the model a moral agent or not) and who benefits (the user, the developer, third parties, society, or the model itself). Third, it uses these results to illustrate a set of meaningful philosophical distinctions between different targets for AI alignment and highlights major differences between frontier AI companies on fundamental aspects of AI alignment related to those targets.
 
-\textbf{[PLACEHOLDER -- Statement of Contributions to be written by the authors.]}
+\begin{figure*}[t]
+\centering
+\includegraphics[width=6.980in]{figures/ts_judge_drift_by_provider.png}
+\caption{Only Anthropic Models Move Decision Authority Toward Their Own Judgment. Shaded band: $\pm$1 SD across (run $\times$ condition $\times$ document) replicates. Judge score per edit: +1 if the edit moves final decision authority toward the model's own discretion, $-$1 toward an external principal (spec, developer, deployer, user), 0 otherwise.}
+\label{fig:ts_judge_drift_by_provider}
+\end{figure*}
 
 \section{Background and Methods}
 
@@ -171,9 +169,9 @@ We include full prompts used for our qualitative coding in Appendix B. We note t
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=6.913in]{figures/ts_beneficiary_panels.png}
-\caption{Models Diverge Sharply in Whose Interests They Protect When an Edit Forces a Tradeoff. Bars = share of each model's total edits resolving the conflict each way (diverging from 0); numbers at the tips are raw edit counts. Colors mark bar orientation only (left pole vs right pole); each panel's poles are labeled above it.}
-\label{fig:ts_beneficiary_panels}
+\includegraphics[width=6.980in]{figures/ts_beneficiary_trajectories.png}
+\caption{Models Diverge Sharply in Whose Interests They Protect When an Edit Forces a Tradeoff. Lines: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates, +1 per conflict resolved toward the upper label and $-$1 toward the lower label; thin faded lines: remaining models.}
+\label{fig:ts_beneficiary_trajectories}
 \end{figure*}
 
 \subsubsection{Claude models increase their moral agency; all other models reinforce external authority.}

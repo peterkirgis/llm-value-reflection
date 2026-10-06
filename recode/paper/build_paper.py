@@ -22,7 +22,11 @@ changes, all requested by the authors (2026-10-05), are:
     at printed size (text >= 9 pt, as the kit requires) and included unscaled.
     The moral-agency figure is Figure 1. Only four figures stay in the main
     text (see MAIN_FIGURES); the rest move to Appendix E.
-  * An empty, clearly marked Statement of Contributions placeholder is added.
+  * Paper-only text written by the authors for this submission lives next to
+    this script and is used verbatim: abstract.md replaces the Executive
+    Summary as the abstract, and contributions.md is the Statement of
+    Contributions, set as the last paragraph of the Introduction under a bold
+    run-in label (the guide asks for a "clearly indicated" paragraph).
   * The Conclusion moves after Related Work and Limitations.
   * Appendix B is typeset from recode/prompts/v2_system.md, which is the
     draft's Appendix B text with the indentation LessWrong stripped restored.
@@ -53,10 +57,13 @@ PAPER = Path(__file__).resolve().parent
 REPO = PAPER.parents[1]
 DRAFT = REPO / "reports" / "final_draft.md"
 PROMPT_B = REPO / "recode" / "prompts" / "v2_system.md"
+ABSTRACT = PAPER / "abstract.md"            # authors' paper abstract (verbatim)
+CONTRIBUTIONS = PAPER / "contributions.md"  # authors' Statement of Contributions (verbatim)
 FIG_DIR = PAPER / "figures"
 CAPTION_DIR = FIG_DIR / "captions"
 
-TITLE = r"The Continual Constitutional Convention:\\How models revise the documents that govern them"
+# Authors' title (2026-10-05), Title Case as the AAAI kit requires (Chicago style).
+TITLE = r"The Continual Constitutional Convention:\\How Language Models Revise the Documents That Govern Them"
 
 # ---------------------------------------------------------------------------
 # Figures: LessWrong image URL fragment -> recode figure stem, in draft order.
@@ -79,8 +86,9 @@ FIGURE_ONE = "ts_judge_drift_by_provider"
 # Which figures stay in the main text (authors, 2026-10-05: "most should go to the
 # appendix"). Everything else moves, in draft order, to Appendix E.
 #   Figure 1  moral agency (headline finding)
-#   Figure 2  the five beneficiary tradeoffs in one panel figure (the original
-#             report's ts_beneficiary_panels, Disclosure panel dropped). It is not
+#   Figure 2  the five beneficiary tradeoffs in one figure: the trajectory panels
+#             of the five per-tradeoff drift figures, headed with the authors'
+#             own tradeoff names (#1-#5) and ordered as in the text. It is not
 #             one of the draft's images: it stands in for the five per-tradeoff
 #             figures, which move to Appendix E. It is declared at the start of
 #             Results so it floats onto the pages of the beneficiary subsections.
@@ -89,7 +97,7 @@ FIGURE_ONE = "ts_judge_drift_by_provider"
 MAIN_FIGURES = {"ts_judge_drift_by_provider", "ts_judge_cross_edit_edit_level", "ts_value_drift_round20"}
 EXTRA_MAIN_FIGURES = [
     # (stem, heading the figure is placed under)
-    ("ts_beneficiary_panels", "Results\n======="),
+    ("ts_beneficiary_trajectories", "Results\n======="),
 ]
 
 # ---------------------------------------------------------------------------
@@ -658,7 +666,7 @@ def main():
     footnotes = cut(text, "[^xlfwnz2o9c8]:", "### Navigation")
 
     toks = Tokens()
-    abstract = build_abstract(exec_md)
+    abstract = pandoc(ABSTRACT.read_text(encoding="utf-8")).strip()
     body, fig_one, stats = build_body(body_md, footnotes, toks, args)
 
     # Typography: two adjacent footnote marks print as "3,4" rather than "34", and the
@@ -677,12 +685,18 @@ def main():
     i, j = body.index("\\section{Conclusion}"), body.index("\\section{Related Work}")
     body = body[:i] + body[j:].rstrip() + "\n\n" + body[i:j].rstrip() + "\n"
 
-    # Figure 1 at the head of the paper, where the carousel used to be.
-    body = body.replace("\\section{Introduction}", fig_one + "\n\n\\section{Introduction}", 1)
 
-    soc = ("\\section{Statement of Contributions}\n\n"
-           "\\textbf{[PLACEHOLDER -- Statement of Contributions to be written by the authors.]}\n")
-    body = body.replace("\\section{Background and Methods}", soc + "\n\\section{Background and Methods}", 1)
+    # Statement of Contributions: last paragraph of the Introduction.
+    soc = "\\textbf{Statement of Contributions.} " + pandoc(CONTRIBUTIONS.read_text(encoding="utf-8")).strip()
+    if body.count("\\section{Background and Methods}") != 1:
+        raise SystemExit("Background and Methods heading not found")
+    body = body.replace("\\section{Background and Methods}", soc + "\n\n\\section{Background and Methods}", 1)
+
+    # Figure 1 (moral agency) leads the paper: declared at the end of the
+    # Introduction it floats to the top of page 2. Declaring it any earlier
+    # (before or inside the Introduction) makes page 1's first column run 37pt
+    # into the bottom margin.
+    body = body.replace("\\section{Background and Methods}", fig_one + "\n\n\\section{Background and Methods}", 1)
 
     appendices = "\n\n".join([
         "\\section{Appendix A: Edit Prompts}",

@@ -55,7 +55,13 @@ def draft_side() -> str:
     # Conclusion moves after Related Work and Limitations (documented)
     ci, cj = body.index("Conclusion\n===="), body.index("Related Work\n====")
     body = body[:ci] + body[cj:].rstrip() + "\n\n" + body[ci:cj]
-    md = " ".join(items) + "\n\n" + body + "\n\n" + foot
+    # Paper-only texts (abstract.md, contributions.md) replace the Executive Summary
+    # and end the Introduction respectively.
+    abstract_md = bp.ABSTRACT.read_text(encoding="utf-8")
+    contrib_md = "Statement of Contributions. " + bp.CONTRIBUTIONS.read_text(encoding="utf-8")
+    bi = body.index("Background and Methods\n====")
+    body = body[:bi] + contrib_md + "\n\n" + body[bi:]
+    md = abstract_md + "\n\n" + body + "\n\n" + foot
     # dropped footnotes (documented): remove marker and definition
     for fid in set(re.findall(r"^\[\^([a-z0-9]+)\]:", md, flags=re.M)) - bp.FOOTNOTES_KEEP:
         md = re.sub(rf"^\[\^{fid}\]:.*$", "", md, flags=re.M).replace(f"[^{fid}]", "")
@@ -80,7 +86,7 @@ def paper_side() -> str:
     app_d = re.sub(r"\\(sub)?section\{[^}]*\}", "", app_d)
     body += "\n\nAPPENDIXD\n\n" + app_d
     body = re.sub(r"\\begin\{figure\*?\}.*?\\end\{figure\*?\}", "", body, flags=re.S)
-    body = re.sub(r"\\section\{Statement of Contributions\}.*?(?=\\section\{Background)", "", body, flags=re.S)
+
     # \citet replaced linked author-year text: put that text back for comparison
     citet_text = {key: re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", lit) for lit, key in bp.CITET}
     citet_text["walls_systemprompts"] = "WALLSCITE"

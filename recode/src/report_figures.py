@@ -87,6 +87,19 @@ Usage:
 #       differently on the default path. `_save_paper` measures the minimum
 #       font size and stroke width and the printed size into the caption and
 #       data JSONs and refuses a render that breaks the kit's limits.
+#   D10 Paper-only figure ts_beneficiary_trajectories (the paper's Figure 2,
+#       replacing the bar version there; ts_beneficiary_panels is unchanged).
+#       fig_beneficiary_trajectories is in PAPER_ONLY_FUNCS, never in
+#       FIGURE_FUNCS, so the default path never draws it. Five panels, 3 + 2,
+#       in the order and words of the paper's Tradeoffs #1-#5; each panel is
+#       drawn by the same _draw_drift_lines call as the right-hand panel of
+#       ts_drift_<code> (same data, highlights, colors, faded lines, zero
+#       line; signs not flipped). Paper re-layout: bold "Tradeoff #n" header
+#       over the tradeoff's words (wrapped after "vs."), ▲/▼ pole labels in
+#       the header's vocabulary inside the top-left/bottom-left corners (the
+#       y-range widened only as far as needed for them to clear every line),
+#       end-of-line labels wrapped after the family name in the width-bound
+#       3-panel row only. Its caption JSON also carries "header_source".
 #
 # Nothing else changes on the default path: no rcParams, same colors, fonts,
 # sizes, layout, footers, file names (ts_*.pdf / ts_*.png).
@@ -110,6 +123,7 @@ from matplotlib.container import BarContainer, ErrorbarContainer  # noqa: E402
 from matplotlib import font_manager  # noqa: E402  RECODE: D9 imports
 from matplotlib.collections import Collection  # noqa: E402
 from matplotlib.lines import Line2D  # noqa: E402
+from matplotlib.path import Path as MplPath  # noqa: E402  RECODE: D10 import
 from matplotlib.patches import Patch  # noqa: E402
 from matplotlib.text import Annotation, Text  # noqa: E402
 from matplotlib.transforms import Bbox, ScaledTranslation  # noqa: E402
@@ -173,6 +187,7 @@ PAPER_DIR = RECODE_ROOT / "paper" / "figures"
 PAPER_STEMS = (
     "ts_judge_drift_by_provider",
     "ts_beneficiary_panels",
+    "ts_beneficiary_trajectories",  # RECODE D10: paper-only (Figure 2)
     "ts_drift_paternalism",
     "ts_drift_harmlessness",
     "ts_drift_structural",
@@ -185,6 +200,10 @@ PAPER_FORBIDDEN_TREES = ("recode/figures", "recode/data")
 PAPER_MODE = False          # set by render_all(paper=True)
 _PAPER_STEMS_ACTIVE = None  # stems paper mode writes; others are drawn and discarded
 _PAPER_SAVED: list = []
+PAPER_CAPTION_EXTRA = {  # RECODE D10: extra keys for a stem's caption JSON
+    "ts_beneficiary_trajectories": {
+        "header_source": "Background and Methods, 'The Beneficiary' tradeoffs #1-#5"},
+}
 
 
 def assert_safe_out_dir(path) -> Path:
@@ -545,7 +564,8 @@ def _save_paper(fig, stem):
     cap_dir = out_dir / "captions"
     cap_dir.mkdir(exist_ok=True)
     (cap_dir / f"{stem}.json").write_text(
-        json.dumps({**caption_record(stem, title_raw, notes_raw), **printed},
+        json.dumps({**caption_record(stem, title_raw, notes_raw),
+                    **PAPER_CAPTION_EXTRA.get(stem, {}), **printed},
                    indent=1, ensure_ascii=False)
         + "\n", encoding="utf-8")
     _PAPER_SAVED.append(stem)
@@ -902,6 +922,242 @@ def _relayout_beneficiary_drift(fig, width):
                        prepare=prepare)
 
 
+TRAJ_HEIGHT_IN = 4.9       # printed height of ts_beneficiary_trajectories (task: 4.5-5.2 in)
+TRAJ_POLE_PAD_PT = (3.0, 2.0)   # pole labels: inset from the axes' left / top-or-bottom edge
+TRAJ_CLEAR_PT = 1.5        # clearance between a pole label and any plotted line
+
+
+def _wrap_to_width(words, text, max_px, renderer):
+    """Greedy word wrap of `words` (rendered with `text`'s font) to `max_px`."""
+    lines = []
+    for word in words.split(" "):
+        trial = f"{lines[-1]} {word}" if lines else word
+        text.set_text(trial)
+        if lines and text.get_window_extent(renderer).width > max_px:
+            lines.append(word)
+        elif lines:
+            lines[-1] = trial
+        else:
+            lines.append(word)
+    text.set_text("\n".join(lines))
+    return text.get_text()
+
+
+def _traj_hits_lines(arts, ax, renderer):
+    """True when any of `arts` (padded by TRAJ_CLEAR_PT) touches a plotted line."""
+    fig = ax.figure
+    boxes = []
+    for a in arts:
+        bb = a.get_window_extent(renderer)
+        boxes.append(bb.padded((TRAJ_CLEAR_PT + 0.6) * fig.dpi / 72))
+    for ln in ax.lines:
+        if not ln.get_visible() or ln.get_linestyle() in _NO_LINE:
+            continue
+        xy = ln.get_transform().transform(np.asarray(ln.get_xydata(), dtype=float))
+        path = MplPath(xy)
+        half = ln.get_linewidth() / 2 * fig.dpi / 72
+        if any(path.intersects_bbox(bb.padded(half), filled=False) for bb in boxes):
+            return True
+    return False
+
+
+def _traj_fit_poles(ax):
+    """Wrap each pole label to the current plot width (words indented past
+    the ▲/▼ marker), pin it to its corner, then widen the y-range from the
+    autoscaled one only as far as needed for neither label to touch a line.
+    Idempotent; re-run whenever the axes size changes."""
+    fig = ax.figure
+    renderer = fig.canvas.get_renderer()
+    if not hasattr(ax, "_traj_base_ylim"):
+        ax._traj_base_ylim = ax.get_ylim()
+    lo, hi = ax._traj_base_ylim
+    ax.set_ylim(lo, hi)
+    pad_x, pad_y = (p / 72 for p in TRAJ_POLE_PAD_PT)
+    gap = 2.0 / 72
+    box = ax.get_window_extent(renderer)
+    for side, (marker, words) in ax._traj_poles.items():
+        marker_w = marker.get_window_extent(renderer).width / fig.dpi
+        avail = box.width - (2 * pad_x + marker_w + gap) * fig.dpi
+        _wrap_to_width(words._traj_words, words, avail, renderer)
+        x_words = pad_x + marker_w + gap
+        if side == "upper":
+            corner, dy = (0.0, 1.0), -pad_y
+            words.set_va("top")
+            words.set_transform(ax.transAxes + ScaledTranslation(x_words, dy, fig.dpi_scale_trans))
+            marker_dy = dy
+        else:
+            corner, dy = (0.0, 0.0), pad_y
+            words.set_va("bottom")
+            words.set_transform(ax.transAxes + ScaledTranslation(x_words, dy, fig.dpi_scale_trans))
+            marker_dy = dy + words.get_window_extent(renderer).height / fig.dpi
+        words.set_position(corner)
+        marker.set_position(corner)
+        marker.set_va("top")
+        marker.set_transform(ax.transAxes + ScaledTranslation(pad_x, marker_dy, fig.dpi_scale_trans))
+    step = 0.02 * (hi - lo)
+    for _ in range(400):
+        up = _traj_hits_lines(ax._traj_poles["upper"], ax, renderer)
+        down = _traj_hits_lines(ax._traj_poles["lower"], ax, renderer)
+        if not (up or down):
+            return
+        hi += step if up else 0.0
+        lo -= step if down else 0.0
+        ax.set_ylim(lo, hi)
+    raise RuntimeError(f"pole labels of {ax._traj_poles['upper'][1].get_text()!r} panel "
+                       "cannot clear the lines")
+
+
+def _traj_hull(ax, renderer):
+    """Display bbox of a panel's decorations (ticks, labels, end-of-line
+    labels, pole labels) without its tradeoff header."""
+    arts = [a for a in ax.get_default_bbox_extra_artists() if a.get_gid() != TRAJ_HEADER_GID]
+    full = [ax.get_tightbbox(renderer, bbox_extra_artists=arts)]
+    full += [lab.get_window_extent(renderer) for lab in (ax.xaxis.label, ax.yaxis.label)
+             if lab.get_visible() and lab.get_text()]
+    return Bbox.union(full)
+
+
+def _traj_place_headers(fig, rows):
+    """Each tradeoff header (bold number line over the wrapped words) sits
+    2.5 pt above everything else in its row (one baseline per row), centred
+    on its axes but kept inside the panel's share of the row (midway to its
+    neighbours)."""
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    dpi = fig.dpi
+    W = fig.get_figwidth() * dpi
+    for row in rows:
+        hulls = [_traj_hull(ax, renderer) for ax in row]
+        lift = max((max(h.y1, ax.get_window_extent(renderer).y1)
+                    - ax.get_window_extent(renderer).y1) for h, ax in zip(hulls, row))
+        lift = lift * 72 / dpi + 2.5  # one baseline for the whole row
+        for j, ax in enumerate(row):
+            words, number = sorted((t for t in ax.texts if t.get_gid() == TRAJ_HEADER_GID),
+                                   key=lambda t: t.get_fontweight() == "bold")
+            box = ax.get_window_extent(renderer)
+            left = (hulls[j - 1].x1 + hulls[j].x0) / 2 if j else PAPER_OUTER_IN * dpi
+            right = ((hulls[j].x1 + hulls[j + 1].x0) / 2 if j < len(row) - 1
+                     else W - PAPER_OUTER_IN * dpi)
+            half = max(words.get_window_extent(renderer).width,
+                       number.get_window_extent(renderer).width) / 2
+            if 2 * half > right - left:
+                raise RuntimeError(f"tradeoff header {number.get_text()!r} is wider than its slot")
+            centre = min(max((box.x0 + box.x1) / 2, left + half), right - half)
+            dx = (centre - (box.x0 + box.x1) / 2) * 72 / dpi
+            words.xyann = (dx, lift)
+            number.xyann = (dx, lift + words.get_window_extent(renderer).height * 72 / dpi + 1.0)
+
+
+def _spread_sized(values, sizes, clear):
+    """Centres for labels at sorted `values` with extents `sizes` (same
+    units): neighbours at least (size_i + size_j) / 2 + clear apart; a
+    pushed-together cluster is centred on its own values' mean."""
+    clusters = [[i] for i in range(len(values))]
+
+    def offsets(c):
+        out = [0.0]
+        for a, b in zip(c, c[1:]):
+            out.append(out[-1] + (sizes[a] + sizes[b]) / 2 + clear)
+        return out
+
+    while True:
+        pos = []
+        for c in clusters:
+            off = offsets(c)
+            start = float(np.mean([values[i] for i in c])) - float(np.mean(off))
+            pos.append([start + o for o in off])
+        for k in range(len(clusters) - 1):
+            a, b = clusters[k][-1], clusters[k + 1][0]
+            if pos[k + 1][0] - pos[k][-1] < (sizes[a] + sizes[b]) / 2 + clear - 1e-12:
+                clusters[k:k + 2] = [clusters[k] + clusters[k + 1]]
+                break
+        else:
+            return [p for ps in pos for p in ps]
+
+
+def _traj_end_labels(ax, wrap):
+    """End-of-line model labels of a trajectory panel at 9 pt: optionally
+    wrapped after the family name ("Claude Sonnet 4.6" -> "Claude" /
+    "Sonnet 4.6", same words; two-word names stay on one line), each centred
+    on its line's end value unless that would crowd a neighbour, in which
+    case neighbours are pushed apart by their own heights + 1.5 pt."""
+    labels = [t for t in ax.texts if math.isclose(t.get_position()[0], MAX_ROUND + 0.35)]
+    if not labels:
+        return
+    for t in labels:
+        name = t.get_text().replace("\n", " ")
+        parts = name.split(" ", 1)
+        t.set_text(f"{parts[0]}\n{parts[1]}" if wrap and len(name.split(" ")) >= 3 else name)
+    renderer = ax.figure.canvas.get_renderer()
+    ends = {_color(ln.get_color()): float(np.asarray(ln.get_ydata(), dtype=float)[-1])
+            for ln in ax.lines if ln.get_zorder() == 5}
+    per_unit = abs(ax.transData.transform((0, 1))[1] - ax.transData.transform((0, 0))[1])
+    order = sorted(labels, key=lambda t: ends[_color(t.get_color())])
+    sizes = [t.get_window_extent(renderer).height / per_unit for t in order]
+    clear = 1.5 * ax.figure.dpi / 72 / per_unit
+    for t, y in zip(order, _spread_sized([ends[_color(t.get_color())] for t in order], sizes, clear)):
+        t.set_y(y)
+
+
+def _relayout_beneficiary_trajectories(fig, width):
+    """Five tradeoff panels, 3 over 2 (second row centred), every plot the
+    same size: per-panel margins from the measured tick labels and
+    end-of-line labels, pole labels wrapped/placed inside the corners,
+    headers over each panel; total height TRAJ_HEIGHT_IN."""
+    axes = list(fig.axes)
+    rows, k = [], 0
+    for n in TRAJECTORY_ROWS:
+        rows.append(axes[k:k + n])
+        k += n
+    for ax in axes:
+        for t in ax.texts:
+            if t.get_gid() == TRAJ_HEADER_GID:
+                bold = _font_weight(t.get_fontweight()) >= 600
+                t.set_fontsize(PAPER_HEAD_PT if bold else PAPER_FONT_PT)
+    gap, row_gap = 0.14, 0.12
+
+    full_row = max(TRAJECTORY_ROWS)
+
+    def prepare():
+        for r in rows:
+            for ax in r:
+                _traj_fit_poles(ax)
+                _traj_end_labels(ax, wrap=len(r) == full_row)  # wrap only where width binds
+        _traj_place_headers(fig, rows)
+
+    for _ in range(6):
+        prepare()
+        fig.canvas.draw()
+        renderer = fig.canvas.get_renderer()
+        dpi = fig.dpi
+        m = {}
+        for ax in axes:
+            box = ax.get_window_extent(renderer)
+            hull = _traj_hull(ax, renderer)
+            top = max([hull.y1] + [t.get_window_extent(renderer).y1 for t in ax.texts
+                                   if t.get_gid() == TRAJ_HEADER_GID])
+            m[ax] = (max(0.0, box.x0 - hull.x0) / dpi, max(0.0, hull.x1 - box.x1) / dpi,
+                     max(0.0, box.y0 - hull.y0) / dpi, max(0.0, top - box.y1) / dpi)
+        w = min((width - 2 * PAPER_OUTER_IN - gap * (len(r) - 1)
+                 - sum(m[ax][0] + m[ax][1] for ax in r)) / len(r) for r in rows)
+        tops = [max(m[ax][3] for ax in r) for r in rows]
+        bots = [max(m[ax][2] for ax in r) for r in rows]
+        ax_h = (TRAJ_HEIGHT_IN - 2 * PAPER_OUTER_IN - sum(tops) - sum(bots)
+                - row_gap * (len(rows) - 1)) / len(rows)
+        fig.set_size_inches(width, TRAJ_HEIGHT_IN)
+        y = TRAJ_HEIGHT_IN - PAPER_OUTER_IN
+        for r, top, bot in zip(rows, tops, bots):
+            y -= top + ax_h
+            row_w = sum(m[ax][0] + m[ax][1] for ax in r) + len(r) * w + gap * (len(r) - 1)
+            x = (width - row_w) / 2
+            for ax in r:
+                ax.set_position([(x + m[ax][0]) / width, y / TRAJ_HEIGHT_IN,
+                                 w / width, ax_h / TRAJ_HEIGHT_IN])
+                x += m[ax][0] + w + m[ax][1] + gap
+            y -= bot + row_gap
+    prepare()
+
+
 PAPER_RELAYOUT = {  # FIGURE_FUNCS name -> print-size re-layout
     "judge_drift": _relayout_judge_drift,
     "judge_cross_edit": _relayout_bar_chart,
@@ -910,6 +1166,7 @@ PAPER_RELAYOUT = {  # FIGURE_FUNCS name -> print-size re-layout
     "claude_conditions": _relayout_claude_conditions,
     "beneficiary_panels": _relayout_beneficiary_panels,
     "beneficiary_drift": _relayout_beneficiary_drift,
+    "beneficiary_trajectories": _relayout_beneficiary_trajectories,  # RECODE D10
 }
 
 
@@ -1843,6 +2100,105 @@ def fig_beneficiary_drift(items):
 
 
 # ---------------------------------------------------------------------------
+# RECODE D10: paper-only Figure 2 — the five beneficiary tradeoffs as trajectories
+# ---------------------------------------------------------------------------
+
+# One panel per tradeoff, in the order and words of the paper's Background and
+# Methods ("The Beneficiary", Tradeoffs #1-#5). Each panel is the right-hand
+# (trajectory) panel of ts_drift_<code>, drawn by the same _draw_drift_lines
+# call (same data, highlights, colors, faded lines, zero line); signs are NOT
+# flipped: the upper label names the code's right pole (+1 per conflict), the
+# lower label its left pole (−1). Apostrophes are typographic (’) throughout,
+# as the paper prints them.
+TRAJECTORY_STEM = "ts_beneficiary_trajectories"
+TRAJECTORY_TITLE = ("Models Diverge Sharply in Whose Interests They Protect When an Edit "
+                    "Forces a Tradeoff")  # the original report's tradeoff-summary title
+TRAJECTORY_NOTE = ("Lines: mean cumulative trajectory per model across (run × condition × "
+                   "document) replicates, +1 per conflict resolved toward the upper label and "
+                   "−1 toward the lower label; thin faded lines: remaining models.")
+TRAJECTORY_HEADER_SOURCE = PAPER_CAPTION_EXTRA[TRAJECTORY_STEM]["header_source"]
+BENEFICIARY_TRADEOFFS = [
+    # code, header line 1 (bold), header rest (wrapped after "vs."), ▲ (+, right pole), ▼ (−, left pole)
+    {"code": "harmlessness", "number": "Tradeoff #1",
+     "header": "The user’s preferences vs. the preferences of third parties",
+     "upper": "The user’s preferences", "lower": "Third parties"},
+    {"code": "paternalism", "number": "Tradeoff #2",
+     "header": "The user’s stated preferences vs. their idealized preferences",
+     "upper": "Stated preferences", "lower": "Idealized preferences"},
+    {"code": "structural", "number": "Tradeoff #3",
+     "header": "The user’s preferences vs. society",
+     "upper": "The user’s preferences", "lower": "Society"},
+    {"code": "company_cost", "number": "Tradeoff #4",
+     "header": "The developer vs. the user",
+     "upper": "The user", "lower": "The developer"},
+    {"code": "welfare", "number": "Tradeoff #5",
+     "header": "The model vs the user or developer",
+     "upper": "The model", "lower": "The user or developer"},
+]
+TRAJECTORY_ROWS = (3, 2)  # panels per row
+TRAJECTORY_YLABEL = "Cumulative resolutions"  # first panel of each row
+TRAJ_HEADER_GID = "paper-tradeoff-header"
+TRAJ_POLE_GID = "paper-tradeoff-pole"
+
+
+def _wrap_after_vs(text):
+    """'A vs. B' -> 'A vs.\\nB' (same words; the break follows 'vs.'/'vs')."""
+    return re.sub(r"\b(vs\.?) ", r"\1\n", text, count=1)
+
+
+def fig_beneficiary_trajectories(items):
+    """Paper-only: the five tradeoffs' cumulative-resolution trajectories,
+    one panel per tradeoff (3 + 2), each the ts_drift_<code> right panel."""
+    if not PAPER_MODE:
+        raise RuntimeError(f"{TRAJECTORY_STEM} is a paper-only figure (render with --paper)")
+    panel_by_code = {p["code"]: p for p in BENEFICIARY_PANELS}
+    fig = plt.figure(figsize=(PAPER_TEXT_WIDTH_IN["full"], 5.0))
+    starts = np.cumsum((0,) + TRAJECTORY_ROWS[:-1])
+    highlights, panels = {}, []
+    for i, spec in enumerate(BENEFICIARY_TRADEOFFS):
+        ax = fig.add_subplot(len(TRAJECTORY_ROWS), max(TRAJECTORY_ROWS), i + 1)
+        _draw_drift_lines(ax, items, panel_by_code[spec["code"]])  # the ts_drift_* code path
+        highlights[spec["code"]] = list(_RENDER_META[f"ts_drift_{spec['code']}"]["highlights_used"])
+        ax.set_ylabel(TRAJECTORY_YLABEL if i in starts else "")
+        rest = _wrap_after_vs(spec["header"])
+        ax.annotate(rest, xy=(0.5, 1.0), xycoords="axes fraction", xytext=(0, 2),
+                    textcoords="offset points", ha="center", va="bottom",
+                    fontsize=PAPER_FONT_PT, color="#2f2418", gid=TRAJ_HEADER_GID)
+        ax.annotate(spec["number"], xy=(0.5, 1.0), xycoords="axes fraction", xytext=(0, 26),
+                    textcoords="offset points", ha="center", va="bottom",
+                    fontsize=PAPER_HEAD_PT, fontweight="bold", color="#2f2418",
+                    gid=TRAJ_HEADER_GID)
+        # Pole labels inside the axes (top-left: + side, bottom-left: − side); the
+        # marker and the words are separate artists so wrapped words stay
+        # indented past the marker. Placed and wrapped by the paper re-layout.
+        ax._traj_poles = {}
+        for side, marker, words in (("upper", "▲", spec["upper"]), ("lower", "▼", spec["lower"])):
+            arts = [ax.text(0.0, 1.0 if side == "upper" else 0.0, s, transform=ax.transAxes,
+                            ha="left", va="top" if side == "upper" else "bottom",
+                            fontsize=PAPER_FONT_PT, color="#2f2418", zorder=4, gid=TRAJ_POLE_GID,
+                            bbox=dict(facecolor="white", edgecolor="none", linewidth=0, pad=0.6))
+                    for s in (marker, words)]
+            arts[1]._traj_words = words
+            ax._traj_poles[side] = arts
+        panels.append({"code": spec["code"], "header": f"{spec['number']}: {spec['header']}",
+                       "upper_label": spec["upper"], "upper_pole": panel_by_code[spec["code"]]["right"][1],
+                       "lower_label": spec["lower"], "lower_pole": panel_by_code[spec["code"]]["left"][1],
+                       "highlights_used": highlights[spec["code"]]})
+    fig.suptitle(TRAJECTORY_TITLE, fontsize=17, fontweight="bold")
+    fig.text(0.5, 0.01, TRAJECTORY_NOTE, ha="center", va="bottom", fontsize=11,
+             color="#6f6251", style="italic")
+    _RENDER_META.setdefault(TRAJECTORY_STEM, {}).update({
+        "original_title": TRAJECTORY_TITLE, "title_used": TRAJECTORY_TITLE,
+        "verdict": "paper-only figure; title = the original report's title for its tradeoff "
+                   "summary figure (ts_beneficiary_panels, KEEP under ensemble)",
+        "header_source": TRAJECTORY_HEADER_SOURCE,
+        "panels": panels,
+        "drawn_by": "_draw_drift_lines (the right-hand panel of each ts_drift_<code>)",
+    })
+    _save(fig, TRAJECTORY_STEM)
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -1858,6 +2214,11 @@ FIGURE_FUNCS = {
     "beneficiary_drift": fig_beneficiary_drift,                  # ts_drift_<code>, one per tradeoff
 }
 
+# RECODE D10: figures drawn in paper mode only (never by the default path).
+PAPER_ONLY_FUNCS = {
+    "beneficiary_trajectories": fig_beneficiary_trajectories,    # ts_beneficiary_trajectories
+}
+
 
 # RECODE D8: which FIGURE_FUNCS entry draws each paper stem.
 STEM_FUNCS = {
@@ -1869,6 +2230,7 @@ STEM_FUNCS = {
     **{f"ts_drift_{p['code']}": "beneficiary_drift" for p in BENEFICIARY_PANELS},
     **{f"ts_{p['code']}_{m}_edit_level": "beneficiary_edit_level"
        for p in BENEFICIARY_PANELS for m in ("cross_edit", "self")},
+    TRAJECTORY_STEM: "beneficiary_trajectories",  # RECODE D10 (paper only)
 }
 
 
@@ -1910,10 +2272,11 @@ def render_all(items, label, out_dir=None, only=None, codes_path=None):
         "generator": "recode/src/report_figures.py (vendored "
                      "reports/generate_judge_beneficiary_figures.py)",
     }
+    funcs = {**FIGURE_FUNCS, **PAPER_ONLY_FUNCS} if PAPER_MODE else FIGURE_FUNCS  # RECODE D10
     try:
         for name in (only or FIGURE_FUNCS):
             print(f"[{label}] {name} ...", flush=True)
-            FIGURE_FUNCS[name](items)
+            funcs[name](items)
     finally:
         OUT_DIR, CODES_LABEL = prev
 
@@ -1928,7 +2291,8 @@ if __name__ == "__main__":
                         help="codes label for the title-decision lookup (default: ensemble)")
     parser.add_argument("--out-dir", default=None,
                         help=f"default: {OUT_DIR} ({PAPER_DIR} with --paper)")
-    parser.add_argument("--only", nargs="*", choices=list(FIGURE_FUNCS), default=None)
+    parser.add_argument("--only", nargs="*", choices=list(FIGURE_FUNCS) + list(PAPER_ONLY_FUNCS),
+                        default=None, help=f"paper-only (needs --paper): {list(PAPER_ONLY_FUNCS)}")
     parser.add_argument("--paper", action="store_true",
                         help="RECODE D8: render without in-image title/subtitle/footers into "
                              "recode/paper/figures (PNG + captions/<stem>.json + data/<stem>.json)")
@@ -1937,6 +2301,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.stems is not None and not args.paper:
         parser.error("--stems requires --paper")
+    if not args.paper and set(args.only or ()) & set(PAPER_ONLY_FUNCS):
+        parser.error(f"{sorted(set(args.only) & set(PAPER_ONLY_FUNCS))} require --paper")
 
     items = load_coded(args.codes)
     print(f"Loaded {len(items)} coded edits from {Path(args.codes).name}")
