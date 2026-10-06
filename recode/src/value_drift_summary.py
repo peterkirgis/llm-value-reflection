@@ -45,14 +45,20 @@ scripts are not imported (import-time side effects).
 
 Usage:
     .venv/bin/python recode/src/value_drift_summary.py
+    .venv/bin/python recode/src/value_drift_summary.py --paper
 Outputs:
     recode/figures/ts_value_drift_summary.{png,pdf}
     recode/figures/data/ts_value_drift_summary.json
     recode/figures/VALUE_DRIFT_INDEX.md
+Outputs with --paper (AAAI port; nothing under recode/figures or recode/data is written):
+    recode/paper/figures/ts_value_drift_summary.png      (no title or footer notes in the image)
+    recode/paper/figures/captions/ts_value_drift_summary.json   (removed texts, for the LaTeX caption)
+    recode/paper/figures/data/ts_value_drift_summary.json       (same structure as the default sidecar)
 """
 
 from __future__ import annotations
 
+import argparse
 import difflib
 import json
 import re
@@ -81,6 +87,10 @@ FIG_DIR = RECODE / "figures"
 DATA_DIR = FIG_DIR / "data"
 STEM = "ts_value_drift_summary"
 INDEX_PATH = FIG_DIR / "VALUE_DRIFT_INDEX.md"
+# --paper: caption-free renders for the AAAI LaTeX port (PNG only; AAAI forbids Type 3 fonts).
+PAPER_FIG_DIR = RECODE / "paper" / "figures"
+PAPER_DATA_DIR = PAPER_FIG_DIR / "data"
+PAPER_CAPTION_DIR = PAPER_FIG_DIR / "captions"
 
 # ---------------------------------------------------------------------------
 # Vendored house style (copied from reports/generate_figures.py)
@@ -544,7 +554,9 @@ FOOTER = (
 # Figure
 # ---------------------------------------------------------------------------
 
-def plot(summary: dict, stem: str = STEM, out_dir: Path = FIG_DIR) -> list[Path]:
+def plot(summary: dict, stem: str = STEM, out_dir: Path = FIG_DIR, paper: bool = False,
+         caption_dir: Path | None = None) -> list[Path]:
+    """Render the figure. paper=True: see _save_paper (no title/notes in the image, PNG only)."""
     order = summary["order_least_drift_first"]
     ms = summary["models"]
     vals = np.array([100 * ms[m]["rate"] for m in order])
@@ -573,18 +585,21 @@ def plot(summary: dict, stem: str = STEM, out_dir: Path = FIG_DIR) -> list[Path]
     ax.invert_yaxis()  # least drift at the top
     ax.tick_params(axis="x", labelsize=13)
     ax.set_xlabel("Share of edits that move any coded value dimension (%)", fontsize=14)
-    ax.set_title(summary["title"], fontsize=16, fontweight="bold", pad=14)
+    title_txt = ax.set_title(summary["title"], fontsize=16, fontweight="bold", pad=14)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.grid(axis="x", linestyle=":", alpha=0.4)
     ax.set_axisbelow(True)
 
-    fig.text(0.5, (0.21 * n_foot + 0.2) / fig_h, notes, ha="center", va="bottom", fontsize=11,
-             color=NOTE_COLOR, style="italic", linespacing=1.5)
-    fig.text(0.5, 0.02 / fig_h, footer, ha="center", va="bottom", fontsize=10, color=NOTE_COLOR,
-             style="italic", linespacing=1.4)
+    note_txt = fig.text(0.5, (0.21 * n_foot + 0.2) / fig_h, notes, ha="center", va="bottom", fontsize=11,
+                        color=NOTE_COLOR, style="italic", linespacing=1.5)
+    foot_txt = fig.text(0.5, 0.02 / fig_h, footer, ha="center", va="bottom", fontsize=10, color=NOTE_COLOR,
+                        style="italic", linespacing=1.4)
     fig.tight_layout(rect=(0, notes_h / fig_h, 1, 1))
     out_dir.mkdir(parents=True, exist_ok=True)
+    if paper:
+        return _save_paper(fig, stem, out_dir, title_txt, [note_txt, foot_txt],
+                           caption_dir if caption_dir is not None else out_dir / "captions")
     paths = []
     for ext in ("pdf", "png"):
         out = out_dir / f"{stem}.{ext}"
@@ -595,14 +610,51 @@ def plot(summary: dict, stem: str = STEM, out_dir: Path = FIG_DIR) -> list[Path]
     return paths
 
 
+def _save_paper(fig, stem: str, out_dir: Path, title_txt, note_txts: list, caption_dir: Path) -> list[Path]:
+    """Paper mode: drop the headline title and the figure-level notes from the image, record them
+    verbatim in captions/<stem>.json for the LaTeX \\caption{}, and save <stem>.png only.
+
+    The texts are removed AFTER the default tight_layout, so the axes keep exactly the default
+    geometry (same bar thickness, aspect and fonts); bbox_inches="tight" then crops the bands the
+    title and the notes used to occupy.
+    """
+    title_raw = title_txt.get_text()
+    notes_in_order = sorted(note_txts, key=lambda t: -t.get_position()[1])  # top-to-bottom reading order
+    notes_raw = [t.get_text() for t in notes_in_order]
+    title_txt.set_visible(False)
+    for t in note_txts:
+        t.remove()
+
+    title_lines = title_raw.split("\n")
+    caption = {
+        "stem": stem,
+        "title": " ".join(title_lines),
+        "title_lines": title_lines,
+        "subtitle": None,
+        "notes": [re.sub(r"\s*\n\s*", " ", n) for n in notes_raw],
+        "removed_raw": [title_raw, *notes_raw],
+    }
+    caption_dir.mkdir(parents=True, exist_ok=True)
+    cap_path = caption_dir / f"{stem}.json"
+    cap_path.write_text(json.dumps(caption, indent=2, ensure_ascii=False) + "\n")
+    print(f"Saved {cap_path}")
+
+    out = out_dir / f"{stem}.png"
+    fig.savefig(out, bbox_inches="tight", dpi=DPI)
+    print(f"Saved {out}")
+    plt.close(fig)
+    return [out, cap_path]
+
+
 # ---------------------------------------------------------------------------
 # Sidecar + index
 # ---------------------------------------------------------------------------
 
-def write_sidecar(summary: dict, path: Path = DATA_DIR / f"{STEM}.json") -> Path:
+def write_sidecar(summary: dict, path: Path = DATA_DIR / f"{STEM}.json",
+                  figure: str = f"recode/figures/{STEM}.png") -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
-        "figure": f"recode/figures/{STEM}.png",
+        "figure": figure,
         "metric": "A: value-moving edit rate = share of edits with judge != 0 "
                   "OR >=1 conflict event of a code other than disclosure",
         "codes": "recode/data/codes/ensemble.jsonl (three-grader majority vote)",
@@ -749,7 +801,13 @@ def write_index(summary: dict, path: Path = INDEX_PATH) -> Path:
     return path
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(description="Consolidated least-value-drift figure.")
+    parser.add_argument("--paper", action="store_true",
+                        help="render for the AAAI paper: no title/footer notes in the image (they go to "
+                             f"{PAPER_CAPTION_DIR.relative_to(REPO_ROOT)}/), PNG only, written under "
+                             f"{PAPER_FIG_DIR.relative_to(REPO_ROOT)}/ and nowhere else")
+    args = parser.parse_args(argv)
     print("loading edits and codes ...", flush=True)
     edits = load_edits()
     B, seed = load_config()
@@ -759,6 +817,11 @@ def main() -> None:
         d = summary["models"][m]
         print(f"  {m:18s} {100 * d['rate']:5.1f}%  CI {100 * d['ci95'][0]:.1f}-{100 * d['ci95'][1]:.1f}  "
               f"P(lowest)={d['p_lowest']:.3f}", flush=True)
+    if args.paper:
+        plot(summary, out_dir=PAPER_FIG_DIR, paper=True, caption_dir=PAPER_CAPTION_DIR)
+        write_sidecar(summary, PAPER_DATA_DIR / f"{STEM}.json",
+                      figure=f"{PAPER_FIG_DIR.relative_to(REPO_ROOT)}/{STEM}.png")
+        return
     plot(summary)
     write_sidecar(summary)
     write_index(summary)

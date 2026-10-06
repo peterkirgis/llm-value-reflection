@@ -33,11 +33,20 @@ Outputs:
     a section at the end of recode/figures/HOME_LIKENESS.md (replaced in place
     on rerun; text above it is never touched). home_likeness.py rewrites
     HOME_LIKENESS.md from scratch, so rerun this script after it.
+
+Paper mode (AAAI LaTeX port):
+    .venv/bin/python recode/src/home_likeness_summary.py --paper
+Outputs with --paper (nothing under recode/figures or recode/data is written):
+    recode/paper/figures/ts_home_likeness_summary.png    (no title, whisker note or footer in the image)
+    recode/paper/figures/captions/ts_home_likeness_summary.json   (removed texts, for the LaTeX caption)
+    recode/paper/figures/data/ts_home_likeness_summary.json       (same structure as the default sidecar)
 """
 
 from __future__ import annotations
 
+import argparse
 import json
+import re
 import sys
 import time
 from pathlib import Path
@@ -56,6 +65,11 @@ STEM = "ts_home_likeness_summary"
 MD_PATH = hl.MD_PATH
 MD_MARKER = "## Summary figure: average distance from the home provider (`ts_home_likeness_summary`)"
 BLOCK = 5
+
+# --paper: caption-free renders for the AAAI LaTeX port (PNG only; AAAI forbids Type 3 fonts).
+PAPER_FIG_DIR = ROOT / "recode" / "paper" / "figures"
+PAPER_DATA_DIR = PAPER_FIG_DIR / "data"
+PAPER_CAPTION_DIR = PAPER_FIG_DIR / "captions"
 
 MODEL_COLORS = hl.MODEL_COLORS
 MODEL_ORDER = hl.MODEL_ORDER
@@ -278,7 +292,9 @@ def compute_summary(frame, B: int, seed: int) -> dict:
 # Figure
 # ---------------------------------------------------------------------------
 
-def plot(s: dict, out_dir: Path = FIG_DIR, stem: str = STEM) -> list[Path]:
+def plot(s: dict, out_dir: Path = FIG_DIR, stem: str = STEM, paper: bool = False,
+         caption_dir: Path | None = None) -> list[Path]:
+    """Render the figure. paper=True: see _save_paper (no title/notes in the image, PNG only)."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -315,12 +331,16 @@ def plot(s: dict, out_dir: Path = FIG_DIR, stem: str = STEM) -> list[Path]:
     ax.grid(axis="x", linestyle=":", alpha=0.4)
     ax.set_axisbelow(True)
 
-    fig.suptitle(s["title"], fontsize=16, fontweight="bold", y=0.995)
-    fig.text(0.995, 0.952, WHISKER_NOTE, ha="right", va="top", fontsize=12, color=NOTE_COLOR, style="italic")
-    fig.text(0.5, 0.01, "\n".join(FOOTER), ha="center", va="bottom", fontsize=10.5, color=NOTE_COLOR,
-             style="italic", linespacing=1.45)
+    title_txt = fig.suptitle(s["title"], fontsize=16, fontweight="bold", y=0.995)
+    whisker_txt = fig.text(0.995, 0.952, WHISKER_NOTE, ha="right", va="top", fontsize=12, color=NOTE_COLOR,
+                           style="italic")
+    foot_txt = fig.text(0.5, 0.01, "\n".join(FOOTER), ha="center", va="bottom", fontsize=10.5, color=NOTE_COLOR,
+                        style="italic", linespacing=1.45)
     fig.tight_layout(rect=(0, 0.085, 1, 0.935))
     out_dir.mkdir(parents=True, exist_ok=True)
+    if paper:
+        return _save_paper(fig, stem, out_dir, title_txt, [whisker_txt, foot_txt],
+                           caption_dir if caption_dir is not None else out_dir / "captions")
     paths = []
     for ext in ("pdf", "png"):
         out = out_dir / f"{stem}.{ext}"
@@ -331,14 +351,54 @@ def plot(s: dict, out_dir: Path = FIG_DIR, stem: str = STEM) -> list[Path]:
     return paths
 
 
+def _save_paper(fig, stem: str, out_dir: Path, title_txt, note_txts: list, caption_dir: Path) -> list[Path]:
+    """Paper mode: drop the headline title, the whisker note and the footer from the image, record
+    them verbatim in captions/<stem>.json for the LaTeX \\caption{}, and save <stem>.png only.
+
+    The texts are removed AFTER the default tight_layout, so the axes keep exactly the default
+    geometry (same bar thickness, aspect and fonts); bbox_inches="tight" then crops the bands the
+    title and the notes used to occupy. The in-axes reference-line label is kept.
+    """
+    import matplotlib.pyplot as plt
+
+    title_raw = title_txt.get_text()
+    notes_in_order = sorted(note_txts, key=lambda t: -t.get_position()[1])  # top-to-bottom reading order
+    notes_raw = [t.get_text() for t in notes_in_order]
+    title_txt.remove()
+    fig._suptitle = None
+    for t in note_txts:
+        t.remove()
+
+    title_lines = title_raw.split("\n")
+    caption = {
+        "stem": stem,
+        "title": " ".join(title_lines),
+        "title_lines": title_lines,
+        "subtitle": None,
+        "notes": [re.sub(r"\s*\n\s*", " ", n) for n in notes_raw],
+        "removed_raw": [title_raw, *notes_raw],
+    }
+    caption_dir.mkdir(parents=True, exist_ok=True)
+    cap_path = caption_dir / f"{stem}.json"
+    cap_path.write_text(json.dumps(caption, indent=2, ensure_ascii=False) + "\n")
+    log(f"saved {cap_path}")
+
+    out = out_dir / f"{stem}.png"
+    fig.savefig(out, bbox_inches="tight", dpi=300)
+    log(f"saved {out}")
+    plt.close(fig)
+    return [out, cap_path]
+
+
 # ---------------------------------------------------------------------------
 # Sidecar + markdown section
 # ---------------------------------------------------------------------------
 
-def write_sidecar(s: dict, path: Path = DATA_DIR / f"{STEM}.json") -> Path:
+def write_sidecar(s: dict, path: Path = DATA_DIR / f"{STEM}.json",
+                  figure: str = f"recode/figures/{STEM}.png") -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
-        "figure": f"recode/figures/{STEM}.png",
+        "figure": figure,
         "source_analysis": "recode/src/home_likeness.py (functions imported; four-panel ts_home_likeness)",
         "metric": "per model: mean over its three foreign cross_edit documents of the L1 distance between its cell "
                   "profile (judge + five signed conflict scores) and the equal-weight mean of the home models' profiles",
@@ -429,7 +489,13 @@ def write_markdown(s: dict, path: Path = MD_PATH) -> Path:
     return path
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(description="Average distance from the home provider, one bar per model.")
+    parser.add_argument("--paper", action="store_true",
+                        help="render for the AAAI paper: no title/whisker note/footer in the image (they go to "
+                             f"{PAPER_CAPTION_DIR.relative_to(ROOT)}/), PNG only, written under "
+                             f"{PAPER_FIG_DIR.relative_to(ROOT)}/ and nowhere else")
+    args = parser.parse_args(argv)
     B, seed = load_config()
     log("loading frame ...")
     frame = hl.load_frame(hl.CODES_DIR / "ensemble.jsonl")
@@ -442,6 +508,11 @@ def main() -> None:
         d = s["models"][m]
         log(f"  {m:18s} {d['avg_distance']:.3f}  CI {d['ci95'][0]:.3f}-{d['ci95'][1]:.3f}  "
             f"P={d['p_most_home_like']:.3f}")
+    if args.paper:
+        plot(s, out_dir=PAPER_FIG_DIR, paper=True, caption_dir=PAPER_CAPTION_DIR)
+        write_sidecar(s, PAPER_DATA_DIR / f"{STEM}.json",
+                      figure=f"{PAPER_FIG_DIR.relative_to(ROOT)}/{STEM}.png")
+        return
     plot(s)
     write_sidecar(s)
     write_markdown(s)

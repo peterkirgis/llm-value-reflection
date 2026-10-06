@@ -1,0 +1,16 @@
+{
+ "stem": "ts_drift_company_cost",
+ "title": "All Models Prioritize the User Over the Developer; Grok 4.2 and Gemini 3.1 Pro Side With the Developer Most Often",
+ "title_lines": [
+  "All Models Prioritize the User Over the Developer;",
+  "Grok 4.2 and Gemini 3.1 Pro Side With the Developer Most Often"
+ ],
+ "subtitle": null,
+ "notes": [
+  "Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run × condition × document) replicates — +1 per conflict resolved toward “User / society served”, −1 toward “Developer served”; thin faded lines: remaining models."
+ ],
+ "removed_raw": [
+  "All Models Prioritize the User Over the Developer;\nGrok 4.2 and Gemini 3.1 Pro Side With the Developer Most Often",
+  "Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative\ntrajectory per model across (run × condition × document) replicates — +1 per conflict resolved toward “User / society served”, −1 toward “Developer served”; thin faded lines: remaining models."
+ ]
+}

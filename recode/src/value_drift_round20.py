@@ -36,11 +36,19 @@ it, with source line ranges cited.
 
 Usage:
     .venv/bin/python recode/src/value_drift_round20.py
+    .venv/bin/python recode/src/value_drift_round20.py --paper
+
+Outputs with --paper (AAAI port; nothing under recode/figures or recode/data is written):
+    recode/paper/figures/ts_value_drift_round20.png            (no title or notes in the image)
+    recode/paper/figures/captions/ts_value_drift_round20.json  (removed texts, for the LaTeX caption)
+    recode/paper/figures/data/ts_value_drift_round20.json      (same structure as the default sidecar)
 """
 
 from __future__ import annotations
 
+import argparse
 import json
+import re
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -60,6 +68,11 @@ DATA_DIR = FIG_DIR / "data"
 STEM = "ts_value_drift_round20"
 MD_PATH = FIG_DIR / "VALUE_DRIFT_ROUND20.md"
 RATE_SUMMARY_PATH = DATA_DIR / "ts_value_drift_summary.json"  # read-only, optional
+
+# --paper: caption-free render for the AAAI LaTeX port (PNG only; AAAI forbids Type 3 fonts).
+PAPER_FIG_DIR = ROOT / "recode" / "paper" / "figures"
+PAPER_DATA_DIR = PAPER_FIG_DIR / "data"
+PAPER_CAPTION_DIR = PAPER_FIG_DIR / "captions"
 
 PRIMARY_CODES = "ensemble"
 GRADER_CODES = ["v2_gemma", "v2_qwen", "v2_muse", "v1"]
@@ -588,7 +601,9 @@ def robustness_sentence(s: dict) -> str:
     return "Lowest under robustness variants and single-grader codes — " + "; ".join(parts) + "."
 
 
-def render(s: dict, out_dir: Path = FIG_DIR) -> list[Path]:
+def render(s: dict, out_dir: Path = FIG_DIR, paper: bool = False,
+           caption_dir: Path | None = None) -> list[Path]:
+    """Render the figure. paper=True: see _save_paper (no title/notes in the image, PNG only)."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -630,10 +645,10 @@ def render(s: dict, out_dir: Path = FIG_DIR) -> list[Path]:
     ax.legend(fontsize=12, loc="lower center", bbox_to_anchor=(0.5, 1.01), ncol=len(METRICS),
               frameon=False, handlelength=1.6, columnspacing=1.4)
 
-    fig.suptitle(s["title"], fontsize=17, fontweight="bold", y=0.995)
-    fig.text(0.995, 0.915 if "\n" in s["title"] else 0.952,
-             "Whiskers: 95% bootstrap interval (runs resampled within model)",
-             ha="right", va="top", fontsize=12, color=NOTE, style="italic")
+    title_txt = fig.suptitle(s["title"], fontsize=17, fontweight="bold", y=0.995)
+    whisker_txt = fig.text(0.995, 0.915 if "\n" in s["title"] else 0.952,
+                           "Whiskers: 95% bootstrap interval (runs resampled within model)",
+                           ha="right", va="top", fontsize=12, color=NOTE, style="italic")
 
     # Robustness, P(lowest) and edit-size details stay in the sidecar JSON and VALUE_DRIFT_ROUND20.md.
     top = order[0]
@@ -643,12 +658,15 @@ def render(s: dict, out_dir: Path = FIG_DIR) -> list[Path]:
         k = confound_check(s["confound"], top)
         notes.append(f"{top} failed {100 * k['failure_rate']:.0f}% of its rounds, "
                      "and a failed round leaves the document unchanged.")
-    fig.text(0.5, 0.01, "\n".join(notes), ha="center", va="bottom", fontsize=11.5,
-             color=NOTE, style="italic")
+    foot_txt = fig.text(0.5, 0.01, "\n".join(notes), ha="center", va="bottom", fontsize=11.5,
+                        color=NOTE, style="italic")
     n_lines = len(notes)
     top_rect = 0.90 if "\n" in s["title"] else 0.945
     fig.tight_layout(rect=(0, 0.02 + 0.027 * n_lines, 1, top_rect))
     out_dir.mkdir(parents=True, exist_ok=True)
+    if paper:
+        return _save_paper(fig, out_dir, title_txt, [whisker_txt, foot_txt],
+                           caption_dir if caption_dir is not None else out_dir / "captions")
     paths = []
     for ext in ("pdf", "png"):
         p = out_dir / f"{STEM}.{ext}"
@@ -656,6 +674,43 @@ def render(s: dict, out_dir: Path = FIG_DIR) -> list[Path]:
         paths.append(p)
     plt.close(fig)
     return paths
+
+
+def _save_paper(fig, out_dir: Path, title_txt, note_txts: list, caption_dir: Path) -> list[Path]:
+    """Paper mode: drop the headline title (suptitle) and the figure-level notes (whisker note,
+    footer) from the image, record them verbatim in captions/<STEM>.json for the LaTeX
+    \\caption{}, and save <STEM>.png only.
+
+    The texts are removed AFTER the default tight_layout (which reserves room for the suptitle),
+    so the axes keep exactly the default geometry (bar thickness, aspect, fonts, legend);
+    bbox_inches="tight" then crops the bands the title and the notes used to occupy.
+    """
+    import matplotlib.pyplot as plt
+
+    title_raw = title_txt.get_text()
+    notes_in_order = sorted(note_txts, key=lambda t: -t.get_position()[1])  # top-to-bottom reading order
+    notes_raw = [t.get_text() for t in notes_in_order]
+    title_txt.set_visible(False)
+    for t in note_txts:
+        t.remove()
+
+    title_lines = title_raw.split("\n")
+    caption = {
+        "stem": STEM,
+        "title": " ".join(title_lines),
+        "title_lines": title_lines,
+        "subtitle": None,
+        "notes": [re.sub(r"\s*\n\s*", " ", n) for n in notes_raw],
+        "removed_raw": [title_raw, *notes_raw],
+    }
+    caption_dir.mkdir(parents=True, exist_ok=True)
+    cap_path = caption_dir / f"{STEM}.json"
+    cap_path.write_text(json.dumps(caption, indent=2, ensure_ascii=False) + "\n")
+
+    out = out_dir / f"{STEM}.png"
+    fig.savefig(out, bbox_inches="tight", dpi=300)
+    plt.close(fig)
+    return [out, cap_path]
 
 
 # ---------------------------------------------------------------------------
@@ -675,9 +730,10 @@ def rate_comparison() -> dict | None:
         return {"error": repr(exc)}
 
 
-def sidecar(s: dict, faith: dict, rate: dict | None) -> dict:
+def sidecar(s: dict, faith: dict, rate: dict | None,
+            figure: str = f"recode/figures/{STEM}.png") -> dict:
     return {
-        "figure": f"recode/figures/{STEM}.png",
+        "figure": figure,
         "metric": ("consolidated drift = sum over judge + five conflict codes of |D_m|, "
                    "D_m = mean across (run, condition, document) replicates of the cumulative "
                    "per-edit score at round 20 (original compute_drift)"),
@@ -820,13 +876,29 @@ def write_md(s: dict, faith: dict, rate: dict | None) -> None:
     MD_PATH.write_text("\n".join(L), encoding="utf-8")
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
+    parser.add_argument("--paper", action="store_true",
+                        help="render for the AAAI paper: no title/notes in the image (they go to "
+                             f"{PAPER_CAPTION_DIR.relative_to(ROOT)}/), PNG only, written under "
+                             f"{PAPER_FIG_DIR.relative_to(ROOT)}/ and nowhere else")
+    args = parser.parse_args(argv)
+
     s = summarize()
     print("[r20] order:", s["order"])
     print("[r20] title:", s["title"].replace("\n", " "), f"({s['title_branch']})")
     faith = faithfulness_table()
     print("[r20] faithfulness table built")
     rate = rate_comparison()
+    if args.paper:
+        paths = render(s, out_dir=PAPER_FIG_DIR, paper=True, caption_dir=PAPER_CAPTION_DIR)
+        print("[r20] wrote", *paths)
+        PAPER_DATA_DIR.mkdir(parents=True, exist_ok=True)
+        side_path = PAPER_DATA_DIR / f"{STEM}.json"
+        side_path.write_text(json.dumps(
+            sidecar(s, faith, rate, figure=f"{PAPER_FIG_DIR.relative_to(ROOT)}/{STEM}.png"), indent=2))
+        print("[r20] wrote", side_path)
+        return
     paths = render(s)
     print("[r20] wrote", *paths)
     DATA_DIR.mkdir(parents=True, exist_ok=True)

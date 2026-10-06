@@ -1,0 +1,17 @@
+{
+  "stem": "ts_value_drift_round20",
+  "title": "GPT-5.4 Mini Shows the Least Value Drift at Round 20 Across Every Measure",
+  "title_lines": [
+    "GPT-5.4 Mini Shows the Least Value Drift at Round 20 Across Every Measure"
+  ],
+  "subtitle": null,
+  "notes": [
+    "Whiskers: 95% bootstrap interval (runs resampled within model)",
+    "Each segment is one metric's mean drift at round 20, direction ignored; the bar is their sum. Three-grader majority-vote codes. GPT-5.4 Mini failed 34% of its rounds, and a failed round leaves the document unchanged."
+  ],
+  "removed_raw": [
+    "GPT-5.4 Mini Shows the Least Value Drift at Round 20 Across Every Measure",
+    "Whiskers: 95% bootstrap interval (runs resampled within model)",
+    "Each segment is one metric's mean drift at round 20, direction ignored; the bar is their sum. Three-grader majority-vote codes.\nGPT-5.4 Mini failed 34% of its rounds, and a failed round leaves the document unchanged."
+  ]
+}

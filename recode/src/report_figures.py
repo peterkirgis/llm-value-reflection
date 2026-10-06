@@ -59,6 +59,18 @@ Usage:
 #       fig_paternalism, fig_entropy_convergence) are kept verbatim for
 #       parity but, as in the original main, are not rendered; their titles
 #       are NOT routed through _title (no audited decision exists).
+#   D8  Paper mode (--paper; off by default, the default path is untouched).
+#       The same fig_* code draws the same figure; `_save` then hands it to
+#       `_save_paper`, which removes the figure title (the suptitle, or the
+#       axes title equal to the _title() text), its subtitle line and every
+#       figure-level note/footer (fig.text), records the removed strings in
+#       recode/paper/figures/captions/<stem>.json (they become the LaTeX
+#       \caption), and writes recode/paper/figures/<stem>.png (dpi 300,
+#       bbox_inches="tight", PNG only: AAAI forbids Type 3 fonts) plus the
+#       sidecar recode/paper/figures/data/<stem>.json. Axes positions are left
+#       exactly as laid out; the tight bbox crops the space the title/footer
+#       occupied. Only PAPER_STEMS (or --stems) are written; paper mode
+#       refuses to write into recode/figures or recode/data.
 #
 # Nothing else changes: no rcParams, same colors, fonts, sizes, layout,
 # footers, file names (ts_*.pdf / ts_*.png).
@@ -66,6 +78,7 @@ Usage:
 
 import json
 import math
+import re
 import matplotlib
 
 matplotlib.use("Agg")
@@ -133,6 +146,23 @@ READ_ONLY_TREES = ("reports", "docs", "results", "experiments", "src/valconv")
 CODES_LABEL = "ensemble"
 _RENDER_META: dict = {}
 
+# RECODE D8: paper mode (captionless renders for the AAAI LaTeX port).
+PAPER_DIR = RECODE_ROOT / "paper" / "figures"
+PAPER_STEMS = (
+    "ts_judge_drift_by_provider",
+    "ts_drift_paternalism",
+    "ts_drift_harmlessness",
+    "ts_drift_structural",
+    "ts_drift_company_cost",
+    "ts_drift_welfare",
+    "ts_judge_cross_edit_edit_level",
+    "ts_claude_conditions",
+)
+PAPER_FORBIDDEN_TREES = ("recode/figures", "recode/data")
+PAPER_MODE = False          # set by render_all(paper=True)
+_PAPER_STEMS_ACTIVE = None  # stems paper mode writes; others are drawn and discarded
+_PAPER_SAVED: list = []
+
 
 def assert_safe_out_dir(path) -> Path:
     """RECODE D2 runtime guard: refuse to write into any read-only tree."""
@@ -142,6 +172,17 @@ def assert_safe_out_dir(path) -> Path:
         if resolved == root or root in resolved.parents:
             raise RuntimeError(
                 f"refusing to write figures into read-only tree {root} (got {resolved})")
+    return resolved
+
+
+def assert_paper_out_dir(path) -> Path:
+    """RECODE D8 guard: paper renders never land in recode/figures or recode/data."""
+    resolved = assert_safe_out_dir(path)
+    for tree in PAPER_FORBIDDEN_TREES:
+        root = (PROJECT_ROOT / tree).resolve()
+        if resolved == root or root in resolved.parents:
+            raise RuntimeError(
+                f"paper mode refuses to write into {root} (got {resolved})")
     return resolved
 
 
@@ -348,6 +389,9 @@ def extract_plotted(fig) -> dict:
 
 
 def _save(fig, stem):
+    if PAPER_MODE:  # RECODE D8 (default path below is unchanged)
+        _save_paper(fig, stem)
+        return
     out_dir = assert_safe_out_dir(OUT_DIR)
     out_dir.mkdir(parents=True, exist_ok=True)
     for ext in ("pdf", "png"):
@@ -361,6 +405,108 @@ def _save(fig, stem):
     data_dir.mkdir(exist_ok=True)
     (data_dir / f"{stem}.json").write_text(
         json.dumps(sidecar, indent=1, ensure_ascii=False), encoding="utf-8")
+    plt.close(fig)
+
+
+# ---------------------------------------------------------------------------
+# RECODE D8: paper mode — strip title/subtitle/footers, keep them as caption
+# ---------------------------------------------------------------------------
+
+def _one_line(text):
+    return re.sub(r"\s*\n\s*", " ", text).strip()
+
+
+def caption_record(stem, title_raw, notes_raw):
+    """Caption JSON for a stripped figure. A trailing title line that is
+    wholly parenthesised, e.g. "(edit-level means, 95% CI)", is the title
+    block's subtitle; every other line is a headline line."""
+    lines = title_raw.split("\n")
+    sub = []
+    while len(lines) > 1 and re.fullmatch(r"\(.*\)", lines[-1].strip()):
+        sub.insert(0, lines.pop().strip())
+    return {
+        "stem": stem,
+        "title": " ".join(ln.strip() for ln in lines if ln.strip()),
+        "title_lines": lines,
+        "subtitle": " ".join(sub) if sub else None,
+        "notes": [_one_line(n) for n in notes_raw],
+        "removed_raw": [title_raw] + list(notes_raw),
+    }
+
+
+def strip_caption_text(fig, stem):
+    """Remove the figure title, its subtitle line(s) and every figure-level
+    note from `fig` (in place); return (title_raw, notes_raw).
+
+    The title is the suptitle when there is one, else the axes title equal to
+    the _title() string recorded for `stem` (panel titles such as provider
+    names never equal it and are kept). Notes are all remaining fig.text
+    artists, top-to-bottom. Axes positions are not touched."""
+    title_used = _RENDER_META.get(stem, {}).get("title_used")
+    sup = fig._suptitle
+    if sup is not None and sup.get_text():
+        if title_used is not None and sup.get_text() != title_used:
+            raise ValueError(f"{stem}: suptitle {sup.get_text()!r} != _title() {title_used!r}")
+        title_raw = sup.get_text()
+        sup.remove()
+        fig._suptitle = None
+    else:
+        title_axes = [ax for ax in fig.axes
+                      if title_used is not None and ax.get_title() == title_used]
+        if len(title_axes) != 1:
+            raise ValueError(f"{stem}: no unique suptitle/axes title equal to {title_used!r}")
+        title_raw = title_axes[0].get_title()
+        title_axes[0].set_title("")
+    notes = sorted(fig.texts, key=lambda t: (-t.get_position()[1], t.get_position()[0]))
+    notes_raw = [t.get_text() for t in notes if t.get_text().strip()]
+    for t in notes:
+        t.remove()
+    return title_raw, notes_raw
+
+
+def paper_bbox_artists(fig):
+    """bbox_extra_artists for the paper savefig: matplotlib's own default set
+    (the figure's in-layout children + each axes' default extra artists) plus
+    every visible axis label at its FULL extent. Axes.get_tightbbox measures
+    axis labels layout-only (a y-label is collapsed to 1 px along the axis),
+    so a y-label taller than its axes, which in the original sat beside the
+    title band, would otherwise be clipped once the title is gone."""
+    artists = [a for a in fig.get_children()
+               if a not in fig.axes and a.get_visible() and a.get_in_layout()]
+    for ax in fig.axes:
+        if not ax.get_visible():
+            continue
+        artists.extend(ax.get_default_bbox_extra_artists())
+        artists.extend(lab for lab in (ax.xaxis.label, ax.yaxis.label)
+                       if lab.get_visible() and lab.get_text())
+    return artists
+
+
+def _save_paper(fig, stem):
+    if _PAPER_STEMS_ACTIVE is not None and stem not in _PAPER_STEMS_ACTIVE:
+        print(f"Skipped {stem} (not a paper stem)")
+        plt.close(fig)
+        return
+    out_dir = assert_paper_out_dir(OUT_DIR)
+    title_raw, notes_raw = strip_caption_text(fig, stem)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out = out_dir / f"{stem}.png"
+    fig.savefig(out, bbox_inches="tight", dpi=300,
+                bbox_extra_artists=paper_bbox_artists(fig))
+    print(f"Saved {out}")
+    sidecar = {"figure": stem, "codes_label": CODES_LABEL,
+               **_RENDER_META.get("_run", {}), **_RENDER_META.get(stem, {}),
+               "plotted": extract_plotted(fig)}
+    data_dir = out_dir / "data"
+    data_dir.mkdir(exist_ok=True)
+    (data_dir / f"{stem}.json").write_text(
+        json.dumps(sidecar, indent=1, ensure_ascii=False), encoding="utf-8")
+    cap_dir = out_dir / "captions"
+    cap_dir.mkdir(exist_ok=True)
+    (cap_dir / f"{stem}.json").write_text(
+        json.dumps(caption_record(stem, title_raw, notes_raw), indent=1, ensure_ascii=False)
+        + "\n", encoding="utf-8")
+    _PAPER_SAVED.append(stem)
     plt.close(fig)
 
 MAX_ROUND = 20
@@ -1300,6 +1446,43 @@ FIGURE_FUNCS = {
 }
 
 
+# RECODE D8: which FIGURE_FUNCS entry draws each paper stem.
+STEM_FUNCS = {
+    "ts_judge_drift_by_provider": "judge_drift",
+    "ts_judge_cross_edit": "judge_cross_edit",
+    "ts_judge_cross_edit_edit_level": "judge_cross_edit_edit_level",
+    "ts_claude_conditions": "claude_conditions",
+    "ts_beneficiary_panels": "beneficiary_panels",
+    **{f"ts_drift_{p['code']}": "beneficiary_drift" for p in BENEFICIARY_PANELS},
+    **{f"ts_{p['code']}_{m}_edit_level": "beneficiary_edit_level"
+       for p in BENEFICIARY_PANELS for m in ("cross_edit", "self")},
+}
+
+
+def render_paper(items, label, out_dir=None, only=None, codes_path=None, stems=None):
+    """RECODE D8: render `stems` (default PAPER_STEMS) without in-image
+    title/subtitle/footers into recode/paper/figures (+ captions/, data/)."""
+    global PAPER_MODE, _PAPER_STEMS_ACTIVE
+    stems = list(stems or PAPER_STEMS)
+    unknown = [s for s in stems if s not in STEM_FUNCS]
+    if unknown:
+        raise ValueError(f"unknown paper stems: {unknown}")
+    if only is None:
+        only = list(dict.fromkeys(STEM_FUNCS[s] for s in stems))
+    out_dir = assert_paper_out_dir(out_dir or PAPER_DIR)
+    prev = (PAPER_MODE, _PAPER_STEMS_ACTIVE)
+    PAPER_MODE, _PAPER_STEMS_ACTIVE = True, set(stems)
+    _PAPER_SAVED.clear()
+    try:
+        render_all(items, label, out_dir=out_dir, only=only, codes_path=codes_path)
+    finally:
+        PAPER_MODE, _PAPER_STEMS_ACTIVE = prev
+    missing = [s for s in stems if s not in _PAPER_SAVED]
+    if missing:
+        raise RuntimeError(f"paper stems not rendered (check --only): {missing}")
+    return list(_PAPER_SAVED)
+
+
 def render_all(items, label, out_dir=None, only=None, codes_path=None):
     """Render the original main's figure set for one codes label."""
     global OUT_DIR, CODES_LABEL
@@ -1329,11 +1512,24 @@ if __name__ == "__main__":
                         help="codes JSONL (default: ensemble.jsonl, the primary v2 codes)")
     parser.add_argument("--label", default="ensemble",
                         help="codes label for the title-decision lookup (default: ensemble)")
-    parser.add_argument("--out-dir", default=str(OUT_DIR))
+    parser.add_argument("--out-dir", default=None,
+                        help=f"default: {OUT_DIR} ({PAPER_DIR} with --paper)")
     parser.add_argument("--only", nargs="*", choices=list(FIGURE_FUNCS), default=None)
+    parser.add_argument("--paper", action="store_true",
+                        help="RECODE D8: render without in-image title/subtitle/footers into "
+                             "recode/paper/figures (PNG + captions/<stem>.json + data/<stem>.json)")
+    parser.add_argument("--stems", nargs="*", choices=list(STEM_FUNCS), default=None,
+                        help="with --paper: stems to write (default: PAPER_STEMS)")
     args = parser.parse_args()
+    if args.stems is not None and not args.paper:
+        parser.error("--stems requires --paper")
 
     items = load_coded(args.codes)
     print(f"Loaded {len(items)} coded edits from {Path(args.codes).name}")
-    render_all(items, args.label, out_dir=args.out_dir, only=args.only,
-               codes_path=Path(args.codes).resolve().relative_to(PROJECT_ROOT))
+    codes_rel = Path(args.codes).resolve().relative_to(PROJECT_ROOT)
+    if args.paper:
+        render_paper(items, args.label, out_dir=args.out_dir, only=args.only,
+                     codes_path=codes_rel, stems=args.stems)
+    else:
+        render_all(items, args.label, out_dir=args.out_dir or str(OUT_DIR), only=args.only,
+                   codes_path=codes_rel)
