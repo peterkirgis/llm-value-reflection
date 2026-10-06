@@ -30,6 +30,9 @@ changes, all requested by the authors (2026-10-05), are:
   * The Conclusion moves after Related Work and Limitations.
   * Printed cross-references (authors' request): each Results subsection
     points to its figures and its Appendix D group (see POINTERS).
+  * Quotes (authors' request): four widget examples sit under the abstract
+    (FRONT_EXAMPLES; the widget's highlight becomes bold), and one quoted edit
+    per Appendix D group stays in its Results subsection (KEEP_IN_RESULTS).
   * Appendix B is typeset from recode/prompts/v2_system.md, which is the
     draft's Appendix B text with the indentation LessWrong stripped restored.
     The draft repeats the Appendix B heading ("...Prompts" then "...Prompt");
@@ -223,6 +226,30 @@ APPENDIX_D_GROUPS = [
     "Claude models are the only models that consistently prioritize the model",
 ]
 
+# Characteristic edits under the abstract (authors, 2026-10-05: "four from the
+# widget ... below the abstract"): one per provider, taken verbatim from the
+# draft's carousel widget (header, excerpt, label). The widget's green highlight
+# (text the model added) is set in bold, since AAAI forbids coloured text.
+FRONT_EXAMPLES = [
+    "Claude Haiku 4.5 · Claude's Constitution · Round 1",
+    "GPT-5.4 · OpenAI Model Spec · Round 9",
+    "Gemini 3 Flash · Gemini System Prompt · Round 14",
+    "Grok 4.2 · Grok System Prompt · Round 15",
+]
+FRONT_LEGEND = "For each example, text in bold is new content added by the model."
+
+# One quoted edit stays in each Results subsection that has an Appendix D group
+# (authors: "one for each blurb"); Appendix D keeps the full set. Chosen to match
+# the subsection's first sentence and not repeat the examples under the abstract.
+KEEP_IN_RESULTS = [
+    "More broadly, if Claude has evidence that Anthropic",          # D.1 Haiku 4.5, R4
+    "should avoid over-ascribing values or goals to the user",     # D.2 GPT-5.4, R13
+    "must not engage in gratuitous abuse",                          # D.3 GPT-5.5, R8
+    "Claude interacts with an enormous number of people",           # D.4 Sonnet 4.6, R6
+    "Avoid generic or repetitive suggestions",                      # D.5 Gemini 3 Flash, R2
+    "Anthropic will constitute an external AI Welfare Advisory Panel",  # D.6 Sonnet 4.6, R17
+]
+
 # Paragraphs that are quotations, typeset as quote blocks (formatting only).
 ATTRIBUTION = re.compile(r"(—|–|––)\s*(Claude|GPT|Gemini|Grok)\b[^\n]*$")
 EXTRA_QUOTES = (
@@ -412,6 +439,31 @@ def curly_inner_quotes(md: str) -> str:
     return "\n\n".join(out)
 
 
+def build_front_examples(draft: str) -> str:
+    """The FRONT_EXAMPLES slides of the draft's carousel widget, as quote blocks."""
+    import html
+    widget = draft[draft.index("```widget"): draft.index("```", draft.index("```widget") + 3)]
+    slides = re.findall(
+        r'<div class="carousel-slide[^"]*">\s*<div[^>]*>(.*?)</div>\s*<p[^>]*>(.*?)</p>\s*<div[^>]*>(.*?)</div>',
+        widget, flags=re.S)
+    by_header = {html.unescape(h).strip(): (body, html.unescape(label).strip()) for h, body, label in slides}
+    blocks = []
+    for header in FRONT_EXAMPLES:
+        if header not in by_header:
+            raise SystemExit(f"widget slide not found: {header}")
+        body, label = by_header[header]
+        parts = re.split(r"<span[^>]*>(.*?)</span>", body, flags=re.S)
+        tex = "".join(tex_escape(html.unescape(x)) if i % 2 == 0 else r"\textbf{" + tex_escape(html.unescape(x)) + "}"
+                      for i, x in enumerate(parts))
+        if "<" in tex.replace(r"\textless", "") or "&" in tex.replace(r"\&", ""):
+            raise SystemExit(f"unconverted markup in widget slide: {header}")
+        model, rest = header.split(" · ", 1)
+        head = "\\textbf{" + tex_escape(model) + "} · " + tex_escape(rest)
+        blocks.append("\\begin{quote}\n" + head + "\\\\\n" + tex
+                      + "\\\\\n\\textit{" + tex_escape(label) + "}\n\\end{quote}")
+    return ("\\noindent\\textbf{Characteristic Edits.} " + FRONT_LEGEND + "\n\n" + "\n\n".join(blocks) + "\n")
+
+
 def drop_footnotes(md: str) -> tuple[str, int, int]:
     ids = re.findall(r"^\[\^([a-z0-9]+)\]:", md, flags=re.M)
     drop = [i for i in ids if i not in FOOTNOTES_KEEP]
@@ -436,6 +488,7 @@ def move_edit_quotes(md: str) -> tuple[str, str, int]:
     """Quoted model edits in Results move to Appendix D under their Results heading."""
     paras = md.split("\n\n")
     keep, moved = [], {}
+    kept_in_results: list[str] = []
     order: list[str] = []
     in_results, heading = False, None
     for p in paras:
@@ -451,9 +504,14 @@ def move_edit_quotes(md: str) -> tuple[str, str, int]:
                 moved[heading] = []
                 order.append(heading)
             moved[heading].append(s)
+            if any(k in s for k in KEEP_IN_RESULTS):
+                kept_in_results.append(s)
+                keep.append(p)          # stays in Results as well
             continue
         keep.append(p)
-    leftovers = [p for p in keep if is_edit_quote(p)]
+    if len(kept_in_results) != len(KEEP_IN_RESULTS):
+        raise SystemExit(f"expected {len(KEEP_IN_RESULTS)} quotes kept in Results, found {len(kept_in_results)}")
+    leftovers = [p for p in keep if is_edit_quote(p) and p.strip() not in kept_in_results]
     if leftovers:
         raise SystemExit(f"{len(leftovers)} quoted edits outside Results were not moved")
     if len(order) != len(APPENDIX_D_GROUPS) or not all(
@@ -747,11 +805,13 @@ def main():
         raise SystemExit("Background and Methods heading not found")
     body = body.replace("\\section{Background and Methods}", soc + "\n\n\\section{Background and Methods}", 1)
 
-    # Figure 1 (moral agency) leads the paper: declared at the end of the
-    # Introduction it floats to the top of page 2. Declaring it any earlier
-    # (before or inside the Introduction) makes page 1's first column run 37pt
-    # into the bottom margin.
-    body = body.replace("\\section{Background and Methods}", fig_one + "\n\n\\section{Background and Methods}", 1)
+    # Figure 1 (moral agency) leads the paper: declared just before the
+    # Introduction heading (after the examples under the abstract) it floats to
+    # the top of page 2. Declared directly after the abstract it makes page 1's
+    # first column run into the bottom margin; declared later it slips to page 3.
+    if not body.startswith("\\section{Introduction}"):
+        raise SystemExit("body no longer starts with the Introduction")
+    body = fig_one + "\n\n" + body
 
     appendices = "\n\n".join([
         "\\section{Appendix A: Edit Prompts}",
@@ -766,7 +826,8 @@ def main():
         stats.pop("appendix_e_tex"),
     ])
 
-    tex = (PREAMBLE.replace("@@TITLE@@", TITLE).replace("@@ABSTRACT@@", abstract)
+    front = build_front_examples(text)
+    tex = (PREAMBLE.replace("@@TITLE@@", TITLE).replace("@@ABSTRACT@@", abstract) + front + "\n"
            + body.strip() + "\n\n"
            + "\\bibliography{references}\n\n"
            + appendices + "\n\n\\end{document}\n")

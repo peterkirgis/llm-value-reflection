@@ -69,7 +69,7 @@ def draft_side() -> str:
     res_i, dis_i = md.index("Results\n===="), md.index("Discussion\n====")
     res = md[res_i:dis_i].split("\n\n")
     quotes = [p for p in res if p.strip() and p.strip()[0] in "“\"" and re.search(r"[—–]\s*(Claude|GPT|Gemini|Grok)\b[^\n]*$", p.strip())]
-    res = [p for p in res if p not in quotes]
+    res = [p for p in res if p not in quotes or any(k in p for k in bp.KEEP_IN_RESULTS)]
     md = md[:res_i] + "\n\n".join(res) + md[dis_i:] + "\n\nAPPENDIXD\n\n" + "\n\n".join(quotes)
     md = re.sub(r"^!\[[^\]]*\]\([^)]*\)[ \t]*$", "", md, flags=re.M)   # images -> figures
     md = md.replace("https://github.com/Wyattwalls/system_prompts", "WALLSCITE")
