@@ -40,7 +40,7 @@ def words(text: str) -> list[str]:
 
 
 def draft_side() -> str:
-    src = bp.DRAFT.read_text(encoding="utf-8")
+    src = bp.apply_paper_edits(bp.DRAFT.read_text(encoding="utf-8"))
     exec_md = bp.cut(src, "Executive Summary\n====", "Characteristic Edits\n----")
     body = bp.cut(src, "Introduction\n====", "Appendix A: Edit Prompts\n====")
     foot = bp.cut(src, "[^xlfwnz2o9c8]:", "### Navigation")
@@ -101,7 +101,7 @@ def paper_side() -> str:
 
 
 def appendix_sides() -> tuple[str, str]:
-    src = bp.DRAFT.read_text(encoding="utf-8")
+    src = bp.apply_paper_edits(bp.DRAFT.read_text(encoding="utf-8"))
     app = bp.cut(src, "Appendix A: Edit Prompts\n====", "Appendix B: Qualitative Coding Prompts\n====")
     app += "\n\n" + bp.cut(src, "Appendix C: Inter-grader Agreement\n====", "[^xlfwnz2o9c8]:")
     app = re.sub(r"^\+\+\+ ?(.*?):?$", r"\1", app, flags=re.M)      # collapsible markers -> headings

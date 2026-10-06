@@ -17,6 +17,19 @@ Nothing in your text was changed. This file lists (A) where a citation now print
 
 The "Follow-up work" LessWrong post on attractor states is by Jakkli, Rajamanoharan and Nanda. It is not self-citation, so anonymity is fine.
 
+## Resolved in the paper (2026-10-05)
+
+These are fixed in the paper through `PAPER_EDITS` in `build_paper.py`; `final_draft.md` is unchanged:
+- B1 (Claude 4 System Card): now Opus 4, and both phrases are quoted from the card.
+- B4 (Gabriel): now "six" targets, and the three value candidates use his terms.
+- B7 (Meta): now "Evaluation Report".
+- The footnote "/See" typo and "I use" are fixed.
+
+Left as written at the authors' request:
+- B2 (Barak).
+- B3 ("four-tiered", because the levels below the principals are heuristics).
+- The Grok Round 15 label ("Baseline", because it is the same document).
+
 ## B. Draft wording that disagrees with the sources
 
 Ordered roughly by importance.

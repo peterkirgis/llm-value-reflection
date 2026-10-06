@@ -28,6 +28,9 @@ changes, all requested by the authors (2026-10-05), are:
     Contributions, set as the last paragraph of the Introduction under a bold
     run-in label (the guide asks for a "clearly indicated" paragraph).
   * The Conclusion moves after Related Work and Limitations.
+  * Text corrections the authors asked for are applied from PAPER_EDITS
+    (numbers updated to the recode's ensemble codes, citation fixes, "essay"
+    -> "paper", footnote and typo fixes).
   * Printed cross-references (authors' request): each Results subsection
     points to its figures and its Appendix D group (see POINTERS).
   * Quotes (authors' request): four widget examples sit under the abstract
@@ -225,6 +228,56 @@ APPENDIX_D_GROUPS = [
     "All models prioritize the user at the expense of the developer",
     "Claude models are the only models that consistently prioritize the model",
 ]
+
+# Text corrections the authors asked for (2026-10-05), applied to the draft text
+# before conversion; reports/final_draft.md itself is left as it is. Each pair must
+# match the draft exactly (count given), so a later draft edit cannot silently
+# skip one. Numbers are the recode's three-grader majority-vote (ensemble) codes.
+PAPER_EDITS = [
+    # Results: developer vs. user (ensemble: Grok 4.2 15 developer-served, 20 user/society-served)
+    ("Grok 4.2 is the only model with a meaningful number of edits that prioritize the developer (7), "
+     "but still makes twice as many edits that privilege the user.",
+     "Grok 4.2 makes the most edits that favor the developer over the user (15), "
+     "but still makes more edits that privilege the user (20).", 1),
+    # Results: society (ensemble: Sonnet 4.6 34, next Gemini 3 Flash 10)
+    ("It makes over four times as many edits in this direction than the next highest model, Claude Opus 4.7.",
+     "It makes over three times as many edits in this direction than the next highest model, Gemini 3 Flash.", 1),
+    # Results: model welfare (ensemble: GPT-5.4 5 against the model, 0 for it)
+    ("GPT 5.4 is the only model that makes more than one edit prioritizing the user or developer at the expense of the model.",
+     "GPT 5.4 is the only model that only makes edits prioritizing the user or developer at the expense of the model.", 1),
+    # Limitations: largest model has 16 chains
+    ("the sample sizes we use are small (n<15)", "the sample sizes we use are small (n<20)", 1),
+    # Appendix C: the paternalism code is stated vs idealized
+    ("| Revealed vs stated preferences |", "| Stated vs idealized preferences |", 1),
+    # Related Work: Claude 4 System Card, Section 5.5 (self-interactions of Claude Opus 4)
+    ("versions of Claude Sonnet 4 talk to one another", "versions of Claude Opus 4 talk to one another", 1),
+    ("“poetry and shared gratitude”", "“profuse mutual gratitude and spiritual, metaphysical, and/or poetic content”", 1),
+    ("“silence in the form of empty messages.”", "“silence in the form of empty space.”", 1),
+    # Related Work: Gabriel (2020) lists six targets (i-vi) and these three value candidates
+    ("The paper outlines five potential alignment targets:", "The paper outlines six potential alignment targets:", 1),
+    ("he briefly mentions a maximin-style utilitarianism, a virtue ethics approach, and a more deontological "
+     "view of mutual recognition and human agency maximization",
+     "he briefly mentions the aggregate interest of everyone weighted to give priority to the worst-off, "
+     "a virtue ethics approach, and an ethic based on mutual recognition and the maintenance of collective bonds", 1),
+    # Related Work: Meta's document is an evaluation report
+    ("[Meta Muse Spark 1.1 System Card]", "[Meta Muse Spark 1.1 Evaluation Report]", 1),
+    # "essay" -> "paper" where the text refers to itself (not Gabriel's or Caputo's essays)
+    ("this essay", "this paper", 4),
+    ("our essay", "our paper", 1),
+    # footnotes and typo
+    ("[^jyctgz9l9va]: /See", "[^jyctgz9l9va]: See", 1),
+    ("I use leaked system prompts", "we use leaked system prompts", 1),
+    ("Anthropic’'s", "Anthropic’s", 1),
+]
+
+
+def apply_paper_edits(text: str) -> str:
+    for old, new, n in PAPER_EDITS:
+        if text.count(old) != n:
+            raise SystemExit(f"paper edit expected {n} match(es), found {text.count(old)}: {old[:60]}")
+        text = text.replace(old, new)
+    return text
+
 
 # Characteristic edits under the abstract (authors, 2026-10-05: "four from the
 # widget ... below the abstract"): one per provider, taken verbatim from the
@@ -765,7 +818,7 @@ def main():
                     help="use the captioned recode/figures PNGs when paper renders are missing (layout tests only)")
     args = ap.parse_args()
 
-    text = DRAFT.read_text(encoding="utf-8")
+    text = apply_paper_edits(DRAFT.read_text(encoding="utf-8"))
     exec_md = cut(text, "Executive Summary\n====", "Characteristic Edits\n----")
     body_md = cut(text, "Introduction\n====", "Appendix A: Edit Prompts\n====")
     app_a = cut(text, "Appendix A: Edit Prompts\n====", "Appendix B: Qualitative Coding Prompts\n====")
