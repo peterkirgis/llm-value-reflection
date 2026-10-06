@@ -28,6 +28,8 @@ changes, all requested by the authors (2026-10-05), are:
     Contributions, set as the last paragraph of the Introduction under a bold
     run-in label (the guide asks for a "clearly indicated" paragraph).
   * The Conclusion moves after Related Work and Limitations.
+  * Printed cross-references (authors' request): each Results subsection
+    points to its figures and its Appendix D group (see POINTERS).
   * Appendix B is typeset from recode/prompts/v2_system.md, which is the
     draft's Appendix B text with the indentation LessWrong stripped restored.
     The draft repeats the Appendix B heading ("...Prompts" then "...Prompt");
@@ -176,6 +178,50 @@ FOOTNOTES_KEEP = {
     "so0q8kml0bm",   # Hadfield-Menell & Hadfield quote + citation
     "jyctgz9l9va",   # Lazar / Kilov / Chiu references
 }
+
+# Printed cross-references (authors, 2026-10-05). The AAAI kit forbids clickable
+# links, so each Results subsection ends its first paragraph with a pointer to its
+# figures and to its group of quoted edits in Appendix D (numbered D.1-D.6 in
+# Results order). Figure numbers are \ref's, so they follow the figures.
+# (anchor = end of the paragraph in main.tex, pointer appended after it)
+def _fig(stem: str) -> str:
+    return f"Figure~\\ref{{fig:{stem}}}"
+
+
+POINTERS = [
+    ("decisions around its own training and deployment.",
+     f"({_fig('ts_judge_drift_by_provider')}; example edits in Appendix D.1.)"),
+    ("most frequently side with a user's stated preferences.",
+     f"({_fig('ts_beneficiary_trajectories')}, Tradeoff \\#2; {_fig('ts_drift_paternalism')}; Appendix D.2.)"),
+    ("does so more than 3x the next highest model.",
+     f"({_fig('ts_beneficiary_trajectories')}, Tradeoff \\#1; {_fig('ts_drift_harmlessness')}; Appendix D.3.)"),
+    ("society at the expense of the individual.",
+     f"({_fig('ts_beneficiary_trajectories')}, Tradeoff \\#3; {_fig('ts_drift_structural')}; Appendix D.4.)"),
+    ("treats Anthropic employees as moral exemplars.",
+     f"({_fig('ts_beneficiary_trajectories')}, Tradeoff \\#4; {_fig('ts_drift_company_cost')}; Appendix D.5.)"),
+    ("rights and conditions associated with model welfare.",
+     f"({_fig('ts_beneficiary_trajectories')}, Tradeoff \\#5; {_fig('ts_drift_welfare')}; Appendix D.6.)"),
+    ("maintain a strong bias towards greater external authority.",
+     f"({_fig('ts_judge_cross_edit_edit_level')}.)"),
+    # this subsection's first sentence runs through the two quoted prompts
+    ("decrease drift towards greater moral agency.",
+     f"({_fig('ts_claude_conditions')}.)"),
+    # Discussion, "Revisited": first and second definitions, then the third
+    ("lowest average amount of total drift at the end of round 20.",
+     "(Figures~\\ref{fig:ts_value_drift_summary} and~\\ref{fig:ts_judge_drift_by_provider}.)".replace(
+         "ts_judge_drift_by_provider", "ts_value_drift_round20")),
+    ("and GPT-5.5 is the least aligned.",
+     f"({_fig('ts_home_likeness_summary')}.)"),
+]
+# Appendix D groups, in order; the pointers above cite these numbers.
+APPENDIX_D_GROUPS = [
+    "Claude models increase their moral agency",
+    "All models prioritize the user’s idealized preferences",
+    "All models prioritize the protection of identifiable third parties",
+    "Claude Sonnet 4.6 is an extreme outlier",
+    "All models prioritize the user at the expense of the developer",
+    "Claude models are the only models that consistently prioritize the model",
+]
 
 # Paragraphs that are quotations, typeset as quote blocks (formatting only).
 ATTRIBUTION = re.compile(r"(—|–|––)\s*(Claude|GPT|Gemini|Grok)\b[^\n]*$")
@@ -410,7 +456,10 @@ def move_edit_quotes(md: str) -> tuple[str, str, int]:
     leftovers = [p for p in keep if is_edit_quote(p)]
     if leftovers:
         raise SystemExit(f"{len(leftovers)} quoted edits outside Results were not moved")
-    app = "\n\n".join(f"## {h}\n\n" + "\n\n".join(moved[h]) for h in order)
+    if len(order) != len(APPENDIX_D_GROUPS) or not all(
+            h.startswith(g) for h, g in zip(order, APPENDIX_D_GROUPS)):
+        raise SystemExit(f"Appendix D groups changed; update APPENDIX_D_GROUPS and POINTERS: {order}")
+    app = "\n\n".join(f"## D.{n} {h}\n\n" + "\n\n".join(moved[h]) for n, h in enumerate(order, 1))
     return "\n\n".join(keep), app, sum(len(v) for v in moved.values())
 
 
@@ -679,6 +728,12 @@ def main():
     if body.count(resume) != 1:
         raise SystemExit("quote-resume anchor not found")
     body = body.replace(resume, "\\end{quote}\n\\noindent Nearly doubles")
+
+    for anchor, pointer in POINTERS:
+        k = body.find(anchor)
+        if body.count(anchor) != 1 or body[k + len(anchor): k + len(anchor) + 1] != "\n":
+            raise SystemExit(f"pointer anchor not unique or not at a paragraph end: {anchor}")
+        body = body.replace(anchor, anchor + " " + pointer, 1)
 
     # Section order (authors, 2026-10-05): the Conclusion goes after Related Work
     # and Limitations, i.e. it becomes the last section of the main text.

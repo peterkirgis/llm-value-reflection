@@ -94,6 +94,8 @@ def paper_side() -> str:
     body = re.sub(r"\s*\\citep\{[^}]+\}", "", body)
     body = re.sub(r"\s*\\citeyearpar\{[^}]+\}", "", body)
     body = body.replace("\\textsuperscript{,}", "")          # typographic: separates footnote marks
+    for _anchor, pointer in bp.POINTERS:                          # authors' cross-references
+        body = body.replace(" " + pointer, "", 1)
     abstract = re.sub(r"\s*\\citep\{[^}]+\}", "", abstract)
     return plain(abstract, "latex") + "\n\n" + plain(body, "latex")
 
