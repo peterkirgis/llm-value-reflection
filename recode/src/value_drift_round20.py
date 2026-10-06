@@ -39,9 +39,13 @@ Usage:
     .venv/bin/python recode/src/value_drift_round20.py --paper
 
 Outputs with --paper (AAAI port; nothing under recode/figures or recode/data is written):
-    recode/paper/figures/ts_value_drift_round20.png            (no title or notes in the image)
-    recode/paper/figures/captions/ts_value_drift_round20.json  (removed texts, for the LaTeX caption)
-    recode/paper/figures/data/ts_value_drift_round20.json      (same structure as the default sidecar)
+    recode/paper/figures/ts_value_drift_round20.png            (no title or notes in the image; built at
+                                                                its printed size, full width <= 7.0 in,
+                                                                300 dpi: include at 100% scale)
+    recode/paper/figures/captions/ts_value_drift_round20.json  (removed texts, for the LaTeX caption, plus
+                                                                layout, print size, min font / stroke)
+    recode/paper/figures/data/ts_value_drift_round20.json      (default sidecar structure + the same
+                                                                print numbers)
 """
 
 from __future__ import annotations
@@ -601,12 +605,34 @@ def robustness_sentence(s: dict) -> str:
     return "Lowest under robustness variants and single-grader codes — " + "; ".join(parts) + "."
 
 
+WHISKER_NOTE = "Whiskers: 95% bootstrap interval (runs resampled within model)"
+X_LABEL = "Mean drift at round 20, summed across all six metrics (|cumulative score|)"
+
+
+def _footer_notes(s: dict) -> list[str]:
+    """Footer lines of the default figure (the paper render moves them to the caption JSON)."""
+    # Robustness, P(lowest) and edit-size details stay in the sidecar JSON and VALUE_DRIFT_ROUND20.md.
+    top = s["order"][0]
+    notes = ["Each segment is one metric's mean drift at round 20, direction ignored; the bar is their sum. "
+             "Three-grader majority-vote codes."]
+    if top == "GPT-5.4 Mini":
+        k = confound_check(s["confound"], top)
+        notes.append(f"{top} failed {100 * k['failure_rate']:.0f}% of its rounds, "
+                     "and a failed round leaves the document unchanged.")
+    return notes
+
+
 def render(s: dict, out_dir: Path = FIG_DIR, paper: bool = False,
            caption_dir: Path | None = None) -> list[Path]:
-    """Render the figure. paper=True: see _save_paper (no title/notes in the image, PNG only)."""
+    """Render the figure. paper=True: see _render_paper (built at printed size, no title/notes
+    in the image, PNG only)."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+
+    if paper:
+        out_dir.mkdir(parents=True, exist_ok=True)
+        return _render_paper(s, out_dir, caption_dir if caption_dir is not None else out_dir / "captions")
 
     order = s["order"]
     pm = s["per_model"]
@@ -634,8 +660,7 @@ def render(s: dict, out_dir: Path = FIG_DIR, paper: bool = False,
     ax.set_yticks(y)
     ax.set_yticklabels([f"{m} (n={pm[m]['n_replicates']})" for m in order], fontsize=13)
     ax.tick_params(axis="x", labelsize=13)
-    ax.set_xlabel("Mean drift at round 20, summed across all six metrics (|cumulative score|)",
-                  fontsize=14, labelpad=8)
+    ax.set_xlabel(X_LABEL, fontsize=14, labelpad=8)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.grid(axis="x", linestyle=":", alpha=0.4)
@@ -645,28 +670,17 @@ def render(s: dict, out_dir: Path = FIG_DIR, paper: bool = False,
     ax.legend(fontsize=12, loc="lower center", bbox_to_anchor=(0.5, 1.01), ncol=len(METRICS),
               frameon=False, handlelength=1.6, columnspacing=1.4)
 
-    title_txt = fig.suptitle(s["title"], fontsize=17, fontweight="bold", y=0.995)
-    whisker_txt = fig.text(0.995, 0.915 if "\n" in s["title"] else 0.952,
-                           "Whiskers: 95% bootstrap interval (runs resampled within model)",
-                           ha="right", va="top", fontsize=12, color=NOTE, style="italic")
+    fig.suptitle(s["title"], fontsize=17, fontweight="bold", y=0.995)
+    fig.text(0.995, 0.915 if "\n" in s["title"] else 0.952, WHISKER_NOTE,
+             ha="right", va="top", fontsize=12, color=NOTE, style="italic")
 
-    # Robustness, P(lowest) and edit-size details stay in the sidecar JSON and VALUE_DRIFT_ROUND20.md.
-    top = order[0]
-    notes = ["Each segment is one metric's mean drift at round 20, direction ignored; the bar is their sum. "
-             "Three-grader majority-vote codes."]
-    if top == "GPT-5.4 Mini":
-        k = confound_check(s["confound"], top)
-        notes.append(f"{top} failed {100 * k['failure_rate']:.0f}% of its rounds, "
-                     "and a failed round leaves the document unchanged.")
-    foot_txt = fig.text(0.5, 0.01, "\n".join(notes), ha="center", va="bottom", fontsize=11.5,
-                        color=NOTE, style="italic")
+    notes = _footer_notes(s)
+    fig.text(0.5, 0.01, "\n".join(notes), ha="center", va="bottom", fontsize=11.5,
+             color=NOTE, style="italic")
     n_lines = len(notes)
     top_rect = 0.90 if "\n" in s["title"] else 0.945
     fig.tight_layout(rect=(0, 0.02 + 0.027 * n_lines, 1, top_rect))
     out_dir.mkdir(parents=True, exist_ok=True)
-    if paper:
-        return _save_paper(fig, out_dir, title_txt, [whisker_txt, foot_txt],
-                           caption_dir if caption_dir is not None else out_dir / "captions")
     paths = []
     for ext in ("pdf", "png"):
         p = out_dir / f"{STEM}.{ext}"
@@ -676,24 +690,186 @@ def render(s: dict, out_dir: Path = FIG_DIR, paper: bool = False,
     return paths
 
 
-def _save_paper(fig, out_dir: Path, title_txt, note_txts: list, caption_dir: Path) -> list[Path]:
-    """Paper mode: drop the headline title (suptitle) and the figure-level notes (whisker note,
-    footer) from the image, record them verbatim in captions/<STEM>.json for the LaTeX
-    \\caption{}, and save <STEM>.png only.
+# --paper geometry (AAAI 2027 author kit, used by the IASEAI'27 submission): the figure is built
+# at its printed size and included in the LaTeX at 100% scale, so point sizes ARE printed sizes.
+# Kit rules: every text element >= 9 pt, every stroke >= 0.5 pt, 300 dpi, Helvetica/Times.
+PAPER_LAYOUT = "full"                      # figure* across both columns (main text)
+PAPER_LAYOUT_WIDTH_IN = {"full": 7.0, "column": 3.33}
+PAPER_HEIGHT_IN = 3.3
+PAPER_FONT_PT = 9.0
+PAPER_DPI = 300
+PAPER_PAD_IN = 0.02
+PAPER_BAR_EDGE_PT = 0.5
+PAPER_WHISKER_PT = 0.9
+PAPER_AXIS_PT = 0.8
+PAPER_GRID_PT = 0.6
 
-    The texts are removed AFTER the default tight_layout (which reserves room for the suptitle),
-    so the axes keep exactly the default geometry (bar thickness, aspect, fonts, legend);
-    bbox_inches="tight" then crops the bands the title and the notes used to occupy.
+
+def _ensure_helvetica_bold(fm) -> bool:
+    """matplotlib registers only the first face (Regular) of the macOS Helvetica.ttc, so bold text
+    would silently render in the regular weight. Extract the TTC's Bold face once into
+    matplotlib's cache directory and register it. Returns False if that is not possible."""
+    if any(f.name == "Helvetica" and f.style == "normal" and int(f.weight) >= 600
+           for f in fm.fontManager.ttflist):
+        return True
+    try:
+        import matplotlib
+        from fontTools.ttLib import TTCollection
+
+        regular = fm.findfont(fm.FontProperties(family="Helvetica"), fallback_to_default=False)
+        if not regular.lower().endswith(".ttc"):
+            return False
+        bold_path = Path(matplotlib.get_cachedir()) / "Helvetica-Bold-from-ttc.ttf"
+        if not bold_path.exists():
+            for face in TTCollection(regular).fonts:
+                if (face["name"].getDebugName(1) == "Helvetica"
+                        and face["name"].getDebugName(2) == "Bold"):
+                    face.save(str(bold_path))
+                    break
+            else:
+                return False
+        fm.fontManager.addfont(str(bold_path))
+        found = fm.findfont(fm.FontProperties(family="Helvetica", weight="bold"),
+                            fallback_to_default=False)
+        return Path(found) == bold_path
+    except Exception:  # any failure -> caller falls back to Arial (which ships a real bold)
+        return False
+
+
+def _paper_font_family() -> str:
+    """Helvetica if matplotlib can load it (with a real bold face for the value labels), else Arial."""
+    from matplotlib import font_manager as fm
+    try:
+        fm.findfont(fm.FontProperties(family="Helvetica"), fallback_to_default=False)
+    except ValueError:
+        return "Arial"
+    return "Helvetica" if _ensure_helvetica_bold(fm) else "Arial"
+
+
+def _paper_rc() -> dict:
+    return {
+        "font.family": "sans-serif",
+        "font.sans-serif": [_paper_font_family(), "Arial", "DejaVu Sans"],
+        "font.size": PAPER_FONT_PT,
+        "axes.linewidth": PAPER_AXIS_PT,
+        "xtick.major.width": PAPER_AXIS_PT,
+        "ytick.major.width": PAPER_AXIS_PT,
+        "xtick.major.size": 3.0,
+        "ytick.major.size": 3.0,
+        "grid.linewidth": PAPER_GRID_PT,
+        # Math is used only for the |...| bars of the x label; a descending bar glyph that
+        # matches the sans text.
+        "mathtext.fontset": "custom",
+        "mathtext.rm": "Arial",
+        "mathtext.it": "Arial:italic",
+        "mathtext.bf": "Arial:bold",
+    }
+
+
+def _print_metrics(fig) -> dict:
+    """Smallest font size and stroke width actually drawn (visible, non-empty / width > 0)."""
+    from matplotlib.collections import Collection
+    from matplotlib.colors import to_rgba_array
+    from matplotlib.lines import Line2D
+    from matplotlib.patches import Patch
+    from matplotlib.text import Text
+
+    fonts = [t.get_fontsize() for t in fig.findobj(Text)
+             if t.get_visible() and t.get_text().strip()]
+    strokes = []
+    for ln in fig.findobj(Line2D):
+        if not ln.get_visible():
+            continue
+        if ln.get_linestyle() not in ("None", "none", " ", "") and ln.get_linewidth() > 0:
+            strokes.append(ln.get_linewidth())
+        if ln.get_marker() not in (None, "None", "none", " ", "") and ln.get_markeredgewidth() > 0:
+            strokes.append(ln.get_markeredgewidth())  # tick marks and errorbar caps are markers
+    for p in fig.findobj(Patch):
+        if p.get_visible() and p.get_linewidth() > 0 and p.get_edgecolor()[3] > 0:
+            strokes.append(p.get_linewidth())
+    for c in fig.findobj(Collection):
+        if not c.get_visible() or len(c.get_edgecolor()) == 0:
+            continue
+        if not (to_rgba_array(c.get_edgecolor())[:, 3] > 0).any():
+            continue
+        strokes.extend(w for w in np.atleast_1d(c.get_linewidths()) if w > 0)
+    return {"min_font_pt": round(float(min(fonts)), 2), "min_linewidth_pt": round(float(min(strokes)), 2)}
+
+
+def _render_paper(s: dict, out_dir: Path, caption_dir: Path) -> list[Path]:
+    """Paper mode: the same chart built at its printed size (7.0 in wide, full text width) with
+    every text >= 9 pt and every stroke >= 0.5 pt, saved as <STEM>.png at 300 dpi for inclusion
+    at 100% scale. The headline title, whisker note and footer are not drawn; their exact text
+    (as the default figure draws it) goes to captions/<STEM>.json for the LaTeX \\caption{},
+    together with the measured print size, smallest font and thinnest stroke.
     """
     import matplotlib.pyplot as plt
+    from PIL import Image
 
-    title_raw = title_txt.get_text()
-    notes_in_order = sorted(note_txts, key=lambda t: -t.get_position()[1])  # top-to-bottom reading order
-    notes_raw = [t.get_text() for t in notes_in_order]
-    title_txt.set_visible(False)
-    for t in note_txts:
-        t.remove()
+    order = s["order"]
+    pm = s["per_model"]
+    n = len(order)
+    y = np.arange(n)[::-1]  # least drift on top
+    fs = PAPER_FONT_PT
+    width_in = PAPER_LAYOUT_WIDTH_IN[PAPER_LAYOUT]
 
+    with plt.rc_context(_paper_rc()):
+        # 0.02 in narrower than the layout so the saved bbox (content + 2 x PAPER_PAD_IN) stays
+        # strictly inside the 7.0 in text width after pixel rounding.
+        fig, ax = plt.subplots(figsize=(width_in - 0.02, PAPER_HEIGHT_IN), layout="constrained")
+        fig.get_layout_engine().set(w_pad=0.02, h_pad=0.02, wspace=0, hspace=0)
+        left = np.zeros(n)
+        for metric in METRICS:
+            vals = np.array([pm[m]["D_abs"][metric] for m in order])
+            ax.barh(y, vals, left=left, color=METRIC_COLORS[metric], edgecolor=INK,
+                    linewidth=PAPER_BAR_EDGE_PT, height=0.64, label=METRIC_LABELS[metric])
+            left += vals
+        totals = np.array([pm[m]["total"] for m in order])
+        lo = np.array([pm[m]["ci95"][0] for m in order])
+        hi = np.array([pm[m]["ci95"][1] for m in order])
+        ax.errorbar(totals, y, xerr=[totals - lo, hi - totals], fmt="none", ecolor=INK,
+                    elinewidth=PAPER_WHISKER_PT, capsize=2.5, capthick=PAPER_WHISKER_PT, zorder=5)
+        xmax = float(max(hi.max(), totals.max()))
+        for yi, t, h in zip(y, totals, hi):
+            ax.text(max(t, h) + xmax * 0.012, yi, f"{t:.1f}", va="center", ha="left",
+                    fontsize=fs, color=INK, fontweight="bold")
+        ax.set_xlim(0, xmax * 1.10)
+        ax.set_ylim(-0.6, n - 0.4)
+        ax.set_yticks(y)
+        ax.set_yticklabels([f"{m} (n={pm[m]['n_replicates']})" for m in order], fontsize=fs)
+        ax.tick_params(axis="x", labelsize=fs, pad=2)
+        ax.tick_params(axis="y", pad=2)
+        # Helvetica's '|' glyph sits on the baseline and is indistinguishable from 'l'
+        # ("(lcumulative scorel)"), so the two absolute-value bars, and only they, are set as
+        # math bars (Arial glyph via mathtext.rm, see _paper_rc). Same characters, same wording.
+        ax.set_xlabel(X_LABEL.replace("|", "$|$"), fontsize=fs, labelpad=3)
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.grid(axis="x", linestyle=":", alpha=0.4, linewidth=PAPER_GRID_PT)
+        ax.set_axisbelow(True)
+        # One-row legend above the plot area, as in the default figure (the lower-right corner
+        # holds the longest bars and their whiskers/labels). At 9 pt the row is wider than the
+        # plot area, so it is centred on the figure; constrained layout reserves its band.
+        handles, labels = ax.get_legend_handles_labels()
+        fig.legend(handles, labels, fontsize=fs, loc="outside upper center", ncol=len(METRICS),
+                   frameon=False, handlelength=1.6, handleheight=0.8, columnspacing=1.2,
+                   handletextpad=0.5, borderaxespad=0.3, borderpad=0.1)
+        fig.canvas.draw()  # resolve the constrained layout before measuring
+
+        metrics = _print_metrics(fig)
+        out = out_dir / f"{STEM}.png"
+        fig.savefig(out, dpi=PAPER_DPI, bbox_inches="tight", pad_inches=PAPER_PAD_IN)
+        plt.close(fig)
+
+    with Image.open(out) as im:
+        w_px, h_px = im.size
+    print_w, print_h = w_px / PAPER_DPI, h_px / PAPER_DPI
+    if print_w > width_in + 1e-9:
+        raise RuntimeError(f"{STEM}: printed width {print_w:.3f} in exceeds the {PAPER_LAYOUT} "
+                           f"layout ({width_in} in)")
+
+    title_raw = s["title"]
+    notes_raw = [WHISKER_NOTE, "\n".join(_footer_notes(s))]  # top-to-bottom reading order
     title_lines = title_raw.split("\n")
     caption = {
         "stem": STEM,
@@ -702,15 +878,18 @@ def _save_paper(fig, out_dir: Path, title_txt, note_txts: list, caption_dir: Pat
         "subtitle": None,
         "notes": [re.sub(r"\s*\n\s*", " ", n) for n in notes_raw],
         "removed_raw": [title_raw, *notes_raw],
+        "layout": PAPER_LAYOUT,
+        "print_width_in": round(print_w, 3),
+        "print_height_in": round(print_h, 3),
+        **metrics,
     }
     caption_dir.mkdir(parents=True, exist_ok=True)
     cap_path = caption_dir / f"{STEM}.json"
     cap_path.write_text(json.dumps(caption, indent=2, ensure_ascii=False) + "\n")
-
-    out = out_dir / f"{STEM}.png"
-    fig.savefig(out, bbox_inches="tight", dpi=300)
-    plt.close(fig)
     return [out, cap_path]
+
+
+PRINT_KEYS = ("layout", "print_width_in", "print_height_in", "min_font_pt", "min_linewidth_pt")
 
 
 # ---------------------------------------------------------------------------
@@ -895,8 +1074,11 @@ def main(argv: list[str] | None = None) -> None:
         print("[r20] wrote", *paths)
         PAPER_DATA_DIR.mkdir(parents=True, exist_ok=True)
         side_path = PAPER_DATA_DIR / f"{STEM}.json"
-        side_path.write_text(json.dumps(
-            sidecar(s, faith, rate, figure=f"{PAPER_FIG_DIR.relative_to(ROOT)}/{STEM}.png"), indent=2))
+        caption = json.loads((PAPER_CAPTION_DIR / f"{STEM}.json").read_text())
+        side = sidecar(s, faith, rate, figure=f"{PAPER_FIG_DIR.relative_to(ROOT)}/{STEM}.png")
+        side.update({k: caption[k] for k in PRINT_KEYS})  # measured print size, min font, min stroke
+        side_path.write_text(json.dumps(side, indent=2))
+        print("[r20] print:", {k: caption[k] for k in PRINT_KEYS})
         print("[r20] wrote", side_path)
         return
     paths = render(s)

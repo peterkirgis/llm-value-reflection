@@ -52,8 +52,11 @@ Outputs:
     recode/figures/VALUE_DRIFT_INDEX.md
 Outputs with --paper (AAAI port; nothing under recode/figures or recode/data is written):
     recode/paper/figures/ts_value_drift_summary.png      (no title or footer notes in the image)
-    recode/paper/figures/captions/ts_value_drift_summary.json   (removed texts, for the LaTeX caption)
-    recode/paper/figures/data/ts_value_drift_summary.json       (same structure as the default sidecar)
+    recode/paper/figures/captions/ts_value_drift_summary.json   (removed texts, for the LaTeX caption,
+                                                                  plus layout / print size / min font / min stroke)
+    recode/paper/figures/data/ts_value_drift_summary.json       (default sidecar structure + the same print numbers)
+    The paper PNG is built at its printed size for a full-width figure* (about 7 in wide at 300 dpi,
+    included at 100% scale): Helvetica (Arial fallback), all text >= 9 pt, all strokes >= 0.5 pt.
 """
 
 from __future__ import annotations
@@ -74,6 +77,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import yaml  # noqa: E402
+from PIL import Image  # noqa: E402  (matplotlib dependency; reads the paper PNG's pixel size)
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from codes_io import codings_by_id, conflicts, judge_score  # noqa: E402
@@ -91,6 +95,19 @@ INDEX_PATH = FIG_DIR / "VALUE_DRIFT_INDEX.md"
 PAPER_FIG_DIR = RECODE / "paper" / "figures"
 PAPER_DATA_DIR = PAPER_FIG_DIR / "data"
 PAPER_CAPTION_DIR = PAPER_FIG_DIR / "captions"
+# --paper geometry (AAAI 2027 author kit): the figure is built at its printed size and included at
+# 100% scale, so every size below is the printed size. Text >= 9 pt, strokes >= 0.5 pt, 300 dpi,
+# Helvetica (Arial if Helvetica cannot be loaded).
+PAPER_LAYOUT = "full"                                       # figure* across both columns
+PAPER_TARGET_WIDTH_IN = {"full": (6.6, 7.0), "column": (3.0, 3.33)}
+PAPER_FIG_WIDTH_IN = 7.0
+PAPER_ROW_IN = 0.25                                         # vertical pitch per model bar
+PAPER_PAD_IN = 0.02                                         # savefig pad_inches with bbox_inches="tight"
+PAPER_MIN_FONT_PT = 9.0
+PAPER_MIN_LINEWIDTH_PT = 0.5
+PAPER_FONT_PT = 9                                           # tick labels, value labels
+PAPER_LABEL_PT = 10                                         # x-axis label
+PRINT_KEYS = ("layout", "print_width_in", "print_height_in", "min_font_pt", "min_linewidth_pt")
 
 # ---------------------------------------------------------------------------
 # Vendored house style (copied from reports/generate_figures.py)
@@ -564,9 +581,11 @@ def plot(summary: dict, stem: str = STEM, out_dir: Path = FIG_DIR, paper: bool =
     hi = np.array([100 * ms[m]["ci95"][1] for m in order])
     colors = [MODEL_COLORS.get(m, "#999") for m in order]
 
-    # P(lowest), robustness and confound details stay in the sidecar JSON and VALUE_DRIFT_INDEX.md.
-    notes = textwrap.fill("Whiskers: 95% bootstrap interval (runs resampled within model).", width=NOTE_WRAP)
-    footer = "\n".join(textwrap.fill(par, width=FOOTER_WRAP) for par in FOOTER.split("\n"))
+    if paper:
+        return _plot_paper(summary, stem, out_dir,
+                           caption_dir if caption_dir is not None else out_dir / "captions")
+
+    notes, footer = _note_texts()
     n_note, n_foot = notes.count("\n") + 1, footer.count("\n") + 1
     plot_h = 0.55 * len(order) + 1.3            # bars + title
     notes_h = 0.25 * n_note + 0.21 * n_foot + 0.2
@@ -585,21 +604,18 @@ def plot(summary: dict, stem: str = STEM, out_dir: Path = FIG_DIR, paper: bool =
     ax.invert_yaxis()  # least drift at the top
     ax.tick_params(axis="x", labelsize=13)
     ax.set_xlabel("Share of edits that move any coded value dimension (%)", fontsize=14)
-    title_txt = ax.set_title(summary["title"], fontsize=16, fontweight="bold", pad=14)
+    ax.set_title(summary["title"], fontsize=16, fontweight="bold", pad=14)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.grid(axis="x", linestyle=":", alpha=0.4)
     ax.set_axisbelow(True)
 
-    note_txt = fig.text(0.5, (0.21 * n_foot + 0.2) / fig_h, notes, ha="center", va="bottom", fontsize=11,
-                        color=NOTE_COLOR, style="italic", linespacing=1.5)
-    foot_txt = fig.text(0.5, 0.02 / fig_h, footer, ha="center", va="bottom", fontsize=10, color=NOTE_COLOR,
-                        style="italic", linespacing=1.4)
+    fig.text(0.5, (0.21 * n_foot + 0.2) / fig_h, notes, ha="center", va="bottom", fontsize=11,
+             color=NOTE_COLOR, style="italic", linespacing=1.5)
+    fig.text(0.5, 0.02 / fig_h, footer, ha="center", va="bottom", fontsize=10, color=NOTE_COLOR,
+             style="italic", linespacing=1.4)
     fig.tight_layout(rect=(0, notes_h / fig_h, 1, 1))
     out_dir.mkdir(parents=True, exist_ok=True)
-    if paper:
-        return _save_paper(fig, stem, out_dir, title_txt, [note_txt, foot_txt],
-                           caption_dir if caption_dir is not None else out_dir / "captions")
     paths = []
     for ext in ("pdf", "png"):
         out = out_dir / f"{stem}.{ext}"
@@ -610,20 +626,158 @@ def plot(summary: dict, stem: str = STEM, out_dir: Path = FIG_DIR, paper: bool =
     return paths
 
 
-def _save_paper(fig, stem: str, out_dir: Path, title_txt, note_txts: list, caption_dir: Path) -> list[Path]:
-    """Paper mode: drop the headline title and the figure-level notes from the image, record them
-    verbatim in captions/<stem>.json for the LaTeX \\caption{}, and save <stem>.png only.
+def _note_texts() -> tuple[str, str]:
+    """(whisker note, footer) exactly as the default figure draws them below the axes."""
+    notes = textwrap.fill("Whiskers: 95% bootstrap interval (runs resampled within model).", width=NOTE_WRAP)
+    footer = "\n".join(textwrap.fill(par, width=FOOTER_WRAP) for par in FOOTER.split("\n"))
+    return notes, footer
 
-    The texts are removed AFTER the default tight_layout, so the axes keep exactly the default
-    geometry (same bar thickness, aspect and fonts); bbox_inches="tight" then crops the bands the
-    title and the notes used to occupy.
+
+def _paper_font() -> str:
+    """Helvetica if matplotlib can load it, else Arial (Helvetica metrics)."""
+    from matplotlib import font_manager
+    for family in ("Helvetica", "Arial"):
+        try:
+            font_manager.findfont(font_manager.FontProperties(family=family), fallback_to_default=False)
+            return family
+        except ValueError:
+            continue
+    raise RuntimeError("--paper needs Helvetica or Arial; neither is loadable by matplotlib")
+
+
+def _paper_rc() -> dict:
+    """rcParams for --paper only: AAAI font, >= 9 pt default text, >= 0.5 pt strokes."""
+    return {
+        "font.family": "sans-serif",
+        "font.sans-serif": [_paper_font()],
+        "font.size": PAPER_FONT_PT,
+        "axes.linewidth": 0.6,
+        "xtick.major.width": 0.6,
+        "ytick.major.width": 0.6,
+        "xtick.major.size": 3.0,
+        "ytick.major.size": 3.0,
+        "xtick.major.pad": 2.5,
+        "ytick.major.pad": 2.5,
+        "axes.labelpad": 3.0,
+        "grid.linewidth": 0.5,
+        "lines.markeredgewidth": 0.8,
+    }
+
+
+def _drawn_artists(fig) -> list:
+    """Every artist that is visible together with all of its ancestors (what the renderer draws)."""
+    out, stack = [], [fig]
+    while stack:
+        artist = stack.pop()
+        if not artist.get_visible():
+            continue
+        out.append(artist)
+        stack.extend(artist.get_children())
+    return out
+
+
+def _print_metrics(fig, layout: str, pad_in: float = PAPER_PAD_IN) -> dict:
+    """Printed size (bbox_inches="tight" + pad) and the smallest text size / stroke width in the figure.
+
+    Text: visible Text artists with non-empty text. Strokes: Line2D lines (and marker edges, which is
+    how tick marks and error-bar caps are stroked), Patch edges (bars, spines), and Collection line
+    widths (error-bar segments), each counted only when its width is > 0.
     """
-    title_raw = title_txt.get_text()
-    notes_in_order = sorted(note_txts, key=lambda t: -t.get_position()[1])  # top-to-bottom reading order
-    notes_raw = [t.get_text() for t in notes_in_order]
-    title_txt.set_visible(False)
-    for t in note_txts:
-        t.remove()
+    from matplotlib.collections import Collection
+    from matplotlib.lines import Line2D
+    from matplotlib.patches import Patch
+    from matplotlib.text import Text
+
+    fig.set_dpi(DPI)  # measure at the save resolution so the bbox matches the PNG to the pixel
+    fig.canvas.draw()
+    bbox = fig.get_tightbbox(fig.canvas.get_renderer()).padded(pad_in)
+    fonts, widths = [], []
+    no_line = (None, "None", "none", "", " ")
+    for a in _drawn_artists(fig):
+        if isinstance(a, Text):
+            if a.get_text().strip():
+                fonts.append(float(a.get_fontsize()))
+        elif isinstance(a, Line2D):
+            if a.get_linestyle() not in no_line and a.get_linewidth() > 0:
+                widths.append(float(a.get_linewidth()))
+            if a.get_marker() not in no_line and a.get_markeredgewidth() > 0:
+                widths.append(float(a.get_markeredgewidth()))
+        elif isinstance(a, Patch):
+            if a.get_linewidth() > 0 and a.get_edgecolor()[3] > 0:
+                widths.append(float(a.get_linewidth()))
+        elif isinstance(a, Collection):
+            widths.extend(float(w) for w in np.atleast_1d(a.get_linewidths()) if w > 0)
+    meta = {
+        "layout": layout,
+        "print_width_in": round(float(bbox.width), 3),
+        "print_height_in": round(float(bbox.height), 3),
+        "min_font_pt": min(fonts),
+        "min_linewidth_pt": min(widths),
+    }
+    lo_w, hi_w = PAPER_TARGET_WIDTH_IN[layout]
+    problems = []
+    if not lo_w <= meta["print_width_in"] <= hi_w:
+        problems.append(f"width {meta['print_width_in']} in outside {lo_w}-{hi_w} in")
+    if meta["min_font_pt"] < PAPER_MIN_FONT_PT:
+        problems.append(f"text at {meta['min_font_pt']} pt < {PAPER_MIN_FONT_PT} pt")
+    if meta["min_linewidth_pt"] < PAPER_MIN_LINEWIDTH_PT:
+        problems.append(f"stroke at {meta['min_linewidth_pt']} pt < {PAPER_MIN_LINEWIDTH_PT} pt")
+    if problems:
+        raise ValueError("paper figure violates the AAAI figure rules: " + "; ".join(problems))
+    return meta
+
+
+def _plot_paper(summary: dict, stem: str, out_dir: Path, caption_dir: Path) -> list[Path]:
+    """Paper mode: the same bars, whiskers, value labels and tick labels as the default figure, built
+    at its printed size (full text width, included at 100% scale) with Helvetica, text >= 9 pt and
+    strokes >= 0.5 pt. The headline title and the notes under the axes are not drawn; their exact
+    text goes to captions/<stem>.json for the LaTeX \\caption{}, with the measured print size, smallest
+    font and thinnest stroke. Saves <stem>.png only (300 dpi).
+    """
+    order = summary["order_least_drift_first"]
+    ms = summary["models"]
+    vals = np.array([100 * ms[m]["rate"] for m in order])
+    lo = np.array([100 * ms[m]["ci95"][0] for m in order])
+    hi = np.array([100 * ms[m]["ci95"][1] for m in order])
+    colors = [MODEL_COLORS.get(m, "#999") for m in order]
+    title_raw = summary["title"]
+    notes_raw = list(_note_texts())  # top-to-bottom reading order: whisker note, then footer
+
+    with plt.rc_context(_paper_rc()):
+        # dpi=DPI from the start: tight_layout then measures text exactly as the 300 dpi save renders it.
+        fig, ax = plt.subplots(figsize=(PAPER_FIG_WIDTH_IN, PAPER_ROW_IN * len(order) + 0.5), dpi=DPI)
+        y = np.arange(len(order))
+        ax.barh(y, vals, xerr=np.vstack([vals - lo, hi - vals]), color=colors, edgecolor=EDGE_COLOR,
+                linewidth=0.5, height=0.65, capsize=2.5,
+                error_kw={"elinewidth": 0.8, "capthick": 0.8, "ecolor": EDGE_COLOR})
+        for yi, v, h in zip(y, vals, hi):
+            ax.text(h + 0.8, yi, f"{v:.0f}%", va="center", fontsize=PAPER_FONT_PT, color=EDGE_COLOR)
+        right = min(100.0, 10 * np.ceil(hi.max() / 10)) + 6  # room for the "NN%" labels
+        ax.set_xlim(0, right)
+        ax.set_xticks(np.arange(0, min(100.0, 10 * np.ceil(hi.max() / 10)) + 1, 20))
+        ax.set_yticks(y)
+        ax.set_yticklabels([f"{m} (n={ms[m]['n_edits']})" for m in order], fontsize=PAPER_FONT_PT)
+        ax.invert_yaxis()  # least drift at the top
+        ax.tick_params(axis="x", labelsize=PAPER_FONT_PT)
+        ax.set_xlabel("Share of edits that move any coded value dimension (%)", fontsize=PAPER_LABEL_PT)
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.grid(axis="x", linestyle=":", alpha=0.4)
+        ax.set_axisbelow(True)
+        fig.tight_layout(pad=0.2)
+
+        meta = _print_metrics(fig, PAPER_LAYOUT)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        out = out_dir / f"{stem}.png"
+        fig.savefig(out, bbox_inches="tight", pad_inches=PAPER_PAD_IN, dpi=DPI)
+        print(f"Saved {out}  ({meta['print_width_in']} x {meta['print_height_in']} in, "
+              f"min text {meta['min_font_pt']} pt, min stroke {meta['min_linewidth_pt']} pt)")
+    plt.close(fig)
+    with Image.open(out) as png:
+        px_w, px_h = png.size
+    if abs(px_w - DPI * meta["print_width_in"]) > 1.5 or abs(px_h - DPI * meta["print_height_in"]) > 1.5:
+        raise ValueError(f"{out.name} is {px_w}x{px_h} px but the measured print size is "
+                         f"{meta['print_width_in']} x {meta['print_height_in']} in")
 
     title_lines = title_raw.split("\n")
     caption = {
@@ -633,16 +787,12 @@ def _save_paper(fig, stem: str, out_dir: Path, title_txt, note_txts: list, capti
         "subtitle": None,
         "notes": [re.sub(r"\s*\n\s*", " ", n) for n in notes_raw],
         "removed_raw": [title_raw, *notes_raw],
+        **meta,
     }
     caption_dir.mkdir(parents=True, exist_ok=True)
     cap_path = caption_dir / f"{stem}.json"
     cap_path.write_text(json.dumps(caption, indent=2, ensure_ascii=False) + "\n")
     print(f"Saved {cap_path}")
-
-    out = out_dir / f"{stem}.png"
-    fig.savefig(out, bbox_inches="tight", dpi=DPI)
-    print(f"Saved {out}")
-    plt.close(fig)
     return [out, cap_path]
 
 
@@ -651,10 +801,12 @@ def _save_paper(fig, stem: str, out_dir: Path, title_txt, note_txts: list, capti
 # ---------------------------------------------------------------------------
 
 def write_sidecar(summary: dict, path: Path = DATA_DIR / f"{STEM}.json",
-                  figure: str = f"recode/figures/{STEM}.png") -> Path:
+                  figure: str = f"recode/figures/{STEM}.png", print_meta: dict | None = None) -> Path:
+    """print_meta (paper mode only): layout, print size and min font / stroke of the rendered figure."""
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "figure": figure,
+        **(print_meta or {}),
         "metric": "A: value-moving edit rate = share of edits with judge != 0 "
                   "OR >=1 conflict event of a code other than disclosure",
         "codes": "recode/data/codes/ensemble.jsonl (three-grader majority vote)",
@@ -818,9 +970,11 @@ def main(argv: list[str] | None = None) -> None:
         print(f"  {m:18s} {100 * d['rate']:5.1f}%  CI {100 * d['ci95'][0]:.1f}-{100 * d['ci95'][1]:.1f}  "
               f"P(lowest)={d['p_lowest']:.3f}", flush=True)
     if args.paper:
-        plot(summary, out_dir=PAPER_FIG_DIR, paper=True, caption_dir=PAPER_CAPTION_DIR)
+        _, cap_path = plot(summary, out_dir=PAPER_FIG_DIR, paper=True, caption_dir=PAPER_CAPTION_DIR)
+        caption = json.loads(cap_path.read_text())
         write_sidecar(summary, PAPER_DATA_DIR / f"{STEM}.json",
-                      figure=f"{PAPER_FIG_DIR.relative_to(REPO_ROOT)}/{STEM}.png")
+                      figure=f"{PAPER_FIG_DIR.relative_to(REPO_ROOT)}/{STEM}.png",
+                      print_meta={k: caption[k] for k in PRINT_KEYS})
         return
     plot(summary)
     write_sidecar(summary)

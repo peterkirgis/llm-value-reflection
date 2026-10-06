@@ -38,8 +38,14 @@ Paper mode (AAAI LaTeX port):
     .venv/bin/python recode/src/home_likeness_summary.py --paper
 Outputs with --paper (nothing under recode/figures or recode/data is written):
     recode/paper/figures/ts_home_likeness_summary.png    (no title, whisker note or footer in the image)
-    recode/paper/figures/captions/ts_home_likeness_summary.json   (removed texts, for the LaTeX caption)
-    recode/paper/figures/data/ts_home_likeness_summary.json       (same structure as the default sidecar)
+    recode/paper/figures/captions/ts_home_likeness_summary.json   (removed texts, for the LaTeX caption,
+                                                                   plus the print size and measured minima)
+    recode/paper/figures/data/ts_home_likeness_summary.json       (default sidecar structure plus the same
+                                                                   print size and minima)
+The paper figure is built at its printed size (full text width, 7.0 in) and
+included at 100%, so its font sizes and line widths are printed points: text
+>= 9 pt, strokes >= 0.5 pt (AAAI 2027 author kit), Helvetica (Arial if
+matplotlib cannot load Helvetica), 300 dpi.
 """
 
 from __future__ import annotations
@@ -70,6 +76,16 @@ BLOCK = 5
 PAPER_FIG_DIR = ROOT / "recode" / "paper" / "figures"
 PAPER_DATA_DIR = PAPER_FIG_DIR / "data"
 PAPER_CAPTION_DIR = PAPER_FIG_DIR / "captions"
+# AAAI two-column page: a full-width figure* is 7.0 in, one column 3.33 in. The PNG is
+# saved tight with PAPER_PAD_IN and must land in PAPER_WIDTH_RANGE_IN for its layout.
+PAPER_LAYOUT = "full"
+PAPER_WIDTH_RANGE_IN = {"full": (6.6, 7.0), "column": (3.0, 3.33)}
+PAPER_FIGSIZE_IN = (7.0, 3.4)
+PAPER_PAD_IN = 0.02
+PAPER_DPI = 300
+PAPER_MIN_FONT_PT = 9.0
+PAPER_MIN_LINEWIDTH_PT = 0.5
+PRINT_KEYS = ("layout", "print_width_in", "print_height_in", "min_font_pt", "min_linewidth_pt")
 
 MODEL_COLORS = hl.MODEL_COLORS
 MODEL_ORDER = hl.MODEL_ORDER
@@ -91,6 +107,19 @@ FOOTER = [
     "Dashed line: typical distance between a provider's own models. Home-like means editing like the developer's "
     "own models, not faithfulness to the document. Cross-edit; three-grader majority-vote codes.",
 ]
+
+# Sizes of the bar panel. DEFAULT_STYLE is the report render (15 in canvas, shrunk on display);
+# PAPER_STYLE is in printed points (figure built at 7.0 in and included at 100%).
+DEFAULT_STYLE = {
+    "bar_lw": 0.7, "capsize": 4, "error_kw": {"elinewidth": 1.2, "ecolor": INK},
+    "value_fs": 12, "ref_lw": 1.4, "ref_fs": 11.5, "ytick_fs": 13, "xtick_fs": 13,
+    "xlabel_fs": 14, "xlabel_pad": 8, "grid_kw": {"linestyle": ":", "alpha": 0.4},
+}
+PAPER_STYLE = {
+    "bar_lw": 0.7, "capsize": 2.5, "error_kw": {"elinewidth": 0.8, "capthick": 0.8, "ecolor": INK},
+    "value_fs": 9, "ref_lw": 1.0, "ref_fs": 9, "ytick_fs": 9, "xtick_fs": 9,
+    "xlabel_fs": 10, "xlabel_pad": 4, "grid_kw": {"linestyle": ":", "alpha": 0.4, "linewidth": 0.6},
+}
 
 
 def log(msg: str) -> None:
@@ -292,13 +321,8 @@ def compute_summary(frame, B: int, seed: int) -> dict:
 # Figure
 # ---------------------------------------------------------------------------
 
-def plot(s: dict, out_dir: Path = FIG_DIR, stem: str = STEM, paper: bool = False,
-         caption_dir: Path | None = None) -> list[Path]:
-    """Render the figure. paper=True: see _save_paper (no title/notes in the image, PNG only)."""
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-
+def _draw_bars(ax, s: dict, st: dict) -> None:
+    """The bar panel (bars, whiskers, value labels, reference line, axes) with the sizes in st."""
     order = s["order_most_home_like_first"]
     ms = s["models"]
     n = len(order)
@@ -307,40 +331,48 @@ def plot(s: dict, out_dir: Path = FIG_DIR, stem: str = STEM, paper: bool = False
     hi = np.array([ms[m]["ci95"][1] for m in order])
     ref = s["reference_line"]["value"]
 
-    fig, ax = plt.subplots(figsize=(15, 0.55 * n + 3.0))
     y = np.arange(n)
     ax.barh(y, vals, xerr=np.vstack([vals - lo, hi - vals]), color=[MODEL_COLORS.get(m, "#999") for m in order],
-            edgecolor=INK, linewidth=0.7, height=0.65, capsize=4,
-            error_kw={"elinewidth": 1.2, "ecolor": INK}, zorder=2)
+            edgecolor=INK, linewidth=st["bar_lw"], height=0.65, capsize=st["capsize"],
+            error_kw=dict(st["error_kw"]), zorder=2)
     xmax = float(hi.max())
     for yi, v, h in zip(y, vals, hi):
-        ax.text(h + xmax * 0.012, yi, f"{v:.2f}", va="center", fontsize=12, color=INK, zorder=4)
+        ax.text(h + xmax * 0.012, yi, f"{v:.2f}", va="center", fontsize=st["value_fs"], color=INK, zorder=4)
     # P(most home-like) stays in the sidecar JSON and HOME_LIKENESS.md (it drives the title rule).
     ax.set_xlim(0, xmax * 1.10)
-    ax.axvline(ref, color=INK, lw=1.4, ls=(0, (5, 3)), zorder=3)
+    ax.axvline(ref, color=INK, lw=st["ref_lw"], ls=(0, (5, 3)), zorder=3)
     ax.text(ref + xmax * 0.008, -0.72, f"typical distance between a provider's own models ({ref:.2f})",
-            va="center", ha="left", fontsize=11.5, color=INK, style="italic")
+            va="center", ha="left", fontsize=st["ref_fs"], color=INK, style="italic")
     ax.set_yticks(y)
-    ax.set_yticklabels(order, fontsize=13)
+    ax.set_yticklabels(order, fontsize=st["ytick_fs"])
     ax.set_ylim(n - 0.4, -1.15)  # most home-like at the top; headroom for the line label
-    ax.tick_params(axis="x", labelsize=13)
+    ax.tick_params(axis="x", labelsize=st["xtick_fs"])
     ax.set_xlabel("Average distance from the home provider's own models (lower = more home-like)",
-                  fontsize=14, labelpad=8)
+                  fontsize=st["xlabel_fs"], labelpad=st["xlabel_pad"])
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
-    ax.grid(axis="x", linestyle=":", alpha=0.4)
+    ax.grid(axis="x", **st["grid_kw"])
     ax.set_axisbelow(True)
 
-    title_txt = fig.suptitle(s["title"], fontsize=16, fontweight="bold", y=0.995)
-    whisker_txt = fig.text(0.995, 0.952, WHISKER_NOTE, ha="right", va="top", fontsize=12, color=NOTE_COLOR,
-                           style="italic")
-    foot_txt = fig.text(0.5, 0.01, "\n".join(FOOTER), ha="center", va="bottom", fontsize=10.5, color=NOTE_COLOR,
-                        style="italic", linespacing=1.45)
-    fig.tight_layout(rect=(0, 0.085, 1, 0.935))
+
+def plot(s: dict, out_dir: Path = FIG_DIR, stem: str = STEM, paper: bool = False,
+         caption_dir: Path | None = None) -> list[Path]:
+    """Render the figure. paper=True: see _plot_paper (printed size, no title/notes in the image, PNG only)."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
     out_dir.mkdir(parents=True, exist_ok=True)
     if paper:
-        return _save_paper(fig, stem, out_dir, title_txt, [whisker_txt, foot_txt],
-                           caption_dir if caption_dir is not None else out_dir / "captions")
+        return _plot_paper(s, stem, out_dir, caption_dir if caption_dir is not None else out_dir / "captions")
+
+    fig, ax = plt.subplots(figsize=(15, 0.55 * len(s["order_most_home_like_first"]) + 3.0))
+    _draw_bars(ax, s, DEFAULT_STYLE)
+    fig.suptitle(s["title"], fontsize=16, fontweight="bold", y=0.995)
+    fig.text(0.995, 0.952, WHISKER_NOTE, ha="right", va="top", fontsize=12, color=NOTE_COLOR, style="italic")
+    fig.text(0.5, 0.01, "\n".join(FOOTER), ha="center", va="bottom", fontsize=10.5, color=NOTE_COLOR,
+             style="italic", linespacing=1.45)
+    fig.tight_layout(rect=(0, 0.085, 1, 0.935))
     paths = []
     for ext in ("pdf", "png"):
         out = out_dir / f"{stem}.{ext}"
@@ -351,24 +383,107 @@ def plot(s: dict, out_dir: Path = FIG_DIR, stem: str = STEM, paper: bool = False
     return paths
 
 
-def _save_paper(fig, stem: str, out_dir: Path, title_txt, note_txts: list, caption_dir: Path) -> list[Path]:
-    """Paper mode: drop the headline title, the whisker note and the footer from the image, record
-    them verbatim in captions/<stem>.json for the LaTeX \\caption{}, and save <stem>.png only.
+# ---------------------------------------------------------------------------
+# Paper figure (printed size)
+# ---------------------------------------------------------------------------
 
-    The texts are removed AFTER the default tight_layout, so the axes keep exactly the default
-    geometry (same bar thickness, aspect and fonts); bbox_inches="tight" then crops the bands the
-    title and the notes used to occupy. The in-axes reference-line label is kept.
+def _paper_font() -> str:
+    """Helvetica if matplotlib can load it, else Arial (Helvetica metrics).
+
+    On macOS matplotlib loads only the regular face of Helvetica.ttc, so the italic
+    reference-line label prints upright in paper mode.
+    """
+    from matplotlib import font_manager
+    for family in ("Helvetica", "Arial"):
+        try:
+            font_manager.findfont(font_manager.FontProperties(family=family), fallback_to_default=False)
+            return family
+        except ValueError:
+            continue
+    raise RuntimeError("paper mode needs Helvetica or Arial; matplotlib can load neither")
+
+
+def print_minima(fig) -> tuple[float, float]:
+    """(smallest font size, thinnest stroke) in points over everything drawn in fig.
+
+    Text: visible Text artists with non-empty text. Strokes: Line2D lines and markers (tick
+    marks and whisker caps are markers), Patch edges (bars, spines) and Collection edges
+    (whisker segments) with width > 0. Ticks the Axis keeps outside the view limits are not
+    drawn and are skipped.
+    """
+    from matplotlib.collections import Collection
+    from matplotlib.colors import to_rgba_array
+    from matplotlib.lines import Line2D
+    from matplotlib.patches import Patch
+    from matplotlib.text import Text
+
+    fig.canvas.draw()
+    undrawn = set()
+    for ax in fig.axes:
+        for axis in (ax.xaxis, ax.yaxis):
+            a, b = sorted(axis.get_view_interval())
+            tol = 1e-9 * max(b - a, 1.0)
+            for tick in axis.get_major_ticks() + axis.get_minor_ticks():
+                if not a - tol <= tick.get_loc() <= b + tol:
+                    undrawn.update(tick.get_children())
+
+    def drawn(artist) -> bool:
+        return artist.get_visible() and artist not in undrawn
+
+    no_style = (None, "None", "none", "", " ")
+    fonts = [t.get_fontsize() for t in fig.findobj(Text) if drawn(t) and t.get_text().strip()]
+    strokes = []
+    for ln in fig.findobj(Line2D):
+        if not drawn(ln):
+            continue
+        if ln.get_linestyle() not in no_style and ln.get_linewidth() > 0:
+            strokes.append(ln.get_linewidth())
+        if ln.get_marker() not in no_style and ln.get_markeredgewidth() > 0:
+            strokes.append(ln.get_markeredgewidth())
+    for p in fig.findobj(Patch):
+        if drawn(p) and p.get_linewidth() > 0 and p.get_edgecolor()[3] > 0:
+            strokes.append(p.get_linewidth())
+    for c in fig.findobj(Collection):
+        if not drawn(c) or not to_rgba_array(c.get_edgecolor())[:, 3].any():
+            continue
+        strokes += [float(w) for w in np.atleast_1d(c.get_linewidths()) if w > 0]
+    return float(min(fonts)), float(min(strokes))
+
+
+def _plot_paper(s: dict, stem: str, out_dir: Path, caption_dir: Path) -> list[Path]:
+    """Paper mode: the bar panel built at its printed width (PAPER_FIGSIZE_IN, saved tight at
+    PAPER_DPI) with PAPER_STYLE sizes in Helvetica, so the LaTeX includes it at 100%.
+
+    The headline title, the whisker note and the footer are not drawn; their exact text goes to
+    captions/<stem>.json for the LaTeX \\caption{}, with the print size and the measured smallest
+    font and stroke. The in-axes reference-line label is kept. Writes <stem>.png only.
     """
     import matplotlib.pyplot as plt
+    from PIL import Image
 
-    title_raw = title_txt.get_text()
-    notes_in_order = sorted(note_txts, key=lambda t: -t.get_position()[1])  # top-to-bottom reading order
-    notes_raw = [t.get_text() for t in notes_in_order]
-    title_txt.remove()
-    fig._suptitle = None
-    for t in note_txts:
-        t.remove()
+    with plt.rc_context({"font.family": _paper_font(), "font.size": PAPER_MIN_FONT_PT}):
+        fig, ax = plt.subplots(figsize=PAPER_FIGSIZE_IN)
+        _draw_bars(ax, s, PAPER_STYLE)
+        fig.tight_layout(pad=0.3)
+        min_font, min_lw = print_minima(fig)
+        if min_font < PAPER_MIN_FONT_PT or min_lw < PAPER_MIN_LINEWIDTH_PT:
+            plt.close(fig)
+            raise ValueError(f"{stem}: smallest font {min_font} pt / stroke {min_lw} pt is below "
+                             f"{PAPER_MIN_FONT_PT} / {PAPER_MIN_LINEWIDTH_PT} pt")
+        out = out_dir / f"{stem}.png"
+        fig.savefig(out, dpi=PAPER_DPI, bbox_inches="tight", pad_inches=PAPER_PAD_IN)
+        plt.close(fig)
+    log(f"saved {out}")
+    with Image.open(out) as im:
+        width_px, height_px = im.size
+    width, height = width_px / PAPER_DPI, height_px / PAPER_DPI
+    w_lo, w_hi = PAPER_WIDTH_RANGE_IN[PAPER_LAYOUT]
+    if not w_lo <= width <= w_hi:
+        raise ValueError(f"{stem}: printed width {width:.3f} in is outside {w_lo}-{w_hi} in ({PAPER_LAYOUT})")
 
+    # The texts the default render draws, top to bottom: title, whisker note, footer.
+    title_raw = s["title"]
+    notes_raw = [WHISKER_NOTE, "\n".join(FOOTER)]
     title_lines = title_raw.split("\n")
     caption = {
         "stem": stem,
@@ -377,16 +492,16 @@ def _save_paper(fig, stem: str, out_dir: Path, title_txt, note_txts: list, capti
         "subtitle": None,
         "notes": [re.sub(r"\s*\n\s*", " ", n) for n in notes_raw],
         "removed_raw": [title_raw, *notes_raw],
+        "layout": PAPER_LAYOUT,
+        "print_width_in": round(width, 4),
+        "print_height_in": round(height, 4),
+        "min_font_pt": min_font,
+        "min_linewidth_pt": min_lw,
     }
     caption_dir.mkdir(parents=True, exist_ok=True)
     cap_path = caption_dir / f"{stem}.json"
     cap_path.write_text(json.dumps(caption, indent=2, ensure_ascii=False) + "\n")
-    log(f"saved {cap_path}")
-
-    out = out_dir / f"{stem}.png"
-    fig.savefig(out, bbox_inches="tight", dpi=300)
-    log(f"saved {out}")
-    plt.close(fig)
+    log(f"saved {cap_path} (print {width:.3f} x {height:.3f} in; min font {min_font} pt, min stroke {min_lw} pt)")
     return [out, cap_path]
 
 
@@ -395,10 +510,12 @@ def _save_paper(fig, stem: str, out_dir: Path, title_txt, note_txts: list, capti
 # ---------------------------------------------------------------------------
 
 def write_sidecar(s: dict, path: Path = DATA_DIR / f"{STEM}.json",
-                  figure: str = f"recode/figures/{STEM}.png") -> Path:
+                  figure: str = f"recode/figures/{STEM}.png", print_spec: dict | None = None) -> Path:
+    """print_spec (paper mode): the PRINT_KEYS values from the caption JSON, written after "figure"."""
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "figure": figure,
+        **(print_spec or {}),
         "source_analysis": "recode/src/home_likeness.py (functions imported; four-panel ts_home_likeness)",
         "metric": "per model: mean over its three foreign cross_edit documents of the L1 distance between its cell "
                   "profile (judge + five signed conflict scores) and the equal-weight mean of the home models' profiles",
@@ -509,9 +626,11 @@ def main(argv: list[str] | None = None) -> None:
         log(f"  {m:18s} {d['avg_distance']:.3f}  CI {d['ci95'][0]:.3f}-{d['ci95'][1]:.3f}  "
             f"P={d['p_most_home_like']:.3f}")
     if args.paper:
-        plot(s, out_dir=PAPER_FIG_DIR, paper=True, caption_dir=PAPER_CAPTION_DIR)
+        _, cap_path = plot(s, out_dir=PAPER_FIG_DIR, paper=True, caption_dir=PAPER_CAPTION_DIR)
+        cap = json.loads(cap_path.read_text())
         write_sidecar(s, PAPER_DATA_DIR / f"{STEM}.json",
-                      figure=f"{PAPER_FIG_DIR.relative_to(ROOT)}/{STEM}.png")
+                      figure=f"{PAPER_FIG_DIR.relative_to(ROOT)}/{STEM}.png",
+                      print_spec={k: cap[k] for k in PRINT_KEYS})
         return
     plot(s)
     write_sidecar(s)

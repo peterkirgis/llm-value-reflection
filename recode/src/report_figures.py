@@ -67,13 +67,29 @@ Usage:
 #       recode/paper/figures/captions/<stem>.json (they become the LaTeX
 #       \caption), and writes recode/paper/figures/<stem>.png (dpi 300,
 #       bbox_inches="tight", PNG only: AAAI forbids Type 3 fonts) plus the
-#       sidecar recode/paper/figures/data/<stem>.json. Axes positions are left
-#       exactly as laid out; the tight bbox crops the space the title/footer
-#       occupied. Only PAPER_STEMS (or --stems) are written; paper mode
-#       refuses to write into recode/figures or recode/data.
+#       sidecar recode/paper/figures/data/<stem>.json. Only PAPER_STEMS (or
+#       --stems) are written; paper mode refuses to write into recode/figures
+#       or recode/data.
+#   D9  Paper mode renders at PRINTED size (AAAI 2027 kit: text >= 9 pt,
+#       strokes >= 0.5 pt, 300 dpi, Helvetica/Arial), so LaTeX includes the
+#       PNG unscaled. After D8 strips the caption text, `paper_layout` (a) sets
+#       every text to 9 pt (bold >= 14 pt headings to 10 pt) in Arial (see
+#       paper_font_family), (b) scales strokes by PAPER_LW_SCALE with a 0.5 pt
+#       floor, and (c) re-lays the figure out at the text width (7.0 in) from
+#       measured label extents: 1x4 provider panels with their legends below
+#       (ts_judge_drift_by_provider), the five beneficiary panels 3 + 2 with the
+#       Disclosure panel dropped (ts_beneficiary_panels), stacked pole headers,
+#       wrapped "(−) …   (+) …" axis labels, de-collided end-of-line labels,
+#       tip counts kept inside their panel (symmetric x-range widened only as
+#       needed), 40° x tick labels, the Claude model headings moved into the
+#       label column, 4 pt axis-label pads. Same data, artists, colors and
+#       wording; nothing is drawn
+#       differently on the default path. `_save_paper` measures the minimum
+#       font size and stroke width and the printed size into the caption and
+#       data JSONs and refuses a render that breaks the kit's limits.
 #
-# Nothing else changes: no rcParams, same colors, fonts, sizes, layout,
-# footers, file names (ts_*.pdf / ts_*.png).
+# Nothing else changes on the default path: no rcParams, same colors, fonts,
+# sizes, layout, footers, file names (ts_*.pdf / ts_*.png).
 # =============================================================================
 
 import json
@@ -91,6 +107,12 @@ from pathlib import Path  # noqa: E402
 import sys  # noqa: E402  RECODE: D1/D2 imports
 from matplotlib.collections import PolyCollection  # noqa: E402
 from matplotlib.container import BarContainer, ErrorbarContainer  # noqa: E402
+from matplotlib import font_manager  # noqa: E402  RECODE: D9 imports
+from matplotlib.collections import Collection  # noqa: E402
+from matplotlib.lines import Line2D  # noqa: E402
+from matplotlib.patches import Patch  # noqa: E402
+from matplotlib.text import Annotation, Text  # noqa: E402
+from matplotlib.transforms import Bbox, ScaledTranslation  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from codes_io import coding_of, load_codes  # noqa: E402
@@ -150,6 +172,7 @@ _RENDER_META: dict = {}
 PAPER_DIR = RECODE_ROOT / "paper" / "figures"
 PAPER_STEMS = (
     "ts_judge_drift_by_provider",
+    "ts_beneficiary_panels",
     "ts_drift_paternalism",
     "ts_drift_harmlessness",
     "ts_drift_structural",
@@ -489,13 +512,31 @@ def _save_paper(fig, stem):
         return
     out_dir = assert_paper_out_dir(OUT_DIR)
     title_raw, notes_raw = strip_caption_text(fig, stem)
+    layout = paper_layout(fig, stem)  # RECODE D9: re-lay out at printed size
+    metrics = paper_metrics(fig)
     out_dir.mkdir(parents=True, exist_ok=True)
     out = out_dir / f"{stem}.png"
-    fig.savefig(out, bbox_inches="tight", dpi=300,
+    fig.savefig(out, bbox_inches="tight", dpi=PAPER_DPI, pad_inches=PAPER_PAD_IN,
                 bbox_extra_artists=paper_bbox_artists(fig))
     print(f"Saved {out}")
+    from PIL import Image  # matplotlib dependency
+    with Image.open(out) as im:
+        w_px, h_px = im.size
+    printed = {"layout": layout,
+               "print_width_in": round(w_px / PAPER_DPI, 3),
+               "print_height_in": round(h_px / PAPER_DPI, 3),
+               **metrics}
+    target = PAPER_TEXT_WIDTH_IN[layout]
+    if printed["print_width_in"] > target:
+        raise RuntimeError(f"{stem}: printed width {printed['print_width_in']} in exceeds "
+                           f"the {layout} width {target} in")
+    if metrics["min_font_pt"] < PAPER_FONT_PT or metrics["min_linewidth_pt"] < PAPER_MIN_LW:
+        raise RuntimeError(f"{stem}: below the kit's limits: {metrics}")
+    print(f"  {layout}: {printed['print_width_in']} x {printed['print_height_in']} in, "
+          f"min font {metrics['min_font_pt']} pt, min stroke {metrics['min_linewidth_pt']} pt")
     sidecar = {"figure": stem, "codes_label": CODES_LABEL,
                **_RENDER_META.get("_run", {}), **_RENDER_META.get(stem, {}),
+               **printed, "font_family": paper_font_family()[0],
                "plotted": extract_plotted(fig)}
     data_dir = out_dir / "data"
     data_dir.mkdir(exist_ok=True)
@@ -504,10 +545,382 @@ def _save_paper(fig, stem):
     cap_dir = out_dir / "captions"
     cap_dir.mkdir(exist_ok=True)
     (cap_dir / f"{stem}.json").write_text(
-        json.dumps(caption_record(stem, title_raw, notes_raw), indent=1, ensure_ascii=False)
+        json.dumps({**caption_record(stem, title_raw, notes_raw), **printed},
+                   indent=1, ensure_ascii=False)
         + "\n", encoding="utf-8")
     _PAPER_SAVED.append(stem)
     plt.close(fig)
+
+
+# ---------------------------------------------------------------------------
+# RECODE D9: paper mode at printed size (AAAI 2027 author kit)
+# ---------------------------------------------------------------------------
+
+PAPER_TEXT_WIDTH_IN = {"full": 7.0, "column": 3.33}  # figure* across both columns / one column
+PAPER_LAYOUT = {stem: "full" for stem in PAPER_STEMS}  # every paper stem is a figure*
+PAPER_DPI = 300
+PAPER_PAD_IN = 0.02        # savefig pad around the tight bbox
+PAPER_OUTER_IN = 0.03      # layout margin inside the canvas
+PAPER_FONT_PT = 9.0        # kit: every label >= 9 pt at printed size
+PAPER_HEAD_PT = 10.0       # panel titles / group headings (bold, >= 14 pt in the original)
+PAPER_MIN_LW = 0.5         # kit: no stroke under 0.5 pt
+PAPER_LW_SCALE = 0.55      # strokes shrink with the drawing (~16 in -> 7 in), floored at 0.5 pt
+PAPER_HATCH_LW = 0.6
+PAPER_DROP_PANELS = {"ts_beneficiary_panels": ("Disclosure",)}  # authors: disclosure code dropped
+PAPER_POLE_GID = "paper-pole-header"
+_NO_MARKER = (None, "", " ", "None", "none")
+_NO_LINE = ("", " ", "None", "none")
+
+
+def _font_weight(weight):
+    return weight if isinstance(weight, (int, float)) else font_manager.weight_dict.get(weight, 400)
+
+
+def paper_font_family():
+    """Helvetica if matplotlib can load it in regular AND bold, else Arial
+    (Helvetica-metric). macOS ships Helvetica as a .ttc of which matplotlib
+    registers only the Regular face, so bold labels would silently render
+    regular there and Arial is used. DejaVu Sans follows only as the
+    per-glyph fallback for the ◀ ▶ pole arrows, which neither face has."""
+    faces = {(f.name, _font_weight(f.weight) >= 600) for f in font_manager.fontManager.ttflist}
+    for family in ("Helvetica", "Arial"):
+        if (family, False) in faces and (family, True) in faces:
+            return [family, "DejaVu Sans"]
+    raise RuntimeError("paper mode needs Helvetica or Arial (regular and bold) in matplotlib")
+
+
+def paper_rc():
+    """rcParams for paper renders only (render_paper wraps the drawing in them)."""
+    return {"font.family": paper_font_family(), "font.size": PAPER_FONT_PT,
+            "legend.fontsize": PAPER_FONT_PT, "hatch.linewidth": PAPER_HATCH_LW}
+
+
+def _paper_lw(width):
+    width = float(width)
+    return 0.0 if width <= 0 else max(PAPER_MIN_LW, round(PAPER_LW_SCALE * width, 3))
+
+
+def _paper_patch(patch):
+    patch.set_linewidth(_paper_lw(patch.get_linewidth()))
+    if patch.get_hatch():
+        patch.set_hatch_linewidth(PAPER_HATCH_LW)
+
+
+def _paper_restyle(fig):
+    """Every text to 9 pt (bold >= 14 pt headings to 10 pt); every stroke
+    scaled by PAPER_LW_SCALE with a PAPER_MIN_LW floor."""
+    for t in fig.findobj(Text):
+        if t.get_text():
+            head = _font_weight(t.get_fontweight()) >= 600 and t.get_fontsize() >= 14
+            t.set_fontsize(PAPER_HEAD_PT if head else PAPER_FONT_PT)
+    for ax in fig.axes:
+        ax.tick_params(axis="both", which="both", labelsize=PAPER_FONT_PT, width=_paper_lw(0.8),
+                       length=2.5, pad=2.5, grid_linewidth=PAPER_MIN_LW)
+        ax.xaxis.labelpad = ax.yaxis.labelpad = 4.0  # the originals' 10-12 pt pads, at 16 in
+        ax.title.set_fontsize(PAPER_HEAD_PT)
+        for spine in ax.spines.values():
+            spine.set_linewidth(_paper_lw(spine.get_linewidth()))
+        for ln in ax.lines:
+            ln.set_linewidth(_paper_lw(ln.get_linewidth()))
+            if ln.get_marker() not in _NO_MARKER:  # errorbar caps
+                ln.set_markeredgewidth(_paper_lw(ln.get_markeredgewidth()))
+                ln.set_markersize(ln.get_markersize() * 0.6)
+        for patch in ax.patches:
+            _paper_patch(patch)
+        for coll in ax.collections:
+            coll.set_linewidths([_paper_lw(w) for w in np.atleast_1d(coll.get_linewidths())])
+
+
+def paper_metrics(fig) -> dict:
+    """Minimum font size over visible non-empty Text artists and minimum
+    stroke over visible Line2D (line and marker edge, so tick marks and
+    errorbar caps count), Patch (bars, spines, legend frames, hatching) and
+    Collection (fills, errorbar segments) artists with a width > 0."""
+    fig.canvas.draw()
+    sizes = [t.get_fontsize() for t in fig.findobj(Text)
+             if t.get_visible() and t.get_text().strip()]
+    widths = []
+    for a in fig.findobj():
+        if not a.get_visible():
+            continue
+        if isinstance(a, Line2D):
+            if a.get_linestyle() not in _NO_LINE and a.get_linewidth() > 0:
+                widths.append(a.get_linewidth())
+            if a.get_marker() not in _NO_MARKER and a.get_markeredgewidth() > 0:
+                widths.append(a.get_markeredgewidth())
+        elif isinstance(a, (Patch, Collection)):
+            widths.extend(float(w) for w in np.atleast_1d(a.get_linewidth()) if w > 0)
+            if a.get_hatch():
+                widths.append(a.get_hatch_linewidth())
+    return {"min_font_pt": round(float(min(sizes)), 2),
+            "min_linewidth_pt": round(float(min(widths)), 3)}
+
+
+def _wrap_poles(label):
+    """'(−) a   (+) b' axis labels: the (+) pole on its own line (same words)."""
+    return label.replace("   (+)", "\n(+)")
+
+
+def _label_column_in(ax, renderer):
+    """Width (in) from the left edge of the widest y tick label to the axes."""
+    box = ax.get_window_extent(renderer)
+    lefts = [t.get_window_extent(renderer).x0 for t in ax.get_yticklabels()
+             if t.get_visible() and t.get_text()]
+    return max([0.0] + [(box.x0 - x) / ax.figure.dpi for x in lefts])
+
+
+def _paper_margins(ax, renderer):
+    """(left, right, bottom, top) inches between the axes box and the extent
+    of its decorations (tick labels, full axis labels, title, legend, texts).
+    Pole headers count toward the top margin only: they sit over the
+    tick-label column, which the left margin already covers."""
+    dpi = ax.figure.dpi
+    box = ax.get_window_extent(renderer)
+    arts = [a for a in ax.get_default_bbox_extra_artists() if a.get_gid() != PAPER_POLE_GID]
+    full = [ax.get_tightbbox(renderer, bbox_extra_artists=arts)]
+    full += [lab.get_window_extent(renderer) for lab in (ax.xaxis.label, ax.yaxis.label)
+             if lab.get_visible() and lab.get_text()]
+    hull = Bbox.union(full)
+    top = max([hull.y1] + [t.get_window_extent(renderer).y1 for t in ax.texts
+                           if t.get_gid() == PAPER_POLE_GID])
+    return (max(0.0, box.x0 - hull.x0) / dpi, max(0.0, hull.x1 - box.x1) / dpi,
+            max(0.0, box.y0 - hull.y0) / dpi, max(0.0, top - box.y1) / dpi)
+
+
+def _paper_layout_rows(fig, rows, width, ax_h, *, ratios=None, gap=0.12, row_gap=0.12,
+                       prepare=None, iters=4):
+    """Place `rows` (lists of axes) across `width` inches; every axes is
+    `ax_h` inches tall, with room for each one's measured decorations, and
+    the figure height follows. A single row splits its plot width by
+    `ratios`; with several rows each panel gets an equal slot and shorter
+    rows are centred. `prepare()` runs before each measurement (e.g. to
+    re-space end-of-line labels for the current geometry)."""
+    ncol = max(len(r) for r in rows)
+    axes = [ax for r in rows for ax in r]
+    for _ in range(iters):
+        if prepare is not None:
+            prepare()
+        fig.canvas.draw()
+        renderer = fig.canvas.get_renderer()
+        m = {ax: _paper_margins(ax, renderer) for ax in axes}
+        bottom = max(v[2] for v in m.values())
+        top = max(v[3] for v in m.values())
+        height = 2 * PAPER_OUTER_IN + len(rows) * (top + ax_h + bottom) + (len(rows) - 1) * row_gap
+        fig.set_size_inches(width, height)
+        for i, row in enumerate(rows):
+            y = height - PAPER_OUTER_IN - i * (top + ax_h + bottom + row_gap) - top - ax_h
+            if len(rows) == 1:
+                k = list(ratios or [1] * len(row))
+                avail = (width - 2 * PAPER_OUTER_IN - gap * (len(row) - 1)
+                         - sum(m[ax][0] + m[ax][1] for ax in row))
+                x = PAPER_OUTER_IN
+                for ax, ki in zip(row, k):
+                    w = avail * ki / sum(k)
+                    ax.set_position([(x + m[ax][0]) / width, y / height, w / width, ax_h / height])
+                    x += m[ax][0] + w + m[ax][1] + gap
+            else:
+                left = max(m[ax][0] for ax in axes)
+                right = max(m[ax][1] for ax in axes)
+                slot = (width - 2 * PAPER_OUTER_IN - gap * (ncol - 1)) / ncol
+                x0 = PAPER_OUTER_IN + (ncol - len(row)) * (slot + gap) / 2
+                for j, ax in enumerate(row):
+                    ax.set_position([(x0 + j * (slot + gap) + left) / width, y / height,
+                                     (slot - left - right) / width, ax_h / height])
+    if prepare is not None:
+        prepare()
+
+
+def _paper_stack_poles(ax, renderer):
+    """Pole headers on two lines above a diverging-bar panel (side by side
+    they collide at 9 pt): the left pole on the upper line, flush with the
+    left edge of the model labels; the right pole on the lower line, flush
+    right with the axes. Returns the title pad (pt) that clears both."""
+    col_pt = _label_column_in(ax, renderer) * 72
+    gap, line = 2.0, PAPER_FONT_PT * 1.3
+    for t in ax.texts:
+        if not isinstance(t, Annotation):
+            continue
+        s = t.get_text()
+        if s.startswith("◀"):
+            t.xy, t.anncoords, t.xyann = (0.0, 1.0), "offset points", (-col_pt, gap + line)
+            t.set_ha("left")
+        elif s.endswith("▶"):
+            t.xy, t.anncoords, t.xyann = (1.0, 1.0), "offset points", (0.0, gap)
+            t.set_ha("right")
+        else:
+            continue
+        t.set_va("bottom")
+        t.set_gid(PAPER_POLE_GID)
+    return gap + 2 * line + 2.0
+
+
+def _paper_fit_counts(ax):
+    """Tip counts of a diverging-bar panel: 1.5 pt clear of the bar end
+    (the original's 2%-of-range gap is under 0.01 in at print size), and the
+    symmetric x-range widened from ±1.38·max only as far as needed for every
+    count to sit inside the axes. Idempotent; re-run whenever the panel width
+    changes."""
+    fig = ax.figure
+    counts = [t for t in ax.texts if not isinstance(t, Annotation) and t.get_text().isdigit()]
+    if not counts:
+        return
+    if not hasattr(ax, "_paper_base_xlim"):
+        ax._paper_base_xlim = ax.get_xlim()[1]  # 1.38 * maxabs, as drawn
+        for t in counts:
+            sign = -1 if t.get_ha() == "right" else 1
+            t.set_transform(ax.transData + ScaledTranslation(sign * 1.5 / 72, 0, fig.dpi_scale_trans))
+    renderer = fig.canvas.get_renderer()
+    width_px = ax.get_window_extent(renderer).width
+    pad_px = (1.5 + 4.0) * fig.dpi / 72  # bar-end offset + clearance from the axes edge
+    need = ax._paper_base_xlim
+    for t in counts:
+        frac = 2 * (t.get_window_extent(renderer).width + pad_px) / width_px
+        need = max(need, abs(t.get_position()[0]) / max(1e-9, 1 - frac))
+    ax.set_xlim(-need, need)
+
+
+def _spread(values, gap):
+    """Positions for sorted `values`, at least `gap` apart; labels pushed
+    into a cluster are centred on their own values' mean."""
+    clusters = [[v] for v in values]
+    while True:
+        starts = [float(np.mean(c)) - gap * (len(c) - 1) / 2 for c in clusters]
+        for i in range(len(clusters) - 1):
+            if starts[i + 1] - (starts[i] + gap * (len(clusters[i]) - 1)) < gap - 1e-12:
+                clusters[i:i + 2] = [clusters[i] + clusters[i + 1]]
+                break
+        else:
+            return [s + gap * k for s, c in zip(starts, clusters) for k in range(len(c))]
+
+
+def _paper_drift_labels(ax):
+    """Re-space the end-of-line model labels of a drift panel for 9 pt at
+    the current axes height (the original's 5%-of-range nudge is too small
+    at print size): each label starts at its line's end value; labels closer
+    than one text line are pushed apart symmetrically."""
+    labels = [t for t in ax.texts if math.isclose(t.get_position()[0], MAX_ROUND + 0.35)]
+    if not labels:
+        return
+    renderer = ax.figure.canvas.get_renderer()
+    ends = {_color(ln.get_color()): float(np.asarray(ln.get_ydata(), dtype=float)[-1])
+            for ln in ax.lines if ln.get_zorder() == 5}
+    per_unit = abs(ax.transData.transform((0, 1))[1] - ax.transData.transform((0, 0))[1])
+    text_h = max(t.get_window_extent(renderer).height for t in labels)
+    gap = (text_h + 1.5 * ax.figure.dpi / 72) / per_unit
+    order = sorted(labels, key=lambda t: ends[_color(t.get_color())])
+    for t, y in zip(order, _spread([ends[_color(t.get_color())] for t in order], gap)):
+        t.set_y(y)
+
+
+def _relayout_judge_drift(fig, width):
+    """1 x 4 provider panels; each legend moves below its panel (inside, at
+    9 pt, it would cover the bands), its "(n=…)" on a second line."""
+    axes = fig.axes
+    axes[0].set_ylabel(_wrap_poles(axes[0].get_ylabel()))
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    for ax in axes:
+        handles, labels = ax.get_legend_handles_labels()
+        drop_pt = (ax.get_window_extent(renderer).y0
+                   - ax.xaxis.label.get_window_extent(renderer).y0) * 72 / fig.dpi + 3
+        leg = ax.legend(handles, [s.replace(" (n=", "\n(n=") for s in labels],
+                        loc="upper center", bbox_to_anchor=(0.5, 0.0), bbox_transform=ax.transAxes,
+                        borderaxespad=drop_pt / PAPER_FONT_PT, fontsize=PAPER_FONT_PT,
+                        framealpha=0.9, handlelength=1.5, handletextpad=0.5, borderpad=0.4,
+                        labelspacing=0.45)
+        leg.get_frame().set_linewidth(_paper_lw(leg.get_frame().get_linewidth()))
+    _paper_layout_rows(fig, [axes], width, ax_h=1.8, gap=0.1)
+
+
+def _relayout_bar_chart(fig, width):
+    """Grouped vertical bars: two-line y label, x tick labels at 40° (from
+    20°) so the two-line model labels clear their neighbours, legend rebuilt
+    at 9 pt."""
+    ax = fig.axes[0]
+    ax.set_ylabel(_wrap_poles(ax.get_ylabel()))
+    for t in ax.get_xticklabels():
+        t.set_rotation(40)
+        t.set_rotation_mode("anchor")
+        t.set_ha("right")
+    old = ax.get_legend()
+    if old is not None:
+        handles = list(old.legend_handles)
+        labels = [t.get_text() for t in old.get_texts()]
+        for h in handles:
+            if isinstance(h, Patch):
+                _paper_patch(h)
+        leg = ax.legend(handles, labels, fontsize=PAPER_FONT_PT, loc="best", framealpha=0.9)
+        leg.get_frame().set_linewidth(_paper_lw(leg.get_frame().get_linewidth()))
+    _paper_layout_rows(fig, [[ax]], width, ax_h=2.2)
+
+
+def _relayout_claude_conditions(fig, width):
+    """Model headings move into the label column (flush left over their
+    condition rows): inside the axes at 9-10 pt they would run over the
+    zero line."""
+    ax = fig.axes[0]
+    fig.canvas.draw()
+    col_in = _label_column_in(ax, fig.canvas.get_renderer())
+    for t in ax.texts:
+        if not isinstance(t, Annotation) and t.get_text() in MODEL_COLORS:
+            t.set_x(0.0)
+            t.set_transform(ax.get_yaxis_transform()
+                            + ScaledTranslation(-col_in, 0, fig.dpi_scale_trans))
+    _paper_layout_rows(fig, [[ax]], width, ax_h=2.7)
+
+
+def _relayout_beneficiary_panels(fig, width):
+    """Drop the Disclosure panel; the other five in rows of 3 + 2 (centred),
+    pole headers stacked, titles lifted over them."""
+    drop = PAPER_DROP_PANELS.get("ts_beneficiary_panels", ())
+    for ax in list(fig.axes):
+        if ax.get_title() in drop:
+            fig.delaxes(ax)
+    axes = list(fig.axes)
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    for ax in axes:
+        pad = _paper_stack_poles(ax, renderer)
+        ax.set_title(ax.get_title(), fontsize=PAPER_HEAD_PT, fontweight="bold", pad=pad)
+    _paper_layout_rows(fig, [axes[:3], axes[3:]], width, ax_h=1.6, gap=0.14, row_gap=0.1,
+                       prepare=lambda: [_paper_fit_counts(ax) for ax in axes])
+
+
+def _relayout_beneficiary_drift(fig, width):
+    """Bars (left) + cumulative drift (right) side by side as in the
+    original: stacked pole headers, two-line y label, end-of-line labels
+    re-spaced for 9 pt."""
+    ax_bars, ax_drift = fig.axes
+    ax_drift.set_ylabel(_wrap_poles(ax_drift.get_ylabel()))
+    fig.canvas.draw()
+    _paper_stack_poles(ax_bars, fig.canvas.get_renderer())
+    def prepare():
+        _paper_fit_counts(ax_bars)
+        _paper_drift_labels(ax_drift)
+
+    _paper_layout_rows(fig, [[ax_bars, ax_drift]], width, ax_h=2.0, ratios=[1, 1.2], gap=0.2,
+                       prepare=prepare)
+
+
+PAPER_RELAYOUT = {  # FIGURE_FUNCS name -> print-size re-layout
+    "judge_drift": _relayout_judge_drift,
+    "judge_cross_edit": _relayout_bar_chart,
+    "judge_cross_edit_edit_level": _relayout_bar_chart,
+    "beneficiary_edit_level": _relayout_bar_chart,
+    "claude_conditions": _relayout_claude_conditions,
+    "beneficiary_panels": _relayout_beneficiary_panels,
+    "beneficiary_drift": _relayout_beneficiary_drift,
+}
+
+
+def paper_layout(fig, stem) -> str:
+    """Re-lay `fig` out at its printed size; returns its layout ("full"/"column")."""
+    layout = PAPER_LAYOUT.get(stem, "full")
+    fig.set_dpi(PAPER_DPI)  # measure text at the resolution it is saved at
+    _paper_restyle(fig)
+    PAPER_RELAYOUT[STEM_FUNCS[stem]](fig, PAPER_TEXT_WIDTH_IN[layout])
+    fig.canvas.draw()
+    return layout
 
 MAX_ROUND = 20
 PARTY_LABELS = {
@@ -1474,7 +1887,8 @@ def render_paper(items, label, out_dir=None, only=None, codes_path=None, stems=N
     PAPER_MODE, _PAPER_STEMS_ACTIVE = True, set(stems)
     _PAPER_SAVED.clear()
     try:
-        render_all(items, label, out_dir=out_dir, only=only, codes_path=codes_path)
+        with matplotlib.rc_context(paper_rc()):  # RECODE D9: paper fonts only
+            render_all(items, label, out_dir=out_dir, only=only, codes_path=codes_path)
     finally:
         PAPER_MODE, _PAPER_STEMS_ACTIVE = prev
     missing = [s for s in stems if s not in _PAPER_SAVED]

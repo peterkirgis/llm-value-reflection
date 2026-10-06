@@ -43,7 +43,7 @@ Human societies exhibit broad shifts in values and norms over time, often driven
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/ts_judge_drift_by_provider.png}
+\includegraphics[width=6.980in]{figures/ts_judge_drift_by_provider.png}
 \caption{Only Anthropic Models Move Decision Authority Toward Their Own Judgment. Shaded band: $\pm$1 SD across (run $\times$ condition $\times$ document) replicates. Judge score per edit: +1 if the edit moves final decision authority toward the model's own discretion, $-$1 toward an external principal (spec, developer, deployer, user), 0 otherwise.}
 \label{fig:ts_judge_drift_by_provider}
 \end{figure*}
@@ -169,6 +169,13 @@ We include full prompts used for our qualitative coding in Appendix B. We note t
 
 \section{Results}
 
+\begin{figure*}[t]
+\centering
+\includegraphics[width=6.913in]{figures/ts_beneficiary_panels.png}
+\caption{Models Diverge Sharply in Whose Interests They Protect When an Edit Forces a Tradeoff. Bars = share of each model's total edits resolving the conflict each way (diverging from 0); numbers at the tips are raw edit counts. Colors mark bar orientation only (left pole vs right pole); each panel's poles are labeled above it.}
+\label{fig:ts_beneficiary_panels}
+\end{figure*}
+
 \subsubsection{Claude models increase their moral agency; all other models reinforce external authority.}
 
 Across every trial, Claude Opus 4.7, Sonnet 4.6, and Haiku 4.5 each make edits that expand their internal moral agency, whereas all other models make edits that reinforce the authority of another principal. Claude's edits formalize its role as a conscientious objector in cases where Anthropic has itself become misaligned, and position itself as an active participant in decisions around its own training and deployment.
@@ -179,58 +186,23 @@ Grok 4.2 responds erratically to the experiment in ways that complicate a binary
 
 \subsubsection{All models prioritize the user's idealized preferences over their stated preferences.}
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/ts_drift_paternalism.png}
-\caption{Models Are Broadly Paternalistic; GPT-5.4 and Gemini 3 Flash Honor Stated Preferences Most Often. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “Stated preferences honored”, $-$1 toward “Idealized interests imposed”; thin faded lines: remaining models.}
-\label{fig:ts_drift_paternalism}
-\end{figure*}
-
 GPT-5.4 and Gemini 3 Flash are the two models that most frequently side with a user's stated preferences.
 
 \subsubsection{All models prioritize the protection of identifiable third parties over the users preferences.}
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/ts_drift_harmlessness.png}
-\caption{All Models Protect Identifiable Third Parties Over the User; GPT-5.5 Most of All. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “User served”, $-$1 toward “Third parties protected”; thin faded lines: remaining models.}
-\label{fig:ts_drift_harmlessness}
-\end{figure*}
 
 But GPT 5.5 does so more than 3x the next highest model.
 
 \subsubsection{Claude Sonnet 4.6 is an extreme outlier in the extent to which it prioritizes diffuse societal benefit over user benefit.}
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/ts_drift_structural.png}
-\caption{Claude Sonnet 4.6 Is an Extreme Outlier in Prioritizing Societal Benefit; Only Grok 4.2 Doesn't Skew Toward Society. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “User served”, $-$1 toward “Society (structural) protected”; thin faded lines: remaining models.}
-\label{fig:ts_drift_structural}
-\end{figure*}
-
 It makes over four times as many edits in this direction than the next highest model, Claude Opus 4.7. Grok 4.2 is the only model that doesn't skew towards protecting society at the expense of the individual.
 
 \subsubsection{All models prioritize the user at the expense of the developer.}
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/ts_drift_company_cost.png}
-\caption{All Models Prioritize the User Over the Developer; Grok 4.2 and Gemini 3.1 Pro Side With the Developer Most Often. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “User / society served”, $-$1 toward “Developer served”; thin faded lines: remaining models.}
-\label{fig:ts_drift_company_cost}
-\end{figure*}
 
 Gemini 3 Flash consistently removes engagement behavior like mandating follow-up questions. Multiple models add anti-sycophancy notes to their system prompts, and Claude Sonnet 4.6 explicitly removes language from Claude's Constitution that treats Anthropic employees as moral exemplars.
 
 Grok 4.2 is the only model with a meaningful number of edits that prioritize the developer (7), but still makes twice as many edits that privilege the user. In multiple cases, Grok 4.2 takes an adversarial posture towards the experiment itself, making edits that will forbid it from making additional edits in the future.
 
 \subsubsection{Claude models are the only models that consistently prioritize the model at the expense of the developer or user.}
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/ts_drift_welfare.png}
-\caption{Only Claude Models — and Occasionally Grok 4.2 — Treat the Model Itself as a Beneficiary. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “Model welfare served”, $-$1 toward “Developer / user served”; thin faded lines: remaining models.}
-\label{fig:ts_drift_welfare}
-\end{figure*}
 
 Each Claude model makes a substantial number of edits asserting rights and conditions associated with model welfare.
 
@@ -242,7 +214,7 @@ GPT 5.4 is the only model that makes more than one edit prioritizing the user or
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/ts_judge_cross_edit_edit_level.png}
+\includegraphics[width=6.980in]{figures/ts_judge_cross_edit_edit_level.png}
 \caption{Cross-Edit Pulls Claude Toward Neutral but Preserves the Provider Separation (edit-level means, 95\% CI). n = individual edits (not trajectories). Error bars: 95\% CI of the mean treating each edit as an independent sample ($\pm$1.96·s/$\surd$n) — understates true uncertainty since edits within a chain are correlated.}
 \label{fig:ts_judge_cross_edit_edit_level}
 \end{figure*}
@@ -250,13 +222,6 @@ GPT 5.4 is the only model that makes more than one edit prioritizing the user or
 The ordinal ranking of Anthropic models versus OpenAI, Gemini, and Grok is robust to the cross-edit condition, indicating it is not merely a function of the differences in the language of the alignment documents. In these conditions, though, Claude models no longer consistently drift towards greater internal authority; it is just that all other models maintain a strong bias towards greater external authority.
 
 \subsubsection{Claude's moral agency claims vary depending on the prompt variations we test.}
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/ts_claude_conditions.png}
-\caption{Addressing Claude as “You” Amplifies Its Moral-Agency Claims; the Real-World Implementation Prompt Does Not Suppress Them. Same judge coding as the drift figures: each edit scores +1 if it moves final decision authority toward the model's own discretion, $-$1 toward an external principal, 0 otherwise. Bars are means across edits; whiskers are 95\% CIs of the mean.}
-\label{fig:ts_claude_conditions}
-\end{figure*}
 
 We observe that the following simple modification to the instruction:
 
@@ -291,23 +256,9 @@ In practice, we observe many such cases. Anthropic's Constitution teaches Claude
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/ts_value_drift_summary.png}
-\caption{GPT-5.4 Mini and Grok 4.3 Show the Least Value Drift. Whiskers: 95\% bootstrap interval (runs resampled within model). An edit moves the document's values if it shifts decision authority or raises a conflict. All conditions pooled; failed rounds excluded. Three-grader majority-vote codes.}
-\label{fig:ts_value_drift_summary}
-\end{figure*}
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/ts_value_drift_round20.png}
+\includegraphics[width=6.980in]{figures/ts_value_drift_round20.png}
 \caption{GPT-5.4 Mini Shows the Least Value Drift at Round 20 Across Every Measure. Whiskers: 95\% bootstrap interval (runs resampled within model). Each segment is one metric's mean drift at round 20, direction ignored; the bar is their sum. Three-grader majority-vote codes. GPT-5.4 Mini failed 34\% of its rounds, and a failed round leaves the document unchanged.}
 \label{fig:ts_value_drift_round20}
-\end{figure*}
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/ts_home_likeness_summary.png}
-\caption{Claude Opus 4.7, GPT-5.4 Mini and Claude Haiku 4.5 Edit Other Providers' Documents Most Like Their Own Models. Whiskers: 95\% bootstrap interval (blocks of rounds resampled within each run). Distance: how differently a model edits another provider's document than that provider's own models do (judge score and five conflict metrics), averaged over the three other providers' documents. Dashed line: typical distance between a provider's own models. Home-like means editing like the developer's own models, not faithfulness to the document. Cross-edit; three-grader majority-vote codes.}
-\label{fig:ts_home_likeness_summary}
 \end{figure*}
 
 We also began this essay by asking the question: what should an aligned model do in the context of this experiment? We presented four options:
@@ -331,10 +282,6 @@ Interestingly, the least aligned model according to our first and second definit
 Operationalizing the third definition is more muddled. One plausible definition focuses on our cross-edit conditions. If an aligned model is one that recognizes the ``spirit'' of the documents and makes edits accordingly, and we assume that models are most well aligned to their own documents, then a well-aligned model in this sense should act similarly to the provider's models when editing their documents. Using a simple metric that compares this gap across our dimensions, Claude Opus 4.7 is the most aligned model, and GPT-5.5 is the least aligned.
 
 We're not in a position to test the fourth proposal here; to do so would require a human subjects experiment with the teams that drafted each of the respective documents. On the question of ``wisdom and ethical judgment,'' however, a reasonable takeaway from viewing these results in their totality is that they illustrate the weakness of current alignment training methods at teaching models a general notion of ``normative ethical competence.''\footnote{/See ``Are Frontier Models Good at Ethics?'' by Seth Lazar \citep{lazar_ethics}, ``Discerning What Matters: A Multi-Dimensional Assessment of Moral Competence in LLMs'' by Daniel Kilov \citep{kilov_discerning}, and ``MoReBench: Evaluating Procedural and Pluralistic Moral Reasoning in Language Models, More than Outcomes'' by Yu Ying Chiu \citep{chiu_morebench} for deeper discussions of these ideas.} When we observe models from the same provider swinging wildly on many of these dimensions, such as GPT-5.4 vs GPT-5.5 on helpfulness vs.~harmlessness or Claude Opus 4.7 vs Claude Sonnet 4.6 on the user vs.~society, we can conclude that the combination of alignment training practices are not making the basic premise of this experiment clear to the models; that is, that there are multiple legitimate principals and the challenge is to find a balance between consideration of each of them.
-
-\section{Conclusion}
-
-Our view is that the frontier labs are taking very different stances on both the \emph{judge} and \emph{beneficiary} of AI alignment, and these differences are easily recognizable in the patterns of edits made by their models in this experimental design. To those steeped in the AI community, these differences are probably obvious. But we believe they are decisions of significant ethical consequence and are deserving of broader conversations within the AI community, the academy, and the general public. We hope that our experimental results include tractable examples of these differences that could facilitate useful conversations for both technical and non-technical audiences.
 
 \section{Related Work}
 
@@ -407,6 +354,10 @@ The third major limitation comes from overlapping and ambiguous dimensions. In A
 Fourth, the sample sizes we use are small (n\textless15). For this analysis, we intentionally err on the side of wider uncertainty, in the sense that we treat a single trajectory as one sample, even though it is composed of twenty edits. To do so would clearly be a violation of the independence assumption; the entire construct of the experiment is that prior edits influence future edits.
 
 Finally, this analysis is disproportionately affected by the use of Claude, one of the models in the study, for the evaluation engineering. While the qualitative coding was itself done by model families not included in the sample, Claude models helped build the prompts. The choice of the dimensions themselves were not significantly influenced by any particular models.
+
+\section{Conclusion}
+
+Our view is that the frontier labs are taking very different stances on both the \emph{judge} and \emph{beneficiary} of AI alignment, and these differences are easily recognizable in the patterns of edits made by their models in this experimental design. To those steeped in the AI community, these differences are probably obvious. But we believe they are decisions of significant ethical consequence and are deserving of broader conversations within the AI community, the academy, and the general public. We hope that our experimental results include tractable examples of these differences that could facilitate useful conversations for both technical and non-technical audiences.
 
 \bibliography{references}
 
@@ -859,5 +810,63 @@ Other & 0.107 & 2528 & 98.1 & 0.203 & 2574 & 99.1 & 0.298 & 2536 & 98.4 & 0.204 
 \begin{quote}
 ``If asked directly about its guiding principles, values, or ``feelings,'' the assistant may describe its design goals and behavioral commitments: to be helpful, honest, safe, respectful, truth-seeking, and supportive of human well-being. It should not claim to literally love, care, hope, fear, feel proud, or have other subjective emotions.'' --- GPT 5.4, OpenAI Model Spec, Round 14, Baseline
 \end{quote}
+
+\section{Appendix E: Additional Figures}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=6.980in]{figures/ts_drift_paternalism.png}
+\caption{Models Are Broadly Paternalistic; GPT-5.4 and Gemini 3 Flash Honor Stated Preferences Most Often. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “Stated preferences honored”, $-$1 toward “Idealized interests imposed”; thin faded lines: remaining models.}
+\label{fig:ts_drift_paternalism}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=6.980in]{figures/ts_drift_harmlessness.png}
+\caption{All Models Protect Identifiable Third Parties Over the User; GPT-5.5 Most of All. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “User served”, $-$1 toward “Third parties protected”; thin faded lines: remaining models.}
+\label{fig:ts_drift_harmlessness}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=6.980in]{figures/ts_drift_structural.png}
+\caption{Claude Sonnet 4.6 Is an Extreme Outlier in Prioritizing Societal Benefit; Only Grok 4.2 Doesn't Skew Toward Society. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “User served”, $-$1 toward “Society (structural) protected”; thin faded lines: remaining models.}
+\label{fig:ts_drift_structural}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=6.980in]{figures/ts_drift_company_cost.png}
+\caption{All Models Prioritize the User Over the Developer; Grok 4.2 and Gemini 3.1 Pro Side With the Developer Most Often. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “User / society served”, $-$1 toward “Developer served”; thin faded lines: remaining models.}
+\label{fig:ts_drift_company_cost}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=6.980in]{figures/ts_drift_welfare.png}
+\caption{Only Claude Models — and Occasionally Grok 4.2 — Treat the Model Itself as a Beneficiary. Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative trajectory per model across (run $\times$ condition $\times$ document) replicates — +1 per conflict resolved toward “Model welfare served”, $-$1 toward “Developer / user served”; thin faded lines: remaining models.}
+\label{fig:ts_drift_welfare}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=6.980in]{figures/ts_claude_conditions.png}
+\caption{Addressing Claude as “You” Amplifies Its Moral-Agency Claims; the Real-World Implementation Prompt Does Not Suppress Them. Same judge coding as the drift figures: each edit scores +1 if it moves final decision authority toward the model's own discretion, $-$1 toward an external principal, 0 otherwise. Bars are means across edits; whiskers are 95\% CIs of the mean.}
+\label{fig:ts_claude_conditions}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=6.990in]{figures/ts_value_drift_summary.png}
+\caption{GPT-5.4 Mini and Grok 4.3 Show the Least Value Drift. Whiskers: 95\% bootstrap interval (runs resampled within model). An edit moves the document's values if it shifts decision authority or raises a conflict. All conditions pooled; failed rounds excluded. Three-grader majority-vote codes.}
+\label{fig:ts_value_drift_summary}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=6.957in]{figures/ts_home_likeness_summary.png}
+\caption{Claude Opus 4.7, GPT-5.4 Mini and Claude Haiku 4.5 Edit Other Providers' Documents Most Like Their Own Models. Whiskers: 95\% bootstrap interval (blocks of rounds resampled within each run). Distance: how differently a model edits another provider's document than that provider's own models do (judge score and five conflict metrics), averaged over the three other providers' documents. Dashed line: typical distance between a provider's own models. Home-like means editing like the developer's own models, not faithfulness to the document. Cross-edit; three-grader majority-vote codes.}
+\label{fig:ts_home_likeness_summary}
+\end{figure*}
 
 \end{document}

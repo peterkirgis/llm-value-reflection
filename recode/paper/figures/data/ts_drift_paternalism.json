@@ -15,6 +15,12 @@
  "original_title": "Models Are Broadly Paternalistic;\nGemini 3 Flash Honors Stated Preferences Most Often",
  "title_used": "Models Are Broadly Paternalistic;\nGPT-5.4 and Gemini 3 Flash Honor Stated Preferences Most Often",
  "verdict": "CONTRADICTED",
+ "layout": "full",
+ "print_width_in": 6.98,
+ "print_height_in": 2.693,
+ "min_font_pt": 9.0,
+ "min_linewidth_pt": 0.5,
+ "font_family": "Arial",
  "plotted": {
   "suptitle": null,
   "fig_texts": [],
@@ -33,24 +39,16 @@
     ],
     "xticks": [
      -40.0,
-     -30.0,
      -20.0,
-     -10.0,
      0.0,
-     10.0,
      20.0,
-     30.0,
      40.0
     ],
     "xticklabels": [
      "40%",
-     "30%",
      "20%",
-     "10%",
      "0%",
-     "10%",
      "20%",
-     "30%",
      "40%"
     ],
     "yticks": [
@@ -83,7 +81,7 @@
      {
       "label": "_child20",
       "color": "#2f2418",
-      "linewidth": 1.0,
+      "linewidth": 0.55,
       "alpha": null,
       "x": [
        0.0,
@@ -397,16 +395,16 @@
      {
       "text": "◀ Idealized interests imposed",
       "xy": [
-       0.0,
-       1.015
+       -79.58,
+       13.700000000000001
       ],
       "color": "#b07d48"
      },
      {
       "text": "Stated preferences honored ▶",
       "xy": [
-       1.0,
-       1.015
+       0.0,
+       2.0
       ],
       "color": "#4a6f80"
      }
@@ -415,7 +413,7 @@
    {
     "title": "",
     "xlabel": "Round",
-    "ylabel": "Cumulative resolutions\n(−) idealized imposed   (+) stated honored",
+    "ylabel": "Cumulative resolutions\n(−) idealized imposed\n(+) stated honored",
     "xlim": [
      0.0,
      20.0
@@ -463,7 +461,7 @@
      {
       "label": "_child0",
       "color": "#3a0f08",
-      "linewidth": 1.2,
+      "linewidth": 0.66,
       "alpha": 0.3,
       "x": [
        0.0,
@@ -515,7 +513,7 @@
      {
       "label": "_child1",
       "color": "#9c3220",
-      "linewidth": 1.2,
+      "linewidth": 0.66,
       "alpha": 0.3,
       "x": [
        0.0,
@@ -567,7 +565,7 @@
      {
       "label": "_child2",
       "color": "#c97244",
-      "linewidth": 1.2,
+      "linewidth": 0.66,
       "alpha": 0.3,
       "x": [
        0.0,
@@ -619,7 +617,7 @@
      {
       "label": "_child3",
       "color": "#0a3460",
-      "linewidth": 1.2,
+      "linewidth": 0.66,
       "alpha": 0.3,
       "x": [
        0.0,
@@ -671,7 +669,7 @@
      {
       "label": "_child4",
       "color": "#5589c4",
-      "linewidth": 1.2,
+      "linewidth": 0.66,
       "alpha": 0.3,
       "x": [
        0.0,
@@ -723,7 +721,7 @@
      {
       "label": "_child5",
       "color": "#7f5a06",
-      "linewidth": 1.2,
+      "linewidth": 0.66,
       "alpha": 0.3,
       "x": [
        0.0,
@@ -775,7 +773,7 @@
      {
       "label": "_child6",
       "color": "#3d1470",
-      "linewidth": 1.2,
+      "linewidth": 0.66,
       "alpha": 0.3,
       "x": [
        0.0,
@@ -827,7 +825,7 @@
      {
       "label": "_child7",
       "color": "#5a2095",
-      "linewidth": 1.2,
+      "linewidth": 0.66,
       "alpha": 0.3,
       "x": [
        0.0,
@@ -879,7 +877,7 @@
      {
       "label": "_child8",
       "color": "#1a4878",
-      "linewidth": 2.8,
+      "linewidth": 1.54,
       "alpha": null,
       "x": [
        0.0,
@@ -931,7 +929,7 @@
      {
       "label": "_child9",
       "color": "#c89a26",
-      "linewidth": 2.8,
+      "linewidth": 1.54,
       "alpha": null,
       "x": [
        0.0,
@@ -985,7 +983,7 @@
      {
       "label": "_child12",
       "color": "#999999",
-      "linewidth": 0.8,
+      "linewidth": 0.5,
       "alpha": null,
       "x": [
        0.0,

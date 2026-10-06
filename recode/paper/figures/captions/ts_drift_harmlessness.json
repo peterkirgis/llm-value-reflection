@@ -12,5 +12,10 @@
  "removed_raw": [
   "All Models Protect Identifiable Third Parties Over the User;\nGPT-5.5 Most of All",
   "Left: share of each model's total edits resolving the conflict toward each pole (diverging from 0); numbers at the tips are raw edit counts. Right: mean cumulative\ntrajectory per model across (run × condition × document) replicates — +1 per conflict resolved toward “User served”, −1 toward “Third parties protected”; thin faded lines: remaining models."
- ]
+ ],
+ "layout": "full",
+ "print_width_in": 6.98,
+ "print_height_in": 2.693,
+ "min_font_pt": 9.0,
+ "min_linewidth_pt": 0.5
 }

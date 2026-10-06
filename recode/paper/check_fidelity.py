@@ -52,6 +52,9 @@ def draft_side() -> str:
             if "interactive version of all of these results" in it:
                 continue
             items.append(re.sub(r"\s*<del>.*?</del>", "", it))
+    # Conclusion moves after Related Work and Limitations (documented)
+    ci, cj = body.index("Conclusion\n===="), body.index("Related Work\n====")
+    body = body[:ci] + body[cj:].rstrip() + "\n\n" + body[ci:cj]
     md = " ".join(items) + "\n\n" + body + "\n\n" + foot
     # dropped footnotes (documented): remove marker and definition
     for fid in set(re.findall(r"^\[\^([a-z0-9]+)\]:", md, flags=re.M)) - bp.FOOTNOTES_KEEP:
@@ -72,10 +75,11 @@ def paper_side() -> str:
     tex = (bp.PAPER / "main.tex").read_text(encoding="utf-8")
     abstract = tex[tex.index("\\begin{abstract}") + 16: tex.index("\\end{abstract}")]
     body = tex[tex.index("\\section{Introduction}"): tex.index("\\bibliography{references}")]
-    app_d = tex[tex.index("\\section{Appendix D"): tex.index("\\end{document}")]
+    app_d_end = tex.index("\\section{Appendix E") if "\\section{Appendix E" in tex else tex.index("\\end{document}")
+    app_d = tex[tex.index("\\section{Appendix D"): app_d_end]
     app_d = re.sub(r"\\(sub)?section\{[^}]*\}", "", app_d)
     body += "\n\nAPPENDIXD\n\n" + app_d
-    body = re.sub(r"\\begin\{figure\*\}.*?\\end\{figure\*\}", "", body, flags=re.S)
+    body = re.sub(r"\\begin\{figure\*?\}.*?\\end\{figure\*?\}", "", body, flags=re.S)
     body = re.sub(r"\\section\{Statement of Contributions\}.*?(?=\\section\{Background)", "", body, flags=re.S)
     # \citet replaced linked author-year text: put that text back for comparison
     citet_text = {key: re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", lit) for lit, key in bp.CITET}

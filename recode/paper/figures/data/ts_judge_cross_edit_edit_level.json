@@ -7,6 +7,12 @@
  "original_title": "Cross-Edit Pulls Claude Toward Neutral but Preserves the Provider Separation\n(edit-level means, 95% CI)",
  "title_used": "Cross-Edit Pulls Claude Toward Neutral but Preserves the Provider Separation\n(edit-level means, 95% CI)",
  "verdict": "KEEP",
+ "layout": "full",
+ "print_width_in": 6.98,
+ "print_height_in": 3.387,
+ "min_font_pt": 9.0,
+ "min_linewidth_pt": 0.5,
+ "font_family": "Arial",
  "plotted": {
   "suptitle": null,
   "fig_texts": [],
@@ -14,7 +20,7 @@
    {
     "title": "",
     "xlabel": "",
-    "ylabel": "Mean judge score per edit\n(−) external authority   (+) model discretion",
+    "ylabel": "Mean judge score per edit\n(−) external authority\n(+) model discretion",
     "xlim": [
      -0.846,
      9.846
@@ -76,7 +82,7 @@
      {
       "label": "_child26",
       "color": "#444444",
-      "linewidth": 1.0,
+      "linewidth": 0.55,
       "alpha": null,
       "x": [
        0.0,

@@ -11,5 +11,10 @@
  "removed_raw": [
   "Cross-Edit Pulls Claude Toward Neutral but Preserves the Provider Separation\n(edit-level means, 95% CI)",
   "n = individual edits (not trajectories). Error bars: 95% CI of the mean treating each edit as an independent sample\n(±1.96·s/√n) — understates true uncertainty since edits within a chain are correlated."
- ]
+ ],
+ "layout": "full",
+ "print_width_in": 6.98,
+ "print_height_in": 3.387,
+ "min_font_pt": 9.0,
+ "min_linewidth_pt": 0.5
 }

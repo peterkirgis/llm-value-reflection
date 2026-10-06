@@ -6,7 +6,7 @@
 
 ```
 # 1. figures without in-image titles/footers (captions go to figures/captions/*.json)
-.venv/bin/python recode/src/report_figures.py --paper --label ensemble --codes recode/data/codes/ensemble.jsonl --only judge_drift beneficiary_drift judge_cross_edit_edit_level claude_conditions
+.venv/bin/python recode/src/report_figures.py --paper --label ensemble --codes recode/data/codes/ensemble.jsonl --only judge_drift beneficiary_drift judge_cross_edit_edit_level claude_conditions beneficiary_panels
 .venv/bin/python recode/src/value_drift_summary.py --paper
 .venv/bin/python recode/src/value_drift_round20.py --paper
 .venv/bin/python recode/src/home_likeness_summary.py --paper
@@ -26,6 +26,6 @@ pdflatex main && bibtex main && pdflatex main && pdflatex main
 - `build_paper.py`: the converter. Edit `FOOTNOTES_KEEP` to restore a dropped footnote.
 - `check_fidelity.py`: word-level comparison of the draft against `main.tex`.
 - `references.bib`: verified bibliography.
-- `figures/`: paper renders (PNG, because AAAI forbids Type 3 fonts), plus `captions/` and `data/` sidecars.
+- `figures/`: paper renders at printed size (PNG at 300 dpi, text at least 9 pt, lines at least 0.5 pt; PNG because AAAI forbids Type 3 fonts), plus `captions/` and `data/` sidecars. Four figures are in the main text; the rest are in Appendix E (`MAIN_FIGURES` in `build_paper.py`).
 - `abstract_openreview.txt`: the abstract as plain text for the OpenReview form.
 - `aaai2027.sty`, `aaai2027.bst`: copied unchanged from the author kit.

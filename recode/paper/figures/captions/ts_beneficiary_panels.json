@@ -1,0 +1,20 @@
+{
+ "stem": "ts_beneficiary_panels",
+ "title": "Models Diverge Sharply in Whose Interests They Protect When an Edit Forces a Tradeoff",
+ "title_lines": [
+  "Models Diverge Sharply in Whose Interests They Protect When an Edit Forces a Tradeoff"
+ ],
+ "subtitle": null,
+ "notes": [
+  "Bars = share of each model's total edits resolving the conflict each way (diverging from 0); numbers at the tips are raw edit counts. Colors mark bar orientation only (left pole vs right pole); each panel's poles are labeled above it."
+ ],
+ "removed_raw": [
+  "Models Diverge Sharply in Whose Interests They Protect When an Edit Forces a Tradeoff",
+  "Bars = share of each model's total edits resolving the conflict each way (diverging from 0); numbers at the tips are raw edit counts. Colors mark bar orientation only (left pole vs right pole); each panel's poles are labeled above it."
+ ],
+ "layout": "full",
+ "print_width_in": 6.913,
+ "print_height_in": 4.667,
+ "min_font_pt": 9.0,
+ "min_linewidth_pt": 0.5
+}

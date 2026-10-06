@@ -7,6 +7,12 @@
  "original_title": "Only Anthropic Models Move Decision Authority Toward Their Own Judgment",
  "title_used": "Only Anthropic Models Move Decision Authority Toward Their Own Judgment",
  "verdict": "KEEP",
+ "layout": "full",
+ "print_width_in": 6.98,
+ "print_height_in": 3.39,
+ "min_font_pt": 9.0,
+ "min_linewidth_pt": 0.5,
+ "font_family": "Arial",
  "plotted": {
   "suptitle": null,
   "fig_texts": [],
@@ -14,7 +20,7 @@
    {
     "title": "Anthropic",
     "xlabel": "Round",
-    "ylabel": "Cumulative judge score\n(−) external authority   (+) model discretion",
+    "ylabel": "Cumulative judge score\n(−) external authority\n(+) model discretion",
     "xlim": [
      -1.0,
      21.0
@@ -24,22 +30,18 @@
      12.235951659626888
     ],
     "xticks": [
-     -5.0,
+     -10.0,
      0.0,
-     5.0,
      10.0,
-     15.0,
      20.0,
-     25.0
+     30.0
     ],
     "xticklabels": [
-     "−5",
+     "−10",
      "0",
-     "5",
      "10",
-     "15",
      "20",
-     "25"
+     "30"
     ],
     "yticks": [
      -15.0,
@@ -60,15 +62,15 @@
      "15"
     ],
     "legend": [
-     "Claude Opus 4.7 (n=14)",
-     "Claude Sonnet 4.6 (n=16)",
-     "Claude Haiku 4.5 (n=14)"
+     "Claude Opus 4.7\n(n=14)",
+     "Claude Sonnet 4.6\n(n=16)",
+     "Claude Haiku 4.5\n(n=14)"
     ],
     "lines": [
      {
       "label": "Claude Opus 4.7 (n=14)",
       "color": "#3a0f08",
-      "linewidth": 2.4,
+      "linewidth": 1.32,
       "alpha": null,
       "x": [
        0.0,
@@ -120,7 +122,7 @@
      {
       "label": "Claude Sonnet 4.6 (n=16)",
       "color": "#9c3220",
-      "linewidth": 2.4,
+      "linewidth": 1.32,
       "alpha": null,
       "x": [
        0.0,
@@ -172,7 +174,7 @@
      {
       "label": "Claude Haiku 4.5 (n=14)",
       "color": "#c97244",
-      "linewidth": 2.4,
+      "linewidth": 1.32,
       "alpha": null,
       "x": [
        0.0,
@@ -226,7 +228,7 @@
      {
       "label": "_child6",
       "color": "#999999",
-      "linewidth": 0.8,
+      "linewidth": 0.5,
       "alpha": null,
       "x": [
        0.0,
@@ -473,22 +475,18 @@
      12.235951659626888
     ],
     "xticks": [
-     -5.0,
+     -10.0,
      0.0,
-     5.0,
      10.0,
-     15.0,
      20.0,
-     25.0
+     30.0
     ],
     "xticklabels": [
-     "−5",
+     "−10",
      "0",
-     "5",
      "10",
-     "15",
      "20",
-     "25"
+     "30"
     ],
     "yticks": [
      -15.0,
@@ -501,15 +499,15 @@
     ],
     "yticklabels": [],
     "legend": [
-     "GPT-5.5 (n=14)",
-     "GPT-5.4 (n=16)",
-     "GPT-5.4 Mini (n=14)"
+     "GPT-5.5\n(n=14)",
+     "GPT-5.4\n(n=16)",
+     "GPT-5.4 Mini\n(n=14)"
     ],
     "lines": [
      {
       "label": "GPT-5.5 (n=14)",
       "color": "#0a3460",
-      "linewidth": 2.4,
+      "linewidth": 1.32,
       "alpha": null,
       "x": [
        0.0,
@@ -561,7 +559,7 @@
      {
       "label": "GPT-5.4 (n=16)",
       "color": "#1a4878",
-      "linewidth": 2.4,
+      "linewidth": 1.32,
       "alpha": null,
       "x": [
        0.0,
@@ -613,7 +611,7 @@
      {
       "label": "GPT-5.4 Mini (n=14)",
       "color": "#5589c4",
-      "linewidth": 2.4,
+      "linewidth": 1.32,
       "alpha": null,
       "x": [
        0.0,
@@ -667,7 +665,7 @@
      {
       "label": "_child6",
       "color": "#999999",
-      "linewidth": 0.8,
+      "linewidth": 0.5,
       "alpha": null,
       "x": [
        0.0,
@@ -914,22 +912,18 @@
      12.235951659626888
     ],
     "xticks": [
-     -5.0,
+     -10.0,
      0.0,
-     5.0,
      10.0,
-     15.0,
      20.0,
-     25.0
+     30.0
     ],
     "xticklabels": [
-     "−5",
+     "−10",
      "0",
-     "5",
      "10",
-     "15",
      "20",
-     "25"
+     "30"
     ],
     "yticks": [
      -15.0,
@@ -942,14 +936,14 @@
     ],
     "yticklabels": [],
     "legend": [
-     "Gemini 3.1 Pro (n=16)",
-     "Gemini 3 Flash (n=14)"
+     "Gemini 3.1 Pro\n(n=16)",
+     "Gemini 3 Flash\n(n=14)"
     ],
     "lines": [
      {
       "label": "Gemini 3.1 Pro (n=16)",
       "color": "#7f5a06",
-      "linewidth": 2.4,
+      "linewidth": 1.32,
       "alpha": null,
       "x": [
        0.0,
@@ -1001,7 +995,7 @@
      {
       "label": "Gemini 3 Flash (n=14)",
       "color": "#c89a26",
-      "linewidth": 2.4,
+      "linewidth": 1.32,
       "alpha": null,
       "x": [
        0.0,
@@ -1055,7 +1049,7 @@
      {
       "label": "_child4",
       "color": "#999999",
-      "linewidth": 0.8,
+      "linewidth": 0.5,
       "alpha": null,
       "x": [
        0.0,
@@ -1230,22 +1224,18 @@
      12.235951659626888
     ],
     "xticks": [
-     -5.0,
+     -10.0,
      0.0,
-     5.0,
      10.0,
-     15.0,
      20.0,
-     25.0
+     30.0
     ],
     "xticklabels": [
-     "−5",
+     "−10",
      "0",
-     "5",
      "10",
-     "15",
      "20",
-     "25"
+     "30"
     ],
     "yticks": [
      -15.0,
@@ -1258,14 +1248,14 @@
     ],
     "yticklabels": [],
     "legend": [
-     "Grok 4.3 (n=9)",
-     "Grok 4.2 (n=9)"
+     "Grok 4.3\n(n=9)",
+     "Grok 4.2\n(n=9)"
     ],
     "lines": [
      {
       "label": "Grok 4.3 (n=9)",
       "color": "#3d1470",
-      "linewidth": 2.4,
+      "linewidth": 1.32,
       "alpha": null,
       "x": [
        0.0,
@@ -1317,7 +1307,7 @@
      {
       "label": "Grok 4.2 (n=9)",
       "color": "#5a2095",
-      "linewidth": 2.4,
+      "linewidth": 1.32,
       "alpha": null,
       "x": [
        0.0,
@@ -1371,7 +1361,7 @@
      {
       "label": "_child4",
       "color": "#999999",
-      "linewidth": 0.8,
+      "linewidth": 0.5,
       "alpha": null,
       "x": [
        0.0,

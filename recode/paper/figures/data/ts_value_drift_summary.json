@@ -1,5 +1,10 @@
 {
   "figure": "recode/paper/figures/ts_value_drift_summary.png",
+  "layout": "full",
+  "print_width_in": 6.99,
+  "print_height_in": 2.99,
+  "min_font_pt": 9.0,
+  "min_linewidth_pt": 0.5,
   "metric": "A: value-moving edit rate = share of edits with judge != 0 OR >=1 conflict event of a code other than disclosure",
   "codes": "recode/data/codes/ensemble.jsonl (three-grader majority vote)",
   "frame": "applied edits with a valid coding, plus every abstention (no_change) counted as non-moving even when uncoded; failed rounds excluded; pooled over all conditions, documents, runs",

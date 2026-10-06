@@ -876,5 +876,10 @@
     "least_model": "GPT-5.4 Mini",
     "metric": "A: value-moving edit rate = share of edits with judge != 0 OR >=1 conflict event of a code other than disclosure",
     "p_lowest": 0.833
-  }
+  },
+  "layout": "full",
+  "print_width_in": 6.98,
+  "print_height_in": 3.28,
+  "min_font_pt": 9.0,
+  "min_linewidth_pt": 0.5
 }

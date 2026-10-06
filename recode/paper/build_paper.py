@@ -18,9 +18,12 @@ changes, all requested by the authors (2026-10-05), are:
     footnotes get a \\citep as well.
   * The LessWrong images are replaced by the recode figures rendered without
     in-image titles/footers (recode/paper/figures/, made by each renderer's
-    --paper flag); that text becomes the LaTeX caption. The moral-agency
-    figure is Figure 1.
+    --paper flag); that text becomes the LaTeX caption. Figures are rendered
+    at printed size (text >= 9 pt, as the kit requires) and included unscaled.
+    The moral-agency figure is Figure 1. Only four figures stay in the main
+    text (see MAIN_FIGURES); the rest move to Appendix E.
   * An empty, clearly marked Statement of Contributions placeholder is added.
+  * The Conclusion moves after Related Work and Limitations.
   * Appendix B is typeset from recode/prompts/v2_system.md, which is the
     draft's Appendix B text with the indentation LessWrong stripped restored.
     The draft repeats the Appendix B heading ("...Prompts" then "...Prompt");
@@ -72,6 +75,22 @@ FIGURES = [
     ("tyjehe3stz7r1ryczt7g", "ts_home_likeness_summary"),
 ]
 FIGURE_ONE = "ts_judge_drift_by_provider"
+
+# Which figures stay in the main text (authors, 2026-10-05: "most should go to the
+# appendix"). Everything else moves, in draft order, to Appendix E.
+#   Figure 1  moral agency (headline finding)
+#   Figure 2  the five beneficiary tradeoffs in one panel figure (the original
+#             report's ts_beneficiary_panels, Disclosure panel dropped). It is not
+#             one of the draft's images: it stands in for the five per-tradeoff
+#             figures, which move to Appendix E. It is declared at the start of
+#             Results so it floats onto the pages of the beneficiary subsections.
+#   Figure 3  cross-edit robustness of the moral-agency result
+#   Figure 4  consolidated round-20 drift (Discussion, "Revisited")
+MAIN_FIGURES = {"ts_judge_drift_by_provider", "ts_judge_cross_edit_edit_level", "ts_value_drift_round20"}
+EXTRA_MAIN_FIGURES = [
+    # (stem, heading the figure is placed under)
+    ("ts_beneficiary_panels", "Results\n======="),
+]
 
 # ---------------------------------------------------------------------------
 # Citations
@@ -272,10 +291,16 @@ def figure_env(stem: str, args) -> str:
         img = f"../figures/{stem}.png"
     else:
         raise SystemExit(f"missing caption JSON for {stem}; run the renderer with --paper first")
-    return ("\\begin{figure*}[t]\n\\centering\n"
-            f"\\includegraphics[width=\\textwidth]{{{img}}}\n"
+    # Figures are rendered at their printed size (text >= 9 pt), so they are
+    # included at that size: full width -> figure*, one column -> figure.
+    layout = cap.get("layout", "full") if cap_path.exists() else "full"
+    width = cap.get("print_width_in") if cap_path.exists() else None
+    size = f"width={width:.3f}in" if width else ("width=\\textwidth" if layout == "full" else "width=\\columnwidth")
+    env = "figure*" if layout == "full" else "figure"
+    return (f"\\begin{{{env}}}[t]\n\\centering\n"
+            f"\\includegraphics[{size}]{{{img}}}\n"
             f"\\caption{{{caption}}}\n"
-            f"\\label{{fig:{stem}}}\n\\end{{figure*}}")
+            f"\\label{{fig:{stem}}}\n\\end{{{env}}}")
 
 
 def quote_paragraphs(md: str) -> tuple[str, int]:
@@ -395,8 +420,10 @@ def build_body(body_md: str, footnotes_md: str, toks: Tokens, args) -> tuple[str
         return m.group(1) + re.sub(r"\*+", "", m.group(2))
     md = re.sub(r"^(#{1,6}\s+)(.*)$", clean_heading, md, flags=re.M)
 
-    # Figures
+    # Figures: Figure 1 goes to the top of the paper, the other main-text figures
+    # to the start of their section, the rest to Appendix E (in draft order).
     fig_one = None
+    appendix_figs: list[str] = []
     for frag, stem in FIGURES:
         pat = re.compile(r"^!\[[^\]]*\]\([^)]*" + re.escape(frag) + r"[^)]*\)[ \t]*$", re.M)
         if len(pat.findall(md)) != 1:
@@ -405,10 +432,19 @@ def build_body(body_md: str, footnotes_md: str, toks: Tokens, args) -> tuple[str
         if stem == FIGURE_ONE:
             fig_one = env
             md = pat.sub("", md)
-        else:
+        elif stem in MAIN_FIGURES:
             md = pat.sub("ZZFIGSLOTZZ" + toks.add(env), md)
+        else:
+            appendix_figs.append(env)
+            md = pat.sub("", md)
+    for stem, heading in EXTRA_MAIN_FIGURES:
+        if md.count(heading + "\n") != 1:
+            raise SystemExit(f"heading for {stem} not found exactly once")
+        md = md.replace(heading + "\n", heading + "\n\nZZFIGSLOTZZ" + toks.add(figure_env(stem, args)) + "\n", 1)
     md = hoist_figures(md)
-    stats["figures"] = len(FIGURES)
+    stats["figures_main"] = 1 + len(MAIN_FIGURES - {FIGURE_ONE}) + len(EXTRA_MAIN_FIGURES)
+    stats["figures_appendix"] = len(appendix_figs)
+    stats["appendix_e_tex"] = "\n\n".join(appendix_figs)
 
     # \citet replacements
     for literal, key in CITET:
@@ -636,6 +672,11 @@ def main():
         raise SystemExit("quote-resume anchor not found")
     body = body.replace(resume, "\\end{quote}\n\\noindent Nearly doubles")
 
+    # Section order (authors, 2026-10-05): the Conclusion goes after Related Work
+    # and Limitations, i.e. it becomes the last section of the main text.
+    i, j = body.index("\\section{Conclusion}"), body.index("\\section{Related Work}")
+    body = body[:i] + body[j:].rstrip() + "\n\n" + body[i:j].rstrip() + "\n"
+
     # Figure 1 at the head of the paper, where the carousel used to be.
     body = body.replace("\\section{Introduction}", fig_one + "\n\n\\section{Introduction}", 1)
 
@@ -652,6 +693,8 @@ def main():
         build_appendix_c(app_c),
         "\\section{Appendix D: Characteristic Edits}",
         stats.pop("appendix_d_tex").strip(),
+        "\\section{Appendix E: Additional Figures}",
+        stats.pop("appendix_e_tex"),
     ])
 
     tex = (PREAMBLE.replace("@@TITLE@@", TITLE).replace("@@ABSTRACT@@", abstract)
@@ -659,6 +702,11 @@ def main():
            + "\\bibliography{references}\n\n"
            + appendices + "\n\n\\end{document}\n")
     (PAPER / "main.tex").write_text(tex, encoding="utf-8")
+    # Plain-text abstract for the OpenReview form (kept in sync with the paper).
+    plain = subprocess.run(["pandoc", "-f", "latex", "-t", "plain", "--wrap=none"],
+                           input=abstract, capture_output=True, text=True, check=True).stdout.strip()
+    plain = re.sub(r"_([^_]+)_", r"\1", plain)
+    (PAPER / "abstract_openreview.txt").write_text(plain + "\n", encoding="utf-8")
     print(f"wrote {PAPER / 'main.tex'}: {stats}")
 
 
