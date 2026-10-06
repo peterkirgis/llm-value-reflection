@@ -266,6 +266,11 @@ PAPER_EDITS = [
     # "essay" -> "paper" where the text refers to itself (not Gabriel's or Caputo's essays)
     ("this essay", "this paper", 4),
     ("our essay", "our paper", 1),
+    # Discussion: the Google quote is not continuous in the source ("shouldn't make
+    # assumptions about your intent or pass judgment on your point of view")
+    ("“shouldn’t pass judgment on your point of view”", "“shouldn’t … pass judgment on your point of view”", 1),
+    # Related Work: the bold in the Askell et al. (2021) quote is the authors' emphasis
+    ("**meaning that it is helpful, honest, and harmless**.\"", "**meaning that it is helpful, honest, and harmless**.\" (emphasis added)", 1),
     # footnotes and typo
     ("[^jyctgz9l9va]: /See", "[^jyctgz9l9va]: See", 1),
     ("I use leaked system prompts", "we use leaked system prompts", 1),
