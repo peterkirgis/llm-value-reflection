@@ -6,7 +6,7 @@ Write-up: analysis/figures/HOME_LIKENESS.md
 Figure: analysis/figures/ts_home_likeness_summary.{png,pdf}, drawn by
 home_likeness_summary.py (which imports this module). The four-panel figure
 this script used to draw (ts_home_likeness) was removed on 2026-10-08 as
-unused; it is in git history (tag backup/pre-restructure-2026-10-08).
+unused; it is in git history (3b36326:recode/figures/ts_home_likeness.png).
 
 Regenerate:
     .venv/bin/python analysis/src/home_likeness.py

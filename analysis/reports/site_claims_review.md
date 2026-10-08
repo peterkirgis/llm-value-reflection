@@ -1,5 +1,11 @@
 # Site claims review — verdict on every published claim vs the re-code evidence
 
+> **Historical (2026-10-08).** This reviews the site as it was before the
+> consensus rebuild, against the two-grader evidence of 2026-09-09. The live site
+> (`docs/`) is now built on the three-grader majority vote by
+> `analysis/src/build_site.py`, with its statements taken from
+> `reports/final_draft.md`.
+
 Reviewed 2026-09-09 against the committed evidence base (headline JSONs, cluster-bootstrap
 CIs, ranking-stability files, E1–E5 validity experiments, B3 inter-grader report,
 F free results, and the audited synthesis in `analysis/reports/SUMMARY.md`). The claims
@@ -14,8 +20,8 @@ under review are the site's published claims in `docs/facets.js`, `docs/index.ht
   so `ensemble` ≡ `v2_gemma` numerically. The **two-grader average** is defined only
   for the judge score (per-edit mean over valid graders):
   `analysis/site_v2avg/data/selfcheck.json` (the superseded two-grader site variant was
-  removed from the tree on 2026-10-08; the file is in git history, e.g. at tag
-  `backup/pre-restructure-2026-10-08`). Conflict-count claims have no averaged
+  removed from the tree on 2026-10-08; the file is in git history as
+  `3b36326:recode/site_v2avg/data/selfcheck.json`). Conflict-count claims have no averaged
   instrument; for them "survives the average" means survives under **both** v2 graders
   separately.
 - **Pooled vs cross-edit.** "Pooled" = all coded edits for a model; "cross-edit" =

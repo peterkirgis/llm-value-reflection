@@ -66,8 +66,8 @@ Outputs (label-suffixed so later labels never overwrite):
 
 The per-document-type drift figures this script used to draw
 (analysis/figures/drift_<document_type>[_<label>].png) were removed on
-2026-10-08 as unused; they are in git history (tag
-backup/pre-restructure-2026-10-08). The constitution / system_prompt strata
+2026-10-08 as unused; they are in git history (commit
+3b36326, under recode/figures/). The constitution / system_prompt strata
 are still bootstrapped and stored in the summary JSON.
 """
 

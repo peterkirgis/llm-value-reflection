@@ -771,7 +771,7 @@ def e3_render(result: dict, metas: dict[str, dict], ids_path: str) -> str:
         m = metas[lab]
         add(f"- `{lab}`: `{m['path']}` ({m['n_unique_ids']} unique edit_ids, "
             f"{m['n_valid']} valid codes, {m['n_invalid']} invalid/failed)")
-    add(f"- Ids file: `{ids_path}` ({result['n_cases']} cases = edits with a "
+    add(f"- Ids file: `{repo_rel(ids_path)}` ({result['n_cases']} cases = edits with a "
         f"paternalism conflict from any grader; {result['n_controls']} controls "
         "= seeded random edits with none).")
     add("")

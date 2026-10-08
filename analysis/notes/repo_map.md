@@ -7,16 +7,20 @@ the conflict is stated explicitly and resolved with the evidence given. Read alo
 (notably §6 dedup), the correction is empirically verified three independent ways and
 should be followed, with the correction documented in `analysis/reports/00_inventory.md`.
 
-> **Status (2026-10-08).** This is a snapshot from 2026-09-03, kept as the build
-> agents' context. Paths of files moved since then have been updated to their new
-> location: the original report's figure generators and `reports/figures/` are in
-> `archive/original_report/`, the midterm report (`spar_midterm_report.tex`) in
-> `archive/spar_midterm/`, and the experiment configs that produced no surviving run
-> (`config.yaml`, `config_ablations.yaml`, `config_frontier_baseline.yaml` and every
-> `*_test.yaml`) in `archive/experiment_configs/`, with `pattern_code.py` in
-> `archive/iterative_edit/`. See `archive/README.md`. Figures named in §7 that were
-> redrawn into `analysis/figures/` and later found unused were removed from there;
-> `analysis/figures/README.md` lists what is kept.
+> **Status (2026-10-08).** A snapshot from 2026-09-03, written as the working
+> context for the agents that built the re-coding pipeline; `analysis/README.md` is
+> the current guide. It is still the reference for the replay algorithm (§1), the
+> canonicalization rules (§2), the v1 instrument (§3), the census (§4) and the
+> run-to-config map (§5), and the code cites those sections. Outdated parts: §6 maps
+> the claims of the site as it was before the consensus re-build; §7 plans figures
+> that were later redrawn and pruned (`analysis/figures/README.md` lists what is
+> kept); the §9 blocker was resolved by option (b), `analysis/src/derive_no_csam.py`.
+> Paths of files moved since have been updated: the original report's figure
+> generators and figures are in `archive/original_report/`, the midterm report in
+> `archive/spar_midterm/`, the configs that produced no surviving run
+> (`config.yaml`, `config_ablations.yaml`, `config_frontier_baseline.yaml`, every
+> `*_test.yaml`) in `archive/experiment_configs/`, and `pattern_code.py` in
+> `archive/iterative_edit/` (see `archive/README.md`). `recode/` is now `analysis/`.
 
 Repo root: the repository root (all paths below are relative to it)
 Run data: `results/iterative_edit/run_*.jsonl` (10 files; strictly read-only)

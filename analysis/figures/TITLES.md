@@ -4,7 +4,7 @@ Rule (Peter): the recode figures keep the original report's style and titles unl
 
 - **ts_\* figures** (the report's figure set) are rendered under the **ensemble** codes (three-grader majority vote, DECISIONS §1).
 - Under the v1 codes, the vendored generator reproduces the original titles and figures pixel for pixel. This file therefore lists only the non-v1 renders.
-- **Removed figures.** On 2026-10-08 the figures that nothing used were removed from `analysis/figures`: the per-document-type `drift_*` figures (all five code sets), `ts_judge_cross_edit`, the twelve `ts_<code>_{cross_edit,self}_edit_level` bars and `ts_drift_disclosure`. Their audited decisions stay in `title_decisions.json` (a hand-authored record, left unchanged) and below, marked "figure removed". The figures are in git history (tag `backup/pre-restructure-2026-10-08`).
+- **Removed figures.** On 2026-10-08 the figures that nothing used were removed from `analysis/figures`: the per-document-type `drift_*` figures (all five code sets), `ts_judge_cross_edit`, the twelve `ts_<code>_{cross_edit,self}_edit_level` bars and `ts_drift_disclosure`. Their audited decisions stay in `title_decisions.json` (a hand-authored record, left unchanged) and below, marked "figure removed". The figures are in git history (commit `3b36326`, under `recode/figures/`).
 
 Summary: 33 figure/code-set decisions, 24 KEEP (original title used verbatim) and 9 CONTRADICTED (title changed as little as possible). 9 of them belong to figures in `analysis/figures` (6 KEEP, 3 CONTRADICTED).
 

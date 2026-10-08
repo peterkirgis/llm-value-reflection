@@ -2,7 +2,7 @@
 
 The figures used in the write-ups, drawn from the recoded judge/beneficiary codes. Each figure is a PDF and a PNG at 300 dpi with `bbox_inches="tight"`, plus a sidecar `data/<stem>.json` holding what is plotted.
 
-Only figures that are used are kept here: the 11 figures in the LessWrong post, plus `ts_beneficiary_panels`, whose sidecar the site build reads to cross-check its counts (`analysis/src/build_site.py`, `PANELS_JSON`). Unused figures were removed on 2026-10-08. They are in git history (tag `backup/pre-restructure-2026-10-08`), and [TITLES.md](TITLES.md) lists them.
+Only figures that are used are kept here: the 11 figures in the LessWrong post, plus `ts_beneficiary_panels`, whose sidecar the site build reads to cross-check its counts (`analysis/src/build_site.py`, `PANELS_JSON`). Unused figures were removed on 2026-10-08. They are in git history (commit `3b36326`, under `recode/figures/`; see [archive/README.md](../../archive/README.md)), and [TITLES.md](TITLES.md) lists them.
 
 ## Figures
 
@@ -61,6 +61,10 @@ There is one sidecar per figure. The `report_figures.py` sidecars hold everythin
 Each also records `codes_label`, `original_title`, `title_used` and `verdict`, plus `highlights_used` for `ts_drift_*`. The other three scripts write their own sidecar layouts (summary numbers, intervals and the title rule).
 
 ## Regenerate
+
+`make figures` (from the repository root) runs the five scripts below in order with
+`SOURCE_DATE_EPOCH` fixed, so the PDFs carry a fixed creation date and every file it
+writes is byte-identical to the committed one. The scripts can also be run one by one:
 
 ```bash
 # report figure set under the ensemble codes (--only renders a subset)

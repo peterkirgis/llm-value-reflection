@@ -8,6 +8,9 @@ __pycache__/
 # once (results/iterative_edit/README.md tells that story).
 results/*
 !results/iterative_edit/
+# per-run exports and v1-coder outputs written next to the run files
+results/iterative_edit/*_changes.json
+results/iterative_edit/*_judge_beneficiary_coded.json
 data/processed/
 docs/data/site.json
 .ruff_cache/

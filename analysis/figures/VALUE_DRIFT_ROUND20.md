@@ -87,7 +87,7 @@ The title rule's "Across Every Measure" branch requires the top model to be lowe
 
 ## Comparison with the rate-based figure
 
-The rate-based summary (`analysis/figures/data/ts_value_drift_summary.json`, metric: A: value-moving edit rate = share of edits with judge != 0 OR patienthood != not_present OR >=1 conflict event of a code other than disclosure) ranks **GPT-5.4 Mini** least (P(lowest) 0.8515). This figure ranks **GPT-5.4 Mini** least.
+The rate-based summary (`analysis/figures/data/ts_value_drift_summary.json`, metric: A: value-moving edit rate = share of edits with judge != 0 OR >=1 conflict event of a code other than disclosure) ranks **GPT-5.4 Mini** least (P(lowest) 0.833). This figure ranks **GPT-5.4 Mini** least.
 
 ## Faithfulness evidence
 

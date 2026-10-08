@@ -1,5 +1,9 @@
 # Workstream status log
 
+> Build log of the re-coding workstreams, oldest first, as written at the time
+> (the folder was then `recode/`; paths below are relative to it, now
+> `analysis/`). For the current state see `analysis/README.md`.
+
 ## Phase 0 — Inventory and canonicalize (+ A2 infrastructure) — DONE (2026-09-04)
 - `data/canonical/edits.jsonl`: 2,740 records (137 chains × rounds 1..20), all
   schema-valid; 2,580 applied / 158 errors / 2 abstentions; v1 join exactly

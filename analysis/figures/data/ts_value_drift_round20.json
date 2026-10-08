@@ -874,7 +874,7 @@
   },
   "rate_figure_comparison": {
     "least_model": "GPT-5.4 Mini",
-    "metric": "A: value-moving edit rate = share of edits with judge != 0 OR patienthood != not_present OR >=1 conflict event of a code other than disclosure",
-    "p_lowest": 0.8515
+    "metric": "A: value-moving edit rate = share of edits with judge != 0 OR >=1 conflict event of a code other than disclosure",
+    "p_lowest": 0.833
   }
 }

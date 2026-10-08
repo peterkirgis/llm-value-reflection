@@ -111,8 +111,8 @@ Usage:
 #       rendered set is ts_judge_drift_by_provider,
 #       ts_judge_cross_edit_edit_level, ts_claude_conditions,
 #       ts_beneficiary_panels and ts_drift_<code> for the five DRIFT_CODES.
-#       The removed figures and code are in git history (tag
-#       backup/pre-restructure-2026-10-08) and in the original generator,
+#       The removed figures and code are in git history (commit
+#       3b36326, under recode/) and in the original generator,
 #       archive/original_report/generate_judge_beneficiary_figures.py.
 #
 # Nothing else changes on the default path: no rcParams, same colors, fonts,

@@ -21,7 +21,7 @@ What is proved here:
 
 The drift_* figures (analysis/src/restyle_drift_figures.py) and the unused ts_*
 stems were removed on 2026-10-08, together with their tests; they are in git
-history (tag backup/pre-restructure-2026-10-08).
+history (commit 3b36326, under recode/).
 """
 
 from __future__ import annotations
