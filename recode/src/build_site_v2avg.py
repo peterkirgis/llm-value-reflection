@@ -120,7 +120,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-DOCS = ROOT / "docs"
+# Base template for every variant: a frozen copy of docs/ as it was before the
+# consensus site was promoted to docs/ (2026-10-08). The variants patch this
+# base, so docs/ itself can now carry the consensus build.
+DOCS = ROOT / "recode" / "site_base"
 RECODE = ROOT / "recode"
 RESULTS_DIR = ROOT / "results" / "iterative_edit"
 EDITS_PATH = RECODE / "data" / "canonical" / "edits.jsonl"
