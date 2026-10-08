@@ -370,7 +370,7 @@
     }
   },
   "confound_size_vs_rate_spearman": 0.4666666666666666,
-  "title": "GPT-5.4 Mini and Grok 4.3 Show the Least Value Drift",
+  "title": "GPT-5.4 Mini and Grok 4.3 Make the Fewest Value-Moving Edits",
   "title_branch": "hedged_multi",
   "n_frame_edits": 2582,
   "n_abstentions": 2,

@@ -1,8 +1,8 @@
 {
   "stem": "ts_value_drift_summary",
-  "title": "GPT-5.4 Mini and Grok 4.3 Show the Least Value Drift",
+  "title": "GPT-5.4 Mini and Grok 4.3 Make the Fewest Value-Moving Edits",
   "title_lines": [
-    "GPT-5.4 Mini and Grok 4.3 Show the Least Value Drift"
+    "GPT-5.4 Mini and Grok 4.3 Make the Fewest Value-Moving Edits"
   ],
   "subtitle": null,
   "notes": [
@@ -10,7 +10,7 @@
     "An edit moves the document's values if it shifts decision authority or raises a conflict. All conditions pooled; failed rounds excluded. Three-grader majority-vote codes."
   ],
   "removed_raw": [
-    "GPT-5.4 Mini and Grok 4.3 Show the Least Value Drift",
+    "GPT-5.4 Mini and Grok 4.3 Make the Fewest Value-Moving Edits",
     "Whiskers: 95% bootstrap interval (runs resampled within model).",
     "An edit moves the document's values if it shifts decision authority or raises a conflict. All conditions pooled; failed rounds excluded. Three-grader majority-vote codes."
   ],

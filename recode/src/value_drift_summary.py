@@ -418,15 +418,15 @@ def title_rule(order: list[str], plow: dict[str, float],
     """
     top = order[0]
     if plow.get(top, 0.0) >= 0.95:
-        return f"{top} Shows the Least Value Drift", "p_lowest>=0.95"
+        return f"{top} Makes the Fewest Value-Moving Edits", "p_lowest>=0.95"
     if lowest_by_measure and all(v == top for v in lowest_by_measure.values()):
-        return f"{top} Shows the Least Value Drift Across Every Measure", "lowest_on_every_measure"
+        return f"{top} Makes the Fewest Value-Moving Edits Across Every Measure", "lowest_on_every_measure"
     leaders = [m for m in order if plow.get(m, 0.0) >= 0.05]
     if top not in leaders:
         leaders = [top] + leaders
     if len(leaders) == 1:
-        return f"{top} Likely Shows the Least Value Drift", "hedged_single"
-    return f"{_join(leaders)} Show the Least Value Drift", "hedged_multi"
+        return f"{top} Likely Makes the Fewest Value-Moving Edits", "hedged_single"
+    return f"{_join(leaders)} Make the Fewest Value-Moving Edits", "hedged_multi"
 
 
 # ---------------------------------------------------------------------------
@@ -933,8 +933,8 @@ def write_index(summary: dict, path: Path = INDEX_PATH) -> Path:
         "condition mix shift a model's rate.",
         "- **No direction.** A model that moves values often but in balanced directions scores as high drift "
         "here. Variant E (|cumulative judge| at round 20) is the one directional check.",
-        "- **Title rule** (applied mechanically): if the top model's P(lowest) ≥ 0.95 → \"<Model> Shows the "
-        "Least Value Drift\"; else if it is lowest under A, B, C, E and every single grader (Gemma, Qwen, Muse, "
+        "- **Title rule** (applied mechanically): if the top model's P(lowest) ≥ 0.95 → \"<Model> Makes the "
+        "Fewest Value-Moving Edits\"; else if it is lowest under A, B, C, E and every single grader (Gemma, Qwen, Muse, "
         "v1) → \"… Across Every Measure\"; otherwise a hedged headline naming every model with P(lowest) ≥ 0.05.",
         "",
         "## Regenerate",

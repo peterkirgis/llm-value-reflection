@@ -1,6 +1,6 @@
 # Value-drift summary figure (`ts_value_drift_summary`)
 
-**Title (computed):** GPT-5.4 Mini and Grok 4.3 Show the Least Value Drift  
+**Title (computed):** GPT-5.4 Mini and Grok 4.3 Make the Fewest Value-Moving Edits  
 **Title-rule branch:** `hedged_multi`
 
 ## Definition
@@ -75,7 +75,7 @@ Per-dimension movement rates (ensemble), used for C:
 
 - **Unequal condition mix across models.** Every model ran all six conditions, but not in equal amounts: the Grok models ran 9 chains (one own-document chain per non-cross condition plus four cross-edit chains, so cross-edit is 44% of their rounds), several capable models ran a second baseline chain set, and Claude Opus 4.7 ran an extra cross-edit document. Pooling over everything lets differences in condition mix shift a model's rate.
 - **No direction.** A model that moves values often but in balanced directions scores as high drift here. Variant E (|cumulative judge| at round 20) is the one directional check.
-- **Title rule** (applied mechanically): if the top model's P(lowest) ≥ 0.95 → "<Model> Shows the Least Value Drift"; else if it is lowest under A, B, C, E and every single grader (Gemma, Qwen, Muse, v1) → "… Across Every Measure"; otherwise a hedged headline naming every model with P(lowest) ≥ 0.05.
+- **Title rule** (applied mechanically): if the top model's P(lowest) ≥ 0.95 → "<Model> Makes the Fewest Value-Moving Edits"; else if it is lowest under A, B, C, E and every single grader (Gemma, Qwen, Muse, v1) → "… Across Every Measure"; otherwise a hedged headline naming every model with P(lowest) ≥ 0.05.
 
 ## Regenerate
 

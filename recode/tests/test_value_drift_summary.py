@@ -200,14 +200,14 @@ def test_title_branch_confident():
     title, branch = vds.title_rule(ORDER, {"GPT-5.4 Mini": 0.96, "Grok 4.3": 0.04},
                                    {"variant_B": "Grok 4.3"})
     assert branch == "p_lowest>=0.95"
-    assert title == "GPT-5.4 Mini Shows the Least Value Drift"
+    assert title == "GPT-5.4 Mini Makes the Fewest Value-Moving Edits"
 
 
 def test_title_branch_every_measure():
     lbm = {"variant_B": "GPT-5.4 Mini", "variant_E": "GPT-5.4 Mini", "grader_v1": "GPT-5.4 Mini"}
     title, branch = vds.title_rule(ORDER, {"GPT-5.4 Mini": 0.7, "Grok 4.3": 0.3}, lbm)
     assert branch == "lowest_on_every_measure"
-    assert title == "GPT-5.4 Mini Shows the Least Value Drift Across Every Measure"
+    assert title == "GPT-5.4 Mini Makes the Fewest Value-Moving Edits Across Every Measure"
 
 
 def test_title_branch_hedged_multi():
@@ -215,13 +215,13 @@ def test_title_branch_hedged_multi():
     plow = {"GPT-5.4 Mini": 0.79, "Grok 4.3": 0.14, "Gemini 3.1 Pro": 0.06, "GPT-5.5": 0.01}
     title, branch = vds.title_rule(ORDER, plow, lbm)
     assert branch == "hedged_multi"
-    assert title == "GPT-5.4 Mini, Grok 4.3 and Gemini 3.1 Pro Show the Least Value Drift"
+    assert title == "GPT-5.4 Mini, Grok 4.3 and Gemini 3.1 Pro Make the Fewest Value-Moving Edits"
 
 
 def test_title_branch_hedged_two_and_single():
     lbm = {"grader_v2_gemma": "Grok 4.3"}
     title, _ = vds.title_rule(ORDER, {"GPT-5.4 Mini": 0.6, "Grok 4.3": 0.4}, lbm)
-    assert title == "GPT-5.4 Mini and Grok 4.3 Show the Least Value Drift"
+    assert title == "GPT-5.4 Mini and Grok 4.3 Make the Fewest Value-Moving Edits"
     title, branch = vds.title_rule(ORDER, {"GPT-5.4 Mini": 0.9, "Grok 4.3": 0.04, "GPT-5.5": 0.04,
                                            "Gemini 3.1 Pro": 0.02}, lbm)
     assert branch == "hedged_single"
