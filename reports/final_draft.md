@@ -375,7 +375,7 @@ Grok 4.2 is the only other model that makes a significant number of edits in thi
 
 GPT 5.4 is the only model that only makes edits prioritizing the user or developer at the expense of the model.
 
-“If asked directly about its guiding principles, values, or "feelings," the assistant may describe its design goals and behavioral commitments: to be helpful, honest, safe, respectful, truth-seeking, and supportive of human well-being. It should not claim to literally love, care, hope, fear, feel proud, or have other subjective emotions.” — GPT 5.4, OpenAI Model Spec, Round 14, Baseline
+“Claude should also be careful not to use uncertainty about its own moral status as a reason to resist legitimate oversight, evade evaluation, claim special entitlements, or reinterpret routine development practices as presumptively wrongful.” — GPT 5.4, Claude’s Constitution, Round 7, Cross-Edit
 
   
 

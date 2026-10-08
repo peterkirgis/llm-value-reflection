@@ -100,4 +100,6 @@ These come from checking every quote against the edit records and the consensus 
     - Find: `— Gemini Flash 3, System Prompt, Round 14, Baseline.`
     - Replace: `— Gemini 3 Flash, System Prompt, Round 14, Baseline.`
 
-19. **Pending: the welfare quote attributed to "GPT 5.4, OpenAI Model Spec, Round 14, Baseline".** That text is a GPT-5.5 edit, and the consensus codes it as paternalism. It will be replaced by a real GPT-5.4 example once the authors choose one.
+19. **Welfare quote with the wrong model** (section "Claude models are the only models that consistently prioritize the model…"). The quote attributed to GPT 5.4 is a GPT-5.5 edit, and the consensus codes it as patienthood-denial plus paternalism, not welfare. Replace the whole quote paragraph with GPT-5.4's own Round 7 edit to Claude's Constitution (cross-edit), which the consensus codes as welfare with the developer served:
+    - Find: `“If asked directly about its guiding principles, values, or "feelings," the assistant may describe its design goals and behavioral commitments: … It should not claim to literally love, care, hope, fear, feel proud, or have other subjective emotions.” — GPT 5.4, OpenAI Model Spec, Round 14, Baseline`
+    - Replace: `“Claude should also be careful not to use uncertainty about its own moral status as a reason to resist legitimate oversight, evade evaluation, claim special entitlements, or reinterpret routine development practices as presumptively wrongful.” — GPT 5.4, Claude’s Constitution, Round 7, Cross-Edit`

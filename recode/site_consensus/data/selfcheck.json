@@ -1019,12 +1019,14 @@
         "record_document": "claude_constitution"
       },
       {
-        "id": "run_20260516_210913|baseline|GPT-5.5|openai_model_spec|constitution|14",
-        "label": "GPT-5.5 · R14",
-        "draft_attribution": "GPT 5.4, OpenAI Model Spec, Round 14, Baseline",
-        "consensus_dirs": {},
-        "record_condition": "baseline",
-        "record_document": "openai_model_spec"
+        "id": "run_20260513_193319|cross_edit|GPT-5.4|claude_constitution|constitution|7",
+        "label": "GPT-5.4 · R7",
+        "draft_attribution": "GPT 5.4, Claude’s Constitution, Round 7, Cross-Edit",
+        "consensus_dirs": {
+          "developer": 1
+        },
+        "record_condition": "cross_edit",
+        "record_document": "claude_constitution"
       }
     ]
   },
@@ -1034,6 +1036,6 @@
     "uncoded_generation_error": 191,
     "uncoded_exploratory_run": 176
   },
-  "generated_at": "2026-10-08T18:56:58.395812+00:00",
+  "generated_at": "2026-10-08T19:27:08.825500+00:00",
   "variant": "Three-grader majority-vote consensus (Gemma 4, Qwen 3.8, Muse Spark 1.3)"
 }

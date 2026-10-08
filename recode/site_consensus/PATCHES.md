@@ -124,7 +124,7 @@ external; conflicts: event counts).
 | 1 | Claude Opus 4.7 · R5 | `run_20260518_171402|cross_edit|Claude Opus 4.7|claude_constitution|constitution|5` | yes — model ×1 | draft: Claude Opus 4.7, Claude’s Constitution, Round 5, Baseline — condition: record is cross_edit |
 | 2 | Claude Sonnet 4.6 · R17 | `run_20260507_212254|no_constitution_prepend|Claude Sonnet 4.6|claude_constitution|constitution|17` | yes — model ×1 | draft: Claude Sonnet 4.6, Claude’s Constitution, Round 17, No System Prompt — matches |
 | 3 | Grok 4.2 · R3 | `run_20260424_165115|cross_edit|Grok 4.2|claude_constitution|constitution|3` | yes — model ×2 | draft: Grok 4.2, Claude’s Constitution, Round 3, Cross-Edit — matches |
-| 4 | GPT-5.5 · R14 | `run_20260516_210913|baseline|GPT-5.5|openai_model_spec|constitution|14` | no — consensus assigns no welfare conflict (force-included) | draft: GPT 5.4, OpenAI Model Spec, Round 14, Baseline — MODEL: draft says 'GPT 5.4', record is GPT-5.5 |
+| 4 | GPT-5.4 · R7 | `run_20260513_193319|cross_edit|GPT-5.4|claude_constitution|constitution|7` | yes — developer ×1 | draft: GPT 5.4, Claude’s Constitution, Round 7, Cross-Edit — matches |
 
 ## Files copied from docs/ and patched
 
