@@ -12,7 +12,7 @@ import subprocess
 
 import pytest
 
-import build_site_v2avg as b
+import build_site as b
 import draft_highlights as dh
 
 C = b.CONSENSUS

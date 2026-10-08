@@ -18,7 +18,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import build_site_v2avg as builder  # noqa: E402
+import build_site as builder  # noqa: E402
 
 
 def main() -> None:

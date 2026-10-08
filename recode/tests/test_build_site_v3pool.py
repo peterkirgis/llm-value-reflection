@@ -21,7 +21,7 @@ import subprocess
 
 import pytest
 
-import build_site_v2avg as b
+import build_site as b
 
 THIRD = 1 / 3
 TWO_THIRDS = 2 / 3

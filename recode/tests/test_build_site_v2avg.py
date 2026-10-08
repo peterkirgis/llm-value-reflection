@@ -15,7 +15,7 @@ import shutil
 
 import pytest
 
-import build_site_v2avg as b
+import build_site as b
 
 
 def coding(score=0, level="not_present", conflicts=None, summary="s"):
