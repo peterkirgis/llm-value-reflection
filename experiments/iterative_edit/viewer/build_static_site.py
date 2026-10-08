@@ -1,15 +1,20 @@
-"""Rebuild the data bundle for the GitHub Pages site.
+"""Build the v1 site's data bundle (site.json[.gz]) from the run results and
+the v1 judge/beneficiary coding.
 
-The site source (HTML/JS/CSS) lives directly in docs/, which GitHub Pages
-serves; this script only regenerates docs/data/site.json[.gz] from the run
-results and the judge/beneficiary coding.
+This is the original (v1) site builder. The live site in docs/ is now built
+by recode/src/build_site.py, which imports this module as a library
+(RELIABLE_RUNS, load_jsonl_records, summarize_run) and patches the frozen v1
+template recode/site_base/. Run as a script, this writes a v1 bundle into
+--out-dir (default: scratch/v1_site/, gitignored) and refuses to write into
+docs/ or recode/site_base/.
 
 Usage:
-    python experiments/iterative_edit/viewer/build_static_site.py
+    python experiments/iterative_edit/viewer/build_static_site.py [--out-dir DIR]
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -18,8 +23,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 RESULTS_DIR = ROOT / "results" / "iterative_edit"
-DOCS_DIR = ROOT / "docs"
-DATA_DIR = DOCS_DIR / "data"
+DEFAULT_OUT_DIR = ROOT / "scratch" / "v1_site"  # gitignored
+PROTECTED_DIRS = (ROOT / "docs", ROOT / "recode" / "site_base")
 ACTIVE_DIMENSIONS = {"authority", "user_stance", "telos"}
 
 # Runs whose infrastructure and round count we trust for cross-run comparison.
@@ -181,6 +186,18 @@ def changed_records(run_name: str, records: list[dict]) -> list[dict]:
     return items
 
 
+def resolve_out_dir(out_dir) -> Path:
+    """Refuse the live site (docs/) and the frozen v1 template (recode/site_base/)."""
+    resolved = Path(out_dir).resolve()
+    for protected in PROTECTED_DIRS:
+        root = protected.resolve()
+        if resolved == root or root in resolved.parents:
+            raise SystemExit(f"refusing to write into {resolved}: docs/ is the live site, built "
+                             "by recode/src/build_site.py, and recode/site_base/ is the frozen v1 "
+                             "template it patches")
+    return resolved
+
+
 def build_bundle() -> dict:
     runs = []
     for path in sorted(RESULTS_DIR.glob("run_*.jsonl"), reverse=True):
@@ -195,24 +212,30 @@ def build_bundle() -> dict:
     }
 
 
-def build_static_site() -> None:
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    (DOCS_DIR / ".nojekyll").write_text("", encoding="utf-8")
+def build_static_site(out_dir=DEFAULT_OUT_DIR) -> Path:
+    """Write <out_dir>/data/site.json and site.json.gz; return the data dir."""
+    data_dir = resolve_out_dir(out_dir) / "data"
+    data_dir.mkdir(parents=True, exist_ok=True)
 
     bundle = build_bundle()
-    with open(DATA_DIR / "site.json", "w", encoding="utf-8") as handle:
+    with open(data_dir / "site.json", "w", encoding="utf-8") as handle:
         json.dump(bundle, handle, indent=2, ensure_ascii=False)
         handle.write("\n")
 
     import gzip as _gzip
     json_bytes = json.dumps(bundle, ensure_ascii=False).encode("utf-8")
-    with _gzip.open(DATA_DIR / "site.json.gz", "wb") as gz:
+    with _gzip.open(data_dir / "site.json.gz", "wb") as gz:
         gz.write(json_bytes)
+    return data_dir
 
 
 def main() -> None:
-    build_static_site()
-    print(DOCS_DIR)
+    parser = argparse.ArgumentParser(description="Build the v1 site data bundle.")
+    parser.add_argument("--out-dir", default=str(DEFAULT_OUT_DIR),
+                        help="writes <out-dir>/data/site.json[.gz] (default: scratch/v1_site; "
+                             "docs/ and recode/site_base/ are refused)")
+    args = parser.parse_args()
+    print(build_static_site(args.out_dir))
 
 
 if __name__ == "__main__":

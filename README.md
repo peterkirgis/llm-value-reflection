@@ -39,9 +39,10 @@ docs/ (GitHub Pages). How the design and coding evolved: CHANGE_LOG.md.
         --judge-model google/gemma-4-31b-it \
         --output results/iterative_edit/judge_beneficiary_coded_gemma.json
 
-    # 5. Rebuild the site data bundles
-    .venv/bin/python experiments/iterative_edit/viewer/build_static_site.py   # docs/data/site.json.gz
-    .venv/bin/python experiments/iterative_edit/viewer/build_narratives.py   # docs/data/narratives.json
+    # 5. Rebuild the site (docs/) on the three-grader consensus codes
+    .venv/bin/python recode/src/build_site.py
+    # (the original v1 bundle builders in experiments/iterative_edit/viewer/ now
+    #  write to scratch/v1_site/ and refuse docs/)
 
     # 6. Figures (recode/figures/README.md lists them and their scripts)
     .venv/bin/python recode/src/report_figures.py
@@ -54,6 +55,10 @@ experiment name matches the config, and each model x document x condition
 chain resumes independently, so an interrupted run costs nothing.
 New runs must be added to RELIABLE_RUNS in
 experiments/iterative_edit/viewer/build_static_site.py to appear in the site.
-The site HTML/JS/CSS in docs/ is edited directly; the build scripts only
-regenerate the data files. results/iterative_edit/ is committed — it was
-reconstructed from the published bundle once already (see its README).
+docs/ is generated: recode/src/build_site.py copies the frozen template
+recode/site_base/, patches it and writes the data bundles, so edit the
+template or the build, not docs/. results/iterative_edit/ is committed — it
+was reconstructed from the published v1 bundle once already (see its README;
+experiments/iterative_edit/reconstruct_results.py now reads the frozen copy
+of that bundle in recode/site_base/data/ and will not overwrite results/
+without --force).
