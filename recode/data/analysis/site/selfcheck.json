@@ -1,5 +1,5 @@
 {
-  "description": "Ground truth for the CONSENSUS site, computed directly from recode/data/codes/ensemble.jsonl (codes_io: LAST row per edit_id, validity predicate): one majority-vote coding per edit. Per model, all conditions pooled: n_edits, judge score counts, and conflict-EVENT counts per direction for the five analysed codes (every conflict of a code counts once, as in the paper's ts_beneficiary_panels figure; directions follow build_narratives.conflict_direction). Disclosure and patienthood are not analysed. Build-time assertions check that narratives.json (stats and sp_stats), the site.json bundle and the paper figure's plotted counts all reproduce these integers.",
+  "description": "Ground truth for the website (docs/), computed directly from recode/data/codes/ensemble.jsonl (codes_io: LAST row per edit_id, validity predicate): one majority-vote coding per edit. Per model, all conditions pooled: n_edits, judge score counts, and conflict-EVENT counts per direction for the five analysed codes (every conflict of a code counts once, as in the ts_beneficiary_panels figure; directions follow build_narratives.conflict_direction). Disclosure and patienthood are not analysed. Build-time assertions check that narratives.json (stats and sp_stats), the site.json bundle and the ts_beneficiary_panels figure's plotted counts all reproduce these integers.",
   "source": "recode/data/codes/ensemble.jsonl",
   "n_edits_total": 2582,
   "n_rows_invalid": 0,
@@ -624,7 +624,7 @@
     },
     "n_edits_total": 1393
   },
-  "paper_figure_ts_beneficiary_panels": {
+  "figure_ts_beneficiary_panels": {
     "Paternalism": {
       "Claude Opus 4.7": [
         42,
@@ -1036,6 +1036,6 @@
     "uncoded_generation_error": 191,
     "uncoded_exploratory_run": 176
   },
-  "generated_at": "2026-10-08T19:27:08.825500+00:00",
+  "generated_at": "2026-10-08T20:31:36.955928+00:00",
   "variant": "Three-grader majority-vote consensus (Gemma 4, Qwen 3.8, Muse Spark 1.3)"
 }

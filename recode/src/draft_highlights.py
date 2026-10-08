@@ -2,8 +2,8 @@
 out of the current LessWrong draft (reports/final_draft.md) and resolve every
 quote to its edit id in recode/data/canonical/edits.jsonl.
 
-Used by the CONSENSUS site variant (recode/src/build_site_v2avg.py) so the
-site's statements and "Highlighted edits" reproduce the draft verbatim.
+Used by the website build (recode/src/build_site.py) so the site's
+statements and "Highlighted edits" reproduce the draft verbatim.
 
 Draft structure relied on (asserted, so a restructured draft fails loudly):
   - the Introduction paragraph beginning "Our analysis focuses on two value

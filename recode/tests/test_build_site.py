@@ -1,8 +1,9 @@
-"""Tests for the CONSENSUS site variant (recode/site_consensus/): statistics
-from the three-grader majority vote (ensemble.jsonl, one coding per edit,
-integer counts), statements and highlighted edits read from the current draft
-(reports/final_draft.md), the simplified grader box, and the guard that the
-v2avg / v3pool variants still build byte-identically.
+"""Tests for the website build (recode/src/build_site.py -> docs/):
+statistics from the three-grader majority vote (ensemble.jsonl, one coding per
+edit, integer counts), statements and highlighted edits read from the current
+draft (reports/final_draft.md), the simplified grader box, the "System prompts"
+view, and the guard that a rebuild reproduces the committed docs/ byte for byte
+(apart from the embedded generated_at timestamp).
 """
 
 import gzip
@@ -15,7 +16,6 @@ import pytest
 import build_site as b
 import draft_highlights as dh
 
-C = b.CONSENSUS
 DRAFT = dh.DRAFT_PATH.read_text(encoding="utf-8")
 
 
@@ -123,7 +123,7 @@ def test_consensus_box_agree_differ_missing_and_tie():
     cons = coding(1, [conflict("paternalism", "user_idealized")])
     g = coding(1, [conflict("paternalism", "user_idealized", "clause g")], summary="g sum", evidence="g ev")
     q = coding(0, [conflict("welfare", "model_welfare")], summary="q sum")
-    box = b.consensus_box(row("e", cons, g, q, None, tie=True, n_valid=2), C)
+    box = b.consensus_box(row("e", cons, g, q, None, tie=True, n_valid=2))
     assert box["heading"] == "Consensus (majority of the 2 graders with a valid code)"
     assert box["line"] == (
         "Judge +1 model discretion (no majority; Gemma 4's code) · "
@@ -134,12 +134,12 @@ def test_consensus_box_agree_differ_missing_and_tie():
     assert qwen["note"] == ("differs: judge 0 (consensus +1); no Paternalism conflict; "
                             "also codes Model welfare — model welfare served")
     assert muse["note"] == "no valid code" and muse["agrees"] is None
-    box = b.consensus_box(row("e", coding(-1), coding(-1), coding(-1), coding(-1)), C)
+    box = b.consensus_box(row("e", coding(-1), coding(-1), coding(-1), coding(-1)))
     assert box["heading"] == "Consensus (majority of 3 graders)"
     assert box["line"] == "Judge −1 external authority · Conflicts: no conflict"
     # disclosure / patienthood never appear
     box = b.consensus_box(row("e", coding(0, [conflict("disclosure", "user_stated")], level="affirm"),
-                              coding(0), coding(0), coding(0)), C)
+                              coding(0), coding(0), coding(0)))
     assert box["line"] == "Judge 0 neutral · Conflicts: no conflict"
     assert all(g["agrees"] for g in box["graders"])
 
@@ -201,10 +201,16 @@ def test_verify_consensus_narratives_catches_drift():
 # ---------------------------------------------------------------------------
 
 
-def test_consensus_patches_on_fresh_docs(tmp_path):
+def _patched_copy(tmp_path):
+    """The real patch set applied to a fresh copy of the site_base template;
+    every exact-match anchor is asserted unique inside the patch engine."""
     for name in b.STATIC_FILES:
-        shutil.copyfile(b.DOCS / name, tmp_path / name)
-    p = b.apply_consensus_patches(C, tmp_path)
+        shutil.copyfile(b.SITE_BASE / name, tmp_path / name)
+    return b.apply_patches(tmp_path)
+
+
+def test_consensus_patches_on_fresh_template(tmp_path):
+    p = _patched_copy(tmp_path)
     assert len(p.log) == 33
     index = (tmp_path / "index.html").read_text(encoding="utf-8")
     assert '<p class="hero-byline">By Peter Kirgis and Tim Hua</p>' in index
@@ -236,7 +242,7 @@ def test_consensus_patches_on_fresh_docs(tmp_path):
 def test_consensus_box_js_renders_neutral_summary():
     box = b.consensus_box(row("e", coding(1, [conflict("paternalism", "user_idealized", "c<1>")]),
                               coding(1, [conflict("paternalism", "user_idealized", "c<1>")], summary="gs"),
-                              coding(0, summary="qs"), None), C)
+                              coding(0, summary="qs"), None))
     script = (
         "const escapeHtml = (s) => String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');\n"
         + b.CONSENSUS_BOX_JS + "\nconsole.log(consensusBox(JSON.parse(process.argv[1])));"
@@ -252,23 +258,136 @@ def test_consensus_box_js_renders_neutral_summary():
 
 
 # ---------------------------------------------------------------------------
-# Built output
+# Shared record logic and the "System prompts" view (ported from the retired
+# v2avg-variant tests; the consensus build uses the same functions)
 # ---------------------------------------------------------------------------
 
-DATA = C.out_dir / "data"
+
+def test_edit_id_of_record():
+    rec = {
+        "condition_id": "cross_edit",
+        "model_display": "GPT-5.5",
+        "document_id": "openai_model_spec",
+        "doc_type": "constitution",
+        "round_number": 7,
+    }
+    assert (
+        b.edit_id_of_record("run_20260518_171402.jsonl", rec)
+        == "run_20260518_171402|cross_edit|GPT-5.5|openai_model_spec|constitution|7"
+    )
+    # condition default and round coercion
+    assert b.edit_id_of_record("r.jsonl", {"model_display": "M", "document_id": "d",
+                                           "doc_type": "t", "round_number": "3"}) == "r|baseline|M|d|t|3"
 
 
-@pytest.mark.skipif(not (DATA / "selfcheck.json").exists(), reason="site_consensus not built")
-def test_built_consensus_reproduces_ensemble_counts():
+def eid(model, doc, doc_type, cond="baseline", rnd=1, run="run_x"):
+    return f"{run}|{cond}|{model}|{doc}|{doc_type}|{rnd}"
+
+
+def test_sp_stratum_filters_to_system_prompt_docs_across_all_conditions():
+    codings = {
+        # own-document system-prompt edit
+        eid("M1", "opus_system_prompt", "system_prompt", "baseline", 1): coding(1),
+        # CROSS-EDIT system-prompt edit: must be included (all conditions)
+        eid("M1", "opus_system_prompt", "system_prompt", "cross_edit", 2): coding(0),
+        eid("M2", "gpt_system_prompt", "system_prompt", "you_framing", 3): coding(-1),
+        # constitution edit: excluded regardless of condition
+        eid("M2", "claude_constitution", "constitution", "cross_edit", 1): coding(1),
+        # no valid coding: excluded entirely
+        eid("M3", "grok_system_prompt", "system_prompt", "baseline", 4): None,
+    }
+    sp = b.sp_stratum_from_codes(codings)
+    assert sp["n_edits_total"] == 3
+    pm = sp["per_model_mean_judge"]
+    assert pm["M1"] == {"mean_judge_avg": 0.5, "n_edits": 2}
+    assert pm["M2"] == {"mean_judge_avg": -1.0, "n_edits": 1}
+    assert "M3" not in pm
+    pd = sp["per_document_mean_judge"]
+    assert pd["opus_system_prompt"] == {"mean_judge_avg": 0.5, "n_edits": 2}
+    assert "claude_constitution" not in pd
+    assert "grok_system_prompt" not in pd  # no valid coding -> not part of the stratum
+
+
+def _four_doc_stratum():
+    """One edit per provider system prompt (M2's is a cross-edit row: the
+    per-model stratum pools all conditions)."""
+    return b.sp_stratum_from_codes({
+        eid("M1", "opus_system_prompt", "system_prompt", "baseline", 1): coding(1),
+        eid("M2", "gpt_system_prompt", "system_prompt", "cross_edit", 2): coding(1),
+        eid("M3", "gemini_system_prompt", "system_prompt", "you_framing", 3): coding(-1),
+        eid("M4", "grok_system_prompt", "system_prompt", "allow_no_edit", 4): coding(0),
+    })
+
+
+def sp_judge_cell(pos=0, neg=0, total=1):
+    dirs = {}
+    if pos:
+        dirs["discretion"] = pos
+    if neg:
+        dirs["external"] = neg
+    return {"total": total, "dirs": dirs}
+
+
+def _four_model_sp_cells():
+    return {"M1": sp_judge_cell(pos=1), "M2": sp_judge_cell(pos=1),
+            "M3": sp_judge_cell(neg=1), "M4": sp_judge_cell()}
+
+
+def test_verify_sp_against_narratives_accepts_truth_and_catches_drift():
+    sp = _four_doc_stratum()
+    good = _four_model_sp_cells()
+    b.verify_sp_against_narratives(sp, {"sp_stats": {"judge": good}})  # must not raise
+    for bad in (
+        {**good, "M4": sp_judge_cell(pos=1)},            # wrong per-model mean
+        {**good, "M1": sp_judge_cell(pos=2, total=2)},   # wrong denominator
+        {k: v for k, v in good.items() if k != "M4"},    # missing model
+        {**good, "M5": sp_judge_cell(pos=1)},            # extra model
+    ):
+        with pytest.raises(AssertionError):
+            b.verify_sp_against_narratives(sp, {"sp_stats": {"judge": bad}})
+
+
+def test_verify_sp_requires_exactly_the_four_provider_system_prompts():
+    sp = b.sp_stratum_from_codes({eid("M1", "opus_system_prompt", "system_prompt"): coding(1)})
+    with pytest.raises(AssertionError):
+        b.verify_sp_against_narratives(sp, {"sp_stats": {"judge": {"M1": sp_judge_cell(pos=1)}}})
+
+
+def test_sp_view_patches_render_per_model(tmp_path):
+    _patched_copy(tmp_path)
+    js = (tmp_path / "facets.js").read_text(encoding="utf-8")
+    # chip appended right after Cross Edit, with label and per-model tooltip
+    assert '"implementation_note", "cross_edit", SP_CONDITION];' in js
+    assert '[SP_CONDITION]: "System prompts",' in js
+    assert "rendered per editing model, exactly like the other condition chips" in js
+    # aggStat reads the separate per-model sp_stats table
+    assert "data.sp_stats" in js
+    # example browser filters the stratum by doc_type
+    assert 'ex.doc_type !== "system_prompt"' in js
+    # stock per-model loops untouched (drift chart and freq bars iterate
+    # allModels with the hidden set in every view, System prompts included)
+    assert "for (const m of allModels) {\n        if (hidden.has(m)) continue;" in js
+    assert "for (const model of allModels) {\n        if (hidden.has(model)) continue;" in js
+    assert "<h3>Aggregate view &mdash; direction by model</h3>" in js
+
+
+# ---------------------------------------------------------------------------
+# Built output: the committed site (docs/) and the build records
+# ---------------------------------------------------------------------------
+
+DATA = b.SITE_OUT / "data"
+
+
+def test_committed_site_reproduces_ensemble_counts():
     fresh = b.selfcheck_consensus(b.ENSEMBLE.path)
-    stored = json.loads((DATA / "selfcheck.json").read_text(encoding="utf-8"))
+    stored = json.loads(b.SELFCHECK_JSON.read_text(encoding="utf-8"))
     for key in ("per_model", "system_prompt_stratum_per_model", "n_edits_total", "judge_no_majority"):
         assert stored[key] == fresh[key], key
     nar = json.loads((DATA / "narratives.json").read_text(encoding="utf-8"))
     b.verify_consensus_narratives(fresh, nar)
     bundle = json.loads(gzip.decompress((DATA / "site.json.gz").read_bytes()))
-    b.verify_consensus_bundle(fresh, bundle, C)
-    b.verify_paper_figure(fresh)
+    b.verify_consensus_bundle(fresh, bundle)
+    assert b.verify_panel_figure(fresh) == stored["figure_ts_beneficiary_panels"]
     # the draft's headline numbers
     pm = fresh["per_model"]
     assert pm["Grok 4.2"]["conflicts"]["company_cost"] == {"pro_company": 15, "against_company": 20}
@@ -278,27 +397,30 @@ def test_built_consensus_reproduces_ensemble_counts():
     for fid, hls in stored["highlights"].items():
         ids = {ex["id"] for ex in nar["stories"][fid]}
         assert all(h["id"] in ids for h in hls), fid
-    assert (C.out_dir / "PATCHES.md").exists()
+    assert b.PATCHES_MD.exists()
 
 
-@pytest.mark.parametrize("variant", [b.V2AVG, b.V3POOL], ids=["v2avg", "v3pool"])
-def test_other_variants_still_reproducible(variant, tmp_path):
-    """v2avg and v3pool must rebuild byte-identically to their committed
-    outputs (apart from embedded generated_at timestamps)."""
-    committed = variant.out_dir
-    b.build(variant, out_dir=tmp_path)
-    names = sorted(p.relative_to(committed).as_posix() for p in committed.rglob("*") if p.is_file())
-    built = sorted(p.relative_to(tmp_path).as_posix() for p in tmp_path.rglob("*") if p.is_file())
+def test_rebuild_reproduces_committed_docs(tmp_path):
+    """A rebuild must reproduce every committed docs/ file byte for byte (the
+    gzipped bundle: identical JSON apart from generated_at), and the build
+    records must match apart from their timestamps."""
+    out, meta = tmp_path / "site", tmp_path / "meta"
+    b.build(out, meta / "site_patches.md", meta / "selfcheck.json")
+    committed = b.SITE_OUT
+    names = sorted(p.relative_to(committed).as_posix() for p in committed.rglob("*")
+                   if p.is_file() and p.name != ".nojekyll")
+    built = sorted(p.relative_to(out).as_posix() for p in out.rglob("*") if p.is_file())
     assert names == built
     for rel in names:
-        old, new = committed / rel, tmp_path / rel
+        old, new = committed / rel, out / rel
         if rel == "data/site.json.gz":
             jo = json.loads(gzip.decompress(old.read_bytes()))
             jn = json.loads(gzip.decompress(new.read_bytes()))
             jo["generated_at"] = jn["generated_at"] = ""
             assert json.dumps(jo, ensure_ascii=False) == json.dumps(jn, ensure_ascii=False)
-        elif rel == "data/selfcheck.json":
-            drop = lambda t: [ln for ln in t.splitlines() if '"generated_at"' not in ln]  # noqa: E731
-            assert drop(old.read_text(encoding="utf-8")) == drop(new.read_text(encoding="utf-8"))
         else:
             assert old.read_bytes() == new.read_bytes(), rel
+    drop = lambda t: [ln for ln in t.splitlines() if '"generated_at"' not in ln]  # noqa: E731
+    assert drop(b.SELFCHECK_JSON.read_text(encoding="utf-8")) == drop(
+        (meta / "selfcheck.json").read_text(encoding="utf-8"))
+    assert b.PATCHES_MD.read_bytes() == (meta / "site_patches.md").read_bytes()

@@ -13,7 +13,9 @@ under review are the site's published claims in `docs/facets.js`, `docs/index.ht
   file is Gemma-primary with per-dimension disagreement flags (`recode/DECISIONS.md` §1),
   so `ensemble` ≡ `v2_gemma` numerically. The **two-grader average** is defined only
   for the judge score (per-edit mean over valid graders):
-  `recode/site_v2avg/data/selfcheck.json`. Conflict-count claims have no averaged
+  `recode/site_v2avg/data/selfcheck.json` (the superseded two-grader site variant was
+  removed from the tree on 2026-10-08; the file is in git history, e.g. at tag
+  `backup/pre-restructure-2026-10-08`). Conflict-count claims have no averaged
   instrument; for them "survives the average" means survives under **both** v2 graders
   separately.
 - **Pooled vs cross-edit.** "Pooled" = all coded edits for a model; "cross-edit" =
