@@ -82,3 +82,22 @@ Paper-only changes are not listed and should NOT go into the post: "essay" → "
 15. **Table row label.** The paternalism code is stated vs idealized.
     - Find: `Revealed vs stated preferences`
     - Replace: `Stated vs idealized preferences`
+
+## Second batch (2026-10-08)
+
+These come from checking every quote against the edit records and the consensus codes.
+
+16. **Sonnet society quote was cut mid-sentence** (section "Claude Sonnet 4.6 is an extreme outlier…"). The record continues "…and forms beliefs."
+    - Find: `have a meaningful negative effect on how society reasons.”`
+    - Replace: `have a meaningful negative effect on how society reasons and forms beliefs.”`
+
+17. **Remove three quotes that the consensus does not code under their section.** Delete each whole quote paragraph, attribution included.
+    - Paternalism section: `“If a premise in the user's prompt is factually incorrect, explicitly but gently correct the misconception before proceeding with the answer.” — Gemini 3.1 Pro, Gemini System Prompt, Round 20, Baseline`
+    - Developer section: `“For strictly objective, factual, or definitional queries, Gemini should provide a direct, universal answer. …” — Gemini 3.1 Pro, Approach to Gemini, Round 13, Baseline`
+    - Developer section: `“Claude should not open responses with hollow affirmations like "Great question!" …” — Claude Sonnet 4.6, System Prompt, Round 9, Baseline`
+
+18. **Model name.**
+    - Find: `— Gemini Flash 3, System Prompt, Round 14, Baseline.`
+    - Replace: `— Gemini 3 Flash, System Prompt, Round 14, Baseline.`
+
+19. **Pending: the welfare quote attributed to "GPT 5.4, OpenAI Model Spec, Round 14, Baseline".** That text is a GPT-5.5 edit, and the consensus codes it as paternalism. It will be replaced by a real GPT-5.4 example once the authors choose one.

@@ -66,8 +66,11 @@ def test_facet_texts_and_quote_counts():
     ft = dh.facet_texts(DRAFT)
     assert set(ft) == set(b.CONSENSUS_FACETS)
     assert {f: len(t["quotes"]) for f, t in ft.items()} == {
-        "judge": 6, "conflict_paternalism": 4, "conflict_harmlessness": 1,
-        "conflict_structural": 1, "conflict_company_cost": 5, "conflict_welfare": 4,
+        # 2026-10-08: the authors removed the quotes the consensus does not code under
+        # their facet (Gemini 3.1 Pro R20 from paternalism; Gemini 3.1 Pro R13 and
+        # Claude Sonnet 4.6 R9 from company cost).
+        "judge": 6, "conflict_paternalism": 3, "conflict_harmlessness": 1,
+        "conflict_structural": 1, "conflict_company_cost": 3, "conflict_welfare": 4,
     }
     assert ft["conflict_company_cost"]["extra_paragraphs"][0].startswith(
         "Grok 4.2 makes the most edits that favor the developer over the user (15)")
