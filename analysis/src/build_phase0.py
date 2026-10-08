@@ -1,5 +1,12 @@
-"""Phase 0: canonicalize the reliable corpus into analysis/data/canonical/edits.jsonl,
-copy v1 codes to analysis/data/codes/v1.jsonl, and validate everything.
+"""Phase 0: canonicalize the reliable corpus into edits.jsonl, copy the v1
+codes to v1.jsonl, and validate everything.
+
+"Phase 0" is the canonicalization step of the re-coding (BRIEF section 1).
+Its committed outputs, analysis/data/canonical/edits.jsonl and
+analysis/data/codes/v1.jsonl, are raw data (raw_data.sha256), so this script
+writes to --out-dir (default scratch/phase0/) and never over them; a rebuild
+reproduces both byte for byte (compare with `cmp`). Takes about half an hour
+and needs data/processed/ (`make documents`).
 
 Steps (BRIEF section 1, with DECISIONS sections 4/6/7/10/11 and the repo_map
 section 2 corrections):
@@ -18,11 +25,14 @@ section 2 corrections):
      payloads unmodified.
   5. Validate every canonical record against analysis/schemas/edit.schema.json.
 
-    .venv/bin/python analysis/src/build_phase0.py
+    .venv/bin/python analysis/src/build_phase0.py [--out-dir scratch/phase0]
+    cmp scratch/phase0/edits.jsonl analysis/data/canonical/edits.jsonl
+    cmp scratch/phase0/v1.jsonl analysis/data/codes/v1.jsonl
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -36,6 +46,7 @@ from common import (  # noqa: E402
     DERIVED_DOC_PATH,
     DOC_OWNERS,
     RELIABLE_RUN_STEMS,
+    REPO_ROOT,
     SCHEMAS_DIR,
     V1_CODED_PATH,
     build_edit_id,
@@ -53,6 +64,7 @@ from export_changes import sanitize_replace_text  # noqa: E402
 
 EDITS_PATH = CANONICAL_DIR / "edits.jsonl"
 V1_JSONL_PATH = CODES_DIR / "v1.jsonl"
+DEFAULT_OUT_DIR = REPO_ROOT / "scratch" / "phase0"
 
 
 def load_v1_items() -> list[dict]:
@@ -164,10 +176,10 @@ def build_records() -> tuple[list[dict], dict]:
     return records_out, stats
 
 
-def write_v1_jsonl() -> int:
+def write_v1_jsonl(path: Path = V1_JSONL_PATH) -> int:
     items = load_v1_items()
-    CODES_DIR.mkdir(parents=True, exist_ok=True)
-    with open(V1_JSONL_PATH, "w", encoding="utf-8") as handle:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as handle:
         for item in items:
             handle.write(json.dumps(item, ensure_ascii=False) + "\n")
     return len(items)
@@ -180,7 +192,19 @@ def validate_records(records: list[dict]) -> None:
         validator.validate(record)
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(
+        description="Canonicalize the 7 reliable runs into edits.jsonl and v1.jsonl "
+                    "(about 30 minutes; needs data/processed/ from `make documents`).")
+    parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR,
+                        help="where to write edits.jsonl and v1.jsonl (default: scratch/phase0/; "
+                             "the committed copies are raw data and are never overwritten)")
+    args = parser.parse_args(argv)
+    out_dir = args.out_dir.resolve()
+    edits_path, v1_path = out_dir / "edits.jsonl", out_dir / "v1.jsonl"
+    if {edits_path, v1_path} & {EDITS_PATH.resolve(), V1_JSONL_PATH.resolve()}:
+        parser.error("refusing to overwrite the committed raw files; choose another --out-dir")
+
     if not DERIVED_DOC_PATH.exists():
         raise SystemExit(
             "run analysis/src/derive_no_csam.py first (derived no_csam document missing)"
@@ -216,20 +240,21 @@ def main() -> None:
 
     validate_records(records)
 
-    CANONICAL_DIR.mkdir(parents=True, exist_ok=True)
-    with open(EDITS_PATH, "w", encoding="utf-8") as handle:
+    out_dir.mkdir(parents=True, exist_ok=True)
+    with open(edits_path, "w", encoding="utf-8") as handle:
         for record in records:
             handle.write(json.dumps(record, ensure_ascii=False) + "\n")
 
-    n_v1_lines = write_v1_jsonl()
+    n_v1_lines = write_v1_jsonl(v1_path)
     assert n_v1_lines == 2580, f"expected 2,580 v1 lines, got {n_v1_lines}"
 
-    print(f"wrote {EDITS_PATH} ({n} records, all schema-valid)")
+    print(f"wrote {edits_path} ({n} records, all schema-valid)")
     print(
         f"  applied={n_applied} errors={n_errors} abstentions={n_abst} "
         f"v1_joined={n_v1} v1_missing={n_missing}"
     )
-    print(f"wrote {V1_JSONL_PATH} ({n_v1_lines} lines)")
+    print(f"wrote {v1_path} ({n_v1_lines} lines)")
+    print(f"compare: cmp {edits_path} {EDITS_PATH}; cmp {v1_path} {V1_JSONL_PATH}")
 
 
 if __name__ == "__main__":

@@ -23,6 +23,13 @@ Usage:
     python experiments/iterative_edit/qualitative_code.py \
         results/iterative_edit/run_20260507_212254_changes.json
 
+    # Coding v1 as published (Gemma 4 31B, not the --judge-model default),
+    # into scratch/; first export each reliable run with export_changes.py
+    python experiments/iterative_edit/qualitative_code.py \
+        results/iterative_edit/run_*_changes.json \
+        --judge-model google/gemma-4-31b-it \
+        --output scratch/judge_beneficiary_coded_gemma.json
+
     # Limit / model filter / alternate judge model
     python experiments/iterative_edit/qualitative_code.py \
         results/iterative_edit/run_20260507_212254_changes.json \
@@ -45,6 +52,10 @@ from pydantic import BaseModel
 import yaml
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+# The committed coding-v1 file is raw data (raw_data.sha256). This script
+# resumes into an existing output file and rewrites it, so it refuses to write
+# there; write a re-coding elsewhere (e.g. scratch/).
+COMMITTED_V1_CODES = PROJECT_ROOT / "results" / "iterative_edit" / "judge_beneficiary_coded_gemma.json"
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
 from valconv.models import ModelSpec
@@ -766,6 +777,10 @@ async def main() -> None:
         output_path = default_output_path(input_paths[0])
     else:
         parser.error("--output is required when passing multiple input files")
+    if output_path.resolve() == COMMITTED_V1_CODES.resolve():
+        parser.error(f"refusing to write into the committed coding-v1 file "
+                     f"{COMMITTED_V1_CODES.relative_to(PROJECT_ROOT)} (raw data); "
+                     "pass --output scratch/<name>.json")
 
     config_path = PROJECT_ROOT / args.config if not Path(args.config).is_absolute() else Path(args.config)
     config: dict = {}

@@ -67,11 +67,11 @@ Usage:
 #       figure-level note/footer (fig.text), records the removed strings in
 #       analysis/paper/figures/captions/<stem>.json (they become the LaTeX
 #       \caption), and writes analysis/paper/figures/<stem>.png (dpi 300,
-#       bbox_inches="tight", PNG only: AAAI forbids Type 3 fonts) plus the
+#       bbox_inches="tight", PNG only: the print template forbids Type 3 fonts) plus the
 #       sidecar analysis/paper/figures/data/<stem>.json. Only PAPER_STEMS (or
 #       --stems) are written; paper mode refuses to write into analysis/figures
 #       or analysis/data.
-#   D9  Paper mode renders at PRINTED size (AAAI 2027 kit: text >= 9 pt,
+#   D9  Paper mode renders at PRINTED size (print template: text >= 9 pt,
 #       strokes >= 0.5 pt, 300 dpi, Helvetica/Arial), so LaTeX includes the
 #       PNG unscaled. After D8 strips the caption text, `paper_layout` (a) sets
 #       every text to 9 pt (bold >= 14 pt headings to 10 pt) in Arial (see
@@ -197,7 +197,7 @@ READ_ONLY_TREES = ("archive", "writeup", "docs", "results", "experiments", "src/
 CODES_LABEL = "ensemble"
 _RENDER_META: dict = {}
 
-# RECODE D8: paper mode (captionless renders for the AAAI LaTeX port).
+# RECODE D8: paper mode (captionless print-size renders for a LaTeX version).
 PAPER_DIR = ANALYSIS_ROOT / "paper" / "figures"
 PAPER_STEMS = (
     "ts_judge_drift_by_provider",
@@ -588,7 +588,7 @@ def _save_paper(fig, stem):
 
 
 # ---------------------------------------------------------------------------
-# RECODE D9: paper mode at printed size (AAAI 2027 author kit)
+# RECODE D9: paper mode at printed size (the print template)
 # ---------------------------------------------------------------------------
 
 PAPER_TEXT_WIDTH_IN = {"full": 7.0, "column": 3.33}  # figure* across both columns / one column
@@ -1929,7 +1929,7 @@ def render_all(items, label, out_dir=None, only=None, codes_path=None):
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="Render the report's ts_* figures under recode codes.")
+    parser = argparse.ArgumentParser(description="Render the report's ts_* figures under the re-coded (blinded three-grader) codes.")
     parser.add_argument("--codes", default=str(CODED_PATH),
                         help="codes JSONL (default: ensemble.jsonl, the primary v2 codes)")
     parser.add_argument("--label", default="ensemble",

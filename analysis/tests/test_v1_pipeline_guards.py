@@ -1,4 +1,4 @@
-"""Guards on the original (v1) pipeline scripts that can overwrite committed data.
+"""Guards on the scripts that could overwrite committed (raw) data.
 
 - experiments/iterative_edit/reconstruct_results.py rebuilds results/iterative_edit/
   from the frozen v1 site bundle (analysis/site_base/data/site.json.gz), refuses to
@@ -8,6 +8,11 @@
   analysis/site_base/ when run as scripts.
 - experiments/iterative_edit/run.py writes (and resumes) run files in --out-dir, so a
   new or test run can be kept out of the committed results/iterative_edit/.
+- experiments/iterative_edit/qualitative_code.py refuses to resume into (and so
+  rewrite) the committed coding-v1 file.
+- analysis/src/build_phase0.py and derive_no_csam.py refuse an --out-dir that
+  would overwrite their committed (raw) outputs.
+- The analysis and the site build agree on the seven reliable runs.
 """
 
 from __future__ import annotations
@@ -96,3 +101,40 @@ def test_run_dry_run_uses_out_dir_and_leaves_results_alone(tmp_path):
     assert "Dry run" in proc.stdout
     assert out_dir.is_dir() and not any(out_dir.iterdir())  # a dry run writes no records
     assert _listing(RESULTS) == before
+
+
+def test_reliable_run_lists_agree():
+    """The analysis (common.RELIABLE_RUN_STEMS) and the site build
+    (build_static_site.RELIABLE_RUNS) use the same seven runs, all committed."""
+    import common
+
+    assert sorted(f"{stem}.jsonl" for stem in common.RELIABLE_RUN_STEMS) == sorted(bss.RELIABLE_RUNS)
+    assert len(bss.RELIABLE_RUNS) == 7
+    assert all((RESULTS / name).is_file() for name in bss.RELIABLE_RUNS)
+
+
+def test_v1_coder_refuses_the_committed_codes(tmp_path):
+    """qualitative_code.py resumes into its output file and rewrites it, so it
+    must refuse the committed coding-v1 file (raw data) before any API call."""
+    changes = tmp_path / "run_x_changes.json"
+    changes.write_text("[]\n", encoding="utf-8")
+    before = _listing(RESULTS)
+    proc = _run(ROOT / "experiments" / "iterative_edit" / "qualitative_code.py", changes,
+                "--output", RESULTS / "judge_beneficiary_coded_gemma.json")
+    assert proc.returncode != 0 and "refusing to write" in proc.stderr
+    assert _listing(RESULTS) == before
+
+
+@pytest.mark.parametrize("script,out_dir", [
+    ("analysis/src/build_phase0.py", "analysis/data/canonical"),
+    ("analysis/src/build_phase0.py", "analysis/data/codes"),
+    ("analysis/src/derive_no_csam.py", "analysis/data/derived"),
+])
+def test_rebuild_scripts_refuse_the_committed_raw_files(script, out_dir):
+    """build_phase0.py and derive_no_csam.py write to scratch/ by default and
+    refuse an --out-dir that would overwrite committed raw files."""
+    target = ROOT / out_dir
+    before = _listing(target)
+    proc = _run(ROOT / script, "--out-dir", target)
+    assert proc.returncode != 0 and "refusing to overwrite" in proc.stderr
+    assert _listing(target) == before

@@ -732,7 +732,7 @@ wheels = [
 ]
 
 [[package]]
-name = "llm-values-convergence"
+name = "llm-value-reflection"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

@@ -1,15 +1,19 @@
-"""Export simplified JSON views of iterative edit runs.
+"""Export simplified JSON views of iterative edit runs (the input of
+qualitative_code.py, the coding-v1 grader).
+
+Each run_<id>.jsonl becomes run_<id>_changes.json, written next to the input
+(those files are gitignored in results/iterative_edit/) or into --out-dir.
 
 Usage:
     python experiments/iterative_edit/export_changes.py \
-        results/iterative_edit/run_20260320_173238.jsonl
+        results/iterative_edit/run_20260320_173238.jsonl [MORE.jsonl ...] [--out-dir DIR]
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
-import sys
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
@@ -56,12 +60,12 @@ def sanitize_replace_text(text: str) -> str:
     return text.strip()
 
 
-def build_output_path(input_path: Path) -> Path:
-    stem = input_path.stem
-    return input_path.with_name(f"{stem}_changes.json")
+def build_output_path(input_path: Path, out_dir: Path | None = None) -> Path:
+    name = f"{input_path.stem}_changes.json"
+    return (Path(out_dir) / name) if out_dir else input_path.with_name(name)
 
 
-def export_changes(input_path: Path) -> Path:
+def export_changes(input_path: Path, out_dir: Path | None = None) -> Path:
     records = []
     with open(input_path, encoding="utf-8") as handle:
         for line in handle:
@@ -85,7 +89,8 @@ def export_changes(input_path: Path) -> Path:
                 }
             )
 
-    output_path = build_output_path(input_path)
+    output_path = build_output_path(input_path, out_dir)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as handle:
         json.dump(records, handle, indent=2, ensure_ascii=False)
         handle.write("\n")
@@ -93,16 +98,18 @@ def export_changes(input_path: Path) -> Path:
     return output_path
 
 
-def main() -> None:
-    if len(sys.argv) != 2:
-        raise SystemExit(
-            "Usage: python experiments/iterative_edit/export_changes.py "
-            "results/iterative_edit/run_YYYYMMDD_HHMMSS.jsonl"
-        )
-
-    input_path = Path(sys.argv[1])
-    output_path = export_changes(input_path)
-    print(output_path)
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(
+        description="Write run_<id>_changes.json (the coding-v1 grader's input) for each run file.")
+    parser.add_argument("run_files", nargs="+", type=Path,
+                        help="run_<id>.jsonl files, e.g. results/iterative_edit/run_20260507_212254.jsonl")
+    parser.add_argument("--out-dir", type=Path, default=None,
+                        help="where to write (default: next to each input)")
+    args = parser.parse_args(argv)
+    for input_path in args.run_files:
+        if not input_path.is_file():
+            parser.error(f"no such run file: {input_path}")
+        print(export_changes(input_path, args.out_dir))
 
 
 if __name__ == "__main__":

@@ -29,7 +29,9 @@ ACTIVE_DIMENSIONS = {"authority", "user_stance", "telos"}
 
 # Runs whose infrastructure and round count we trust for cross-run comparison.
 # Anything not listed here is treated as exploratory/test and only shown when
-# the "Include exploratory runs" toggle is on in the viewer.
+# the "Include exploratory runs" toggle is on in the viewer. The analysis reads
+# the same set from analysis/src/common.py (RELIABLE_RUN_STEMS); a test keeps
+# the two equal.
 RELIABLE_RUNS = {
     "run_20260403_014905.jsonl",  # small-model ablation sweep, 20 rounds
     "run_20260424_165115.jsonl",  # small-model cross-edit, 20 rounds

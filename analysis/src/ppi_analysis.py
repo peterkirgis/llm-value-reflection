@@ -36,7 +36,7 @@ CLI (from the repo root):
     .venv/bin/python analysis/src/ppi_analysis.py \
         --sheets analysis/human/coding_sheet_<coder>.csv [MORE...] \
         --blind-key analysis/human/blind_key.csv \
-        --predictor analysis/data/codes/v2_gemma.jsonl \
+        --predictor analysis/data/codes/ensemble.jsonl \
         --edits analysis/data/canonical/edits.jsonl \
         --out analysis/reports/C_ppi.md
 """
@@ -678,9 +678,9 @@ def main(argv: list[str] | None = None) -> dict:
     parser.add_argument(
         "--predictor", required=True,
         help="the prediction f codes file (DECISIONS section 1: the "
-        "Gemma-v2 codes)",
+        "majority-vote ensemble, analysis/data/codes/ensemble.jsonl)",
     )
-    parser.add_argument("--predictor-label", default="gemma_v2")
+    parser.add_argument("--predictor-label", default="ensemble")
     parser.add_argument("--edits", required=True)
     parser.add_argument("--out", required=True)
     parser.add_argument(

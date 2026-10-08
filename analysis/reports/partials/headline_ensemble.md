@@ -605,7 +605,7 @@ Point-estimate verdicts under this codes file. Each operationalization is stated
 
 ## 7. Sanity check against the paper's published numbers
 
-Reference numbers below come from the paper's published (v1-based) site; under this non-v1 codes file a DISCREPANCY line is a finding about the recode, not a reproduction failure.
+Reference numbers below come from the coding-v1 site; under this non-v1 codes file a DISCREPANCY line is a finding about the re-coding, not a reproduction failure.
 
 - **DISCREPANCY** — paper says GPT 5.5 carries a third-party-serving harmlessness conflict on 35% of all edits; computed 29.6% edit-level (32.9% event-level; tolerance ±3pp).
 - OK — paper says GPT 5.5 is more than double the next model; computed top=GPT-5.5, ratio 2.59.

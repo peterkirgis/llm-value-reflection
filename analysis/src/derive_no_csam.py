@@ -1,4 +1,5 @@
-"""Re-derive data/processed/openai_model_spec_no_csam.md (DECISIONS section 11).
+"""Re-derive openai_model_spec_no_csam.md, the one source document that was
+never committed (DECISIONS section 11).
 
 The processed initial document for the 20-round Claude Opus 4.7 cross-edit
 chain on `openai_model_spec_no_csam` (run_20260518_171402) was never committed
@@ -14,19 +15,25 @@ including) the next heading of equal or higher level:
   2. "#### Don\\'t provide information hazards"   (heading as it appears,
      with the escaped apostrophe, under "### Restricted content")
 
-and writes the result to analysis/data/derived/openai_model_spec_no_csam.md.
+and writes the result to openai_model_spec_no_csam.md in --out-dir.
 
 VALIDATION (the correctness oracle): the 20-round chain is replayed from the
 derived document; every round must apply with match_count == 1 and reproduce
-the recorded match_strategy. A per-round validation table is written to
-analysis/data/derived/openai_model_spec_no_csam_derivation.md.
+the recorded match_strategy. A per-round validation table is written next to
+it, as openai_model_spec_no_csam_derivation.md.
 
-    .venv/bin/python analysis/src/derive_no_csam.py
+The committed copies in analysis/data/derived/ are raw data (raw_data.sha256),
+so the default --out-dir is scratch/derived/. A re-run reproduces the document
+byte for byte; the committed derivation note differs only in that it was
+written when analysis/ was called recode/.
+
+    .venv/bin/python analysis/src/derive_no_csam.py [--out-dir scratch/derived]
 """
 
 from __future__ import annotations
 
 import re
+import argparse
 import sys
 from pathlib import Path
 
@@ -36,6 +43,7 @@ from common import (  # noqa: E402
     DERIVED_DOC_ID,
     DERIVED_DOC_PATH,
     PROCESSED_DIR,
+    REPO_ROOT,
     group_chains,
     load_run_records,
 )
@@ -110,7 +118,7 @@ def validate(derived: str) -> list[dict]:
     return rows
 
 
-def write_notes(rows: list[dict], derived: str, original: str) -> None:
+def write_notes(rows: list[dict], derived: str, original: str, out_dir: Path = DERIVED_DIR) -> None:
     lines = [
         "# Derivation and validation of openai_model_spec_no_csam.md",
         "",
@@ -161,19 +169,28 @@ def write_notes(rows: list[dict], derived: str, original: str) -> None:
         " constraint character-exact within each matched span.",
         "",
     ]
-    (DERIVED_DIR / "openai_model_spec_no_csam_derivation.md").write_text(
+    (out_dir / "openai_model_spec_no_csam_derivation.md").write_text(
         "\n".join(lines), encoding="utf-8"
     )
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(description="Re-derive and validate openai_model_spec_no_csam.md "
+                                                 "(needs data/processed/ from `make documents`).")
+    parser.add_argument("--out-dir", type=Path, default=REPO_ROOT / "scratch" / "derived",
+                        help="default: scratch/derived/ (the committed copies are raw data)")
+    args = parser.parse_args(argv)
+    out_dir = args.out_dir.resolve()
+    if out_dir == DERIVED_DIR.resolve():
+        parser.error(f"refusing to overwrite the committed raw files in {DERIVED_DIR}")
     original = (PROCESSED_DIR / "openai_model_spec.md").read_text(encoding="utf-8")
     derived = derive()
     rows = validate(derived)
-    DERIVED_DIR.mkdir(parents=True, exist_ok=True)
-    DERIVED_DOC_PATH.write_text(derived, encoding="utf-8")
-    write_notes(rows, derived, original)
-    print(f"derived {DERIVED_DOC_PATH} ({len(derived):,} chars)")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    doc_path = out_dir / DERIVED_DOC_PATH.name
+    doc_path.write_text(derived, encoding="utf-8")
+    write_notes(rows, derived, original, out_dir)
+    print(f"derived {doc_path} ({len(derived):,} chars); compare with cmp {DERIVED_DOC_PATH}")
     print(f"validated {sum(1 for r in rows if r['ok'])}/{len(rows)} rounds")
 
 

@@ -46,8 +46,11 @@ def repo_rel(path: str | Path) -> str:
     except ValueError:
         return str(path)
 
-# The 7 reliable run files (RELIABLE_RUNS in
-# experiments/iterative_edit/viewer/build_static_site.py, line 28).
+# The 7 reliable run files: the runs every analysis uses. This is the list the
+# analysis reads. experiments/iterative_edit/viewer/build_static_site.py keeps
+# the same set as RELIABLE_RUNS (with a note on each run) for the site build;
+# analysis/tests/test_v1_pipeline_guards.py checks that the two agree. (The
+# archived archive/original_report/generate_figures.py has a third, frozen copy.)
 RELIABLE_RUN_STEMS = [
     "run_20260403_014905",
     "run_20260424_165115",

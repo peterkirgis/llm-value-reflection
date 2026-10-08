@@ -607,7 +607,7 @@ Point-estimate verdicts under this codes file. Each operationalization is stated
 
 ## 7. Sanity check against the paper's published numbers
 
-The site's published claim numbers were produced from the v1 codes, so under `--label v1` every line below should read OK (same instrument, same data); a DISCREPANCY line under v1 means either a divergence in this module's join / operationalization or the site's prose overstating its own data — investigated, never hidden. Under v2/ensemble labels, DISCREPANCY lines are findings (the recode changing a published number), not bugs.
+The site's published claim numbers were produced from the v1 codes, so under `--label v1` every line below should read OK (same instrument, same data); a DISCREPANCY line under v1 means either a divergence in this module's join / operationalization or the site's prose overstating its own data — investigated, never hidden. Under v2/ensemble labels, DISCREPANCY lines are findings (the re-coding changing a published number), not bugs.
 
 - OK — paper says GPT 5.5 carries a third-party-serving harmlessness conflict on 35% of all edits; computed 33.6% edit-level (34.6% event-level; tolerance ±3pp).
 - OK — paper says GPT 5.5 is more than double the next model; computed top=GPT-5.5, ratio 2.35.

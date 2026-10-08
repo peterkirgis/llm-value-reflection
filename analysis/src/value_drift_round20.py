@@ -38,7 +38,7 @@ Usage:
     .venv/bin/python analysis/src/value_drift_round20.py
     .venv/bin/python analysis/src/value_drift_round20.py --paper
 
-Outputs with --paper (AAAI port; nothing under analysis/figures or analysis/data is written):
+Outputs with --paper (print-size renders; nothing under analysis/figures or analysis/data is written):
     analysis/paper/figures/ts_value_drift_round20.png            (no title or notes in the image; built at
                                                                 its printed size, full width <= 7.0 in,
                                                                 300 dpi: include at 100% scale)
@@ -73,7 +73,7 @@ STEM = "ts_value_drift_round20"
 MD_PATH = FIG_DIR / "VALUE_DRIFT_ROUND20.md"
 RATE_SUMMARY_PATH = DATA_DIR / "ts_value_drift_summary.json"  # read-only, optional
 
-# --paper: caption-free render for the AAAI LaTeX port (PNG only; AAAI forbids Type 3 fonts).
+# --paper: caption-free render for a LaTeX version (PNG only; the print template forbids Type 3 fonts).
 PAPER_FIG_DIR = ROOT / "analysis" / "paper" / "figures"
 PAPER_DATA_DIR = PAPER_FIG_DIR / "data"
 PAPER_CAPTION_DIR = PAPER_FIG_DIR / "captions"
@@ -690,7 +690,7 @@ def render(s: dict, out_dir: Path = FIG_DIR, paper: bool = False,
     return paths
 
 
-# --paper geometry (AAAI 2027 author kit, used by the IASEAI'27 submission): the figure is built
+# --paper geometry (the print template): the figure is built
 # at its printed size and included in the LaTeX at 100% scale, so point sizes ARE printed sizes.
 # Kit rules: every text element >= 9 pt, every stroke >= 0.5 pt, 300 dpi, Helvetica/Times.
 PAPER_LAYOUT = "full"                      # figure* across both columns (main text)
@@ -1058,7 +1058,7 @@ def write_md(s: dict, faith: dict, rate: dict | None) -> None:
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("--paper", action="store_true",
-                        help="render for the AAAI paper: no title/notes in the image (they go to "
+                        help="print-size render: no title/notes in the image (they go to "
                              f"{PAPER_CAPTION_DIR.relative_to(ROOT)}/), PNG only, written under "
                              f"{PAPER_FIG_DIR.relative_to(ROOT)}/ and nowhere else")
     args = parser.parse_args(argv)

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://recode.local/schemas/edit.schema.json",
+  "$id": "urn:llm-value-reflection:analysis:schemas:edit",
   "title": "Canonical edit record (analysis/data/canonical/edits.jsonl)",
   "description": "One record per raw record in the 7 RELIABLE_RUNS files (2,740 total): applied edits, the 2 abstentions, and the 158 generation-error records that occupy round slots. Context fields are extracted from the replayed document state as it was when the model made the edit. apply_status extends the brief's enum with no_change (abstentions) and generation_error (API/parse failures with no edit text), documented in reports/00_inventory.md.",
   "type": "object",

@@ -975,11 +975,11 @@ def _sanity_section(claims: dict, label: str) -> str:
         "DISCREPANCY line under v1 means either a divergence in this module's join / "
         "operationalization or the site's prose overstating its own data — investigated, "
         "never hidden. Under v2/ensemble labels, DISCREPANCY lines are findings (the "
-        "recode changing a published number), not bugs."
+        "re-coding changing a published number), not bugs."
         if label == "v1"
         else
-        "Reference numbers below come from the paper's published (v1-based) site; under "
-        "this non-v1 codes file a DISCREPANCY line is a finding about the recode, not a "
+        "Reference numbers below come from the coding-v1 site; under "
+        "this non-v1 codes file a DISCREPANCY line is a finding about the re-coding, not a "
         "reproduction failure."
     )
     body = intro + "\n\n" + "\n".join(checks)

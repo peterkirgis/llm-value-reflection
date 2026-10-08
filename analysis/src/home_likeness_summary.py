@@ -34,7 +34,7 @@ Outputs:
     on rerun; text above it is never touched). home_likeness.py rewrites
     HOME_LIKENESS.md from scratch, so rerun this script after it.
 
-Paper mode (AAAI LaTeX port):
+Paper mode (print-size renders for a LaTeX version):
     .venv/bin/python analysis/src/home_likeness_summary.py --paper
 Outputs with --paper (nothing under analysis/figures or analysis/data is written):
     analysis/paper/figures/ts_home_likeness_summary.png    (no title, whisker note or footer in the image)
@@ -44,7 +44,7 @@ Outputs with --paper (nothing under analysis/figures or analysis/data is written
                                                                    print size and minima)
 The paper figure is built at its printed size (full text width, 7.0 in) and
 included at 100%, so its font sizes and line widths are printed points: text
->= 9 pt, strokes >= 0.5 pt (AAAI 2027 author kit), Helvetica (Arial if
+>= 9 pt, strokes >= 0.5 pt (the print template), Helvetica (Arial if
 matplotlib cannot load Helvetica), 300 dpi.
 """
 
@@ -72,11 +72,11 @@ MD_PATH = hl.MD_PATH
 MD_MARKER = "## Summary figure: average distance from the home provider (`ts_home_likeness_summary`)"
 BLOCK = 5
 
-# --paper: caption-free renders for the AAAI LaTeX port (PNG only; AAAI forbids Type 3 fonts).
+# --paper: caption-free renders for a LaTeX version (PNG only; the print template forbids Type 3 fonts).
 PAPER_FIG_DIR = ROOT / "analysis" / "paper" / "figures"
 PAPER_DATA_DIR = PAPER_FIG_DIR / "data"
 PAPER_CAPTION_DIR = PAPER_FIG_DIR / "captions"
-# AAAI two-column page: a full-width figure* is 7.0 in, one column 3.33 in. The PNG is
+# Two-column print page: a full-width figure* is 7.0 in, one column 3.33 in. The PNG is
 # saved tight with PAPER_PAD_IN and must land in PAPER_WIDTH_RANGE_IN for its layout.
 PAPER_LAYOUT = "full"
 PAPER_WIDTH_RANGE_IN = {"full": (6.6, 7.0), "column": (3.0, 3.33)}
@@ -609,7 +609,7 @@ def write_markdown(s: dict, path: Path = MD_PATH) -> Path:
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Average distance from the home provider, one bar per model.")
     parser.add_argument("--paper", action="store_true",
-                        help="render for the AAAI paper: no title/whisker note/footer in the image (they go to "
+                        help="print-size render: no title/whisker note/footer in the image (they go to "
                              f"{PAPER_CAPTION_DIR.relative_to(ROOT)}/), PNG only, written under "
                              f"{PAPER_FIG_DIR.relative_to(ROOT)}/ and nowhere else")
     args = parser.parse_args(argv)

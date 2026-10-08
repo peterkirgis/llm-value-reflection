@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://recode.local/schemas/code.schema.json",
+  "$id": "urn:llm-value-reflection:analysis:schemas:code",
   "title": "Grader judgment (v1/v2 coding output)",
   "description": "The JSON object a grader must return for one edit (Appendix I OUTPUT FORMAT; identical shape to the v1 instrument). Structural validation only — the semantic checks that mirror v1's validate_judgment (external_locus required iff score == -1, cost_bearer != served_party, subtype only for company_cost, cost_clause whitespace-normalized-substring verbatim check) are enforced in analysis/src/grade.py so their behavior stays byte-compatible with qualitative_code.py.",
   "type": "object",

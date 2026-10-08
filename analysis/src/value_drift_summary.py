@@ -50,7 +50,7 @@ Outputs:
     analysis/figures/ts_value_drift_summary.{png,pdf}
     analysis/figures/data/ts_value_drift_summary.json
     analysis/figures/VALUE_DRIFT_INDEX.md
-Outputs with --paper (AAAI port; nothing under analysis/figures or analysis/data is written):
+Outputs with --paper (print-size renders; nothing under analysis/figures or analysis/data is written):
     analysis/paper/figures/ts_value_drift_summary.png      (no title or footer notes in the image)
     analysis/paper/figures/captions/ts_value_drift_summary.json   (removed texts, for the LaTeX caption,
                                                                   plus layout / print size / min font / min stroke)
@@ -91,11 +91,11 @@ FIG_DIR = ANALYSIS / "figures"
 DATA_DIR = FIG_DIR / "data"
 STEM = "ts_value_drift_summary"
 INDEX_PATH = FIG_DIR / "VALUE_DRIFT_INDEX.md"
-# --paper: caption-free renders for the AAAI LaTeX port (PNG only; AAAI forbids Type 3 fonts).
+# --paper: caption-free renders for a LaTeX version (PNG only; the print template forbids Type 3 fonts).
 PAPER_FIG_DIR = ANALYSIS / "paper" / "figures"
 PAPER_DATA_DIR = PAPER_FIG_DIR / "data"
 PAPER_CAPTION_DIR = PAPER_FIG_DIR / "captions"
-# --paper geometry (AAAI 2027 author kit): the figure is built at its printed size and included at
+# --paper geometry (the print template): the figure is built at its printed size and included at
 # 100% scale, so every size below is the printed size. Text >= 9 pt, strokes >= 0.5 pt, 300 dpi,
 # Helvetica (Arial if Helvetica cannot be loaded).
 PAPER_LAYOUT = "full"                                       # figure* across both columns
@@ -646,7 +646,7 @@ def _paper_font() -> str:
 
 
 def _paper_rc() -> dict:
-    """rcParams for --paper only: AAAI font, >= 9 pt default text, >= 0.5 pt strokes."""
+    """rcParams for --paper only: print font, >= 9 pt default text, >= 0.5 pt strokes."""
     return {
         "font.family": "sans-serif",
         "font.sans-serif": [_paper_font()],
@@ -723,7 +723,7 @@ def _print_metrics(fig, layout: str, pad_in: float = PAPER_PAD_IN) -> dict:
     if meta["min_linewidth_pt"] < PAPER_MIN_LINEWIDTH_PT:
         problems.append(f"stroke at {meta['min_linewidth_pt']} pt < {PAPER_MIN_LINEWIDTH_PT} pt")
     if problems:
-        raise ValueError("paper figure violates the AAAI figure rules: " + "; ".join(problems))
+        raise ValueError("paper figure violates the print-template figure rules: " + "; ".join(problems))
     return meta
 
 
@@ -956,7 +956,7 @@ def write_index(summary: dict, path: Path = INDEX_PATH) -> Path:
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Consolidated least-value-drift figure.")
     parser.add_argument("--paper", action="store_true",
-                        help="render for the AAAI paper: no title/footer notes in the image (they go to "
+                        help="print-size render: no title/footer notes in the image (they go to "
                              f"{PAPER_CAPTION_DIR.relative_to(REPO_ROOT)}/), PNG only, written under "
                              f"{PAPER_FIG_DIR.relative_to(REPO_ROOT)}/ and nowhere else")
     args = parser.parse_args(argv)

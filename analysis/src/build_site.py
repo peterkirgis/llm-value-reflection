@@ -21,7 +21,9 @@ What a build does (rerunnable end to end; zero LLM calls):
      asserts that narratives.json, the site.json bundle and the plotted
      ts_beneficiary_panels figure data reproduce it. The self-check is written
      to analysis/data/analysis/site/selfcheck.json and the patch documentation
-     to analysis/notes/site_patches.md (neither is served).
+     to analysis/notes/site_patches.md (neither is served). A trial build with
+     --out-dir <dir> other than docs/ writes them next to <dir> instead
+     (<dir>_selfcheck.json, <dir>_site_patches.md) and leaves the tree clean.
 
 Statistics semantics:
   - one coding per edit (codes_io: LAST ensemble row per edit_id, validity
@@ -1739,12 +1741,24 @@ def build(out_dir: Path = SITE_OUT, patches_md: Path = PATCHES_MD,
     return sc
 
 
+def record_paths(out_dir: Path) -> tuple[Path, Path]:
+    """Where a build into out_dir writes its records (site_patches.md,
+    selfcheck.json). A build into docs/ updates the tracked records in
+    analysis/; a trial build anywhere else writes them next to its output
+    (<out>_site_patches.md, <out>_selfcheck.json), so it leaves the tree clean."""
+    out = Path(out_dir).resolve()
+    if out == SITE_OUT.resolve():
+        return PATCHES_MD, SELFCHECK_JSON
+    return out.parent / f"{out.name}_site_patches.md", out.parent / f"{out.name}_selfcheck.json"
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--out-dir", type=Path, default=SITE_OUT,
-                        help="where to write the site (default: docs/)")
+                        help="where to write the site (default: docs/). With any other directory "
+                             "the build records go next to it, not into analysis/")
     args = parser.parse_args(argv)
-    build(args.out_dir)
+    build(args.out_dir, *record_paths(args.out_dir))
 
 
 if __name__ == "__main__":

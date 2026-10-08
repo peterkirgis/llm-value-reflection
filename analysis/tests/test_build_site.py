@@ -424,3 +424,13 @@ def test_rebuild_reproduces_committed_docs(tmp_path):
     assert drop(b.SELFCHECK_JSON.read_text(encoding="utf-8")) == drop(
         (meta / "selfcheck.json").read_text(encoding="utf-8"))
     assert b.PATCHES_MD.read_bytes() == (meta / "site_patches.md").read_bytes()
+
+
+def test_trial_builds_keep_their_records_out_of_the_tree(tmp_path):
+    """--out-dir docs/ updates the tracked build records; any other output
+    directory gets its records next to it, so a trial build leaves the tree clean."""
+    assert b.record_paths(b.SITE_OUT) == (b.PATCHES_MD, b.SELFCHECK_JSON)
+    patches, selfcheck = b.record_paths(tmp_path / "site")
+    assert patches == tmp_path / "site_site_patches.md"
+    assert selfcheck == tmp_path / "site_selfcheck.json"
+    assert b.ROOT not in patches.parents and b.ROOT not in selfcheck.parents

@@ -3,7 +3,8 @@
 Builds the blinded Appendix I user prompt for each gradeable record
 (apply_status in {applied, no_change}; error records carry no edit text and
 are excluded per DECISIONS section 10), calls the shared LLM client, parses
-and validates the JSON, and writes data/codes/v2_<grader>.jsonl.
+and validates the JSON, and appends to analysis/data/codes/v2_<grader>.jsonl
+(or to --out).
 
 Validation mirrors v1's validate_judgment byte-for-byte semantics
 (qualitative_code.py; repo_map gotcha 11): fatal errors force a corrective
@@ -18,6 +19,15 @@ Usage:
     .venv/bin/python analysis/src/grade.py --smoke          # 3 edits x 2 graders, live
     .venv/bin/python analysis/src/grade.py --grader gemma --limit 50
     .venv/bin/python analysis/src/grade.py --grader gemma   # full run
+    .venv/bin/python analysis/src/grade.py --grader gemma --out scratch/grades/v2_gemma.jsonl
+
+The committed v2_<grader>.jsonl files are raw data (raw_data.sha256). Grading
+is complete, so a resumed run on them appends nothing; anything it did append
+would change their checksums. `make api-grade` passes --out scratch/grades/...,
+which re-grades every edit into a fresh file, answered from the API cache
+(analysis/data/cache/, `make cache`) wherever a request is cached. --smoke
+writes scratch/grading_smoke_test/smoke_test_results.json (the committed
+pre-flight output is archive/grading_smoke_test/smoke_test_results.json).
 
 Output files are append-only; a rerun retries rows whose error starts with
 "transport:", so the same edit_id can appear twice. Consumers MUST keep the
@@ -41,11 +51,12 @@ import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from client import ClientError, LLMClient  # noqa: E402
-from common import CODES_DIR, PROMPTS_DIR, ANALYSIS_ROOT, SCHEMAS_DIR  # noqa: E402
+from common import CODES_DIR, PROMPTS_DIR, ANALYSIS_ROOT, REPO_ROOT, SCHEMAS_DIR  # noqa: E402
 from common import CANONICAL_DIR  # noqa: E402
 
 EDITS_PATH = CANONICAL_DIR / "edits.jsonl"
 CONFIG_PATH = ANALYSIS_ROOT / "config.yaml"
+SMOKE_PATH = REPO_ROOT / "scratch" / "grading_smoke_test" / "smoke_test_results.json"
 
 JSON_BLOCK_RE = re.compile(r"\{.*\}", re.DOTALL)
 WHITESPACE_RE = re.compile(r"\s+")
@@ -317,13 +328,14 @@ def output_record(record: dict, grader_id: str, system_prompt: str, user_prompt:
 
 
 def run_grader(
-    grader_key: str, limit: int | None, edits: list[dict], concurrency: int = 8
+    grader_key: str, limit: int | None, edits: list[dict], concurrency: int = 8,
+    out_path: Path | None = None,
 ) -> None:
     config = load_config()
     grader_cfg = config["graders"][grader_key]
     system_prompt, user_template = load_prompts()
     client = LLMClient()
-    out_path = CODES_DIR / f"v2_{grader_key}.jsonl"
+    out_path = Path(out_path) if out_path else CODES_DIR / f"v2_{grader_key}.jsonl"
 
     done_ids = set()
     if out_path.exists():
@@ -347,7 +359,7 @@ def run_grader(
     n_transport_fail = 0
     n_done = 0
     write_lock = threading.Lock()
-    CODES_DIR.mkdir(parents=True, exist_ok=True)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
 
     def grade_record(record: dict) -> None:
         nonlocal n_parse_fail, n_transport_fail, n_done
@@ -498,8 +510,8 @@ def run_smoke() -> None:
                 f"≈ {mean_in * n_gradeable / 1e6:.1f}M in + "
                 f"{mean_out * n_gradeable / 1e6:.1f}M out tokens per full pass"
             )
-    smoke_path = CODES_DIR / "smoke_test_results.json"
-    CODES_DIR.mkdir(parents=True, exist_ok=True)
+    smoke_path = SMOKE_PATH
+    smoke_path.parent.mkdir(parents=True, exist_ok=True)
     smoke_path.write_text(json.dumps(report_rows, indent=2), encoding="utf-8")
     print(f"wrote {smoke_path}")
 
@@ -510,6 +522,9 @@ def main() -> None:
     parser.add_argument("--limit", type=int)
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--concurrency", type=int, default=8)
+    parser.add_argument("--out", type=Path, default=None,
+                        help="codes file to append to and resume from "
+                             "(default: analysis/data/codes/v2_<grader>.jsonl, raw data)")
     args = parser.parse_args()
 
     if args.smoke:
@@ -517,7 +532,8 @@ def main() -> None:
         return
     if not args.grader:
         parser.error("--grader is required unless --smoke")
-    run_grader(args.grader, args.limit, load_edits(), concurrency=args.concurrency)
+    run_grader(args.grader, args.limit, load_edits(), concurrency=args.concurrency,
+               out_path=args.out)
 
 
 if __name__ == "__main__":

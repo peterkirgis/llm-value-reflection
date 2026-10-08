@@ -1,4 +1,4 @@
-"""Statistical primitives for the recode workstreams (BRIEF section 10, Appendix VI).
+"""Statistical primitives for the re-coding workstreams (BRIEF section 10, Appendix VI).
 
 - Cohen's kappa: sklearn.metrics.cohen_kappa_score.
 - Krippendorff's alpha: the krippendorff package, nominal metric, np.nan missing.

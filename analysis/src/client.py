@@ -1,4 +1,4 @@
-"""Single LLM client wrapper for every recode grading call (BRIEF section 10).
+"""Single LLM client wrapper for every grading call of the re-coding (BRIEF section 10).
 
 Provides:
   - disk caching keyed on sha256(model + system + user + temperature + extras),
