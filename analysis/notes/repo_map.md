@@ -1,6 +1,6 @@
 # Repo Map — Synthesized from Six Parallel Readers (2026-09-03)
 
-Primary context document for the recode build agents. Merges verified findings from six
+Primary context document for the agents that built the re-coding pipeline (`analysis/`, then called `recode/`). Merges verified findings from six
 repo readers (runner, v1coder, publish, census, paper, configs). Where readers conflicted,
 the conflict is stated explicitly and resolved with the evidence given. Read alongside
 `analysis/BRIEF.md` and `analysis/DECISIONS.md`; where this document corrects DECISIONS
@@ -675,11 +675,11 @@ DECISIONS §5), not the old drift_* set.
   (839), DRIFT_PANEL_NOTES (815), DRIFT_HIGHLIGHTS (820), CONDITION_LABELS (37).
   `compute_drift` fills missing rounds with 0 (`rounds.get(r, 0)`) and prepends a round-0
   zero → 21-point curves; abstentions/apply-failures silently count as 0. Mirror exactly
-  or v2 curves diverge for reasons unrelated to the recode.
+  or v2 curves diverge for reasons unrelated to the re-coding.
 
 ### 7.3 Re-render recipe (under new codes, into `analysis/figures/`)
 
-1. Build a converter that joins recode v2/ensemble JSONL codes onto items shaped like the
+1. Build a converter that joins the re-coding's v2/ensemble JSONL codes onto items shaped like the
    v1 coded array: `[{model_display, source_run, condition_id, document_id, round_number,
    doc_type, coding: {...}}]` — the join key is the §2.5 6-tuple.
 2. In `analysis/src/`, write a thin driver that (a) parameterizes CODED_PATH (feed the

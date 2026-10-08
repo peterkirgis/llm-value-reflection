@@ -25,7 +25,19 @@ commands that recover it. Commit `3b36326` is the last state before the
 | `archive/original_report/figures/` | `3b36326:reports/figures` | The 23 `ts_*` figures (png + pdf) as the original generator drew them from the coding-v1 codes. The `ts_claude_conditions` PNG is stale: its footer still says "two-slot". |
 | `archive/experiment_configs/` | `3b36326:experiments/iterative_edit/config.yaml` and its siblings | Configs that map to no run in `results/iterative_edit/`: `config.yaml`, `config_ablations.yaml` (an experiment that never ran: old models, 4 conditions, 10 rounds), `config_frontier_baseline.yaml` (frontier baseline data exists only as the baseline condition inside `run_20260516_210913`), and the `*_test.yaml` smoke-test configs. The configs behind the published runs stay in `experiments/iterative_edit/`; `analysis/notes/repo_map.md` §5.1 maps runs to configs. |
 | `archive/iterative_edit/pattern_code.py` | `3b36326:experiments/iterative_edit/pattern_code.py` | A second coding-v0 pass (binary behaviour flags such as moral_agency_claim; see `CHANGE_LOG.md`). Its inputs were lost with the July 2026 checkout, so it cannot be rerun. |
-| `archive/grading_smoke_test/smoke_test_results.json` | `3b36326:recode/data/codes/smoke_test_results.json` | Output of the graders' pre-flight check (`analysis/src/grade.py --smoke`): tokens, latency and parsed judge/patienthood for a few edits per grader. It is not a codes file. A new `--smoke` run writes to `analysis/data/codes/` again. |
+| `archive/grading_smoke_test/smoke_test_results.json` | `3b36326:recode/data/codes/smoke_test_results.json` | Output of the graders' pre-flight check (`analysis/src/grade.py --smoke`): tokens, latency and parsed judge/patienthood for a few edits per grader. It is not a codes file. A new `--smoke` run writes to `scratch/grading_smoke_test/`. |
+
+### Raw files that moved
+
+Every raw data file survives byte for byte; these are at a new path
+(`raw_data.sha256` lists them there):
+
+| Now | Was | Why |
+|---|---|---|
+| `analysis/...` | `3b36326:recode` | The folder rename (`6c5c859`). |
+| `archive/grading_smoke_test/smoke_test_results.json` | `3b36326:recode/data/codes/smoke_test_results.json` | Not a codes file (see above). |
+| `results/iterative_edit/RECONSTRUCTION.md` | `3b36326:results/iterative_edit/README.md` | The reconstruction note, renamed so a guide to the directory could be its README (`bd324fb`). |
+| `writeup/lesswrong_draft.md` | `3b36326:reports/final_draft.md` | The LessWrong draft, moved out of a root `reports/` folder that sat beside `analysis/reports/`. |
 
 ### Running the archived scripts
 
@@ -57,8 +69,9 @@ is in this branch's history.
 
 ### Document text the committed runs lack
 
-`results/iterative_edit/` has no full document text per round (see its
-README). For the two earliest runs it survives: `c513ef9:docs/data/site.json.gz`
+`results/iterative_edit/` has no full document text per round
+([its README](../results/iterative_edit/README.md) tells why). For the two
+earliest runs it survives: `c513ef9:docs/data/site.json.gz`
 (2026-04-03) carries `previous_content` and `new_content` for every successful
 round of `run_20260320_173238` and `run_20260403_014905` (745 of 858 rounds;
 the other 113 failed and have no text). To extract it:

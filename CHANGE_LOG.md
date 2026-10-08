@@ -44,7 +44,7 @@ The same "v" numbers were used for two different things, so:
   separating what the editor brings from what the document invites.
 - Tiers: the same designs were run on small models, then capable models, then
   a frontier pair (Claude Opus 4.7, GPT-5.5). Seven runs are used for analysis
-  (`RELIABLE_RUNS` in experiments/iterative_edit/viewer/build_static_site.py).
+  (`RELIABLE_RUN_STEMS` in analysis/src/common.py).
 
 ## Coding
 
@@ -137,13 +137,13 @@ and amended along the way; analysis/reports/STATUS.md is the build log.
 ## Data
 
 - results/iterative_edit/ was lost with a local checkout in July 2026 and
-  reconstructed from the published bundle (then docs/data/site.json.gz, now
-  frozen as analysis/site_base/data/site.json.gz), which embeds every record
-  with its coding. The reconstruction is complete for analysis; what is gone
-  is the full document text per round and the coding-error items. The
-  directory has been committed since. See results/iterative_edit/README.md.
+  rebuilt from the published site bundle; results/iterative_edit/README.md
+  tells the story and what is missing.
 - Repository restructure (2026-10-08): the folder recode/ was renamed
   analysis/ (with git mv, so history follows); unused figures, superseded site
   variants and their code were removed; historical files moved to archive/;
-  the grader API cache was committed as one compressed archive; and
-  raw_data.sha256 records the checksum of every raw data file.
+  the LessWrong draft moved from reports/final_draft.md to
+  writeup/lesswrong_draft.md; the grader API cache was committed as one
+  compressed archive; and raw_data.sha256 records the checksum of every raw
+  data file. Raw files that changed path are listed in archive/README.md
+  ("Raw files that moved"); none changed content.

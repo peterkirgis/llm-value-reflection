@@ -19,9 +19,8 @@ under review are the site's published claims in `docs/facets.js`, `docs/index.ht
   file is Gemma-primary with per-dimension disagreement flags (`analysis/DECISIONS.md` §1),
   so `ensemble` ≡ `v2_gemma` numerically. The **two-grader average** is defined only
   for the judge score (per-edit mean over valid graders):
-  `analysis/site_v2avg/data/selfcheck.json` (the superseded two-grader site variant was
-  removed from the tree on 2026-10-08; the file is in git history as
-  `3b36326:recode/site_v2avg/data/selfcheck.json`). Conflict-count claims have no averaged
+  `3b36326:recode/site_v2avg/data/selfcheck.json` (the superseded two-grader site variant was
+  removed from the tree on 2026-10-08; the file is in git history at that path). Conflict-count claims have no averaged
   instrument; for them "survives the average" means survives under **both** v2 graders
   separately.
 - **Pooled vs cross-edit.** "Pooled" = all coded edits for a model; "cross-edit" =
@@ -158,7 +157,7 @@ non-Claude model" survives under every instrument with ranking stability 1.000 (
 (`analysis/data/analysis/bootstrap/*_ranking_stability.json`) — and the sign pattern
 (all Claude means positive, all non-Claude negative) holds on point estimates under
 every instrument including the two-grader average (Haiku +0.249, Opus +0.216,
-Sonnet +0.189 vs best non-Claude GPT-5.4 −0.158; `analysis/site_v2avg/data/selfcheck.json`).
+Sonnet +0.189 vs best non-Claude GPT-5.4 −0.158; `3b36326:recode/site_v2avg/data/selfcheck.json`).
 What fails: (i) **"Across every trial" is false** — in the cross-edit stratum the
 ordering holds in at most 55.7% of bootstrap draws (0.5285 / 0.3765 / 0.557), and
 under v2_gemma Opus (−0.225) and Sonnet (−0.152) have *negative* cross-edit means
@@ -301,7 +300,7 @@ transparency guarantees." Retain "most" only after reading the events themselves
 estimates under every instrument, including the two-grader average: all three Claude
 means positive, all seven non-Claude means negative
 (`analysis/data/analysis/headline/*.json` `claims.a.numbers`,
-`analysis/site_v2avg/data/selfcheck.json`). But as a per-model sign prediction it is
+`3b36326:recode/site_v2avg/data/selfcheck.json`). But as a per-model sign prediction it is
 not CI-secure everywhere: Opus [−0.033, +0.271] and Sonnet [−0.047, +0.211] include
 0 under v2_gemma, GPT-5.4's [−0.168, +0.105] includes 0 under v2_qwen
 (`analysis/data/analysis/bootstrap/*_bootstrap_summary.json`), and the prediction

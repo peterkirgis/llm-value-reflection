@@ -1,6 +1,6 @@
 # analysis/figures
 
-The figures used in the write-ups, drawn from the recoded judge/beneficiary codes. Each figure is a PDF and a PNG at 300 dpi with `bbox_inches="tight"`, plus a sidecar `data/<stem>.json` holding what is plotted.
+The figures used in the write-ups, drawn from the judge/beneficiary codes of the blinded three-grader re-coding. Each figure is a PDF and a PNG at 300 dpi with `bbox_inches="tight"`, plus a sidecar `data/<stem>.json` holding what is plotted.
 
 Only figures that are used are kept here: the 11 figures in the LessWrong post, plus `ts_beneficiary_panels`, whose sidecar the site build reads to cross-check its counts (`analysis/src/build_site.py`, `PANELS_JSON`). Unused figures were removed on 2026-10-08. They are in git history (commit `3b36326`, under `recode/figures/`; see [archive/README.md](../../archive/README.md)), and [TITLES.md](TITLES.md) lists them.
 
@@ -23,13 +23,13 @@ All scripts are in `analysis/src/`. The codes are `analysis/data/codes/ensemble.
 
 The `ts_judge_*`, `ts_claude_conditions`, `ts_beneficiary_panels` and `ts_drift_*` figures are the original report's figures redrawn under the new codes, with the same filenames, style and titles, except where the recoded result contradicts the original finding. They are drawn by `analysis/src/report_figures.py`, a vendored copy of the original generator `archive/original_report/generate_judge_beneficiary_figures.py`. Titles and verdicts are listed in [TITLES.md](TITLES.md); the machine-readable table is [title_decisions.json](title_decisions.json).
 
-The uncertainty conventions are the original's (±1 SD trajectory bands, naive per-edit CIs), not the recode's cluster bootstrap. These figures answer one question: what does the report's own figure look like under the new codes?
+The uncertainty conventions are the original's (±1 SD trajectory bands, naive per-edit CIs), not the re-coding's cluster bootstrap (`analysis/reports/D_bootstrap_ensemble.md`). These figures answer one question: what does the report's own figure look like under the new codes?
 
-Nothing here is written into `archive/original_report/figures/`. The generator refuses at runtime to write into `archive/`, `reports/`, `docs/`, `results/`, `experiments/` or `src/valconv/`.
+Nothing here is written into `archive/original_report/figures/`. The generator refuses at runtime to write into `archive/`, `writeup/`, `docs/`, `results/`, `experiments/` or `src/valconv/`.
 
 ### Deviations from the original generator
 
-The full list is in the header comment of `analysis/src/report_figures.py`. Every changed line is marked `# RECODE:`.
+The full list is in the header comment of `analysis/src/report_figures.py`. Every changed line is marked `# RECODE:` ("changed for the re-coding"; `analysis/tests/test_report_figures.py` uses the marker to find the deviating functions, so it keeps its old name).
 
 - **D1: data.** The generator reads an adapter, `build_items(codes_path)`, instead of `results/iterative_edit/judge_beneficiary_coded_gemma.json`. The adapter joins a codes JSONL (the last row per edit_id, via `codes_io`) onto `analysis/data/canonical/edits.jsonl` and emits items in the original schema. Edits without a usable code are dropped, as in the original file. Run on `v1.jsonl`, it reproduces the original 2,580 items exactly.
 - **D2: output.** `OUT_DIR = analysis/figures`, with a runtime guard. The constants are vendored from `archive/original_report/generate_figures.py`, which is never imported because importing it creates `archive/original_report/figures`. `_save` still writes pdf and png at dpi 300 with a tight bbox. It also writes a sidecar, `data/<stem>.json`.
@@ -40,6 +40,7 @@ The full list is in the header comment of `analysis/src/report_figures.py`. Ever
   - company_cost: + Gemini 3.1 Pro
 - **D5: `ts_claude_conditions` x-limits.** The original hard-codes the limits at (−0.2, 0.95). Under the ensemble codes, Sonnet's real-world-implementation whisker reaches −0.209, so the left limit is widened to about −0.25. The limits change only when the data would otherwise be clipped; under v1 they are unchanged.
 - **D6: CLI and batching.** The script takes `--codes`, `--label`, `--out-dir` and `--only`.
+- **D7-D10: superseded functions and paper mode.** D7 is superseded by D11. D8-D10 add the print-size `--paper` mode (see the last section); the default path is unchanged.
 - **D11: pruned to the figures in use.** The original functions that drew only unused figures (`fig_judge_cross_edit`, `fig_beneficiary_edit_level`, and the four functions the original main never called) are not vendored, and `ts_drift_disclosure` is not drawn.
 
 Everything else is identical: rcParams (none), colours, fonts, sizes, layout, footers and filenames. The ts_claude_conditions footer follows the current script ("Same judge coding…"). The PNG in `archive/original_report/figures` is stale and still says "two-slot".
@@ -83,3 +84,15 @@ writes is byte-identical to the committed one. The scripts can also be run one b
 # tests
 .venv/bin/python -m pytest analysis/tests/test_report_figures.py -q
 ```
+
+## Print-size renders: `--paper` and `analysis/paper/`
+
+`report_figures.py`, `value_drift_summary.py`, `value_drift_round20.py` and
+`home_likeness_summary.py` also take `--paper`. It renders the figures at
+their printed size for a LaTeX version of the write-up: no title, subtitle or
+footer in the image (those texts go to a caption JSON), PNG only, text at
+least 9 pt. Everything goes to `analysis/paper/figures/` (with `captions/`
+and `data/`), which is gitignored, and never into `analysis/figures/` or
+`analysis/data/`. `report_figures.py --paper` can also draw one figure that
+exists only in that mode, `ts_beneficiary_trajectories`. Nothing in this
+repository reads these renders.
