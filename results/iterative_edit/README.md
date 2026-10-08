@@ -70,10 +70,10 @@ Nothing the analysis uses is missing.
 
 ## Adding runs
 
-`experiments/iterative_edit/run.py` writes to `--out-dir` (default: this
-directory) and resumes into the newest run file there whose records carry the
-config's experiment name. Write new or test runs elsewhere, e.g.
-`make api-run CONFIG=... CONFIRM=1`, which uses `scratch/runs/`. A new run
+`experiments/iterative_edit/run.py` writes to `--out-dir` (default:
+`scratch/runs/`, which git ignores) and resumes into the newest run file there
+whose records carry the config's experiment name. Never point it at this
+directory; `make api-run CONFIG=... CONFIRM=1` also uses `scratch/runs/`. A new run
 joins the analysis only when it is moved here and added to both run lists.
 `experiments/iterative_edit/export_changes.py` writes a `*_changes.json`
 file next to its input (or into `--out-dir`); those files are gitignored

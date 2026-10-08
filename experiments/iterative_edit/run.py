@@ -5,16 +5,16 @@ The output of each round becomes the input to the next.
 
 Usage (--config is required; see README.md for the configs behind each run):
     python experiments/iterative_edit/run.py --config experiments/iterative_edit/config_capable.yaml
-        --out-dir scratch/runs     # write somewhere other than results/iterative_edit/
+        --out-dir DIR              # where run files go (default scratch/runs/)
         --rounds 3                 # override round count
         --model anthropic          # run only one provider
         --dry-run                  # print plan without calling APIs
 
-Output goes to --out-dir (default results/iterative_edit/) as run_<UTC timestamp>.jsonl.
-A run RESUMES into the newest run_*.jsonl in --out-dir when that file's
-records carry the same experiment name as the config, so pointing a published
-config at results/iterative_edit/ can append to a committed run file. Use a
-fresh --out-dir for new or test runs.
+Output goes to --out-dir (default scratch/runs/, which git ignores) as
+run_<UTC timestamp>.jsonl. A run RESUMES into the newest run_*.jsonl in
+--out-dir when that file's records carry the same experiment name as the
+config, so never point --out-dir at results/iterative_edit/: that could append
+to a committed (raw) run file. Move a finished run there deliberately instead.
 """
 
 import argparse
@@ -404,10 +404,11 @@ async def main():
     parser.add_argument("--config", type=str, required=True,
                         help="experiment config, e.g. experiments/iterative_edit/config_capable.yaml "
                              "(configs that produced no surviving run are in archive/experiment_configs/)")
-    parser.add_argument("--out-dir", type=str, default="results/iterative_edit",
+    parser.add_argument("--out-dir", type=str, default="scratch/runs",
                         help="directory for run_*.jsonl, relative to the repo root unless absolute "
-                             "(default: results/iterative_edit, which holds the committed runs; "
-                             "a run resumes into the newest run file there with the same experiment name)")
+                             "(default: scratch/runs, which git ignores; a run resumes into the newest "
+                             "run file there with the same experiment name). Do not point it at "
+                             "results/iterative_edit, which holds the committed runs.")
     args = parser.parse_args()
 
     config_path = PROJECT_ROOT / args.config

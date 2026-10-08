@@ -20,7 +20,7 @@ Usage:
 #
 #   D1  Data source. `load_coded()` no longer reads
 #       results/iterative_edit/judge_beneficiary_coded_gemma.json; it calls
-#       `build_items(codes_path)`, an adapter that joins a recode codes JSONL
+#       `build_items(codes_path)`, an adapter that joins a re-coding codes JSONL
 #       (default analysis/data/codes/ensemble.jsonl, the three-grader majority
 #       vote, DECISIONS §1; last row per edit_id via codes_io) onto the
 #       canonical frame analysis/data/canonical/edits.jsonl and emits items in
@@ -244,7 +244,7 @@ def assert_paper_out_dir(path) -> Path:
 
 
 # ---------------------------------------------------------------------------
-# RECODE D1: adapter — recode codes + canonical edits -> original item schema
+# RECODE D1: adapter — re-coding codes + canonical edits -> original item schema
 # ---------------------------------------------------------------------------
 
 def _load_jsonl(path):

@@ -103,6 +103,17 @@ def test_run_dry_run_uses_out_dir_and_leaves_results_alone(tmp_path):
     assert _listing(RESULTS) == before
 
 
+def test_run_default_out_dir_is_not_the_committed_results(tmp_path):
+    """Without --out-dir, run.py must not write (or resume) into results/iterative_edit/."""
+    import re
+    src = RUN.read_text(encoding="utf-8")
+    m = re.search(r'"--out-dir", type=str, default="([^"]+)"', src)
+    assert m, "run.py --out-dir argument not found"
+    default = m.group(1)
+    assert "results" not in Path(default).parts, default
+    assert default.startswith("scratch"), default
+
+
 def test_reliable_run_lists_agree():
     """The analysis (common.RELIABLE_RUN_STEMS) and the site build
     (build_static_site.RELIABLE_RUNS) use the same seven runs, all committed."""
