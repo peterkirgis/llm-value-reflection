@@ -82,6 +82,11 @@ live in README.md; this file explains how the project got its current shape.
   document text per round and the coding-error items. The directory is
   committed since then. See results/iterative_edit/README.md and
   experiments/iterative_edit/reconstruct_results.py.
+- The v2 recoding (three blinded graders plus a majority vote) was built in a
+  folder called recode/; on 2026-10-08 it was renamed analysis/ (git mv, so
+  history follows), provenance paths in its outputs became repo-relative, and
+  the grader API cache was committed as analysis/data/raw_api_cache_2026-10-08.tar.gz
+  (README.md, "Raw grader API cache").
 
 ## Site
 

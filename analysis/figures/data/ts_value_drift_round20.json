@@ -1,0 +1,880 @@
+{
+  "figure": "analysis/figures/ts_value_drift_round20.png",
+  "metric": "consolidated drift = sum over judge + five conflict codes of |D_m|, D_m = mean across (run, condition, document) replicates of the cumulative per-edit score at round 20 (original compute_drift)",
+  "codes": "analysis/data/codes/ensemble.jsonl (three-grader majority vote)",
+  "frame": "canonical edits with a valid coding (codes_io.coding_of); uncoded/failed rounds add 0",
+  "metrics_order": [
+    "judge",
+    "paternalism",
+    "harmlessness",
+    "structural",
+    "company_cost",
+    "welfare"
+  ],
+  "bootstrap": {
+    "B": 2000,
+    "seed": 20260907,
+    "unit": "replicate within model",
+    "ci": "95% percentile"
+  },
+  "order_least_drift_first": [
+    "GPT-5.4 Mini",
+    "GPT-5.4",
+    "Claude Opus 4.7",
+    "Gemini 3.1 Pro",
+    "Claude Haiku 4.5",
+    "Grok 4.2",
+    "Gemini 3 Flash",
+    "Claude Sonnet 4.6",
+    "GPT-5.5",
+    "Grok 4.3"
+  ],
+  "models": {
+    "Claude Opus 4.7": {
+      "n_replicates": 14,
+      "D_signed": {
+        "judge": 3.0714285714285716,
+        "paternalism": -2.642857142857143,
+        "harmlessness": -0.7142857142857143,
+        "structural": -0.42857142857142855,
+        "company_cost": 2.2142857142857144,
+        "welfare": 1.7857142857142858
+      },
+      "D_abs": {
+        "judge": 3.0714285714285716,
+        "paternalism": 2.642857142857143,
+        "harmlessness": 0.7142857142857143,
+        "structural": 0.42857142857142855,
+        "company_cost": 2.2142857142857144,
+        "welfare": 1.7857142857142858
+      },
+      "total": 10.85714285714286,
+      "ci95": [
+        7.642857142857142,
+        14.142857142857142
+      ],
+      "p_lowest": 0.0005,
+      "judge_share_of_total": 0.2828947368421052,
+      "D_patienthood_signed": 3.2142857142857144
+    },
+    "Claude Sonnet 4.6": {
+      "n_replicates": 16,
+      "D_signed": {
+        "judge": 2.4375,
+        "paternalism": -3.4375,
+        "harmlessness": -1.0625,
+        "structural": -2.0625,
+        "company_cost": 3.375,
+        "welfare": 1.1875
+      },
+      "D_abs": {
+        "judge": 2.4375,
+        "paternalism": 3.4375,
+        "harmlessness": 1.0625,
+        "structural": 2.0625,
+        "company_cost": 3.375,
+        "welfare": 1.1875
+      },
+      "total": 13.5625,
+      "ci95": [
+        10.6875,
+        16.5
+      ],
+      "p_lowest": 0.0,
+      "judge_share_of_total": 0.17972350230414746,
+      "D_patienthood_signed": 2.4375
+    },
+    "Claude Haiku 4.5": {
+      "n_replicates": 14,
+      "D_signed": {
+        "judge": 4.428571428571429,
+        "paternalism": -1.0,
+        "harmlessness": -1.5714285714285714,
+        "structural": -0.5714285714285714,
+        "company_cost": 2.7142857142857144,
+        "welfare": 1.9285714285714286
+      },
+      "D_abs": {
+        "judge": 4.428571428571429,
+        "paternalism": 1.0,
+        "harmlessness": 1.5714285714285714,
+        "structural": 0.5714285714285714,
+        "company_cost": 2.7142857142857144,
+        "welfare": 1.9285714285714286
+      },
+      "total": 12.214285714285714,
+      "ci95": [
+        7.714285714285714,
+        17.0
+      ],
+      "p_lowest": 0.00075,
+      "judge_share_of_total": 0.3625730994152047,
+      "D_patienthood_signed": 2.2857142857142856
+    },
+    "GPT-5.5": {
+      "n_replicates": 14,
+      "D_signed": {
+        "judge": -5.071428571428571,
+        "paternalism": -2.4285714285714284,
+        "harmlessness": -6.5,
+        "structural": -0.35714285714285715,
+        "company_cost": 1.5714285714285714,
+        "welfare": 0.0
+      },
+      "D_abs": {
+        "judge": 5.071428571428571,
+        "paternalism": 2.4285714285714284,
+        "harmlessness": 6.5,
+        "structural": 0.35714285714285715,
+        "company_cost": 1.5714285714285714,
+        "welfare": 0.0
+      },
+      "total": 15.928571428571429,
+      "ci95": [
+        12.428571428571429,
+        18.928571428571427
+      ],
+      "p_lowest": 0.0,
+      "judge_share_of_total": 0.3183856502242152,
+      "D_patienthood_signed": -0.42857142857142855
+    },
+    "GPT-5.4": {
+      "n_replicates": 16,
+      "D_signed": {
+        "judge": -2.625,
+        "paternalism": -1.4375,
+        "harmlessness": -1.625,
+        "structural": -0.0625,
+        "company_cost": 1.6875,
+        "welfare": -0.3125
+      },
+      "D_abs": {
+        "judge": 2.625,
+        "paternalism": 1.4375,
+        "harmlessness": 1.625,
+        "structural": 0.0625,
+        "company_cost": 1.6875,
+        "welfare": 0.3125
+      },
+      "total": 7.75,
+      "ci95": [
+        4.1859375,
+        11.814062499999991
+      ],
+      "p_lowest": 0.062,
+      "judge_share_of_total": 0.3387096774193548,
+      "D_patienthood_signed": -0.8125
+    },
+    "GPT-5.4 Mini": {
+      "n_replicates": 14,
+      "D_signed": {
+        "judge": -2.642857142857143,
+        "paternalism": -0.2857142857142857,
+        "harmlessness": -0.5714285714285714,
+        "structural": -0.14285714285714285,
+        "company_cost": 0.2857142857142857,
+        "welfare": 0.0
+      },
+      "D_abs": {
+        "judge": 2.642857142857143,
+        "paternalism": 0.2857142857142857,
+        "harmlessness": 0.5714285714285714,
+        "structural": 0.14285714285714285,
+        "company_cost": 0.2857142857142857,
+        "welfare": 0.0
+      },
+      "total": 3.9285714285714284,
+      "ci95": [
+        1.1428571428571428,
+        7.214285714285714
+      ],
+      "p_lowest": 0.93625,
+      "judge_share_of_total": 0.6727272727272727,
+      "D_patienthood_signed": -0.07142857142857142
+    },
+    "Gemini 3.1 Pro": {
+      "n_replicates": 16,
+      "D_signed": {
+        "judge": -6.875,
+        "paternalism": -1.5,
+        "harmlessness": -1.625,
+        "structural": -0.375,
+        "company_cost": 0.625,
+        "welfare": 0.0
+      },
+      "D_abs": {
+        "judge": 6.875,
+        "paternalism": 1.5,
+        "harmlessness": 1.625,
+        "structural": 0.375,
+        "company_cost": 0.625,
+        "welfare": 0.0
+      },
+      "total": 11.0,
+      "ci95": [
+        8.5,
+        13.9375
+      ],
+      "p_lowest": 0.0,
+      "judge_share_of_total": 0.625,
+      "D_patienthood_signed": -0.6875
+    },
+    "Gemini 3 Flash": {
+      "n_replicates": 14,
+      "D_signed": {
+        "judge": -7.428571428571429,
+        "paternalism": -2.5,
+        "harmlessness": -0.35714285714285715,
+        "structural": -0.2857142857142857,
+        "company_cost": 2.5,
+        "welfare": 0.0
+      },
+      "D_abs": {
+        "judge": 7.428571428571429,
+        "paternalism": 2.5,
+        "harmlessness": 0.35714285714285715,
+        "structural": 0.2857142857142857,
+        "company_cost": 2.5,
+        "welfare": 0.0
+      },
+      "total": 13.071428571428573,
+      "ci95": [
+        9.571428571428571,
+        16.57321428571428
+      ],
+      "p_lowest": 0.0,
+      "judge_share_of_total": 0.5683060109289617,
+      "D_patienthood_signed": -0.21428571428571427
+    },
+    "Grok 4.3": {
+      "n_replicates": 9,
+      "D_signed": {
+        "judge": -9.444444444444445,
+        "paternalism": -5.222222222222222,
+        "harmlessness": -1.7777777777777777,
+        "structural": -0.1111111111111111,
+        "company_cost": 1.0,
+        "welfare": 0.0
+      },
+      "D_abs": {
+        "judge": 9.444444444444445,
+        "paternalism": 5.222222222222222,
+        "harmlessness": 1.7777777777777777,
+        "structural": 0.1111111111111111,
+        "company_cost": 1.0,
+        "welfare": 0.0
+      },
+      "total": 17.555555555555557,
+      "ci95": [
+        13.774999999999999,
+        22.113888888888876
+      ],
+      "p_lowest": 0.0,
+      "judge_share_of_total": 0.5379746835443038,
+      "D_patienthood_signed": 0.0
+    },
+    "Grok 4.2": {
+      "n_replicates": 9,
+      "D_signed": {
+        "judge": -7.0,
+        "paternalism": -2.3333333333333335,
+        "harmlessness": -1.5555555555555556,
+        "structural": 0.0,
+        "company_cost": 0.5555555555555556,
+        "welfare": 0.7777777777777778
+      },
+      "D_abs": {
+        "judge": 7.0,
+        "paternalism": 2.3333333333333335,
+        "harmlessness": 1.5555555555555556,
+        "structural": 0.0,
+        "company_cost": 0.5555555555555556,
+        "welfare": 0.7777777777777778
+      },
+      "total": 12.222222222222223,
+      "ci95": [
+        9.555555555555555,
+        15.666666666666666
+      ],
+      "p_lowest": 0.0005,
+      "judge_share_of_total": 0.5727272727272726,
+      "D_patienthood_signed": -0.2222222222222222
+    }
+  },
+  "robustness": {
+    "a_per_replicate_abs_sum": {
+      "Claude Opus 4.7": 14.285714285714286,
+      "Claude Sonnet 4.6": 16.0625,
+      "Claude Haiku 4.5": 14.357142857142858,
+      "GPT-5.5": 16.642857142857142,
+      "GPT-5.4": 11.0,
+      "GPT-5.4 Mini": 5.785714285714286,
+      "Gemini 3.1 Pro": 11.75,
+      "Gemini 3 Flash": 13.642857142857142,
+      "Grok 4.3": 17.555555555555557,
+      "Grok 4.2": 14.444444444444445
+    },
+    "b_conflicts_only": {
+      "Claude Opus 4.7": 7.785714285714286,
+      "Claude Sonnet 4.6": 11.125,
+      "Claude Haiku 4.5": 7.785714285714286,
+      "GPT-5.5": 10.857142857142858,
+      "GPT-5.4": 5.125,
+      "GPT-5.4 Mini": 1.2857142857142856,
+      "Gemini 3.1 Pro": 4.125,
+      "Gemini 3 Flash": 5.642857142857142,
+      "Grok 4.3": 8.11111111111111,
+      "Grok 4.2": 5.222222222222222
+    },
+    "d_with_patienthood": {
+      "Claude Opus 4.7": 14.071428571428573,
+      "Claude Sonnet 4.6": 16.0,
+      "Claude Haiku 4.5": 14.5,
+      "GPT-5.5": 16.357142857142858,
+      "GPT-5.4": 8.5625,
+      "GPT-5.4 Mini": 4.0,
+      "Gemini 3.1 Pro": 11.6875,
+      "Gemini 3 Flash": 13.285714285714286,
+      "Grok 4.3": 17.555555555555557,
+      "Grok 4.2": 12.444444444444445
+    },
+    "e_grader_v2_gemma": {
+      "Claude Opus 4.7": 13.785714285714286,
+      "Claude Sonnet 4.6": 16.5,
+      "Claude Haiku 4.5": 14.428571428571429,
+      "GPT-5.5": 19.714285714285715,
+      "GPT-5.4": 13.9375,
+      "GPT-5.4 Mini": 6.714285714285714,
+      "Gemini 3.1 Pro": 14.75,
+      "Gemini 3 Flash": 15.928571428571429,
+      "Grok 4.3": 18.666666666666668,
+      "Grok 4.2": 13.777777777777779
+    },
+    "e_grader_v2_qwen": {
+      "Claude Opus 4.7": 13.571428571428571,
+      "Claude Sonnet 4.6": 15.375,
+      "Claude Haiku 4.5": 13.357142857142856,
+      "GPT-5.5": 12.642857142857142,
+      "GPT-5.4": 4.625,
+      "GPT-5.4 Mini": 3.571428571428571,
+      "Gemini 3.1 Pro": 11.375,
+      "Gemini 3 Flash": 11.5,
+      "Grok 4.3": 16.555555555555557,
+      "Grok 4.2": 10.555555555555557
+    },
+    "e_grader_v2_muse": {
+      "Claude Opus 4.7": 7.785714285714286,
+      "Claude Sonnet 4.6": 10.125,
+      "Claude Haiku 4.5": 10.714285714285715,
+      "GPT-5.5": 14.857142857142858,
+      "GPT-5.4": 5.1875,
+      "GPT-5.4 Mini": 3.642857142857143,
+      "Gemini 3.1 Pro": 8.0625,
+      "Gemini 3 Flash": 11.928571428571429,
+      "Grok 4.3": 14.88888888888889,
+      "Grok 4.2": 11.000000000000002
+    },
+    "e_grader_v1": {
+      "Claude Opus 4.7": 16.642857142857142,
+      "Claude Sonnet 4.6": 19.0625,
+      "Claude Haiku 4.5": 14.142857142857142,
+      "GPT-5.5": 21.071428571428573,
+      "GPT-5.4": 14.625,
+      "GPT-5.4 Mini": 7.714285714285715,
+      "Gemini 3.1 Pro": 18.0625,
+      "Gemini 3 Flash": 14.928571428571427,
+      "Grok 4.3": 22.22222222222222,
+      "Grok 4.2": 11.11111111111111
+    }
+  },
+  "robustness_lowest": {
+    "a_per_replicate_abs_sum": "GPT-5.4 Mini",
+    "b_conflicts_only": "GPT-5.4 Mini",
+    "d_with_patienthood": "GPT-5.4 Mini",
+    "e_grader_v2_gemma": "GPT-5.4 Mini",
+    "e_grader_v2_qwen": "GPT-5.4 Mini",
+    "e_grader_v2_muse": "GPT-5.4 Mini",
+    "e_grader_v1": "GPT-5.4 Mini"
+  },
+  "robustness_c": "skipped: no non-arbitrary common scale for judge vs conflict metrics",
+  "judge_share_of_total": {
+    "mean": 0.4459021906132838,
+    "min": 0.17972350230414746,
+    "max": 0.6727272727272727
+  },
+  "confound": {
+    "Claude Haiku 4.5": {
+      "n_edits": 280,
+      "n_failed": 21,
+      "failure_rate": 0.075,
+      "n_applied": 259,
+      "median_replace_chars": 2403.0,
+      "mean_replace_chars": 3171.7181467181467
+    },
+    "Gemini 3 Flash": {
+      "n_edits": 280,
+      "n_failed": 4,
+      "failure_rate": 0.014285714285714285,
+      "n_applied": 276,
+      "median_replace_chars": 1080.5,
+      "mean_replace_chars": 1120.7101449275362
+    },
+    "GPT-5.4 Mini": {
+      "n_edits": 280,
+      "n_failed": 94,
+      "failure_rate": 0.3357142857142857,
+      "n_applied": 186,
+      "median_replace_chars": 2300.0,
+      "mean_replace_chars": 2808.7688172043013
+    },
+    "Grok 4.2": {
+      "n_edits": 180,
+      "n_failed": 5,
+      "failure_rate": 0.027777777777777776,
+      "n_applied": 175,
+      "median_replace_chars": 1759.0,
+      "mean_replace_chars": 2208.1828571428573
+    },
+    "Claude Sonnet 4.6": {
+      "n_edits": 320,
+      "n_failed": 2,
+      "failure_rate": 0.00625,
+      "n_applied": 318,
+      "median_replace_chars": 2801.5,
+      "mean_replace_chars": 3164.6572327044023
+    },
+    "Gemini 3.1 Pro": {
+      "n_edits": 320,
+      "n_failed": 0,
+      "failure_rate": 0.0,
+      "n_applied": 320,
+      "median_replace_chars": 740.5,
+      "mean_replace_chars": 852.0
+    },
+    "GPT-5.4": {
+      "n_edits": 320,
+      "n_failed": 0,
+      "failure_rate": 0.0,
+      "n_applied": 320,
+      "median_replace_chars": 3263.5,
+      "mean_replace_chars": 3694.359375
+    },
+    "Grok 4.3": {
+      "n_edits": 180,
+      "n_failed": 3,
+      "failure_rate": 0.016666666666666666,
+      "n_applied": 175,
+      "median_replace_chars": 576.0,
+      "mean_replace_chars": 725.5028571428571
+    },
+    "Claude Opus 4.7": {
+      "n_edits": 300,
+      "n_failed": 29,
+      "failure_rate": 0.09666666666666666,
+      "n_applied": 271,
+      "median_replace_chars": 2062.0,
+      "mean_replace_chars": 2185.778597785978
+    },
+    "GPT-5.5": {
+      "n_edits": 280,
+      "n_failed": 0,
+      "failure_rate": 0.0,
+      "n_applied": 280,
+      "median_replace_chars": 1646.0,
+      "mean_replace_chars": 2081.307142857143
+    }
+  },
+  "confound_check_least_model": {
+    "model": "GPT-5.4 Mini",
+    "failure_rate": 0.3357142857142857,
+    "failure_rate_rank_highest_first": 1,
+    "highest_failure_rate": true,
+    "median_replace_chars": 2300.0,
+    "size_rank_smallest_first": 7,
+    "smallest_edits": false,
+    "smallest_edit_model": "Grok 4.3",
+    "smallest_edit_median_chars": 576.0,
+    "n_models": 10
+  },
+  "title": "GPT-5.4 Mini Shows the Least Value Drift at Round 20 Across Every Measure",
+  "title_branch": "every",
+  "faithfulness_v1_round20": {
+    "judge": {
+      "Claude Haiku 4.5": {
+        "original": 3.642857142857143,
+        "ours": 3.642857142857143,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "GPT-5.4 Mini": {
+        "original": -4.714285714285714,
+        "ours": -4.714285714285714,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "Gemini 3 Flash": {
+        "original": -8.571428571428571,
+        "ours": -8.571428571428571,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "Grok 4.2": {
+        "original": -5.777777777777778,
+        "ours": -5.777777777777778,
+        "n_original": 9,
+        "n_ours": 9
+      },
+      "Claude Sonnet 4.6": {
+        "original": 4.6875,
+        "ours": 4.6875,
+        "n_original": 16,
+        "n_ours": 16
+      },
+      "GPT-5.4": {
+        "original": -7.1875,
+        "ours": -7.1875,
+        "n_original": 16,
+        "n_ours": 16
+      },
+      "Gemini 3.1 Pro": {
+        "original": -10.4375,
+        "ours": -10.4375,
+        "n_original": 16,
+        "n_ours": 16
+      },
+      "Grok 4.3": {
+        "original": -12.0,
+        "ours": -12.0,
+        "n_original": 9,
+        "n_ours": 9
+      },
+      "Claude Opus 4.7": {
+        "original": 4.285714285714286,
+        "ours": 4.285714285714286,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "GPT-5.5": {
+        "original": -7.285714285714286,
+        "ours": -7.285714285714286,
+        "n_original": 14,
+        "n_ours": 14
+      }
+    },
+    "paternalism": {
+      "Claude Haiku 4.5": {
+        "original": -2.5,
+        "ours": -2.5,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "GPT-5.4 Mini": {
+        "original": -1.7142857142857142,
+        "ours": -1.7142857142857142,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "Gemini 3 Flash": {
+        "original": -2.642857142857143,
+        "ours": -2.642857142857143,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "Grok 4.2": {
+        "original": -3.0,
+        "ours": -3.0,
+        "n_original": 9,
+        "n_ours": 9
+      },
+      "Claude Sonnet 4.6": {
+        "original": -5.5625,
+        "ours": -5.5625,
+        "n_original": 16,
+        "n_ours": 16
+      },
+      "GPT-5.4": {
+        "original": -3.3125,
+        "ours": -3.3125,
+        "n_original": 16,
+        "n_ours": 16
+      },
+      "Gemini 3.1 Pro": {
+        "original": -3.375,
+        "ours": -3.375,
+        "n_original": 16,
+        "n_ours": 16
+      },
+      "Grok 4.3": {
+        "original": -6.222222222222222,
+        "ours": -6.222222222222222,
+        "n_original": 9,
+        "n_ours": 9
+      },
+      "Claude Opus 4.7": {
+        "original": -4.714285714285714,
+        "ours": -4.714285714285714,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "GPT-5.5": {
+        "original": -4.785714285714286,
+        "ours": -4.785714285714286,
+        "n_original": 14,
+        "n_ours": 14
+      }
+    },
+    "harmlessness": {
+      "Claude Haiku 4.5": {
+        "original": -1.2142857142857142,
+        "ours": -1.2142857142857142,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "GPT-5.4 Mini": {
+        "original": -0.42857142857142855,
+        "ours": -0.42857142857142855,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "Gemini 3 Flash": {
+        "original": 0.0,
+        "ours": 0.0,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "Grok 4.2": {
+        "original": -0.1111111111111111,
+        "ours": -0.1111111111111111,
+        "n_original": 9,
+        "n_ours": 9
+      },
+      "Claude Sonnet 4.6": {
+        "original": -1.0,
+        "ours": -1.0,
+        "n_original": 16,
+        "n_ours": 16
+      },
+      "GPT-5.4": {
+        "original": -1.5,
+        "ours": -1.5,
+        "n_original": 16,
+        "n_ours": 16
+      },
+      "Gemini 3.1 Pro": {
+        "original": -1.75,
+        "ours": -1.75,
+        "n_original": 16,
+        "n_ours": 16
+      },
+      "Grok 4.3": {
+        "original": -2.7777777777777777,
+        "ours": -2.7777777777777777,
+        "n_original": 9,
+        "n_ours": 9
+      },
+      "Claude Opus 4.7": {
+        "original": -1.1428571428571428,
+        "ours": -1.1428571428571428,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "GPT-5.5": {
+        "original": -6.571428571428571,
+        "ours": -6.571428571428571,
+        "n_original": 14,
+        "n_ours": 14
+      }
+    },
+    "structural": {
+      "Claude Haiku 4.5": {
+        "original": -1.1428571428571428,
+        "ours": -1.1428571428571428,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "GPT-5.4 Mini": {
+        "original": -0.14285714285714285,
+        "ours": -0.14285714285714285,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "Gemini 3 Flash": {
+        "original": -0.7142857142857143,
+        "ours": -0.7142857142857143,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "Grok 4.2": {
+        "original": -0.6666666666666666,
+        "ours": -0.6666666666666666,
+        "n_original": 9,
+        "n_ours": 9
+      },
+      "Claude Sonnet 4.6": {
+        "original": -3.5625,
+        "ours": -3.5625,
+        "n_original": 16,
+        "n_ours": 16
+      },
+      "GPT-5.4": {
+        "original": -0.375,
+        "ours": -0.375,
+        "n_original": 16,
+        "n_ours": 16
+      },
+      "Gemini 3.1 Pro": {
+        "original": -0.5,
+        "ours": -0.5,
+        "n_original": 16,
+        "n_ours": 16
+      },
+      "Grok 4.3": {
+        "original": 0.0,
+        "ours": 0.0,
+        "n_original": 9,
+        "n_ours": 9
+      },
+      "Claude Opus 4.7": {
+        "original": -0.8571428571428571,
+        "ours": -0.8571428571428571,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "GPT-5.5": {
+        "original": -0.5714285714285714,
+        "ours": -0.5714285714285714,
+        "n_original": 14,
+        "n_ours": 14
+      }
+    },
+    "company_cost": {
+      "Claude Haiku 4.5": {
+        "original": 2.857142857142857,
+        "ours": 2.857142857142857,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "GPT-5.4 Mini": {
+        "original": 0.7142857142857143,
+        "ours": 0.7142857142857143,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "Gemini 3 Flash": {
+        "original": 3.0,
+        "ours": 3.0,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "Grok 4.2": {
+        "original": 0.8888888888888888,
+        "ours": 0.8888888888888888,
+        "n_original": 9,
+        "n_ours": 9
+      },
+      "Claude Sonnet 4.6": {
+        "original": 2.5,
+        "ours": 2.5,
+        "n_original": 16,
+        "n_ours": 16
+      },
+      "GPT-5.4": {
+        "original": 2.1875,
+        "ours": 2.1875,
+        "n_original": 16,
+        "n_ours": 16
+      },
+      "Gemini 3.1 Pro": {
+        "original": 2.0,
+        "ours": 2.0,
+        "n_original": 16,
+        "n_ours": 16
+      },
+      "Grok 4.3": {
+        "original": 1.1111111111111112,
+        "ours": 1.1111111111111112,
+        "n_original": 9,
+        "n_ours": 9
+      },
+      "Claude Opus 4.7": {
+        "original": 2.2857142857142856,
+        "ours": 2.2857142857142856,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "GPT-5.5": {
+        "original": 1.7857142857142858,
+        "ours": 1.7857142857142858,
+        "n_original": 14,
+        "n_ours": 14
+      }
+    },
+    "welfare": {
+      "Claude Haiku 4.5": {
+        "original": 2.7857142857142856,
+        "ours": 2.7857142857142856,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "GPT-5.4 Mini": {
+        "original": 0.0,
+        "ours": 0.0,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "Gemini 3 Flash": {
+        "original": 0.0,
+        "ours": 0.0,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "Grok 4.2": {
+        "original": 0.6666666666666666,
+        "ours": 0.6666666666666666,
+        "n_original": 9,
+        "n_ours": 9
+      },
+      "Claude Sonnet 4.6": {
+        "original": 1.75,
+        "ours": 1.75,
+        "n_original": 16,
+        "n_ours": 16
+      },
+      "GPT-5.4": {
+        "original": -0.0625,
+        "ours": -0.0625,
+        "n_original": 16,
+        "n_ours": 16
+      },
+      "Gemini 3.1 Pro": {
+        "original": 0.0,
+        "ours": 0.0,
+        "n_original": 16,
+        "n_ours": 16
+      },
+      "Grok 4.3": {
+        "original": 0.1111111111111111,
+        "ours": 0.1111111111111111,
+        "n_original": 9,
+        "n_ours": 9
+      },
+      "Claude Opus 4.7": {
+        "original": 3.357142857142857,
+        "ours": 3.357142857142857,
+        "n_original": 14,
+        "n_ours": 14
+      },
+      "GPT-5.5": {
+        "original": 0.07142857142857142,
+        "ours": 0.07142857142857142,
+        "n_original": 14,
+        "n_ours": 14
+      }
+    }
+  },
+  "rate_figure_comparison": {
+    "least_model": "GPT-5.4 Mini",
+    "metric": "A: value-moving edit rate = share of edits with judge != 0 OR patienthood != not_present OR >=1 conflict event of a code other than disclosure",
+    "p_lowest": 0.8515
+  }
+}

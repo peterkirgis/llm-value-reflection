@@ -14,9 +14,9 @@ Known losses relative to the originals (see the README this script writes):
     round's find/replace to the processed source documents.
   - coded items whose coding errored were dropped at publish time.
 
-That v1 bundle is frozen at recode/site_base/data/site.json.gz, which is
+That v1 bundle is frozen at analysis/site_base/data/site.json.gz, which is
 what this script reads. docs/data/site.json.gz is now the consensus-coded
-site bundle (recode/src/build_site.py); reconstructing from it would write
+site bundle (analysis/src/build_site.py); reconstructing from it would write
 the wrong codes. The committed results/iterative_edit/ is the output of this
 script on the v1 bundle (a rebuild into another directory reproduces it byte
 for byte), so the script refuses to overwrite existing files unless --force.
@@ -35,7 +35,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-BUNDLE = ROOT / "recode" / "site_base" / "data" / "site.json.gz"  # frozen v1 bundle
+BUNDLE = ROOT / "analysis" / "site_base" / "data" / "site.json.gz"  # frozen v1 bundle
 OUT_DIR = ROOT / "results" / "iterative_edit"
 
 # Fields of the original run records, in their original shape. Viewer-side

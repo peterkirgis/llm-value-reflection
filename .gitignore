@@ -35,6 +35,6 @@ archive/spar_midterm/presentation.html
 archive/spar_midterm/presentation.pdf
 
 # The conference paper lives on the "paper" branch, not on main. Figure
-# scripts may still render print-size copies into recode/paper/; never
+# scripts may still render print-size copies into analysis/paper/; never
 # commit them here.
-recode/paper/
+analysis/paper/

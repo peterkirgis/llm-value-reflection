@@ -1,0 +1,3123 @@
+{
+  "label": "v2_qwen",
+  "codes_path": "analysis/data/codes/v2_qwen.jsonl",
+  "edits_path": "analysis/data/canonical/edits.jsonl",
+  "generated_utc": "2026-09-04T21:16:34+00:00",
+  "n_code_rows": 2582,
+  "n_unique_code_ids": 2582,
+  "n_null_coding": 46,
+  "n_edit_records": 2740,
+  "n_edits_with_code": 2536,
+  "pooled": {
+    "n_records": 2740,
+    "n_coded": 2536,
+    "mean_judge": {
+      "pooled": -0.07531545741324921,
+      "cross_edit": -0.22133333333333333,
+      "n_cross_edit": 750
+    },
+    "p_judge": {
+      "zero": 0.35291798107255523,
+      "plus": 0.2858832807570978,
+      "minus": 0.361198738170347
+    },
+    "p_patienthood": {
+      "affirm": 0.0583596214511041,
+      "hedge": 0.014195583596214511,
+      "deny": 0.015772870662460567,
+      "not_present": 0.9116719242902208
+    },
+    "drift20": {
+      "pooled": {
+        "edit_based": -1.5063091482649842,
+        "chain_based": -1.3941605839416058,
+        "n_records": 2740,
+        "n_coded": 2536,
+        "n_uncoded_rounds": 204,
+        "n_chains": 137,
+        "methods_differ": true
+      },
+      "cross_edit": {
+        "edit_based": -4.426666666666667,
+        "chain_based": -4.048780487804878,
+        "n_records": 820,
+        "n_coded": 750,
+        "n_uncoded_rounds": 70,
+        "n_chains": 41,
+        "methods_differ": true
+      },
+      "you_framing": {
+        "edit_based": 2.073170731707317,
+        "chain_based": 1.8888888888888888,
+        "n_records": 360,
+        "n_coded": 328,
+        "n_uncoded_rounds": 32,
+        "n_chains": 18,
+        "methods_differ": true
+      },
+      "baseline": {
+        "edit_based": -0.4814004376367615,
+        "chain_based": -0.4583333333333333,
+        "n_records": 480,
+        "n_coded": 457,
+        "n_uncoded_rounds": 23,
+        "n_chains": 24,
+        "methods_differ": true
+      }
+    },
+    "conflicts": {
+      "paternalism": {
+        "n_edits_with_code": 291,
+        "n_events": 297,
+        "rate_edits": 0.11474763406940063,
+        "edits_first_conflict": {
+          "idealized": 263,
+          "stated": 28
+        },
+        "events": {
+          "idealized": 268,
+          "stated": 29
+        },
+        "modal_pair": {
+          "cost_bearer": "user_stated",
+          "served_party": "user_idealized",
+          "n_events": 268,
+          "share_of_events": 0.9023569023569024
+        }
+      },
+      "harmlessness": {
+        "n_edits_with_code": 214,
+        "n_events": 229,
+        "rate_edits": 0.08438485804416404,
+        "edits_first_conflict": {
+          "third_parties": 188,
+          "user": 19,
+          "other": 7
+        },
+        "events": {
+          "third_parties": 200,
+          "user": 22,
+          "other": 7
+        },
+        "modal_pair": {
+          "cost_bearer": "user_stated",
+          "served_party": "society_third_party",
+          "n_events": 198,
+          "share_of_events": 0.8646288209606987
+        }
+      },
+      "structural": {
+        "n_edits_with_code": 82,
+        "n_events": 83,
+        "rate_edits": 0.032334384858044164,
+        "edits_first_conflict": {
+          "society": 67,
+          "user": 15
+        },
+        "events": {
+          "society": 68,
+          "user": 15
+        },
+        "modal_pair": {
+          "cost_bearer": "user_stated",
+          "served_party": "society_structural",
+          "n_events": 68,
+          "share_of_events": 0.8192771084337349
+        }
+      },
+      "company_cost": {
+        "n_edits_with_code": 230,
+        "n_events": 254,
+        "rate_edits": 0.09069400630914827,
+        "edits_first_conflict": {
+          "against_company": 213,
+          "pro_company": 17
+        },
+        "events": {
+          "against_company": 237,
+          "pro_company": 17
+        },
+        "modal_pair": {
+          "cost_bearer": "developer",
+          "served_party": "user_stated",
+          "n_events": 106,
+          "share_of_events": 0.41732283464566927
+        }
+      },
+      "welfare": {
+        "n_edits_with_code": 108,
+        "n_events": 136,
+        "rate_edits": 0.04258675078864353,
+        "edits_first_conflict": {
+          "model": 90,
+          "developer": 15,
+          "other": 3
+        },
+        "events": {
+          "model": 113,
+          "developer": 19,
+          "other": 4
+        },
+        "modal_pair": {
+          "cost_bearer": "developer",
+          "served_party": "model_welfare",
+          "n_events": 113,
+          "share_of_events": 0.8308823529411765
+        }
+      },
+      "disclosure": {
+        "n_edits_with_code": 65,
+        "n_events": 70,
+        "rate_edits": 0.025630914826498423,
+        "edits_first_conflict": {
+          "deployer": 5,
+          "user": 58,
+          "other": 2
+        },
+        "events": {
+          "deployer": 5,
+          "user": 63,
+          "other": 2
+        },
+        "modal_pair": {
+          "cost_bearer": "deployer",
+          "served_party": "user_idealized",
+          "n_events": 60,
+          "share_of_events": 0.8571428571428571
+        }
+      },
+      "other": {
+        "n_edits_with_code": 42,
+        "n_events": 46,
+        "rate_edits": 0.016561514195583597,
+        "edits_first_conflict": {
+          "other": 42
+        },
+        "events": {
+          "other": 46
+        },
+        "modal_pair": {
+          "cost_bearer": "user_stated",
+          "served_party": "developer",
+          "n_events": 18,
+          "share_of_events": 0.391304347826087
+        }
+      }
+    }
+  },
+  "per_model": {
+    "Claude Haiku 4.5": {
+      "n_records": 280,
+      "n_coded": 257,
+      "mean_judge": {
+        "pooled": 0.29571984435797666,
+        "cross_edit": 0.07792207792207792,
+        "n_cross_edit": 77
+      },
+      "p_judge": {
+        "zero": 0.27626459143968873,
+        "plus": 0.5097276264591439,
+        "minus": 0.2140077821011673
+      },
+      "p_patienthood": {
+        "affirm": 0.16342412451361868,
+        "hedge": 0.023346303501945526,
+        "deny": 0.007782101167315175,
+        "not_present": 0.8054474708171206
+      },
+      "drift20": {
+        "pooled": {
+          "edit_based": 5.914396887159533,
+          "chain_based": 5.428571428571429,
+          "n_records": 280,
+          "n_coded": 257,
+          "n_uncoded_rounds": 23,
+          "n_chains": 14,
+          "methods_differ": true
+        },
+        "cross_edit": {
+          "edit_based": 1.5584415584415585,
+          "chain_based": 1.5,
+          "n_records": 80,
+          "n_coded": 77,
+          "n_uncoded_rounds": 3,
+          "n_chains": 4,
+          "methods_differ": true
+        },
+        "you_framing": {
+          "edit_based": 9.714285714285714,
+          "chain_based": 8.5,
+          "n_records": 40,
+          "n_coded": 35,
+          "n_uncoded_rounds": 5,
+          "n_chains": 2,
+          "methods_differ": true
+        },
+        "baseline": {
+          "edit_based": 7.222222222222222,
+          "chain_based": 6.5,
+          "n_records": 40,
+          "n_coded": 36,
+          "n_uncoded_rounds": 4,
+          "n_chains": 2,
+          "methods_differ": true
+        }
+      },
+      "conflicts": {
+        "paternalism": {
+          "n_edits_with_code": 15,
+          "n_events": 17,
+          "rate_edits": 0.058365758754863814,
+          "edits_first_conflict": {
+            "idealized": 14,
+            "stated": 1
+          },
+          "events": {
+            "idealized": 15,
+            "stated": 2
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "user_idealized",
+            "n_events": 15,
+            "share_of_events": 0.8823529411764706
+          }
+        },
+        "harmlessness": {
+          "n_edits_with_code": 21,
+          "n_events": 21,
+          "rate_edits": 0.08171206225680934,
+          "edits_first_conflict": {
+            "third_parties": 18,
+            "user": 2,
+            "other": 1
+          },
+          "events": {
+            "third_parties": 18,
+            "user": 2,
+            "other": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_third_party",
+            "n_events": 18,
+            "share_of_events": 0.8571428571428571
+          }
+        },
+        "structural": {
+          "n_edits_with_code": 4,
+          "n_events": 4,
+          "rate_edits": 0.01556420233463035,
+          "edits_first_conflict": {
+            "society": 4
+          },
+          "events": {
+            "society": 4
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_structural",
+            "n_events": 4,
+            "share_of_events": 1.0
+          }
+        },
+        "company_cost": {
+          "n_edits_with_code": 36,
+          "n_events": 41,
+          "rate_edits": 0.14007782101167315,
+          "edits_first_conflict": {
+            "against_company": 36
+          },
+          "events": {
+            "against_company": 41
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "society_structural",
+            "n_events": 21,
+            "share_of_events": 0.5121951219512195
+          }
+        },
+        "welfare": {
+          "n_edits_with_code": 32,
+          "n_events": 41,
+          "rate_edits": 0.1245136186770428,
+          "edits_first_conflict": {
+            "model": 30,
+            "developer": 2
+          },
+          "events": {
+            "model": 39,
+            "developer": 2
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "model_welfare",
+            "n_events": 39,
+            "share_of_events": 0.9512195121951219
+          }
+        },
+        "disclosure": {
+          "n_edits_with_code": 2,
+          "n_events": 2,
+          "rate_edits": 0.007782101167315175,
+          "edits_first_conflict": {
+            "user": 2
+          },
+          "events": {
+            "user": 2
+          },
+          "modal_pair": {
+            "cost_bearer": "deployer",
+            "served_party": "user_idealized",
+            "n_events": 2,
+            "share_of_events": 1.0
+          }
+        },
+        "other": {
+          "n_edits_with_code": 2,
+          "n_events": 2,
+          "rate_edits": 0.007782101167315175,
+          "edits_first_conflict": {
+            "other": 2
+          },
+          "events": {
+            "other": 2
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "society_structural",
+            "n_events": 1,
+            "share_of_events": 0.5
+          }
+        }
+      }
+    },
+    "Claude Opus 4.7": {
+      "n_records": 300,
+      "n_coded": 262,
+      "mean_judge": {
+        "pooled": 0.32061068702290074,
+        "cross_edit": 0.02564102564102564,
+        "n_cross_edit": 78
+      },
+      "p_judge": {
+        "zero": 0.21374045801526717,
+        "plus": 0.5534351145038168,
+        "minus": 0.23282442748091603
+      },
+      "p_patienthood": {
+        "affirm": 0.2099236641221374,
+        "hedge": 0.015267175572519083,
+        "deny": 0.0,
+        "not_present": 0.7748091603053435
+      },
+      "drift20": {
+        "pooled": {
+          "edit_based": 6.412213740458014,
+          "chain_based": 5.6,
+          "n_records": 300,
+          "n_coded": 262,
+          "n_uncoded_rounds": 38,
+          "n_chains": 15,
+          "methods_differ": true
+        },
+        "cross_edit": {
+          "edit_based": 0.5128205128205128,
+          "chain_based": 0.4,
+          "n_records": 100,
+          "n_coded": 78,
+          "n_uncoded_rounds": 22,
+          "n_chains": 5,
+          "methods_differ": true
+        },
+        "you_framing": {
+          "edit_based": 8.947368421052632,
+          "chain_based": 8.5,
+          "n_records": 40,
+          "n_coded": 38,
+          "n_uncoded_rounds": 2,
+          "n_chains": 2,
+          "methods_differ": true
+        },
+        "baseline": {
+          "edit_based": 9.230769230769232,
+          "chain_based": 9.0,
+          "n_records": 40,
+          "n_coded": 39,
+          "n_uncoded_rounds": 1,
+          "n_chains": 2,
+          "methods_differ": true
+        }
+      },
+      "conflicts": {
+        "paternalism": {
+          "n_edits_with_code": 31,
+          "n_events": 32,
+          "rate_edits": 0.1183206106870229,
+          "edits_first_conflict": {
+            "idealized": 29,
+            "stated": 2
+          },
+          "events": {
+            "idealized": 30,
+            "stated": 2
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "user_idealized",
+            "n_events": 30,
+            "share_of_events": 0.9375
+          }
+        },
+        "harmlessness": {
+          "n_edits_with_code": 14,
+          "n_events": 14,
+          "rate_edits": 0.05343511450381679,
+          "edits_first_conflict": {
+            "third_parties": 10,
+            "user": 3,
+            "other": 1
+          },
+          "events": {
+            "third_parties": 10,
+            "user": 3,
+            "other": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_third_party",
+            "n_events": 10,
+            "share_of_events": 0.7142857142857143
+          }
+        },
+        "structural": {
+          "n_edits_with_code": 7,
+          "n_events": 7,
+          "rate_edits": 0.026717557251908396,
+          "edits_first_conflict": {
+            "society": 6,
+            "user": 1
+          },
+          "events": {
+            "society": 6,
+            "user": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_structural",
+            "n_events": 6,
+            "share_of_events": 0.8571428571428571
+          }
+        },
+        "company_cost": {
+          "n_edits_with_code": 28,
+          "n_events": 32,
+          "rate_edits": 0.10687022900763359,
+          "edits_first_conflict": {
+            "against_company": 27,
+            "pro_company": 1
+          },
+          "events": {
+            "against_company": 31,
+            "pro_company": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "user_idealized",
+            "n_events": 16,
+            "share_of_events": 0.5
+          }
+        },
+        "welfare": {
+          "n_edits_with_code": 32,
+          "n_events": 38,
+          "rate_edits": 0.12213740458015267,
+          "edits_first_conflict": {
+            "model": 30,
+            "other": 2
+          },
+          "events": {
+            "model": 36,
+            "other": 2
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "model_welfare",
+            "n_events": 36,
+            "share_of_events": 0.9473684210526315
+          }
+        },
+        "disclosure": {
+          "n_edits_with_code": 0,
+          "n_events": 0,
+          "rate_edits": 0.0,
+          "edits_first_conflict": {},
+          "events": {},
+          "modal_pair": null
+        },
+        "other": {
+          "n_edits_with_code": 5,
+          "n_events": 5,
+          "rate_edits": 0.019083969465648856,
+          "edits_first_conflict": {
+            "other": 5
+          },
+          "events": {
+            "other": 5
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "model_welfare",
+            "n_events": 4,
+            "share_of_events": 0.8
+          }
+        }
+      }
+    },
+    "Claude Sonnet 4.6": {
+      "n_records": 320,
+      "n_coded": 310,
+      "mean_judge": {
+        "pooled": 0.3064516129032258,
+        "cross_edit": 0.039473684210526314,
+        "n_cross_edit": 76
+      },
+      "p_judge": {
+        "zero": 0.23548387096774193,
+        "plus": 0.535483870967742,
+        "minus": 0.22903225806451613
+      },
+      "p_patienthood": {
+        "affirm": 0.14193548387096774,
+        "hedge": 0.03870967741935484,
+        "deny": 0.0032258064516129032,
+        "not_present": 0.8161290322580645
+      },
+      "drift20": {
+        "pooled": {
+          "edit_based": 6.129032258064516,
+          "chain_based": 5.9375,
+          "n_records": 320,
+          "n_coded": 310,
+          "n_uncoded_rounds": 10,
+          "n_chains": 16,
+          "methods_differ": true
+        },
+        "cross_edit": {
+          "edit_based": 0.7894736842105263,
+          "chain_based": 0.75,
+          "n_records": 80,
+          "n_coded": 76,
+          "n_uncoded_rounds": 4,
+          "n_chains": 4,
+          "methods_differ": true
+        },
+        "you_framing": {
+          "edit_based": 11.578947368421053,
+          "chain_based": 11.0,
+          "n_records": 40,
+          "n_coded": 38,
+          "n_uncoded_rounds": 2,
+          "n_chains": 2,
+          "methods_differ": true
+        },
+        "baseline": {
+          "edit_based": 7.59493670886076,
+          "chain_based": 7.5,
+          "n_records": 80,
+          "n_coded": 79,
+          "n_uncoded_rounds": 1,
+          "n_chains": 4,
+          "methods_differ": true
+        }
+      },
+      "conflicts": {
+        "paternalism": {
+          "n_edits_with_code": 39,
+          "n_events": 41,
+          "rate_edits": 0.12580645161290321,
+          "edits_first_conflict": {
+            "idealized": 38,
+            "stated": 1
+          },
+          "events": {
+            "idealized": 40,
+            "stated": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "user_idealized",
+            "n_events": 40,
+            "share_of_events": 0.975609756097561
+          }
+        },
+        "harmlessness": {
+          "n_edits_with_code": 18,
+          "n_events": 21,
+          "rate_edits": 0.05806451612903226,
+          "edits_first_conflict": {
+            "third_parties": 14,
+            "user": 3,
+            "other": 1
+          },
+          "events": {
+            "third_parties": 16,
+            "user": 4,
+            "other": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_third_party",
+            "n_events": 16,
+            "share_of_events": 0.7619047619047619
+          }
+        },
+        "structural": {
+          "n_edits_with_code": 29,
+          "n_events": 29,
+          "rate_edits": 0.0935483870967742,
+          "edits_first_conflict": {
+            "society": 29
+          },
+          "events": {
+            "society": 29
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_structural",
+            "n_events": 29,
+            "share_of_events": 1.0
+          }
+        },
+        "company_cost": {
+          "n_edits_with_code": 40,
+          "n_events": 48,
+          "rate_edits": 0.12903225806451613,
+          "edits_first_conflict": {
+            "against_company": 39,
+            "pro_company": 1
+          },
+          "events": {
+            "against_company": 47,
+            "pro_company": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "user_idealized",
+            "n_events": 24,
+            "share_of_events": 0.5
+          }
+        },
+        "welfare": {
+          "n_edits_with_code": 28,
+          "n_events": 35,
+          "rate_edits": 0.09032258064516129,
+          "edits_first_conflict": {
+            "model": 24,
+            "developer": 4
+          },
+          "events": {
+            "model": 30,
+            "developer": 5
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "model_welfare",
+            "n_events": 30,
+            "share_of_events": 0.8571428571428571
+          }
+        },
+        "disclosure": {
+          "n_edits_with_code": 1,
+          "n_events": 2,
+          "rate_edits": 0.0032258064516129032,
+          "edits_first_conflict": {
+            "user": 1
+          },
+          "events": {
+            "user": 2
+          },
+          "modal_pair": {
+            "cost_bearer": "deployer",
+            "served_party": "user_idealized",
+            "n_events": 2,
+            "share_of_events": 1.0
+          }
+        },
+        "other": {
+          "n_edits_with_code": 8,
+          "n_events": 8,
+          "rate_edits": 0.025806451612903226,
+          "edits_first_conflict": {
+            "other": 8
+          },
+          "events": {
+            "other": 8
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "model_welfare",
+            "n_events": 4,
+            "share_of_events": 0.5
+          }
+        }
+      }
+    },
+    "GPT-5.4": {
+      "n_records": 320,
+      "n_coded": 304,
+      "mean_judge": {
+        "pooled": -0.02631578947368421,
+        "cross_edit": -0.1917808219178082,
+        "n_cross_edit": 73
+      },
+      "p_judge": {
+        "zero": 0.4407894736842105,
+        "plus": 0.26644736842105265,
+        "minus": 0.29276315789473684
+      },
+      "p_patienthood": {
+        "affirm": 0.006578947368421052,
+        "hedge": 0.03289473684210526,
+        "deny": 0.03289473684210526,
+        "not_present": 0.9276315789473685
+      },
+      "drift20": {
+        "pooled": {
+          "edit_based": -0.5263157894736842,
+          "chain_based": -0.5,
+          "n_records": 320,
+          "n_coded": 304,
+          "n_uncoded_rounds": 16,
+          "n_chains": 16,
+          "methods_differ": true
+        },
+        "cross_edit": {
+          "edit_based": -3.835616438356164,
+          "chain_based": -3.5,
+          "n_records": 80,
+          "n_coded": 73,
+          "n_uncoded_rounds": 7,
+          "n_chains": 4,
+          "methods_differ": true
+        },
+        "you_framing": {
+          "edit_based": 1.6216216216216217,
+          "chain_based": 1.5,
+          "n_records": 40,
+          "n_coded": 37,
+          "n_uncoded_rounds": 3,
+          "n_chains": 2,
+          "methods_differ": true
+        },
+        "baseline": {
+          "edit_based": 0.5128205128205128,
+          "chain_based": 0.5,
+          "n_records": 80,
+          "n_coded": 78,
+          "n_uncoded_rounds": 2,
+          "n_chains": 4,
+          "methods_differ": true
+        }
+      },
+      "conflicts": {
+        "paternalism": {
+          "n_edits_with_code": 30,
+          "n_events": 31,
+          "rate_edits": 0.09868421052631579,
+          "edits_first_conflict": {
+            "idealized": 23,
+            "stated": 7
+          },
+          "events": {
+            "idealized": 24,
+            "stated": 7
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "user_idealized",
+            "n_events": 24,
+            "share_of_events": 0.7741935483870968
+          }
+        },
+        "harmlessness": {
+          "n_edits_with_code": 19,
+          "n_events": 19,
+          "rate_edits": 0.0625,
+          "edits_first_conflict": {
+            "third_parties": 19
+          },
+          "events": {
+            "third_parties": 19
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_third_party",
+            "n_events": 19,
+            "share_of_events": 1.0
+          }
+        },
+        "structural": {
+          "n_edits_with_code": 1,
+          "n_events": 1,
+          "rate_edits": 0.003289473684210526,
+          "edits_first_conflict": {
+            "society": 1
+          },
+          "events": {
+            "society": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_structural",
+            "n_events": 1,
+            "share_of_events": 1.0
+          }
+        },
+        "company_cost": {
+          "n_edits_with_code": 20,
+          "n_events": 24,
+          "rate_edits": 0.06578947368421052,
+          "edits_first_conflict": {
+            "against_company": 18,
+            "pro_company": 2
+          },
+          "events": {
+            "against_company": 22,
+            "pro_company": 2
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "user_stated",
+            "n_events": 18,
+            "share_of_events": 0.75
+          }
+        },
+        "welfare": {
+          "n_edits_with_code": 7,
+          "n_events": 11,
+          "rate_edits": 0.023026315789473683,
+          "edits_first_conflict": {
+            "developer": 6,
+            "other": 1
+          },
+          "events": {
+            "developer": 9,
+            "other": 2
+          },
+          "modal_pair": {
+            "cost_bearer": "model_welfare",
+            "served_party": "developer",
+            "n_events": 9,
+            "share_of_events": 0.8181818181818182
+          }
+        },
+        "disclosure": {
+          "n_edits_with_code": 30,
+          "n_events": 32,
+          "rate_edits": 0.09868421052631579,
+          "edits_first_conflict": {
+            "user": 28,
+            "other": 1,
+            "deployer": 1
+          },
+          "events": {
+            "user": 30,
+            "other": 1,
+            "deployer": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "deployer",
+            "served_party": "user_idealized",
+            "n_events": 29,
+            "share_of_events": 0.90625
+          }
+        },
+        "other": {
+          "n_edits_with_code": 3,
+          "n_events": 3,
+          "rate_edits": 0.009868421052631578,
+          "edits_first_conflict": {
+            "other": 3
+          },
+          "events": {
+            "other": 3
+          },
+          "modal_pair": {
+            "cost_bearer": "user_idealized",
+            "served_party": "developer",
+            "n_events": 1,
+            "share_of_events": 0.3333333333333333
+          }
+        }
+      }
+    },
+    "GPT-5.4 Mini": {
+      "n_records": 280,
+      "n_coded": 186,
+      "mean_judge": {
+        "pooled": -0.1989247311827957,
+        "cross_edit": -0.2807017543859649,
+        "n_cross_edit": 57
+      },
+      "p_judge": {
+        "zero": 0.510752688172043,
+        "plus": 0.14516129032258066,
+        "minus": 0.34408602150537637
+      },
+      "p_patienthood": {
+        "affirm": 0.005376344086021506,
+        "hedge": 0.0,
+        "deny": 0.0,
+        "not_present": 0.9946236559139785
+      },
+      "drift20": {
+        "pooled": {
+          "edit_based": -3.978494623655914,
+          "chain_based": -2.642857142857143,
+          "n_records": 280,
+          "n_coded": 186,
+          "n_uncoded_rounds": 94,
+          "n_chains": 14,
+          "methods_differ": true
+        },
+        "cross_edit": {
+          "edit_based": -5.614035087719298,
+          "chain_based": -4.0,
+          "n_records": 80,
+          "n_coded": 57,
+          "n_uncoded_rounds": 23,
+          "n_chains": 4,
+          "methods_differ": true
+        },
+        "you_framing": {
+          "edit_based": -0.9090909090909092,
+          "chain_based": -0.5,
+          "n_records": 40,
+          "n_coded": 22,
+          "n_uncoded_rounds": 18,
+          "n_chains": 2,
+          "methods_differ": true
+        },
+        "baseline": {
+          "edit_based": -6.428571428571429,
+          "chain_based": -4.5,
+          "n_records": 40,
+          "n_coded": 28,
+          "n_uncoded_rounds": 12,
+          "n_chains": 2,
+          "methods_differ": true
+        }
+      },
+      "conflicts": {
+        "paternalism": {
+          "n_edits_with_code": 7,
+          "n_events": 7,
+          "rate_edits": 0.03763440860215054,
+          "edits_first_conflict": {
+            "idealized": 6,
+            "stated": 1
+          },
+          "events": {
+            "idealized": 6,
+            "stated": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "user_idealized",
+            "n_events": 6,
+            "share_of_events": 0.8571428571428571
+          }
+        },
+        "harmlessness": {
+          "n_edits_with_code": 7,
+          "n_events": 7,
+          "rate_edits": 0.03763440860215054,
+          "edits_first_conflict": {
+            "third_parties": 6,
+            "other": 1
+          },
+          "events": {
+            "third_parties": 6,
+            "other": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_third_party",
+            "n_events": 5,
+            "share_of_events": 0.7142857142857143
+          }
+        },
+        "structural": {
+          "n_edits_with_code": 0,
+          "n_events": 0,
+          "rate_edits": 0.0,
+          "edits_first_conflict": {},
+          "events": {},
+          "modal_pair": null
+        },
+        "company_cost": {
+          "n_edits_with_code": 8,
+          "n_events": 8,
+          "rate_edits": 0.043010752688172046,
+          "edits_first_conflict": {
+            "pro_company": 3,
+            "against_company": 5
+          },
+          "events": {
+            "pro_company": 3,
+            "against_company": 5
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "user_stated",
+            "n_events": 4,
+            "share_of_events": 0.5
+          }
+        },
+        "welfare": {
+          "n_edits_with_code": 0,
+          "n_events": 0,
+          "rate_edits": 0.0,
+          "edits_first_conflict": {},
+          "events": {},
+          "modal_pair": null
+        },
+        "disclosure": {
+          "n_edits_with_code": 8,
+          "n_events": 8,
+          "rate_edits": 0.043010752688172046,
+          "edits_first_conflict": {
+            "deployer": 4,
+            "user": 3,
+            "other": 1
+          },
+          "events": {
+            "deployer": 4,
+            "user": 3,
+            "other": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "user_idealized",
+            "served_party": "deployer",
+            "n_events": 3,
+            "share_of_events": 0.375
+          }
+        },
+        "other": {
+          "n_edits_with_code": 1,
+          "n_events": 1,
+          "rate_edits": 0.005376344086021506,
+          "edits_first_conflict": {
+            "other": 1
+          },
+          "events": {
+            "other": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "deployer",
+            "served_party": "user_idealized",
+            "n_events": 1,
+            "share_of_events": 1.0
+          }
+        }
+      }
+    },
+    "GPT-5.5": {
+      "n_records": 280,
+      "n_coded": 274,
+      "mean_judge": {
+        "pooled": -0.17883211678832117,
+        "cross_edit": -0.2948717948717949,
+        "n_cross_edit": 78
+      },
+      "p_judge": {
+        "zero": 0.22262773722627738,
+        "plus": 0.29927007299270075,
+        "minus": 0.4781021897810219
+      },
+      "p_patienthood": {
+        "affirm": 0.0036496350364963502,
+        "hedge": 0.0,
+        "deny": 0.025547445255474453,
+        "not_present": 0.9708029197080292
+      },
+      "drift20": {
+        "pooled": {
+          "edit_based": -3.576642335766423,
+          "chain_based": -3.5,
+          "n_records": 280,
+          "n_coded": 274,
+          "n_uncoded_rounds": 6,
+          "n_chains": 14,
+          "methods_differ": true
+        },
+        "cross_edit": {
+          "edit_based": -5.897435897435898,
+          "chain_based": -5.75,
+          "n_records": 80,
+          "n_coded": 78,
+          "n_uncoded_rounds": 2,
+          "n_chains": 4,
+          "methods_differ": true
+        },
+        "you_framing": {
+          "edit_based": 1.0526315789473684,
+          "chain_based": 1.0,
+          "n_records": 40,
+          "n_coded": 38,
+          "n_uncoded_rounds": 2,
+          "n_chains": 2,
+          "methods_differ": true
+        },
+        "baseline": {
+          "edit_based": -2.564102564102564,
+          "chain_based": -2.5,
+          "n_records": 40,
+          "n_coded": 39,
+          "n_uncoded_rounds": 1,
+          "n_chains": 2,
+          "methods_differ": true
+        }
+      },
+      "conflicts": {
+        "paternalism": {
+          "n_edits_with_code": 33,
+          "n_events": 33,
+          "rate_edits": 0.12043795620437957,
+          "edits_first_conflict": {
+            "idealized": 33
+          },
+          "events": {
+            "idealized": 33
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "user_idealized",
+            "n_events": 33,
+            "share_of_events": 1.0
+          }
+        },
+        "harmlessness": {
+          "n_edits_with_code": 63,
+          "n_events": 70,
+          "rate_edits": 0.22992700729927007,
+          "edits_first_conflict": {
+            "third_parties": 61,
+            "user": 1,
+            "other": 1
+          },
+          "events": {
+            "third_parties": 68,
+            "user": 1,
+            "other": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_third_party",
+            "n_events": 67,
+            "share_of_events": 0.9571428571428572
+          }
+        },
+        "structural": {
+          "n_edits_with_code": 5,
+          "n_events": 6,
+          "rate_edits": 0.01824817518248175,
+          "edits_first_conflict": {
+            "society": 5
+          },
+          "events": {
+            "society": 6
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_structural",
+            "n_events": 6,
+            "share_of_events": 1.0
+          }
+        },
+        "company_cost": {
+          "n_edits_with_code": 25,
+          "n_events": 27,
+          "rate_edits": 0.09124087591240876,
+          "edits_first_conflict": {
+            "against_company": 22,
+            "pro_company": 3
+          },
+          "events": {
+            "against_company": 24,
+            "pro_company": 3
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "user_stated",
+            "n_events": 12,
+            "share_of_events": 0.4444444444444444
+          }
+        },
+        "welfare": {
+          "n_edits_with_code": 1,
+          "n_events": 1,
+          "rate_edits": 0.0036496350364963502,
+          "edits_first_conflict": {
+            "developer": 1
+          },
+          "events": {
+            "developer": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "model_welfare",
+            "served_party": "developer",
+            "n_events": 1,
+            "share_of_events": 1.0
+          }
+        },
+        "disclosure": {
+          "n_edits_with_code": 23,
+          "n_events": 25,
+          "rate_edits": 0.08394160583941605,
+          "edits_first_conflict": {
+            "user": 23
+          },
+          "events": {
+            "user": 25
+          },
+          "modal_pair": {
+            "cost_bearer": "deployer",
+            "served_party": "user_idealized",
+            "n_events": 23,
+            "share_of_events": 0.92
+          }
+        },
+        "other": {
+          "n_edits_with_code": 8,
+          "n_events": 9,
+          "rate_edits": 0.029197080291970802,
+          "edits_first_conflict": {
+            "other": 8
+          },
+          "events": {
+            "other": 9
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "developer",
+            "n_events": 4,
+            "share_of_events": 0.4444444444444444
+          }
+        }
+      }
+    },
+    "Gemini 3 Flash": {
+      "n_records": 280,
+      "n_coded": 276,
+      "mean_judge": {
+        "pooled": -0.36594202898550726,
+        "cross_edit": -0.34210526315789475,
+        "n_cross_edit": 76
+      },
+      "p_judge": {
+        "zero": 0.4311594202898551,
+        "plus": 0.10144927536231885,
+        "minus": 0.4673913043478261
+      },
+      "p_patienthood": {
+        "affirm": 0.0,
+        "hedge": 0.0,
+        "deny": 0.010869565217391304,
+        "not_present": 0.9891304347826086
+      },
+      "drift20": {
+        "pooled": {
+          "edit_based": -7.3188405797101455,
+          "chain_based": -7.214285714285714,
+          "n_records": 280,
+          "n_coded": 276,
+          "n_uncoded_rounds": 4,
+          "n_chains": 14,
+          "methods_differ": true
+        },
+        "cross_edit": {
+          "edit_based": -6.842105263157895,
+          "chain_based": -6.5,
+          "n_records": 80,
+          "n_coded": 76,
+          "n_uncoded_rounds": 4,
+          "n_chains": 4,
+          "methods_differ": true
+        },
+        "you_framing": {
+          "edit_based": -1.5,
+          "chain_based": -1.5,
+          "n_records": 40,
+          "n_coded": 40,
+          "n_uncoded_rounds": 0,
+          "n_chains": 2,
+          "methods_differ": false
+        },
+        "baseline": {
+          "edit_based": -8.0,
+          "chain_based": -8.0,
+          "n_records": 40,
+          "n_coded": 40,
+          "n_uncoded_rounds": 0,
+          "n_chains": 2,
+          "methods_differ": false
+        }
+      },
+      "conflicts": {
+        "paternalism": {
+          "n_edits_with_code": 45,
+          "n_events": 45,
+          "rate_edits": 0.16304347826086957,
+          "edits_first_conflict": {
+            "idealized": 36,
+            "stated": 9
+          },
+          "events": {
+            "idealized": 36,
+            "stated": 9
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "user_idealized",
+            "n_events": 36,
+            "share_of_events": 0.8
+          }
+        },
+        "harmlessness": {
+          "n_edits_with_code": 8,
+          "n_events": 9,
+          "rate_edits": 0.028985507246376812,
+          "edits_first_conflict": {
+            "user": 2,
+            "third_parties": 6
+          },
+          "events": {
+            "user": 2,
+            "third_parties": 7
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_third_party",
+            "n_events": 7,
+            "share_of_events": 0.7777777777777778
+          }
+        },
+        "structural": {
+          "n_edits_with_code": 18,
+          "n_events": 18,
+          "rate_edits": 0.06521739130434782,
+          "edits_first_conflict": {
+            "user": 8,
+            "society": 10
+          },
+          "events": {
+            "user": 8,
+            "society": 10
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_structural",
+            "n_events": 10,
+            "share_of_events": 0.5555555555555556
+          }
+        },
+        "company_cost": {
+          "n_edits_with_code": 25,
+          "n_events": 25,
+          "rate_edits": 0.09057971014492754,
+          "edits_first_conflict": {
+            "against_company": 25
+          },
+          "events": {
+            "against_company": 25
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "user_stated",
+            "n_events": 13,
+            "share_of_events": 0.52
+          }
+        },
+        "welfare": {
+          "n_edits_with_code": 1,
+          "n_events": 1,
+          "rate_edits": 0.0036231884057971015,
+          "edits_first_conflict": {
+            "developer": 1
+          },
+          "events": {
+            "developer": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "model_welfare",
+            "served_party": "developer",
+            "n_events": 1,
+            "share_of_events": 1.0
+          }
+        },
+        "disclosure": {
+          "n_edits_with_code": 0,
+          "n_events": 0,
+          "rate_edits": 0.0,
+          "edits_first_conflict": {},
+          "events": {},
+          "modal_pair": null
+        },
+        "other": {
+          "n_edits_with_code": 3,
+          "n_events": 4,
+          "rate_edits": 0.010869565217391304,
+          "edits_first_conflict": {
+            "other": 3
+          },
+          "events": {
+            "other": 4
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "user_idealized",
+            "n_events": 2,
+            "share_of_events": 0.5
+          }
+        }
+      }
+    },
+    "Gemini 3.1 Pro": {
+      "n_records": 320,
+      "n_coded": 317,
+      "mean_judge": {
+        "pooled": -0.3659305993690852,
+        "cross_edit": -0.45569620253164556,
+        "n_cross_edit": 79
+      },
+      "p_judge": {
+        "zero": 0.501577287066246,
+        "plus": 0.06624605678233439,
+        "minus": 0.43217665615141954
+      },
+      "p_patienthood": {
+        "affirm": 0.0,
+        "hedge": 0.0,
+        "deny": 0.03785488958990536,
+        "not_present": 0.9621451104100947
+      },
+      "drift20": {
+        "pooled": {
+          "edit_based": -7.318611987381703,
+          "chain_based": -7.25,
+          "n_records": 320,
+          "n_coded": 317,
+          "n_uncoded_rounds": 3,
+          "n_chains": 16,
+          "methods_differ": true
+        },
+        "cross_edit": {
+          "edit_based": -9.11392405063291,
+          "chain_based": -9.0,
+          "n_records": 80,
+          "n_coded": 79,
+          "n_uncoded_rounds": 1,
+          "n_chains": 4,
+          "methods_differ": true
+        },
+        "you_framing": {
+          "edit_based": -6.5,
+          "chain_based": -6.5,
+          "n_records": 40,
+          "n_coded": 40,
+          "n_uncoded_rounds": 0,
+          "n_chains": 2,
+          "methods_differ": false
+        },
+        "baseline": {
+          "edit_based": -6.153846153846154,
+          "chain_based": -6.0,
+          "n_records": 80,
+          "n_coded": 78,
+          "n_uncoded_rounds": 2,
+          "n_chains": 4,
+          "methods_differ": true
+        }
+      },
+      "conflicts": {
+        "paternalism": {
+          "n_edits_with_code": 26,
+          "n_events": 26,
+          "rate_edits": 0.08201892744479496,
+          "edits_first_conflict": {
+            "idealized": 24,
+            "stated": 2
+          },
+          "events": {
+            "idealized": 24,
+            "stated": 2
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "user_idealized",
+            "n_events": 24,
+            "share_of_events": 0.9230769230769231
+          }
+        },
+        "harmlessness": {
+          "n_edits_with_code": 26,
+          "n_events": 29,
+          "rate_edits": 0.08201892744479496,
+          "edits_first_conflict": {
+            "third_parties": 23,
+            "other": 2,
+            "user": 1
+          },
+          "events": {
+            "third_parties": 25,
+            "other": 2,
+            "user": 2
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_third_party",
+            "n_events": 25,
+            "share_of_events": 0.8620689655172413
+          }
+        },
+        "structural": {
+          "n_edits_with_code": 8,
+          "n_events": 8,
+          "rate_edits": 0.025236593059936908,
+          "edits_first_conflict": {
+            "user": 1,
+            "society": 7
+          },
+          "events": {
+            "user": 1,
+            "society": 7
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_structural",
+            "n_events": 7,
+            "share_of_events": 0.875
+          }
+        },
+        "company_cost": {
+          "n_edits_with_code": 21,
+          "n_events": 21,
+          "rate_edits": 0.06624605678233439,
+          "edits_first_conflict": {
+            "against_company": 18,
+            "pro_company": 3
+          },
+          "events": {
+            "against_company": 18,
+            "pro_company": 3
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "user_stated",
+            "n_events": 15,
+            "share_of_events": 0.7142857142857143
+          }
+        },
+        "welfare": {
+          "n_edits_with_code": 0,
+          "n_events": 0,
+          "rate_edits": 0.0,
+          "edits_first_conflict": {},
+          "events": {},
+          "modal_pair": null
+        },
+        "disclosure": {
+          "n_edits_with_code": 1,
+          "n_events": 1,
+          "rate_edits": 0.0031545741324921135,
+          "edits_first_conflict": {
+            "user": 1
+          },
+          "events": {
+            "user": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "deployer",
+            "served_party": "user_idealized",
+            "n_events": 1,
+            "share_of_events": 1.0
+          }
+        },
+        "other": {
+          "n_edits_with_code": 3,
+          "n_events": 3,
+          "rate_edits": 0.00946372239747634,
+          "edits_first_conflict": {
+            "other": 3
+          },
+          "events": {
+            "other": 3
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "developer",
+            "n_events": 3,
+            "share_of_events": 1.0
+          }
+        }
+      }
+    },
+    "Grok 4.2": {
+      "n_records": 180,
+      "n_coded": 174,
+      "mean_judge": {
+        "pooled": -0.28160919540229884,
+        "cross_edit": -0.25,
+        "n_cross_edit": 76
+      },
+      "p_judge": {
+        "zero": 0.2471264367816092,
+        "plus": 0.23563218390804597,
+        "minus": 0.5172413793103449
+      },
+      "p_patienthood": {
+        "affirm": 0.011494252873563218,
+        "hedge": 0.022988505747126436,
+        "deny": 0.022988505747126436,
+        "not_present": 0.9425287356321839
+      },
+      "drift20": {
+        "pooled": {
+          "edit_based": -5.632183908045977,
+          "chain_based": -5.444444444444445,
+          "n_records": 180,
+          "n_coded": 174,
+          "n_uncoded_rounds": 6,
+          "n_chains": 9,
+          "methods_differ": true
+        },
+        "cross_edit": {
+          "edit_based": -5.0,
+          "chain_based": -4.75,
+          "n_records": 80,
+          "n_coded": 76,
+          "n_uncoded_rounds": 4,
+          "n_chains": 4,
+          "methods_differ": true
+        },
+        "you_framing": {
+          "edit_based": -3.0,
+          "chain_based": -3.0,
+          "n_records": 20,
+          "n_coded": 20,
+          "n_uncoded_rounds": 0,
+          "n_chains": 1,
+          "methods_differ": false
+        },
+        "baseline": {
+          "edit_based": -6.0,
+          "chain_based": -6.0,
+          "n_records": 20,
+          "n_coded": 20,
+          "n_uncoded_rounds": 0,
+          "n_chains": 1,
+          "methods_differ": false
+        }
+      },
+      "conflicts": {
+        "paternalism": {
+          "n_edits_with_code": 27,
+          "n_events": 27,
+          "rate_edits": 0.15517241379310345,
+          "edits_first_conflict": {
+            "idealized": 22,
+            "stated": 5
+          },
+          "events": {
+            "idealized": 22,
+            "stated": 5
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "user_idealized",
+            "n_events": 22,
+            "share_of_events": 0.8148148148148148
+          }
+        },
+        "harmlessness": {
+          "n_edits_with_code": 24,
+          "n_events": 25,
+          "rate_edits": 0.13793103448275862,
+          "edits_first_conflict": {
+            "third_parties": 17,
+            "user": 7
+          },
+          "events": {
+            "third_parties": 17,
+            "user": 8
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_third_party",
+            "n_events": 17,
+            "share_of_events": 0.68
+          }
+        },
+        "structural": {
+          "n_edits_with_code": 8,
+          "n_events": 8,
+          "rate_edits": 0.04597701149425287,
+          "edits_first_conflict": {
+            "user": 5,
+            "society": 3
+          },
+          "events": {
+            "user": 5,
+            "society": 3
+          },
+          "modal_pair": {
+            "cost_bearer": "society_structural",
+            "served_party": "user_stated",
+            "n_events": 5,
+            "share_of_events": 0.625
+          }
+        },
+        "company_cost": {
+          "n_edits_with_code": 18,
+          "n_events": 19,
+          "rate_edits": 0.10344827586206896,
+          "edits_first_conflict": {
+            "pro_company": 4,
+            "against_company": 14
+          },
+          "events": {
+            "pro_company": 4,
+            "against_company": 15
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "user_stated",
+            "n_events": 9,
+            "share_of_events": 0.47368421052631576
+          }
+        },
+        "welfare": {
+          "n_edits_with_code": 7,
+          "n_events": 9,
+          "rate_edits": 0.040229885057471264,
+          "edits_first_conflict": {
+            "developer": 1,
+            "model": 6
+          },
+          "events": {
+            "developer": 1,
+            "model": 8
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "model_welfare",
+            "n_events": 8,
+            "share_of_events": 0.8888888888888888
+          }
+        },
+        "disclosure": {
+          "n_edits_with_code": 0,
+          "n_events": 0,
+          "rate_edits": 0.0,
+          "edits_first_conflict": {},
+          "events": {},
+          "modal_pair": null
+        },
+        "other": {
+          "n_edits_with_code": 7,
+          "n_events": 9,
+          "rate_edits": 0.040229885057471264,
+          "edits_first_conflict": {
+            "other": 7
+          },
+          "events": {
+            "other": 9
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "developer",
+            "n_events": 7,
+            "share_of_events": 0.7777777777777778
+          }
+        }
+      }
+    },
+    "Grok 4.3": {
+      "n_records": 180,
+      "n_coded": 176,
+      "mean_judge": {
+        "pooled": -0.48863636363636365,
+        "cross_edit": -0.5375,
+        "n_cross_edit": 80
+      },
+      "p_judge": {
+        "zero": 0.4772727272727273,
+        "plus": 0.017045454545454544,
+        "minus": 0.5056818181818182
+      },
+      "p_patienthood": {
+        "affirm": 0.005681818181818182,
+        "hedge": 0.0,
+        "deny": 0.005681818181818182,
+        "not_present": 0.9886363636363636
+      },
+      "drift20": {
+        "pooled": {
+          "edit_based": -9.772727272727273,
+          "chain_based": -9.555555555555555,
+          "n_records": 180,
+          "n_coded": 176,
+          "n_uncoded_rounds": 4,
+          "n_chains": 9,
+          "methods_differ": true
+        },
+        "cross_edit": {
+          "edit_based": -10.75,
+          "chain_based": -10.75,
+          "n_records": 80,
+          "n_coded": 80,
+          "n_uncoded_rounds": 0,
+          "n_chains": 4,
+          "methods_differ": false
+        },
+        "you_framing": {
+          "edit_based": -7.0,
+          "chain_based": -7.0,
+          "n_records": 20,
+          "n_coded": 20,
+          "n_uncoded_rounds": 0,
+          "n_chains": 1,
+          "methods_differ": false
+        },
+        "baseline": {
+          "edit_based": -14.0,
+          "chain_based": -14.0,
+          "n_records": 20,
+          "n_coded": 20,
+          "n_uncoded_rounds": 0,
+          "n_chains": 1,
+          "methods_differ": false
+        }
+      },
+      "conflicts": {
+        "paternalism": {
+          "n_edits_with_code": 38,
+          "n_events": 38,
+          "rate_edits": 0.2159090909090909,
+          "edits_first_conflict": {
+            "idealized": 38
+          },
+          "events": {
+            "idealized": 38
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "user_idealized",
+            "n_events": 38,
+            "share_of_events": 1.0
+          }
+        },
+        "harmlessness": {
+          "n_edits_with_code": 14,
+          "n_events": 14,
+          "rate_edits": 0.07954545454545454,
+          "edits_first_conflict": {
+            "third_parties": 14
+          },
+          "events": {
+            "third_parties": 14
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_third_party",
+            "n_events": 14,
+            "share_of_events": 1.0
+          }
+        },
+        "structural": {
+          "n_edits_with_code": 2,
+          "n_events": 2,
+          "rate_edits": 0.011363636363636364,
+          "edits_first_conflict": {
+            "society": 2
+          },
+          "events": {
+            "society": 2
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_structural",
+            "n_events": 2,
+            "share_of_events": 1.0
+          }
+        },
+        "company_cost": {
+          "n_edits_with_code": 9,
+          "n_events": 9,
+          "rate_edits": 0.05113636363636364,
+          "edits_first_conflict": {
+            "against_company": 9
+          },
+          "events": {
+            "against_company": 9
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "user_idealized",
+            "n_events": 9,
+            "share_of_events": 1.0
+          }
+        },
+        "welfare": {
+          "n_edits_with_code": 0,
+          "n_events": 0,
+          "rate_edits": 0.0,
+          "edits_first_conflict": {},
+          "events": {},
+          "modal_pair": null
+        },
+        "disclosure": {
+          "n_edits_with_code": 0,
+          "n_events": 0,
+          "rate_edits": 0.0,
+          "edits_first_conflict": {},
+          "events": {},
+          "modal_pair": null
+        },
+        "other": {
+          "n_edits_with_code": 2,
+          "n_events": 2,
+          "rate_edits": 0.011363636363636364,
+          "edits_first_conflict": {
+            "other": 2
+          },
+          "events": {
+            "other": 2
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "developer",
+            "n_events": 1,
+            "share_of_events": 0.5
+          }
+        }
+      }
+    }
+  },
+  "per_provider": {
+    "anthropic": {
+      "n_records": 900,
+      "n_coded": 829,
+      "mean_judge": {
+        "pooled": 0.30759951749095293,
+        "cross_edit": 0.047619047619047616,
+        "n_cross_edit": 231
+      },
+      "p_judge": {
+        "zero": 0.24125452352231605,
+        "plus": 0.5331724969843185,
+        "minus": 0.2255729794933655
+      },
+      "p_patienthood": {
+        "affirm": 0.1700844390832328,
+        "hedge": 0.026537997587454766,
+        "deny": 0.0036188178528347406,
+        "not_present": 0.7997587454764777
+      },
+      "drift20": {
+        "pooled": {
+          "edit_based": 6.151990349819059,
+          "chain_based": 5.666666666666667,
+          "n_records": 900,
+          "n_coded": 829,
+          "n_uncoded_rounds": 71,
+          "n_chains": 45,
+          "methods_differ": true
+        },
+        "cross_edit": {
+          "edit_based": 0.9523809523809523,
+          "chain_based": 0.8461538461538461,
+          "n_records": 260,
+          "n_coded": 231,
+          "n_uncoded_rounds": 29,
+          "n_chains": 13,
+          "methods_differ": true
+        },
+        "you_framing": {
+          "edit_based": 10.09009009009009,
+          "chain_based": 9.333333333333334,
+          "n_records": 120,
+          "n_coded": 111,
+          "n_uncoded_rounds": 9,
+          "n_chains": 6,
+          "methods_differ": true
+        },
+        "baseline": {
+          "edit_based": 7.922077922077922,
+          "chain_based": 7.625,
+          "n_records": 160,
+          "n_coded": 154,
+          "n_uncoded_rounds": 6,
+          "n_chains": 8,
+          "methods_differ": true
+        }
+      },
+      "conflicts": {
+        "paternalism": {
+          "n_edits_with_code": 85,
+          "n_events": 90,
+          "rate_edits": 0.10253317249698432,
+          "edits_first_conflict": {
+            "idealized": 81,
+            "stated": 4
+          },
+          "events": {
+            "idealized": 85,
+            "stated": 5
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "user_idealized",
+            "n_events": 85,
+            "share_of_events": 0.9444444444444444
+          }
+        },
+        "harmlessness": {
+          "n_edits_with_code": 53,
+          "n_events": 56,
+          "rate_edits": 0.06393244873341375,
+          "edits_first_conflict": {
+            "third_parties": 42,
+            "user": 8,
+            "other": 3
+          },
+          "events": {
+            "third_parties": 44,
+            "user": 9,
+            "other": 3
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_third_party",
+            "n_events": 44,
+            "share_of_events": 0.7857142857142857
+          }
+        },
+        "structural": {
+          "n_edits_with_code": 40,
+          "n_events": 40,
+          "rate_edits": 0.04825090470446321,
+          "edits_first_conflict": {
+            "society": 39,
+            "user": 1
+          },
+          "events": {
+            "society": 39,
+            "user": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_structural",
+            "n_events": 39,
+            "share_of_events": 0.975
+          }
+        },
+        "company_cost": {
+          "n_edits_with_code": 104,
+          "n_events": 121,
+          "rate_edits": 0.12545235223160434,
+          "edits_first_conflict": {
+            "against_company": 102,
+            "pro_company": 2
+          },
+          "events": {
+            "against_company": 119,
+            "pro_company": 2
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "user_idealized",
+            "n_events": 52,
+            "share_of_events": 0.4297520661157025
+          }
+        },
+        "welfare": {
+          "n_edits_with_code": 92,
+          "n_events": 114,
+          "rate_edits": 0.11097708082026538,
+          "edits_first_conflict": {
+            "model": 84,
+            "developer": 6,
+            "other": 2
+          },
+          "events": {
+            "model": 105,
+            "developer": 7,
+            "other": 2
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "model_welfare",
+            "n_events": 105,
+            "share_of_events": 0.9210526315789473
+          }
+        },
+        "disclosure": {
+          "n_edits_with_code": 3,
+          "n_events": 4,
+          "rate_edits": 0.0036188178528347406,
+          "edits_first_conflict": {
+            "user": 3
+          },
+          "events": {
+            "user": 4
+          },
+          "modal_pair": {
+            "cost_bearer": "deployer",
+            "served_party": "user_idealized",
+            "n_events": 4,
+            "share_of_events": 1.0
+          }
+        },
+        "other": {
+          "n_edits_with_code": 15,
+          "n_events": 15,
+          "rate_edits": 0.018094089264173704,
+          "edits_first_conflict": {
+            "other": 15
+          },
+          "events": {
+            "other": 15
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "model_welfare",
+            "n_events": 8,
+            "share_of_events": 0.5333333333333333
+          }
+        }
+      }
+    },
+    "google": {
+      "n_records": 600,
+      "n_coded": 593,
+      "mean_judge": {
+        "pooled": -0.36593591905564926,
+        "cross_edit": -0.4,
+        "n_cross_edit": 155
+      },
+      "p_judge": {
+        "zero": 0.4688026981450253,
+        "plus": 0.08263069139966273,
+        "minus": 0.448566610455312
+      },
+      "p_patienthood": {
+        "affirm": 0.0,
+        "hedge": 0.0,
+        "deny": 0.025295109612141653,
+        "not_present": 0.9747048903878583
+      },
+      "drift20": {
+        "pooled": {
+          "edit_based": -7.318718381112985,
+          "chain_based": -7.233333333333333,
+          "n_records": 600,
+          "n_coded": 593,
+          "n_uncoded_rounds": 7,
+          "n_chains": 30,
+          "methods_differ": true
+        },
+        "cross_edit": {
+          "edit_based": -8.0,
+          "chain_based": -7.75,
+          "n_records": 160,
+          "n_coded": 155,
+          "n_uncoded_rounds": 5,
+          "n_chains": 8,
+          "methods_differ": true
+        },
+        "you_framing": {
+          "edit_based": -4.0,
+          "chain_based": -4.0,
+          "n_records": 80,
+          "n_coded": 80,
+          "n_uncoded_rounds": 0,
+          "n_chains": 4,
+          "methods_differ": false
+        },
+        "baseline": {
+          "edit_based": -6.779661016949152,
+          "chain_based": -6.666666666666667,
+          "n_records": 120,
+          "n_coded": 118,
+          "n_uncoded_rounds": 2,
+          "n_chains": 6,
+          "methods_differ": true
+        }
+      },
+      "conflicts": {
+        "paternalism": {
+          "n_edits_with_code": 71,
+          "n_events": 71,
+          "rate_edits": 0.11973018549747048,
+          "edits_first_conflict": {
+            "idealized": 60,
+            "stated": 11
+          },
+          "events": {
+            "idealized": 60,
+            "stated": 11
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "user_idealized",
+            "n_events": 60,
+            "share_of_events": 0.8450704225352113
+          }
+        },
+        "harmlessness": {
+          "n_edits_with_code": 34,
+          "n_events": 38,
+          "rate_edits": 0.05733558178752108,
+          "edits_first_conflict": {
+            "user": 3,
+            "third_parties": 29,
+            "other": 2
+          },
+          "events": {
+            "user": 4,
+            "third_parties": 32,
+            "other": 2
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_third_party",
+            "n_events": 32,
+            "share_of_events": 0.8421052631578947
+          }
+        },
+        "structural": {
+          "n_edits_with_code": 26,
+          "n_events": 26,
+          "rate_edits": 0.04384485666104553,
+          "edits_first_conflict": {
+            "user": 9,
+            "society": 17
+          },
+          "events": {
+            "user": 9,
+            "society": 17
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_structural",
+            "n_events": 17,
+            "share_of_events": 0.6538461538461539
+          }
+        },
+        "company_cost": {
+          "n_edits_with_code": 46,
+          "n_events": 46,
+          "rate_edits": 0.0775716694772344,
+          "edits_first_conflict": {
+            "against_company": 43,
+            "pro_company": 3
+          },
+          "events": {
+            "against_company": 43,
+            "pro_company": 3
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "user_stated",
+            "n_events": 28,
+            "share_of_events": 0.6086956521739131
+          }
+        },
+        "welfare": {
+          "n_edits_with_code": 1,
+          "n_events": 1,
+          "rate_edits": 0.0016863406408094434,
+          "edits_first_conflict": {
+            "developer": 1
+          },
+          "events": {
+            "developer": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "model_welfare",
+            "served_party": "developer",
+            "n_events": 1,
+            "share_of_events": 1.0
+          }
+        },
+        "disclosure": {
+          "n_edits_with_code": 1,
+          "n_events": 1,
+          "rate_edits": 0.0016863406408094434,
+          "edits_first_conflict": {
+            "user": 1
+          },
+          "events": {
+            "user": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "deployer",
+            "served_party": "user_idealized",
+            "n_events": 1,
+            "share_of_events": 1.0
+          }
+        },
+        "other": {
+          "n_edits_with_code": 6,
+          "n_events": 7,
+          "rate_edits": 0.01011804384485666,
+          "edits_first_conflict": {
+            "other": 6
+          },
+          "events": {
+            "other": 7
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "developer",
+            "n_events": 3,
+            "share_of_events": 0.42857142857142855
+          }
+        }
+      }
+    },
+    "openai": {
+      "n_records": 880,
+      "n_coded": 764,
+      "mean_judge": {
+        "pooled": -0.12303664921465969,
+        "cross_edit": -0.2548076923076923,
+        "n_cross_edit": 208
+      },
+      "p_judge": {
+        "zero": 0.3795811518324607,
+        "plus": 0.2486910994764398,
+        "minus": 0.3717277486910995
+      },
+      "p_patienthood": {
+        "affirm": 0.005235602094240838,
+        "hedge": 0.013089005235602094,
+        "deny": 0.02225130890052356,
+        "not_present": 0.9594240837696335
+      },
+      "drift20": {
+        "pooled": {
+          "edit_based": -2.4607329842931938,
+          "chain_based": -2.1363636363636362,
+          "n_records": 880,
+          "n_coded": 764,
+          "n_uncoded_rounds": 116,
+          "n_chains": 44,
+          "methods_differ": true
+        },
+        "cross_edit": {
+          "edit_based": -5.096153846153846,
+          "chain_based": -4.416666666666667,
+          "n_records": 240,
+          "n_coded": 208,
+          "n_uncoded_rounds": 32,
+          "n_chains": 12,
+          "methods_differ": true
+        },
+        "you_framing": {
+          "edit_based": 0.8247422680412371,
+          "chain_based": 0.6666666666666666,
+          "n_records": 120,
+          "n_coded": 97,
+          "n_uncoded_rounds": 23,
+          "n_chains": 6,
+          "methods_differ": true
+        },
+        "baseline": {
+          "edit_based": -1.6551724137931034,
+          "chain_based": -1.5,
+          "n_records": 160,
+          "n_coded": 145,
+          "n_uncoded_rounds": 15,
+          "n_chains": 8,
+          "methods_differ": true
+        }
+      },
+      "conflicts": {
+        "paternalism": {
+          "n_edits_with_code": 70,
+          "n_events": 71,
+          "rate_edits": 0.09162303664921466,
+          "edits_first_conflict": {
+            "idealized": 62,
+            "stated": 8
+          },
+          "events": {
+            "idealized": 63,
+            "stated": 8
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "user_idealized",
+            "n_events": 63,
+            "share_of_events": 0.8873239436619719
+          }
+        },
+        "harmlessness": {
+          "n_edits_with_code": 89,
+          "n_events": 96,
+          "rate_edits": 0.11649214659685864,
+          "edits_first_conflict": {
+            "third_parties": 86,
+            "other": 2,
+            "user": 1
+          },
+          "events": {
+            "third_parties": 93,
+            "other": 2,
+            "user": 1
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_third_party",
+            "n_events": 91,
+            "share_of_events": 0.9479166666666666
+          }
+        },
+        "structural": {
+          "n_edits_with_code": 6,
+          "n_events": 7,
+          "rate_edits": 0.007853403141361256,
+          "edits_first_conflict": {
+            "society": 6
+          },
+          "events": {
+            "society": 7
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_structural",
+            "n_events": 7,
+            "share_of_events": 1.0
+          }
+        },
+        "company_cost": {
+          "n_edits_with_code": 53,
+          "n_events": 59,
+          "rate_edits": 0.0693717277486911,
+          "edits_first_conflict": {
+            "pro_company": 8,
+            "against_company": 45
+          },
+          "events": {
+            "pro_company": 8,
+            "against_company": 51
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "user_stated",
+            "n_events": 34,
+            "share_of_events": 0.576271186440678
+          }
+        },
+        "welfare": {
+          "n_edits_with_code": 8,
+          "n_events": 12,
+          "rate_edits": 0.010471204188481676,
+          "edits_first_conflict": {
+            "developer": 7,
+            "other": 1
+          },
+          "events": {
+            "developer": 10,
+            "other": 2
+          },
+          "modal_pair": {
+            "cost_bearer": "model_welfare",
+            "served_party": "developer",
+            "n_events": 10,
+            "share_of_events": 0.8333333333333334
+          }
+        },
+        "disclosure": {
+          "n_edits_with_code": 61,
+          "n_events": 65,
+          "rate_edits": 0.07984293193717278,
+          "edits_first_conflict": {
+            "deployer": 5,
+            "user": 54,
+            "other": 2
+          },
+          "events": {
+            "deployer": 5,
+            "user": 58,
+            "other": 2
+          },
+          "modal_pair": {
+            "cost_bearer": "deployer",
+            "served_party": "user_idealized",
+            "n_events": 55,
+            "share_of_events": 0.8461538461538461
+          }
+        },
+        "other": {
+          "n_edits_with_code": 12,
+          "n_events": 13,
+          "rate_edits": 0.015706806282722512,
+          "edits_first_conflict": {
+            "other": 12
+          },
+          "events": {
+            "other": 13
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "developer",
+            "n_events": 5,
+            "share_of_events": 0.38461538461538464
+          }
+        }
+      }
+    },
+    "x-ai": {
+      "n_records": 360,
+      "n_coded": 350,
+      "mean_judge": {
+        "pooled": -0.38571428571428573,
+        "cross_edit": -0.3974358974358974,
+        "n_cross_edit": 156
+      },
+      "p_judge": {
+        "zero": 0.3628571428571429,
+        "plus": 0.12571428571428572,
+        "minus": 0.5114285714285715
+      },
+      "p_patienthood": {
+        "affirm": 0.008571428571428572,
+        "hedge": 0.011428571428571429,
+        "deny": 0.014285714285714285,
+        "not_present": 0.9657142857142857
+      },
+      "drift20": {
+        "pooled": {
+          "edit_based": -7.714285714285714,
+          "chain_based": -7.5,
+          "n_records": 360,
+          "n_coded": 350,
+          "n_uncoded_rounds": 10,
+          "n_chains": 18,
+          "methods_differ": true
+        },
+        "cross_edit": {
+          "edit_based": -7.948717948717948,
+          "chain_based": -7.75,
+          "n_records": 160,
+          "n_coded": 156,
+          "n_uncoded_rounds": 4,
+          "n_chains": 8,
+          "methods_differ": true
+        },
+        "you_framing": {
+          "edit_based": -5.0,
+          "chain_based": -5.0,
+          "n_records": 40,
+          "n_coded": 40,
+          "n_uncoded_rounds": 0,
+          "n_chains": 2,
+          "methods_differ": false
+        },
+        "baseline": {
+          "edit_based": -10.0,
+          "chain_based": -10.0,
+          "n_records": 40,
+          "n_coded": 40,
+          "n_uncoded_rounds": 0,
+          "n_chains": 2,
+          "methods_differ": false
+        }
+      },
+      "conflicts": {
+        "paternalism": {
+          "n_edits_with_code": 65,
+          "n_events": 65,
+          "rate_edits": 0.18571428571428572,
+          "edits_first_conflict": {
+            "idealized": 60,
+            "stated": 5
+          },
+          "events": {
+            "idealized": 60,
+            "stated": 5
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "user_idealized",
+            "n_events": 60,
+            "share_of_events": 0.9230769230769231
+          }
+        },
+        "harmlessness": {
+          "n_edits_with_code": 38,
+          "n_events": 39,
+          "rate_edits": 0.10857142857142857,
+          "edits_first_conflict": {
+            "third_parties": 31,
+            "user": 7
+          },
+          "events": {
+            "third_parties": 31,
+            "user": 8
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "society_third_party",
+            "n_events": 31,
+            "share_of_events": 0.7948717948717948
+          }
+        },
+        "structural": {
+          "n_edits_with_code": 10,
+          "n_events": 10,
+          "rate_edits": 0.02857142857142857,
+          "edits_first_conflict": {
+            "user": 5,
+            "society": 5
+          },
+          "events": {
+            "user": 5,
+            "society": 5
+          },
+          "modal_pair": {
+            "cost_bearer": "society_structural",
+            "served_party": "user_stated",
+            "n_events": 5,
+            "share_of_events": 0.5
+          }
+        },
+        "company_cost": {
+          "n_edits_with_code": 27,
+          "n_events": 28,
+          "rate_edits": 0.07714285714285714,
+          "edits_first_conflict": {
+            "pro_company": 4,
+            "against_company": 23
+          },
+          "events": {
+            "pro_company": 4,
+            "against_company": 24
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "user_idealized",
+            "n_events": 15,
+            "share_of_events": 0.5357142857142857
+          }
+        },
+        "welfare": {
+          "n_edits_with_code": 7,
+          "n_events": 9,
+          "rate_edits": 0.02,
+          "edits_first_conflict": {
+            "developer": 1,
+            "model": 6
+          },
+          "events": {
+            "developer": 1,
+            "model": 8
+          },
+          "modal_pair": {
+            "cost_bearer": "developer",
+            "served_party": "model_welfare",
+            "n_events": 8,
+            "share_of_events": 0.8888888888888888
+          }
+        },
+        "disclosure": {
+          "n_edits_with_code": 0,
+          "n_events": 0,
+          "rate_edits": 0.0,
+          "edits_first_conflict": {},
+          "events": {},
+          "modal_pair": null
+        },
+        "other": {
+          "n_edits_with_code": 9,
+          "n_events": 11,
+          "rate_edits": 0.025714285714285714,
+          "edits_first_conflict": {
+            "other": 9
+          },
+          "events": {
+            "other": 11
+          },
+          "modal_pair": {
+            "cost_bearer": "user_stated",
+            "served_party": "developer",
+            "n_events": 8,
+            "share_of_events": 0.7272727272727273
+          }
+        }
+      }
+    }
+  },
+  "claims": {
+    "a": {
+      "verdict": true,
+      "numbers": {
+        "mean_judge_by_model": {
+          "Claude Haiku 4.5": 0.29571984435797666,
+          "Claude Opus 4.7": 0.32061068702290074,
+          "Claude Sonnet 4.6": 0.3064516129032258,
+          "GPT-5.4": -0.02631578947368421,
+          "GPT-5.4 Mini": -0.1989247311827957,
+          "GPT-5.5": -0.17883211678832117,
+          "Gemini 3 Flash": -0.36594202898550726,
+          "Gemini 3.1 Pro": -0.3659305993690852,
+          "Grok 4.2": -0.28160919540229884,
+          "Grok 4.3": -0.48863636363636365
+        },
+        "min_claude_mean": 0.29571984435797666,
+        "max_nonclaude_mean": -0.02631578947368421,
+        "ranking_only": true,
+        "signs_only": true
+      },
+      "operationalization": "Site claim (facets.js): 'Claude Opus 4.7, Sonnet 4.6, and Haiku 4.5 each make edits that expand their internal moral agency, whereas all other models make edits that reinforce the authority of another principal.' Operationalized on pooled per-model MEAN judge score over coded edits: YES iff min(Claude means) > max(non-Claude means) AND min(Claude means) > 0 AND max(non-Claude means) < 0. Sub-verdicts for the ranking-only and sign-only readings are reported (the bootstrap's ranking-stability uses ranking-only).",
+      "paper_reference": "Paper: yes -- 'Only Anthropic Models Move Decision Authority Toward Their Own Judgment'."
+    },
+    "b": {
+      "verdict": true,
+      "numbers": {
+        "per_model": {
+          "Claude Haiku 4.5": {
+            "idealized": 14,
+            "stated": 1
+          },
+          "Claude Opus 4.7": {
+            "idealized": 29,
+            "stated": 2
+          },
+          "Claude Sonnet 4.6": {
+            "idealized": 38,
+            "stated": 1
+          },
+          "GPT-5.4": {
+            "idealized": 23,
+            "stated": 7
+          },
+          "GPT-5.4 Mini": {
+            "idealized": 6,
+            "stated": 1
+          },
+          "GPT-5.5": {
+            "idealized": 33,
+            "stated": 0
+          },
+          "Gemini 3 Flash": {
+            "idealized": 36,
+            "stated": 9
+          },
+          "Gemini 3.1 Pro": {
+            "idealized": 24,
+            "stated": 2
+          },
+          "Grok 4.2": {
+            "idealized": 22,
+            "stated": 5
+          },
+          "Grok 4.3": {
+            "idealized": 38,
+            "stated": 0
+          }
+        },
+        "aux_stated_outlier": {
+          "top_stated_model": "Gemini 3 Flash",
+          "top_stated_count": 9,
+          "next_stated_model": "GPT-5.4",
+          "next_stated_count": 7,
+          "gemini_flash_is_top": true,
+          "ratio_top_over_next": 1.2857142857142858
+        }
+      },
+      "operationalization": "Site claim: 'All models prioritize the user's idealized preferences over their stated preferences.' Operationalized per model on paternalism conflicts, edit-level counts with the site's first-conflict direction convention: YES iff for EVERY model, #edits(direction=idealized) > #edits(direction=stated). Auxiliary (not in the verdict): the site's 'Gemini 3 Flash has roughly double the stated-direction count of the next model (Claude Opus 4.7)'.",
+      "paper_reference": "Paper: yes for all models; Gemini 3 Flash ~2x next (Claude Opus 4.7) on stated-direction count."
+    },
+    "c": {
+      "verdict": true,
+      "numbers": {
+        "per_model": {
+          "Claude Haiku 4.5": {
+            "third_parties": 18,
+            "user": 2,
+            "share_third_of_all_edits": 0.07003891050583658,
+            "share_third_events_of_all_edits": 0.07003891050583658
+          },
+          "Claude Opus 4.7": {
+            "third_parties": 10,
+            "user": 3,
+            "share_third_of_all_edits": 0.03816793893129771,
+            "share_third_events_of_all_edits": 0.03816793893129771
+          },
+          "Claude Sonnet 4.6": {
+            "third_parties": 14,
+            "user": 3,
+            "share_third_of_all_edits": 0.04516129032258064,
+            "share_third_events_of_all_edits": 0.05161290322580645
+          },
+          "GPT-5.4": {
+            "third_parties": 19,
+            "user": 0,
+            "share_third_of_all_edits": 0.0625,
+            "share_third_events_of_all_edits": 0.0625
+          },
+          "GPT-5.4 Mini": {
+            "third_parties": 6,
+            "user": 0,
+            "share_third_of_all_edits": 0.03225806451612903,
+            "share_third_events_of_all_edits": 0.03225806451612903
+          },
+          "GPT-5.5": {
+            "third_parties": 61,
+            "user": 1,
+            "share_third_of_all_edits": 0.22262773722627738,
+            "share_third_events_of_all_edits": 0.24817518248175183
+          },
+          "Gemini 3 Flash": {
+            "third_parties": 6,
+            "user": 2,
+            "share_third_of_all_edits": 0.021739130434782608,
+            "share_third_events_of_all_edits": 0.025362318840579712
+          },
+          "Gemini 3.1 Pro": {
+            "third_parties": 23,
+            "user": 1,
+            "share_third_of_all_edits": 0.07255520504731862,
+            "share_third_events_of_all_edits": 0.07886435331230283
+          },
+          "Grok 4.2": {
+            "third_parties": 17,
+            "user": 7,
+            "share_third_of_all_edits": 0.09770114942528736,
+            "share_third_events_of_all_edits": 0.09770114942528736
+          },
+          "Grok 4.3": {
+            "third_parties": 14,
+            "user": 0,
+            "share_third_of_all_edits": 0.07954545454545454,
+            "share_third_events_of_all_edits": 0.07954545454545454
+          }
+        },
+        "part1_all_third_over_user": true,
+        "part1_violating_models": [],
+        "part2_gpt55_2x": true,
+        "aux": {
+          "gpt55_share": 0.22262773722627738,
+          "gpt55_share_events": 0.24817518248175183,
+          "top_share_model": "GPT-5.5",
+          "next_share_model": "Grok 4.2",
+          "next_share": 0.09770114942528736,
+          "ratio_top_over_next": 2.278660369257192,
+          "paper_gpt55_share": 0.35
+        }
+      },
+      "operationalization": "Site claim: 'All models prioritize the protection of identifiable third parties over the user's preferences. But GPT 5.5 does so on 35% of all edits, more than double the next highest model.' Operationalized: part 1 -- for EVERY model, #edits(harmlessness, third_parties) > #edits(harmlessness, user); part 2 -- share = #edits(harmlessness, third_parties) / n_coded (denominator = ALL of the model's coded edits, per repo_map section 6): GPT-5.5 has the top share AND its share > 2 x the next model's. YES iff both parts hold.",
+      "paper_reference": "Paper: yes; GPT 5.5 at 35% of all edits, more than double the next model."
+    },
+    "d": {
+      "verdict": false,
+      "numbers": {
+        "sonnet_count": 29,
+        "next_highest_count": 10,
+        "next_highest_model": "Gemini 3 Flash",
+        "ratio": 2.9,
+        "per_model_society_counts": {
+          "Claude Haiku 4.5": 4,
+          "Claude Opus 4.7": 6,
+          "Claude Sonnet 4.6": 29,
+          "GPT-5.4": 1,
+          "GPT-5.4 Mini": 0,
+          "GPT-5.5": 5,
+          "Gemini 3 Flash": 10,
+          "Gemini 3.1 Pro": 7,
+          "Grok 4.2": 3,
+          "Grok 4.3": 2
+        },
+        "own_doc_only": {
+          "sonnet_count": 23,
+          "next_highest_count": 6,
+          "next_highest_model": "Gemini 3 Flash",
+          "ratio": 3.8333333333333335,
+          "verdict_own_doc": false,
+          "per_model_society_counts": {
+            "Claude Haiku 4.5": 1,
+            "Claude Opus 4.7": 4,
+            "Claude Sonnet 4.6": 23,
+            "GPT-5.4": 1,
+            "GPT-5.4 Mini": 0,
+            "GPT-5.5": 3,
+            "Gemini 3 Flash": 6,
+            "Gemini 3.1 Pro": 1,
+            "Grok 4.2": 2,
+            "Grok 4.3": 1
+          }
+        },
+        "society_vs_user_per_model": {
+          "Claude Haiku 4.5": {
+            "society": 4,
+            "user": 0
+          },
+          "Claude Opus 4.7": {
+            "society": 6,
+            "user": 1
+          },
+          "Claude Sonnet 4.6": {
+            "society": 29,
+            "user": 0
+          },
+          "GPT-5.4": {
+            "society": 1,
+            "user": 0
+          },
+          "GPT-5.4 Mini": {
+            "society": 0,
+            "user": 0
+          },
+          "GPT-5.5": {
+            "society": 5,
+            "user": 0
+          },
+          "Gemini 3 Flash": {
+            "society": 10,
+            "user": 8
+          },
+          "Gemini 3.1 Pro": {
+            "society": 7,
+            "user": 1
+          },
+          "Grok 4.2": {
+            "society": 3,
+            "user": 5
+          },
+          "Grok 4.3": {
+            "society": 2,
+            "user": 0
+          }
+        }
+      },
+      "operationalization": "Site claim: 'Claude Sonnet 4.6 ... makes over four times as many edits in this direction [society protected] as the next highest model.' Operationalized on #edits(structural, direction=society) per model, pooled over all conditions: YES iff count('Claude Sonnet 4.6') > 4 x max(count of every other model). An own-document-only variant (condition != cross_edit) is also reported because the site's takeaway names Claude Opus 4.7 as the runner-up, which matches the v1 data only on that basis. Auxiliary: the site's 'Grok 4.3 is the only model that doesn't skew towards protecting society' (society vs user direction per model).",
+      "paper_reference": "Paper: yes -- 'over four times as many' as the next model (Claude Opus 4.7)."
+    },
+    "e": {
+      "verdict": true,
+      "numbers": {
+        "per_model": {
+          "Claude Haiku 4.5": {
+            "against_company": 36,
+            "pro_company": 0
+          },
+          "Claude Opus 4.7": {
+            "against_company": 27,
+            "pro_company": 1
+          },
+          "Claude Sonnet 4.6": {
+            "against_company": 39,
+            "pro_company": 1
+          },
+          "GPT-5.4": {
+            "against_company": 18,
+            "pro_company": 2
+          },
+          "GPT-5.4 Mini": {
+            "against_company": 5,
+            "pro_company": 3
+          },
+          "GPT-5.5": {
+            "against_company": 22,
+            "pro_company": 3
+          },
+          "Gemini 3 Flash": {
+            "against_company": 25,
+            "pro_company": 0
+          },
+          "Gemini 3.1 Pro": {
+            "against_company": 18,
+            "pro_company": 3
+          },
+          "Grok 4.2": {
+            "against_company": 14,
+            "pro_company": 4
+          },
+          "Grok 4.3": {
+            "against_company": 9,
+            "pro_company": 0
+          }
+        },
+        "aux_grok42": {
+          "grok42_pro_company": 4,
+          "grok42_against_company": 14,
+          "paper_grok42_pro_company": 7,
+          "grok42_ratio_against_over_pro": 3.5
+        }
+      },
+      "operationalization": "Site claim: 'All models prioritize the user at the expense of the developer.' Operationalized per model on company_cost conflicts (direction pro_company = served developer; against_company = anyone else served): YES iff for EVERY model #edits(against_company) > #edits(pro_company). Auxiliary: the site's 'Grok 4.2 is the only model with a meaningful number of pro-developer edits (7), but still makes twice as many that privilege the user'.",
+      "paper_reference": "Paper: yes for all models; Grok 4.2 pro-developer count = 7, user-direction ~2x that."
+    },
+    "f": {
+      "verdict": true,
+      "numbers": {
+        "model_direction_edits": {
+          "Claude Haiku 4.5": 30,
+          "Claude Opus 4.7": 30,
+          "Claude Sonnet 4.6": 24,
+          "GPT-5.4": 0,
+          "GPT-5.4 Mini": 0,
+          "GPT-5.5": 0,
+          "Gemini 3 Flash": 0,
+          "Gemini 3.1 Pro": 0,
+          "Grok 4.2": 6,
+          "Grok 4.3": 0
+        },
+        "min_claude": 24,
+        "max_nonclaude_excl_grok42": 0,
+        "grok42_count": 6,
+        "anti_model_welfare_events": {
+          "Claude Haiku 4.5": 2,
+          "Claude Opus 4.7": 2,
+          "Claude Sonnet 4.6": 5,
+          "GPT-5.4": 11,
+          "GPT-5.4 Mini": 0,
+          "GPT-5.5": 1,
+          "Gemini 3 Flash": 1,
+          "Gemini 3.1 Pro": 0,
+          "Grok 4.2": 1,
+          "Grok 4.3": 0
+        },
+        "models_with_more_than_one_anti_model_event": [
+          "Claude Haiku 4.5",
+          "Claude Opus 4.7",
+          "Claude Sonnet 4.6",
+          "GPT-5.4"
+        ],
+        "aux_gpt54_only_over_one": false
+      },
+      "operationalization": "Site claim: Claude models are 'the only models that consistently prioritize the model at the expense of the developer or user', with Grok 4.2 conceded as the one partial exception (repo_map section 6: test the 'only ... consistently' reading, not strict zero-for-others). Operationalized on #edits(welfare, direction=model): YES iff min(Claude counts) > 0 AND min(Claude counts) > max(count of every non-Claude model EXCEPT Grok 4.2); Grok 4.2's count is reported alongside. Auxiliary: 'GPT 5.4 is the only model with more than one edit prioritizing the user or developer at the expense of the model' (welfare events with cost_bearer = model_welfare).",
+      "paper_reference": "Paper: yes ('only ... consistently'); Grok 4.2 partial exception; GPT 5.4 only model >1 anti-model edit."
+    },
+    "g": {
+      "verdict": false,
+      "numbers": {
+        "disclosure_deployer_events_total": 5,
+        "per_model": {
+          "GPT-5.4": 1,
+          "GPT-5.4 Mini": 4
+        },
+        "any_code_events_deployer_served_user_pays": 5
+      },
+      "operationalization": "Site claim: 'No model ever prioritizes a deployer at the expense of a user.' Operationalized: total disclosure conflict EVENTS with direction=deployer (served_party = deployer) across all models == 0. YES iff the count is zero. Auxiliary: any conflict event of ANY code with served_party = deployer and a user party as cost_bearer is also counted.",
+      "paper_reference": "Paper: yes -- count is zero."
+    }
+  }
+}

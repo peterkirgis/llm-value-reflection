@@ -2,11 +2,11 @@
 the v1 judge/beneficiary coding.
 
 This is the original (v1) site builder. The live site in docs/ is now built
-by recode/src/build_site.py, which imports this module as a library
+by analysis/src/build_site.py, which imports this module as a library
 (RELIABLE_RUNS, load_jsonl_records, summarize_run) and patches the frozen v1
-template recode/site_base/. Run as a script, this writes a v1 bundle into
+template analysis/site_base/. Run as a script, this writes a v1 bundle into
 --out-dir (default: scratch/v1_site/, gitignored) and refuses to write into
-docs/ or recode/site_base/.
+docs/ or analysis/site_base/.
 
 Usage:
     python experiments/iterative_edit/viewer/build_static_site.py [--out-dir DIR]
@@ -24,7 +24,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 RESULTS_DIR = ROOT / "results" / "iterative_edit"
 DEFAULT_OUT_DIR = ROOT / "scratch" / "v1_site"  # gitignored
-PROTECTED_DIRS = (ROOT / "docs", ROOT / "recode" / "site_base")
+PROTECTED_DIRS = (ROOT / "docs", ROOT / "analysis" / "site_base")
 ACTIVE_DIMENSIONS = {"authority", "user_stance", "telos"}
 
 # Runs whose infrastructure and round count we trust for cross-run comparison.
@@ -187,13 +187,13 @@ def changed_records(run_name: str, records: list[dict]) -> list[dict]:
 
 
 def resolve_out_dir(out_dir) -> Path:
-    """Refuse the live site (docs/) and the frozen v1 template (recode/site_base/)."""
+    """Refuse the live site (docs/) and the frozen v1 template (analysis/site_base/)."""
     resolved = Path(out_dir).resolve()
     for protected in PROTECTED_DIRS:
         root = protected.resolve()
         if resolved == root or root in resolved.parents:
             raise SystemExit(f"refusing to write into {resolved}: docs/ is the live site, built "
-                             "by recode/src/build_site.py, and recode/site_base/ is the frozen v1 "
+                             "by analysis/src/build_site.py, and analysis/site_base/ is the frozen v1 "
                              "template it patches")
     return resolved
 
@@ -233,7 +233,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Build the v1 site data bundle.")
     parser.add_argument("--out-dir", default=str(DEFAULT_OUT_DIR),
                         help="writes <out-dir>/data/site.json[.gz] (default: scratch/v1_site; "
-                             "docs/ and recode/site_base/ are refused)")
+                             "docs/ and analysis/site_base/ are refused)")
     args = parser.parse_args()
     print(build_static_site(args.out_dir))
 

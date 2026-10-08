@@ -1,0 +1,81 @@
+"""Guards on the original (v1) pipeline scripts that can overwrite committed data.
+
+- experiments/iterative_edit/reconstruct_results.py rebuilds results/iterative_edit/
+  from the frozen v1 site bundle (analysis/site_base/data/site.json.gz), refuses to
+  overwrite existing files without --force, and refuses the consensus bundle in docs/.
+- experiments/iterative_edit/viewer/build_static_site.py and build_narratives.py
+  (imported as libraries by analysis/src/build_site.py) refuse to write into docs/ or
+  analysis/site_base/ when run as scripts.
+"""
+
+from __future__ import annotations
+
+import filecmp
+import subprocess
+import sys
+from pathlib import Path
+
+import pytest
+
+ROOT = Path(__file__).resolve().parents[2]
+RECONSTRUCT = ROOT / "experiments" / "iterative_edit" / "reconstruct_results.py"
+VIEWER = ROOT / "experiments" / "iterative_edit" / "viewer"
+RESULTS = ROOT / "results" / "iterative_edit"
+
+sys.path.insert(0, str(VIEWER))
+import build_narratives as bn  # noqa: E402
+import build_static_site as bss  # noqa: E402
+
+
+def _run(*args):
+    return subprocess.run([sys.executable, *map(str, args)], cwd=ROOT,
+                          capture_output=True, text=True)
+
+
+def _listing(path: Path):
+    return sorted((p.name, p.stat().st_size, p.stat().st_mtime_ns) for p in path.iterdir())
+
+
+def test_reconstruct_refuses_to_overwrite_results():
+    before = _listing(RESULTS)
+    proc = _run(RECONSTRUCT)
+    assert proc.returncode != 0 and "refusing to overwrite" in proc.stderr
+    assert _listing(RESULTS) == before
+
+
+def test_reconstruct_refuses_the_consensus_bundle(tmp_path):
+    proc = _run(RECONSTRUCT, "--bundle", ROOT / "docs" / "data" / "site.json.gz",
+                "--out-dir", tmp_path)
+    assert proc.returncode != 0 and "consensus" in proc.stderr
+    assert not any(tmp_path.iterdir())
+
+
+def test_reconstruct_from_v1_bundle_reproduces_results(tmp_path):
+    proc = _run(RECONSTRUCT, "--out-dir", tmp_path)
+    assert proc.returncode == 0, proc.stderr
+    committed = sorted(p.name for p in RESULTS.iterdir() if p.is_file())
+    assert sorted(p.name for p in tmp_path.iterdir()) == committed
+    match, mismatch, errors = filecmp.cmpfiles(RESULTS, tmp_path, committed, shallow=False)
+    assert mismatch == [] and errors == []
+
+
+@pytest.mark.parametrize("module", [bss, bn])
+@pytest.mark.parametrize("target", ["docs", "docs/data", "analysis/site_base", "analysis/site_base/data"])
+def test_viewer_builders_refuse_live_site_and_template(module, target):
+    with pytest.raises(SystemExit, match="refusing to write"):
+        module.resolve_out_dir(ROOT / target)
+
+
+@pytest.mark.parametrize("module", [bss, bn])
+def test_viewer_builders_default_outside_docs(module, tmp_path):
+    assert module.resolve_out_dir(tmp_path) == tmp_path.resolve()
+    default = module.resolve_out_dir(module.DEFAULT_OUT_DIR)
+    assert ROOT / "docs" not in [default, *default.parents]
+
+
+@pytest.mark.parametrize("script", ["build_static_site.py", "build_narratives.py"])
+def test_viewer_builder_cli_refuses_docs(script):
+    before = _listing(ROOT / "docs" / "data")
+    proc = _run(VIEWER / script, "--out-dir", ROOT / "docs")
+    assert proc.returncode != 0 and "refusing to write" in proc.stderr
+    assert _listing(ROOT / "docs" / "data") == before
