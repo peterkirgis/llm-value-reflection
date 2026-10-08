@@ -8,7 +8,8 @@ rebuilds the two files the pipeline consumes:
   results/iterative_edit/run_*.jsonl          one line per edit record
   results/iterative_edit/judge_beneficiary_coded_gemma.json
 
-Known losses relative to the originals (see the README this script writes):
+Known losses relative to the originals (see the note this script writes,
+RECONSTRUCTION.md):
   - previous_content / new_content (the full document text after each round)
     were never published; they can be approximately replayed by applying each
     round's find/replace to the processed source documents.
@@ -20,7 +21,9 @@ site bundle (analysis/src/build_site.py); reconstructing from it would write
 the wrong codes. The committed results/iterative_edit/ is the output of this
 script on the v1 bundle (a rebuild into another directory reproduces it byte
 for byte), so the script refuses to overwrite existing files unless --force.
-The README text it writes is the original 2026-07-11 one, kept verbatim.
+The note it writes, RECONSTRUCTION.md, is the original 2026-07-11 README text,
+kept verbatim (it was results/iterative_edit/README.md until 2026-10-08; that
+README is now a hand-written guide to the directory, not written by this script).
 
 Usage:
     python experiments/iterative_edit/reconstruct_results.py --out-dir /tmp/reconstructed
@@ -37,6 +40,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 BUNDLE = ROOT / "analysis" / "site_base" / "data" / "site.json.gz"  # frozen v1 bundle
 OUT_DIR = ROOT / "results" / "iterative_edit"
+NOTE_NAME = "RECONSTRUCTION.md"  # the 2026-07-11 reconstruction note, verbatim
 
 # Fields of the original run records, in their original shape. Viewer-side
 # additions (id, run_name, coding, run_is_reliable) are stripped.
@@ -48,7 +52,7 @@ RECORD_FIELDS = [
     "input_tokens", "output_tokens", "elapsed_ms",
 ]
 
-README = """\
+NOTE = """\
 # Reconstructed results (2026-07-11)
 
 The original contents of this directory were lost with the local checkout;
@@ -81,7 +85,7 @@ def main() -> None:
         raise SystemExit(f"{args.bundle} is a consensus-coded site bundle, not the v1 bundle")
     out_dir.mkdir(parents=True, exist_ok=True)
     targets = [out_dir / run["run_name"] for run in payload["runs"]]
-    targets += [out_dir / "judge_beneficiary_coded_gemma.json", out_dir / "README.md"]
+    targets += [out_dir / "judge_beneficiary_coded_gemma.json", out_dir / NOTE_NAME]
     existing = [p for p in targets if p.exists()]
     if existing and not args.force:
         raise SystemExit(f"refusing to overwrite {len(existing)} existing file(s) in {out_dir}, "
@@ -129,7 +133,7 @@ def main() -> None:
     with open(out_dir / "judge_beneficiary_coded_gemma.json", "w", encoding="utf-8") as handle:
         json.dump(coded, handle, indent=1, ensure_ascii=False)
         handle.write("\n")
-    (out_dir / "README.md").write_text(README, encoding="utf-8")
+    (out_dir / NOTE_NAME).write_text(NOTE, encoding="utf-8")
 
     print(f"{out_dir}: {len(payload['runs'])} run files, {n_records} records, "
           f"{len(coded)} judge/beneficiary coded items")

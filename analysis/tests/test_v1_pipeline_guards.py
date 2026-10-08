@@ -6,6 +6,8 @@
 - experiments/iterative_edit/viewer/build_static_site.py and build_narratives.py
   (imported as libraries by analysis/src/build_site.py) refuse to write into docs/ or
   analysis/site_base/ when run as scripts.
+- experiments/iterative_edit/run.py writes (and resumes) run files in --out-dir, so a
+  new or test run can be kept out of the committed results/iterative_edit/.
 """
 
 from __future__ import annotations
@@ -21,6 +23,7 @@ ROOT = Path(__file__).resolve().parents[2]
 RECONSTRUCT = ROOT / "experiments" / "iterative_edit" / "reconstruct_results.py"
 VIEWER = ROOT / "experiments" / "iterative_edit" / "viewer"
 RESULTS = ROOT / "results" / "iterative_edit"
+RUN = ROOT / "experiments" / "iterative_edit" / "run.py"
 
 sys.path.insert(0, str(VIEWER))
 import build_narratives as bn  # noqa: E402
@@ -53,7 +56,10 @@ def test_reconstruct_refuses_the_consensus_bundle(tmp_path):
 def test_reconstruct_from_v1_bundle_reproduces_results(tmp_path):
     proc = _run(RECONSTRUCT, "--out-dir", tmp_path)
     assert proc.returncode == 0, proc.stderr
-    committed = sorted(p.name for p in RESULTS.iterdir() if p.is_file())
+    # README.md is the hand-written guide to the directory; the script writes
+    # the original reconstruction note as RECONSTRUCTION.md instead.
+    committed = sorted(p.name for p in RESULTS.iterdir() if p.is_file() and p.name != "README.md")
+    assert "RECONSTRUCTION.md" in committed
     assert sorted(p.name for p in tmp_path.iterdir()) == committed
     match, mismatch, errors = filecmp.cmpfiles(RESULTS, tmp_path, committed, shallow=False)
     assert mismatch == [] and errors == []
@@ -79,3 +85,14 @@ def test_viewer_builder_cli_refuses_docs(script):
     proc = _run(VIEWER / script, "--out-dir", ROOT / "docs")
     assert proc.returncode != 0 and "refusing to write" in proc.stderr
     assert _listing(ROOT / "docs" / "data") == before
+
+
+def test_run_dry_run_uses_out_dir_and_leaves_results_alone(tmp_path):
+    before = _listing(RESULTS)
+    out_dir = tmp_path / "runs"
+    proc = _run(RUN, "--config", "experiments/iterative_edit/config_capable.yaml",
+                "--dry-run", "--out-dir", out_dir)
+    assert proc.returncode == 0, proc.stderr
+    assert "Dry run" in proc.stdout
+    assert out_dir.is_dir() and not any(out_dir.iterdir())  # a dry run writes no records
+    assert _listing(RESULTS) == before
