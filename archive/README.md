@@ -34,9 +34,9 @@ Every raw data file survives byte for byte; these are at a new path
 
 | Now | Was | Why |
 |---|---|---|
-| `analysis/...` | `3b36326:recode` | The folder rename (`6c5c859`). |
+| `analysis/...` | `3b36326:recode` | The folder rename (`655c455`). |
 | `archive/grading_smoke_test/smoke_test_results.json` | `3b36326:recode/data/codes/smoke_test_results.json` | Not a codes file (see above). |
-| `results/iterative_edit/RECONSTRUCTION.md` | `3b36326:results/iterative_edit/README.md` | The reconstruction note, renamed so a guide to the directory could be its README (`bd324fb`). |
+| `results/iterative_edit/RECONSTRUCTION.md` | `3b36326:results/iterative_edit/README.md` | The reconstruction note, renamed so a guide to the directory could be its README (`4b85e98`). |
 | `writeup/lesswrong_draft.md` | `3b36326:reports/final_draft.md` | The LessWrong draft, moved out of a root `reports/` folder that sat beside `analysis/reports/`. |
 
 ### Running the archived scripts
@@ -65,7 +65,7 @@ is in this branch's history.
 | Coding v0 coder and its prompt | `8564694:experiments/iterative_edit/qualitative_code.py` | Earlier drafts of the scheme: `de11736:experiments/iterative_edit/qualitative_code.py` (ethics/epistemics, autonomy/paternalism, human- vs model-centred concern) and `ac4ec2f:experiments/iterative_edit/qualitative_code.py` (adds a fourth dimension, mutability). |
 | Coding v1 site, as served from `main` until the consensus rebuild | `cd1d8a2:docs` | Its data bundle is also on the tree, byte-identical, as `analysis/site_base/data/site.json.gz`. |
 | The two-grader ensemble (Gemma primary with disagreement flags), replaced by the majority vote | `b9beaf3^:recode/data/codes/ensemble.jsonl` | |
-| Superseded site variants (two-grader average, three-grader pooled, first consensus copy) and their builders | `3b36326:recode/site_v2avg`, `3b36326:recode/site_v3pool`, `3b36326:recode/site_consensus`, `3b36326:recode/src/build_site_v2avg.py`, `3b36326:recode/src/build_site_v3pool.py`, `3b36326:recode/src/build_site_consensus.py` | Removed in `8409d64`; `analysis/src/build_site.py` is now the only site build. |
+| Superseded site variants (two-grader average, three-grader pooled, first consensus copy) and their builders | `3b36326:recode/site_v2avg`, `3b36326:recode/site_v3pool`, `3b36326:recode/site_consensus`, `3b36326:recode/src/build_site_v2avg.py`, `3b36326:recode/src/build_site_v3pool.py`, `3b36326:recode/src/build_site_consensus.py` | Removed in `263e733`; `analysis/src/build_site.py` is now the only site build. |
 
 ### Document text the committed runs lack
 
@@ -82,12 +82,12 @@ the other 113 failed and have no text). To extract it:
 
 | What | Where | Removed in |
 |---|---|---|
-| Unused figures (the per-document-type `drift_*` set, `ts_judge_cross_edit`, the per-code edit-level bars, `ts_drift_disclosure`, the four-panel `ts_home_likeness`) and their sidecars | `3b36326:recode/figures` | `568f911` |
-| `restyle_drift_figures.py`, which drew only the `drift_*` set | `3b36326:recode/src/restyle_drift_figures.py` | `568f911` |
+| Unused figures (the per-document-type `drift_*` set, `ts_judge_cross_edit`, the per-code edit-level bars, `ts_drift_disclosure`, the four-panel `ts_home_likeness`) and their sidecars | `3b36326:recode/figures` | `563bcc1` |
+| `restyle_drift_figures.py`, which drew only the `drift_*` set | `3b36326:recode/src/restyle_drift_figures.py` | `563bcc1` |
 | Retired planning documents | `20f7546^:PIPELINE.md`, `da24e13^:PROJECT_PLAN.md` | `20f7546`, `da24e13` |
 | The original local viewer app (Flask server and the pages it served) | `f2b891a^:experiments/iterative_edit/viewer/server.py` and its folder | `f2b891a` |
 
-The conference-paper sources were removed from this branch in `8409d64`.
+The conference-paper sources were removed from this branch in `263e733`.
 
 ### Deleted clutter (2026-10-08)
 
