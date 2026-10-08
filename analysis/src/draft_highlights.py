@@ -1,5 +1,5 @@
 """draft_highlights — read the findings statements and quoted example edits
-out of the current LessWrong draft (reports/final_draft.md) and resolve every
+out of the current LessWrong draft (writeup/lesswrong_draft.md) and resolve every
 quote to its edit id in analysis/data/canonical/edits.jsonl.
 
 Used by the website build (analysis/src/build_site.py) so the site's
@@ -24,7 +24,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-DRAFT_PATH = ROOT / "reports" / "final_draft.md"
+DRAFT_PATH = ROOT / "writeup" / "lesswrong_draft.md"
 EDITS_PATH = ROOT / "analysis" / "data" / "canonical" / "edits.jsonl"
 
 # Draft Results subsection heading (prefix, markdown stripped) -> site facet.

@@ -1,7 +1,7 @@
 """Tests for the website build (analysis/src/build_site.py -> docs/):
 statistics from the three-grader majority vote (ensemble.jsonl, one coding per
 edit, integer counts), statements and highlighted edits read from the current
-draft (reports/final_draft.md), the simplified grader box, the "System prompts"
+draft (writeup/lesswrong_draft.md), the simplified grader box, the "System prompts"
 view, and the guard that a rebuild reproduces the committed docs/ byte for byte
 (apart from the embedded generated_at timestamp).
 """

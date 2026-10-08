@@ -1,8 +1,8 @@
 # Corrections to apply to the LessWrong draft (2026-10-08)
 
-These are the factual and citation corrections made for the IASEAI paper. They are already applied to the repo snapshot `reports/final_draft.md`. The live post on LessWrong has to be edited by hand, in its editor.
+These are factual and citation corrections found while preparing a print version of the write-up. They are already applied to the repo copy `writeup/lesswrong_draft.md`. The live post on LessWrong has to be edited by hand, in its editor.
 
-Each entry gives the text as it appears in the post, then its replacement. Use the editor's find (Cmd-F) on the "Find" text. Numbers are the recode's three-grader majority-vote (consensus) codes.
+Each entry gives the text as it appears in the post, then its replacement. Use the editor's find (Cmd-F) on the "Find" text. Numbers come from the three-grader majority-vote (consensus) codes.
 
 Paper-only changes are not listed and should NOT go into the post: "essay" → "paper", the dropped footnotes, quotes moved to an appendix, the new abstract and contributions statement, and the title.
 

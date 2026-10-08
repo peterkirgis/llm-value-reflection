@@ -127,7 +127,7 @@ and amended along the way; analysis/reports/STATUS.md is the build log.
   analysis/src/build_site.py from the ensemble codes. It starts from a frozen
   copy of the coding-v1 site (analysis/site_base/), regenerates the data
   bundles, and patches the page text: the findings and quoted edits come from
-  the LessWrong draft (reports/final_draft.md), the methods describe the three
+  the LessWrong draft (writeup/lesswrong_draft.md), the methods describe the three
   blinded graders and the majority vote, and each edit shows the consensus
   coding with every grader's rationale. The build checks its counts against
   the ensemble and the figure data. The patienthood flag is coded on every edit

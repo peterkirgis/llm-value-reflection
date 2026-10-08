@@ -84,4 +84,3 @@ The conference-paper sources were removed from this branch in `8409d64`.
 | `3b36326:experiments/iterative_edit/debug_gpt_response.py` | A one-off debugging script. |
 | `3b36326:render.yaml` | A Render deployment config for the viewer server above. |
 | `3b36326:.gitmodules` and the `the-artificial-self-experiments` submodule | Never initialised; nothing used it. |
-| `3b36326:recode/human/coding_sheet_peter.csv` | A byte-identical copy of the blank template `analysis/human/coding_sheet.csv`, with no codes entered. The coding app (`analysis/human/app.py`) creates a coder's own sheet when they start. |

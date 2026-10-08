@@ -4,7 +4,7 @@
 > consensus rebuild, against the two-grader evidence of 2026-09-09. The live site
 > (`docs/`) is now built on the three-grader majority vote by
 > `analysis/src/build_site.py`, with its statements taken from
-> `reports/final_draft.md`.
+> `writeup/lesswrong_draft.md`.
 
 Reviewed 2026-09-09 against the committed evidence base (headline JSONs, cluster-bootstrap
 CIs, ranking-stability files, E1–E5 validity experiments, B3 inter-grader report,

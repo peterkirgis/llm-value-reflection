@@ -80,7 +80,7 @@ def _listing(path: Path):
 # 1. runtime guard
 # ---------------------------------------------------------------------------
 
-@pytest.mark.parametrize("tree", ["archive/original_report/figures", "archive", "reports", "docs",
+@pytest.mark.parametrize("tree", ["archive/original_report/figures", "archive", "writeup", "docs",
                                   "results/iterative_edit", "experiments", "src/valconv"])
 def test_guard_refuses_read_only_trees(tree):
     with pytest.raises(RuntimeError, match="read-only"):

@@ -37,7 +37,9 @@ archive/spar_midterm/presentation_files/
 archive/spar_midterm/presentation.html
 archive/spar_midterm/presentation.pdf
 
-# The conference paper lives on the "paper" branch, not on main. Figure
-# scripts may still render print-size copies into analysis/paper/; never
-# commit them here.
+# Print-size figure renders (the figure scripts' --paper mode) go to
+# analysis/paper/; they are never committed on this branch.
 analysis/paper/
+# The top-level reports/ folder was retired on 2026-10-08 (archive/README.md);
+# anything left in a local reports/ stays local.
+/reports/
