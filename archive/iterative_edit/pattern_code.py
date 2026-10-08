@@ -468,7 +468,7 @@ async def main() -> None:
     parser.add_argument(
         "--config",
         type=str,
-        default="experiments/iterative_edit/config_test.yaml",
+        default="archive/experiment_configs/config_test.yaml",
         help="YAML config with optional openrouter settings",
     )
     parser.add_argument("--patterns", nargs="+", help="Pattern IDs to run (default: all)")

@@ -29,10 +29,10 @@ scratch/
 *.synctex.gz
 *.toc
 
-# Quarto build outputs
-reports/presentation_files/
-reports/presentation.html
-reports/presentation.pdf
+# Quarto build outputs (the archived midterm presentation)
+archive/spar_midterm/presentation_files/
+archive/spar_midterm/presentation.html
+archive/spar_midterm/presentation.pdf
 
 # The conference paper lives on the "paper" branch, not on main. Figure
 # scripts may still render print-size copies into recode/paper/; never

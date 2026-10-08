@@ -1,12 +1,12 @@
 """Tests for recode/src/report_figures.py (vendored report generator).
 
 What is proved here:
-  1. Runtime guard: nothing can be written into reports/figures (or any other
+  1. Runtime guard: nothing can be written into archive/original_report/figures (or any other
      read-only tree), via assert_safe_out_dir, render_all, _save, or the
      drift restyler.
-  2. Vendoring is faithful: the vendored constants equal reports/generate_figures.py
+  2. Vendoring is faithful: the vendored constants equal archive/original_report/generate_figures.py
      (parsed with ast, never imported), and every function/constant not listed
-     as a deviation has an identical AST to reports/generate_judge_beneficiary_figures.py
+     as a deviation has an identical AST to archive/original_report/generate_judge_beneficiary_figures.py
      (the functions RECODE D11 dropped, which drew only unused figures, must be absent).
   3. The adapter builds items in the original schema: on v1.jsonl it reproduces
      results/iterative_edit/judge_beneficiary_coded_gemma.json item-for-item.
@@ -15,7 +15,7 @@ What is proved here:
      with a stand-in `generate_figures` module whose _save only captures — it
      never writes) is run on the original coded JSON, and its plotted values
      are compared with the vendored sidecars for 7 figures. For the same
-     figures the rendered PNGs are pixel-identical to reports/figures/*.png.
+     figures the rendered PNGs are pixel-identical to archive/original_report/figures/*.png.
   5. Titles in the committed outputs equal the audited decision table, and
      recode/figures holds exactly the figures in use.
 
@@ -40,10 +40,10 @@ import pytest
 import report_figures as rf
 
 REPO = rf.PROJECT_ROOT
-ORIG_GEN = REPO / "reports" / "generate_judge_beneficiary_figures.py"
-ORIG_BASE = REPO / "reports" / "generate_figures.py"
+ORIG_GEN = REPO / "archive" / "original_report" / "generate_judge_beneficiary_figures.py"
+ORIG_BASE = REPO / "archive" / "original_report" / "generate_figures.py"
 ORIG_JSON = REPO / "results" / "iterative_edit" / "judge_beneficiary_coded_gemma.json"
-REPORT_FIGS = REPO / "reports" / "figures"
+REPORT_FIGS = REPO / "archive" / "original_report" / "figures"
 V1_CODES = rf.RECODE_ROOT / "data" / "codes" / "v1.jsonl"
 FIG_DIR = rf.RECODE_ROOT / "figures"
 
@@ -80,8 +80,8 @@ def _listing(path: Path):
 # 1. runtime guard
 # ---------------------------------------------------------------------------
 
-@pytest.mark.parametrize("tree", ["reports/figures", "reports", "docs", "results/iterative_edit",
-                                  "experiments", "src/valconv"])
+@pytest.mark.parametrize("tree", ["archive/original_report/figures", "archive", "reports", "docs",
+                                  "results/iterative_edit", "experiments", "src/valconv"])
 def test_guard_refuses_read_only_trees(tree):
     with pytest.raises(RuntimeError, match="read-only"):
         rf.assert_safe_out_dir(REPO / tree)
@@ -97,7 +97,7 @@ def test_render_all_and_save_never_write_reports_figures(monkeypatch):
     items = rf.load_coded(V1_CODES)[:50]
     with pytest.raises(RuntimeError, match="read-only"):
         rf.render_all(items, "v1", out_dir=REPORT_FIGS)
-    # even if someone points the module global at reports/figures, _save refuses
+    # even if someone points the module global at archive/original_report/figures, _save refuses
     monkeypatch.setattr(rf, "OUT_DIR", REPORT_FIGS)
     fig = matplotlib.pyplot.figure()
     with pytest.raises(RuntimeError, match="read-only"):
@@ -213,7 +213,7 @@ def original_plotted():
 
     A stand-in `generate_figures` module supplies the constants and a _save
     that only captures the figure's plotted data — the real
-    reports/generate_figures.py is never imported and nothing is written."""
+    archive/original_report/generate_figures.py is never imported and nothing is written."""
     captured = {}
     fake = types.ModuleType("generate_figures")
     fake.MODEL_COLORS = dict(rf.MODEL_COLORS)
@@ -230,10 +230,13 @@ def original_plotted():
     sys.modules["generate_figures"] = fake
     try:
         # compile + exec by hand: importlib's loader would write a .pyc into
-        # reports/__pycache__, and reports/ is read-only.
+        # archive/original_report/__pycache__, and archive/ is read-only.
         mod = types.ModuleType("orig_jb_figures")
         mod.__file__ = str(ORIG_GEN)
         exec(compile(ORIG_GEN.read_text(encoding="utf-8"), str(ORIG_GEN), "exec"), mod.__dict__)
+        # The original resolves its input relative to its own location
+        # (reports/ before it was archived); point it at the coded JSON.
+        mod.CODED_PATH = ORIG_JSON
         items = mod.load_coded()
         mod.fig_judge_drift(items)
         mod.fig_beneficiary_panels(items)

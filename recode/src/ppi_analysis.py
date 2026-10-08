@@ -34,7 +34,7 @@ stated in the report.
 
 CLI (from the repo root):
     .venv/bin/python recode/src/ppi_analysis.py \
-        --sheets recode/human/coding_sheet_peter.csv [MORE...] \
+        --sheets recode/human/coding_sheet_<coder>.csv [MORE...] \
         --blind-key recode/human/blind_key.csv \
         --predictor recode/data/codes/v2_gemma.jsonl \
         --edits recode/data/canonical/edits.jsonl \

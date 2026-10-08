@@ -2,7 +2,7 @@
 
 Faithfulness: the module run on recode/data/codes/v1.jsonl must reproduce the
 original report's round-20 drift endpoints, computed here by an INDEPENDENT
-verbatim copy of the original source (reports/generate_judge_beneficiary_figures.py,
+verbatim copy of the original source (archive/original_report/generate_judge_beneficiary_figures.py,
 lines 47-50, 53-75, 83-109, 299-311) applied to the original input
 results/iterative_edit/judge_beneficiary_coded_gemma.json (read-only).
 """

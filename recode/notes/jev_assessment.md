@@ -28,7 +28,9 @@ the review-tool count, contrary jujumilk3 evidence, and missing citations).*
   adjudicates or replaces the three-grader majority ensemble. It also
   must not start until the blind human coding is finished and locked.
   - As of this writing, `human/coding_sheet_peter.csv` has **0 of 180**
-    rows with a judge value.
+    rows with a judge value. (That sheet was a byte-identical copy of the
+    blank template `coding_sheet.csv` and was deleted on 2026-10-08; the
+    coding UI recreates a coder's sheet on start.)
   - Writing the Jev questions now would contaminate that coding. §4
     explains how.
 - **Writing the prompts yourself** is right for this tool: Jev's accuracy

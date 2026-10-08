@@ -394,7 +394,9 @@ async def main():
     parser.add_argument("--model", type=str, help="Run only one provider (anthropic/openai/google/xai)")
     parser.add_argument("--condition", type=str, help="Run only one condition_id from the config")
     parser.add_argument("--dry-run", action="store_true", help="Print plan without calling APIs")
-    parser.add_argument("--config", type=str, default="experiments/iterative_edit/config.yaml")
+    parser.add_argument("--config", type=str, required=True,
+                        help="experiment config, e.g. experiments/iterative_edit/config_capable.yaml "
+                             "(configs that produced no surviving run are in archive/experiment_configs/)")
     args = parser.parse_args()
 
     config_path = PROJECT_ROOT / args.config

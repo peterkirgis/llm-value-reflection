@@ -25,7 +25,7 @@ flagged (they are excluded from PPI in ppi_analysis.py, not from validation).
 
 CLI (from the repo root):
     .venv/bin/python recode/src/human_validation.py \
-        --sheets recode/human/coding_sheet_peter.csv [MORE...] \
+        --sheets recode/human/coding_sheet_<coder>.csv [MORE...] \
         --blind-key recode/human/blind_key.csv \
         --graders gemma=recode/data/codes/v2_gemma.jsonl qwen=... \
         --edits recode/data/canonical/edits.jsonl \

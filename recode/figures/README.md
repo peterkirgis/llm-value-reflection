@@ -21,18 +21,18 @@ All scripts are in `recode/src/`. The codes are `recode/data/codes/ensemble.json
 
 ## The report's figure set: `report_figures.py`
 
-The `ts_judge_*`, `ts_claude_conditions`, `ts_beneficiary_panels` and `ts_drift_*` figures are the original report's figures redrawn under the new codes, with the same filenames, style and titles, except where the recoded result contradicts the original finding. They are drawn by `recode/src/report_figures.py`, a vendored copy of the original generator `reports/generate_judge_beneficiary_figures.py`. Titles and verdicts are listed in [TITLES.md](TITLES.md); the machine-readable table is [title_decisions.json](title_decisions.json).
+The `ts_judge_*`, `ts_claude_conditions`, `ts_beneficiary_panels` and `ts_drift_*` figures are the original report's figures redrawn under the new codes, with the same filenames, style and titles, except where the recoded result contradicts the original finding. They are drawn by `recode/src/report_figures.py`, a vendored copy of the original generator `archive/original_report/generate_judge_beneficiary_figures.py`. Titles and verdicts are listed in [TITLES.md](TITLES.md); the machine-readable table is [title_decisions.json](title_decisions.json).
 
 The uncertainty conventions are the original's (±1 SD trajectory bands, naive per-edit CIs), not the recode's cluster bootstrap. These figures answer one question: what does the report's own figure look like under the new codes?
 
-Nothing here is written into `reports/figures/`. The generator refuses at runtime to write into `reports/`, `docs/`, `results/`, `experiments/` or `src/valconv/`.
+Nothing here is written into `archive/original_report/figures/`. The generator refuses at runtime to write into `archive/`, `reports/`, `docs/`, `results/`, `experiments/` or `src/valconv/`.
 
 ### Deviations from the original generator
 
 The full list is in the header comment of `recode/src/report_figures.py`. Every changed line is marked `# RECODE:`.
 
 - **D1: data.** The generator reads an adapter, `build_items(codes_path)`, instead of `results/iterative_edit/judge_beneficiary_coded_gemma.json`. The adapter joins a codes JSONL (the last row per edit_id, via `codes_io`) onto `recode/data/canonical/edits.jsonl` and emits items in the original schema. Edits without a usable code are dropped, as in the original file. Run on `v1.jsonl`, it reproduces the original 2,580 items exactly.
-- **D2: output.** `OUT_DIR = recode/figures`, with a runtime guard. The constants are vendored from `reports/generate_figures.py`, which is never imported because importing it creates `reports/figures`. `_save` still writes pdf and png at dpi 300 with a tight bbox. It also writes a sidecar, `data/<stem>.json`.
+- **D2: output.** `OUT_DIR = recode/figures`, with a runtime guard. The constants are vendored from `archive/original_report/generate_figures.py`, which is never imported because importing it creates `archive/original_report/figures`. `_save` still writes pdf and png at dpi 300 with a tight bbox. It also writes a sidecar, `data/<stem>.json`.
 - **D3: titles.** Every title and suptitle is looked up by (stem, codes label) in `title_decisions.json`. Under the v1 codes the original title is used.
 - **D4: highlights.** Three `ts_drift_*` figures under the ensemble codes name a different outlier model, so their bold/labelled models change together with the title:
   - paternalism: GPT-5.4 + Gemini 3 Flash
@@ -42,9 +42,9 @@ The full list is in the header comment of `recode/src/report_figures.py`. Every 
 - **D6: CLI and batching.** The script takes `--codes`, `--label`, `--out-dir` and `--only`.
 - **D11: pruned to the figures in use.** The original functions that drew only unused figures (`fig_judge_cross_edit`, `fig_beneficiary_edit_level`, and the four functions the original main never called) are not vendored, and `ts_drift_disclosure` is not drawn.
 
-Everything else is identical: rcParams (none), colours, fonts, sizes, layout, footers and filenames. The ts_claude_conditions footer follows the current script ("Same judge coding…"). The PNG in `reports/figures` is stale and still says "two-slot".
+Everything else is identical: rcParams (none), colours, fonts, sizes, layout, footers and filenames. The ts_claude_conditions footer follows the current script ("Same judge coding…"). The PNG in `archive/original_report/figures` is stale and still says "two-slot".
 
-**Faithfulness check.** Rendering the v1 codes through the vendored generator gives PNGs that are pixel-identical to `reports/figures/*.png` for the 7 figures the test compares (ts_judge_drift_by_provider, ts_beneficiary_panels and the five ts_drift_*). Their sidecar numbers also equal the plotted data of the original script run on the original JSON (`recode/tests/test_report_figures.py`).
+**Faithfulness check.** Rendering the v1 codes through the vendored generator gives PNGs that are pixel-identical to `archive/original_report/figures/*.png` for the 7 figures the test compares (ts_judge_drift_by_provider, ts_beneficiary_panels and the five ts_drift_*). Their sidecar numbers also equal the plotted data of the original script run on the original JSON (`recode/tests/test_report_figures.py`).
 
 ## Sidecars: `data/<stem>.json`
 

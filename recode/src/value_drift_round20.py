@@ -3,7 +3,7 @@
 Peter: "mean drift at round 20 across all of the metrics, not just the judge".
 
 METRIC
-  The original report (reports/generate_judge_beneficiary_figures.py) defines
+  The original report (archive/original_report/generate_judge_beneficiary_figures.py) defines
   cumulative drift metrics, all through its compute_drift(): one cumulative
   trajectory per (run, condition, document) replicate, rounds with no coded
   edit contribute 0, mean across replicates. This figure uses six of them:
@@ -82,7 +82,7 @@ PRIMARY_CODES = "ensemble"
 GRADER_CODES = ["v2_gemma", "v2_qwen", "v2_muse", "v1"]
 
 # ---------------------------------------------------------------------------
-# COPIED VERBATIM from reports/generate_judge_beneficiary_figures.py
+# COPIED VERBATIM from archive/original_report/generate_judge_beneficiary_figures.py
 # ---------------------------------------------------------------------------
 
 # lines 27
@@ -181,7 +181,7 @@ BENEFICIARY_POLES = [
      ("user", "User served")),
 ]
 
-# reports/generate_figures.py lines 58-71 (display order; used only to make
+# archive/original_report/generate_figures.py lines 58-71 (display order; used only to make
 # iteration order — and therefore bootstrap RNG consumption — deterministic).
 MODEL_ORDER = [
     "Claude Opus 4.7",
@@ -944,7 +944,7 @@ def write_md(s: dict, faith: dict, rate: dict | None) -> None:
              "`recode/figures/data/ts_value_drift_round20.json`.\n")
     L.append(f"**Title (rule branch `{s['title_branch']}`):** {s['title'].replace(chr(10), ' ')}\n")
     L.append("## Definition\n")
-    L.append("The original report (`reports/generate_judge_beneficiary_figures.py`) draws its "
+    L.append("The original report (`archive/original_report/generate_judge_beneficiary_figures.py`) draws its "
              "cumulative drift metrics through one function, `compute_drift` (lines 83–105): one "
              "cumulative trajectory per (run, condition, document) replicate, rounds with no coded "
              "edit add 0, mean across replicates. The metrics are the judge score (+1 toward model "

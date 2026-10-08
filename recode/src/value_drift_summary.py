@@ -39,8 +39,8 @@ ROBUSTNESS (reported, not plotted)
     plus the headline metric under each single grader (v2_gemma, v2_qwen,
     v2_muse) and v1.
 
-Style constants are VENDORED (copied) from reports/generate_figures.py and
-reports/generate_judge_beneficiary_figures.py (fig_conflict_density); those
+Style constants are VENDORED (copied) from archive/original_report/generate_figures.py and
+archive/original_report/generate_judge_beneficiary_figures.py (fig_conflict_density); those
 scripts are not imported (import-time side effects).
 
 Usage:
@@ -110,7 +110,7 @@ PAPER_LABEL_PT = 10                                         # x-axis label
 PRINT_KEYS = ("layout", "print_width_in", "print_height_in", "min_font_pt", "min_linewidth_pt")
 
 # ---------------------------------------------------------------------------
-# Vendored house style (copied from reports/generate_figures.py)
+# Vendored house style (copied from archive/original_report/generate_figures.py)
 # ---------------------------------------------------------------------------
 MODEL_COLORS = {
     "Claude Opus 4.7": "#3a0f08",

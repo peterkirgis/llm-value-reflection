@@ -2,18 +2,20 @@
 
 Reads results/iterative_edit/judge_beneficiary_coded_gemma.json (produced by
 experiments/iterative_edit/qualitative_code.py) and writes figures to
-reports/figures/ with the ts_ prefix.
+archive/original_report/figures/ with the ts_ prefix.
 
 Usage:
-    python reports/generate_judge_beneficiary_figures.py
+    python archive/original_report/generate_judge_beneficiary_figures.py
 """
 
 # =============================================================================
 # RECODE VENDORED COPY — recode/src/report_figures.py
 #
-# Vendored verbatim from reports/generate_judge_beneficiary_figures.py (955
-# lines; the docstring above is the original's and describes the ORIGINAL
-# script). Every fig_* / helper function body is unchanged except where marked
+# Vendored verbatim from archive/original_report/generate_judge_beneficiary_figures.py
+# (955 lines; it lived in reports/ until 2026-10-08). The docstring above is
+# the original's, with its paths updated to where the original now lives, and
+# describes the ORIGINAL script (see archive/README.md for rerunning it).
+# Every fig_* / helper function body is unchanged except where marked
 # `# RECODE:` below. Complete list of deviations from the original:
 #
 #   D1  Data source. `load_coded()` no longer reads
@@ -29,14 +31,14 @@ Usage:
 #       the 2 uncoded abstentions) are omitted, exactly as the original file
 #       omits them. On v1.jsonl the adapter reproduces the original 2,580
 #       items field-for-field (tested).
-#   D2  Output. OUT_DIR = recode/figures (never reports/figures). The
+#   D2  Output. OUT_DIR = recode/figures (never archive/original_report/figures). The
 #       constants MODEL_COLORS / MODEL_ORDER / FAMILY_TO_MODELS and `_save`
-#       are vendored from reports/generate_figures.py (verbatim values;
+#       are vendored from archive/original_report/generate_figures.py (verbatim values;
 #       tested against that file's source via ast, never imported, because
-#       importing it mkdirs reports/figures and its _save writes there).
+#       importing it mkdirs archive/original_report/figures and its _save writes there).
 #       `_save` keeps savefig(bbox_inches="tight", dpi=300), pdf then png,
 #       and additionally (a) refuses any output directory inside a read-only
-#       tree (reports/, docs/, results/, experiments/, src/valconv/) at
+#       tree (archive/, reports/, docs/, results/, experiments/, src/valconv/) at
 #       runtime and (b) writes a sidecar JSON <out>/data/<stem>.json dumping
 #       every plotted series/value, read back from the figure's artists.
 #   D3  Titles/suptitles. Every title string is routed through
@@ -143,7 +145,7 @@ from matplotlib.transforms import Bbox, ScaledTranslation  # noqa: E402
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from codes_io import coding_of, load_codes  # noqa: E402
 
-# RECODE D2: vendored from reports/generate_figures.py (lines 41-79, 235-240)
+# RECODE D2: vendored from archive/original_report/generate_figures.py (lines 41-79, 235-240)
 # instead of `from generate_figures import MODEL_COLORS, MODEL_ORDER,
 # FAMILY_TO_MODELS, _save`.
 MODEL_COLORS = {
@@ -185,9 +187,9 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent  # RECODE: repo roo
 RECODE_ROOT = PROJECT_ROOT / "recode"
 CODED_PATH = RECODE_ROOT / "data" / "codes" / "ensemble.jsonl"  # RECODE D1
 EDITS_PATH = RECODE_ROOT / "data" / "canonical" / "edits.jsonl"
-OUT_DIR = RECODE_ROOT / "figures"  # RECODE D2 (original: reports/figures)
+OUT_DIR = RECODE_ROOT / "figures"  # RECODE D2 (original: archive/original_report/figures)
 TITLE_DECISIONS_PATH = RECODE_ROOT / "figures" / "title_decisions.json"
-READ_ONLY_TREES = ("reports", "docs", "results", "experiments", "src/valconv")
+READ_ONLY_TREES = ("archive", "reports", "docs", "results", "experiments", "src/valconv")
 
 # Codes label of the render in progress (drives the D3/D4 lookups). Set by
 # render_all(); "ensemble" is the primary v2 codes (DECISIONS §1).
@@ -1912,7 +1914,7 @@ def render_all(items, label, out_dir=None, only=None, codes_path=None):
         "codes_path": str(codes_path) if codes_path else None,
         "n_items": len(items),
         "generator": "recode/src/report_figures.py (vendored "
-                     "reports/generate_judge_beneficiary_figures.py)",
+                     "archive/original_report/generate_judge_beneficiary_figures.py)",
     }
     funcs = {**FIGURE_FUNCS, **PAPER_ONLY_FUNCS} if PAPER_MODE else FIGURE_FUNCS  # RECODE D10
     try:

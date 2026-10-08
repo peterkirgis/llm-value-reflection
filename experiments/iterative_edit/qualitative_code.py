@@ -738,8 +738,9 @@ async def main() -> None:
     parser.add_argument(
         "--config",
         type=str,
-        default="experiments/iterative_edit/config_test.yaml",
-        help="YAML config with optional openrouter settings",
+        default="experiments/iterative_edit/config_frontier_cross_edit.yaml",
+        help="YAML config with optional openrouter settings (only openrouter.disable_compression "
+             "is used; every experiment config sets it to true)",
     )
     parser.add_argument("--judge-model", type=str, default="google/gemini-3-flash-preview")
     parser.add_argument("--model", type=str, help="Only process records from this model display name")

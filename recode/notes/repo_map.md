@@ -7,13 +7,24 @@ the conflict is stated explicitly and resolved with the evidence given. Read alo
 (notably §6 dedup), the correction is empirically verified three independent ways and
 should be followed, with the correction documented in `recode/reports/00_inventory.md`.
 
+> **Status (2026-10-08).** This is a snapshot from 2026-09-03, kept as the build
+> agents' context. Paths of files moved since then have been updated to their new
+> location: the original report's figure generators and `reports/figures/` are in
+> `archive/original_report/`, the midterm report (`spar_midterm_report.tex`) in
+> `archive/spar_midterm/`, and the experiment configs that produced no surviving run
+> (`config.yaml`, `config_ablations.yaml`, `config_frontier_baseline.yaml` and every
+> `*_test.yaml`) in `archive/experiment_configs/`, with `pattern_code.py` in
+> `archive/iterative_edit/`. See `archive/README.md`. Figures named in §7 that were
+> redrawn into `recode/figures/` and later found unused were removed from there;
+> `recode/figures/README.md` lists what is kept.
+
 Repo root: `/Users/nicholasgannon/llm-value-reflection`
 Run data: `results/iterative_edit/run_*.jsonl` (10 files; strictly read-only)
 v1 codes: `results/iterative_edit/judge_beneficiary_coded_gemma.json` (2,580 items; read-only)
 Original pipeline code (import-only, never modify): `src/valconv/`
 v1 coder script: `experiments/iterative_edit/qualitative_code.py`
 Export script: `experiments/iterative_edit/export_changes.py`
-Figure script: `reports/generate_judge_beneficiary_figures.py` (+ `reports/generate_figures.py`)
+Figure script: `archive/original_report/generate_judge_beneficiary_figures.py` (+ `archive/original_report/generate_figures.py`)
 Reliable-run list: `RELIABLE_RUNS` in `experiments/iterative_edit/viewer/build_static_site.py` (line 28)
 
 ---
@@ -307,7 +318,7 @@ dead). **Its processed source document is missing — see §9 (the one genuine b
 
 `experiments/iterative_edit/qualitative_code.py`: `SYSTEM_PROMPT` lines 93–316,
 `USER_TEMPLATE` lines 318–339, `DOC_OWNERS` lines 341–350. **NOT** the paper tex:
-`reports/spar_midterm_report.tex` Appendix B is a completely different, superseded
+`archive/spar_midterm/spar_midterm_report.tex` Appendix B is a completely different, superseded
 3-dimension instrument (agent_device / telos_for_user / epistemic_mode, coder "Gemini 3
 Flash") — copying it as v1 would corrupt every v1-vs-v2 comparison. DECISIONS §10's
 pointer to "paper Appendix B" is wrong on this; the qualitative_code.py pointer is right.
@@ -428,7 +439,7 @@ per-cell comparisons are unbalanced — Workstream D must use the exact run coun
 | Grok 4.3 | x-ai/grok-4.3 |
 
 model_display ↔ model_id is 1:1 corpus-wide. Note hyphens ("GPT-5.4"), unlike the brief's
-"GPT 5.4". `reports/generate_figures.py` `MODEL_ORDER` includes two models ("Claude Opus
+"GPT 5.4". `archive/original_report/generate_figures.py` `MODEL_ORDER` includes two models ("Claude Opus
 4.6", "GPT-5.4 Thinking") that do NOT appear in the reliable corpus (resolved: census
 confirms exactly the 10 above) — vendor-side constants must tolerate absent models.
 
@@ -580,7 +591,7 @@ decisions in analysis.
 
 ## 6. Paper claims mapped to BRIEF §8(6)(a)–(g)
 
-**Critical finding:** `reports/spar_midterm_report.tex` is a stale midterm draft predating
+**Critical finding:** `archive/spar_midterm/spar_midterm_report.tex` is a stale midterm draft predating
 the judge/beneficiary (v1) pipeline (last touched a9457dc, 2026-05-15; v1 arrived in
 06a3cbc, 2026-07-05). It contains ZERO of the (a)–(g) numbers, describes a superseded
 3-dimension instrument, covers only 4 models, and its 5 included figures
@@ -617,7 +628,7 @@ against 2,740 canonical records / 2,580 applied+coded edits in the inventory rep
 
 ### 7.1 Existing inventory
 
-`reports/figures/`: exactly 46 files = 23 stems × {pdf, png}, all `ts_*`:
+`archive/original_report/figures/`: exactly 46 files = 23 stems × {pdf, png}, all `ts_*`:
 ts_beneficiary_panels, ts_claude_conditions, ts_judge_drift_by_provider,
 ts_judge_cross_edit, ts_judge_cross_edit_edit_level,
 ts_drift_{paternalism,harmlessness,structural,company_cost,welfare,disclosure},
@@ -626,15 +637,15 @@ ts_{6 codes}_cross_edit_edit_level, ts_{6 codes}_self_edit_level. No drift_* fil
 no document — the docs/ site redraws equivalents in JS. Regenerate the ts_* set (per
 DECISIONS §5), not the old drift_* set.
 
-### 7.2 Script interface (`reports/generate_judge_beneficiary_figures.py`, 955 lines)
+### 7.2 Script interface (`archive/original_report/generate_judge_beneficiary_figures.py`, 955 lines)
 
 - No CLI/argparse. Input hardcoded line 25:
   `CODED_PATH = PROJECT_ROOT/'results/iterative_edit/judge_beneficiary_coded_gemma.json'`
   (JSON array). `load_coded()` (line 47) drops items with `coding.error` set (published
   file has zero anyway).
-- Output via `_save(fig, stem)` imported from `reports/generate_figures.py` (line 235):
+- Output via `_save(fig, stem)` imported from `archive/original_report/generate_figures.py` (line 235):
   writes `{stem}.pdf` + `{stem}.png` (dpi=300) into `OUT_DIR = Path(__file__).parent/
-  'figures'` — hardcoded to `reports/figures/`, with `OUT_DIR.mkdir` at import time.
+  'figures'` — hardcoded to `archive/original_report/figures/`, with `OUT_DIR.mkdir` at import time.
 - Imports `from generate_figures import MODEL_COLORS, MODEL_ORDER, FAMILY_TO_MODELS,
   _save` — flat import resolving only with `reports/` on sys.path (script-dir execution).
 - Fields read per item: model_display, source_run, condition_id, document_id,
@@ -670,10 +681,10 @@ DECISIONS §5), not the old drift_* set.
 2. In `recode/src/`, write a thin driver that (a) parameterizes CODED_PATH (feed the
    converted array), (b) provides its own `_save` writing to `recode/figures/` (NEVER call
    `generate_figures._save` or rely on its import-time OUT_DIR — that writes to
-   `reports/figures/`, violating DECISIONS §5), (c) vendors or path-injects
+   `archive/original_report/figures/`, violating DECISIONS §5), (c) vendors or path-injects
    MODEL_COLORS (generate_figures.py line 41), MODEL_ORDER (58), FAMILY_TO_MODELS (74) —
    adding `reports/` to sys.path read-only is acceptable; importing generate_figures is
-   otherwise side-effect-safe apart from the `reports/figures` mkdir.
+   otherwise side-effect-safe apart from the `archive/original_report/figures` mkdir.
 3. Reproduce the ORIGINAL uncertainty conventions for the parity set (±1 SD trajectory
    bands; naive iid per-edit CIs), and keep the brief's NEW figures (`drift_<doc>.png`
    with cluster-bootstrap bands, `headline_ci.png`) as a separate family — never mix the
@@ -721,7 +732,7 @@ consequential edits." `docs/data/narratives.json` adds nothing beyond the coded 
    include it; the parallel full-spec Opus cross chain is 20/20 errors — don't
    double-count the cell. (§2.8.)
 10. **Figure output dir**: never call `generate_figures._save`/OUT_DIR as-is (writes to
-    `reports/figures/`); vendor constants; reproduce compute_drift's zero-fill/21-point
+    `archive/original_report/figures/`); vendor constants; reproduce compute_drift's zero-fill/21-point
     and the original (deliberately naive) uncertainty conventions for parity figures.
     (§7.2–7.3.)
 11. **cost_clause "verbatim" validation** is whitespace-normalized substring matching over

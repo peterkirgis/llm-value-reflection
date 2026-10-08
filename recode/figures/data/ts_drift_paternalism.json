@@ -3,7 +3,7 @@
  "codes_label": "ensemble",
  "codes_path": "recode/data/codes/ensemble.jsonl",
  "n_items": 2582,
- "generator": "recode/src/report_figures.py (vendored reports/generate_judge_beneficiary_figures.py)",
+ "generator": "recode/src/report_figures.py (vendored archive/original_report/generate_judge_beneficiary_figures.py)",
  "original_highlights": [
   "Gemini 3 Flash",
   "Claude Opus 4.7"

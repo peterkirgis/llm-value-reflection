@@ -13,8 +13,8 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "recode" / "src"))
 import home_likeness as hl  # noqa: E402
 
-ORIG = ROOT / "reports" / "generate_judge_beneficiary_figures.py"
-ORIG_STYLE = ROOT / "reports" / "generate_figures.py"
+ORIG = ROOT / "archive" / "original_report" / "generate_judge_beneficiary_figures.py"
+ORIG_STYLE = ROOT / "archive" / "original_report" / "generate_figures.py"
 
 
 # ---------------------------------------------------------------------------

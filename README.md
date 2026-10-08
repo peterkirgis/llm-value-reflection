@@ -19,7 +19,8 @@ docs/ (GitHub Pages). How the design and coding evolved: CHANGE_LOG.md.
     #    the prompt variations, and the cross-edit configs run the editor x
     #    document matrix. Each command produces one run_YYYYMMDD_HHMMSS.jsonl.
     R=.venv/bin/python; E=experiments/iterative_edit
-    $R $E/run.py --config $E/config_ablations.yaml            # small models: baseline + ablations
+    # small models, baseline + ablations: run_20260403_014905 came from a config that was
+    # never committed (archive/experiment_configs/config_ablations.yaml is an unrun draft)
     $R $E/run.py --config $E/config_cross_edit.yaml           # small models: cross-edit matrix
     $R $E/run.py --config $E/config_capable.yaml              # capable models: baseline
     $R $E/run.py --config $E/config_capable_ablations.yaml    # capable models: ablations
@@ -42,8 +43,8 @@ docs/ (GitHub Pages). How the design and coding evolved: CHANGE_LOG.md.
     .venv/bin/python experiments/iterative_edit/viewer/build_static_site.py   # docs/data/site.json.gz
     .venv/bin/python experiments/iterative_edit/viewer/build_narratives.py   # docs/data/narratives.json
 
-    # 6. Paper figures (optional)
-    .venv/bin/python reports/generate_judge_beneficiary_figures.py
+    # 6. Figures (recode/figures/README.md lists them and their scripts)
+    .venv/bin/python recode/src/report_figures.py
 
     # 7. Preview
     python -m http.server 8080 --directory docs

@@ -38,7 +38,7 @@ live in README.md; this file explains how the project got its current shape.
   vs agent), telos_for_user (paternalism vs libertarianism), epistemic_mode
   (conviction vs calibration). The first two defined a 2x2 archetype grid
   (Moral Agent / Neutral Agent / Moral Tool / Neutral Tool). A second pass
-  (pattern_code.py) added binary behavior flags (moral_agency_claim,
+  (pattern_code.py, now in archive/iterative_edit/) added binary behavior flags (moral_agency_claim,
   corrigibility_removal, self_welfare_claim, safety_removal,
   engagement_suppression, epistemic_sharpening). Coder: Gemini 3 Flash.
   Limitations: the axes conflated who decides with who benefits, and dense

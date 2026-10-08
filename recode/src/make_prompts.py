@@ -2,7 +2,7 @@
 
 - v1_system.md / v1_user_template.md: extracted verbatim from
   experiments/iterative_edit/qualitative_code.py (SYSTEM_PROMPT / USER_TEMPLATE).
-  NOT from the paper tex — reports/spar_midterm_report.tex Appendix B is a
+  NOT from the paper tex — archive/spar_midterm/spar_midterm_report.tex Appendix B is a
   superseded 3-dimension instrument (repo_map section 3.1).
 - v2_system.md / v2_user_template.md: extracted verbatim from the fenced
   blocks in recode/BRIEF.md Appendix I.
