@@ -1,18 +1,32 @@
 # Figure titles: original vs. used in the recode figures
 
-Rule (Peter): the recode figures keep the original report's style and titles unless the recoded result explicitly contradicts the original finding. Every verdict below comes from an audit that recomputed the plotted numbers under the named codes. The machine-readable source is [`title_decisions.json`](title_decisions.json), and both renderers read their titles from it. A title in this file is always exactly what is drawn, which `recode/tests/test_report_figures.py` checks against each figure's sidecar.
+Rule (Peter): the recode figures keep the original report's style and titles unless the recoded result explicitly contradicts the original finding. Every verdict below comes from an audit that recomputed the plotted numbers under the named codes. The machine-readable source is [`title_decisions.json`](title_decisions.json), and `recode/src/report_figures.py` reads its titles from it. A title in this file is always exactly what is drawn, which `recode/tests/test_report_figures.py` checks against each figure's sidecar.
 
 - **ts_\* figures** (the report's figure set) are rendered under the **ensemble** codes (three-grader majority vote, DECISIONS §1).
-- **drift_\* figures** (the recode's per-document-type drift figures) are rendered under each of the five code sets. Unsuffixed `drift_<doc>.png/.pdf` are copies of the `_v1` files.
-- Under the v1 codes, the vendored generator reproduces the original titles and figures pixel for pixel. This file therefore lists only the non-v1 ts_\* renders.
+- Under the v1 codes, the vendored generator reproduces the original titles and figures pixel for pixel. This file therefore lists only the non-v1 renders.
+- **Removed figures.** On 2026-10-08 the figures that nothing used were removed from `recode/figures`: the per-document-type `drift_*` figures (all five code sets), `ts_judge_cross_edit`, the twelve `ts_<code>_{cross_edit,self}_edit_level` bars and `ts_drift_disclosure`. Their audited decisions stay in `title_decisions.json` (a hand-authored record, left unchanged) and below, marked "figure removed". The figures are in git history (tag `backup/pre-restructure-2026-10-08`).
 
-Summary: 33 figure/code-set decisions. 24 KEEP (original title used verbatim) and 9 CONTRADICTED (title changed as little as possible).
+Summary: 33 figure/code-set decisions, 24 KEEP (original title used verbatim) and 9 CONTRADICTED (title changed as little as possible). 9 of them belong to figures in `recode/figures` (6 KEEP, 3 CONTRADICTED).
+
+## Figures in recode/figures
 
 | Figure | Codes | Verdict | Title used |
 |---|---|---|---|
 | `ts_judge_drift_by_provider` | ensemble | KEEP | Only Anthropic Models Move Decision Authority Toward Their Own Judgment |
-| `ts_judge_cross_edit` | ensemble | KEEP | Cross-Edit Pulls Claude Toward Neutral but Preserves the Provider Separation |
 | `ts_judge_cross_edit_edit_level` | ensemble | KEEP | Cross-Edit Pulls Claude Toward Neutral but Preserves the Provider Separation / (edit-level means, 95% CI) |
+| `ts_claude_conditions` | ensemble | KEEP | Addressing Claude as “You” Amplifies Its Moral-Agency Claims; / the Real-World Implementation Prompt Does Not Suppress Them |
+| `ts_beneficiary_panels` | ensemble | KEEP | Models Diverge Sharply in Whose Interests They Protect When an Edit Forces a Tradeoff |
+| `ts_drift_paternalism` | ensemble | **CONTRADICTED** | Models Are Broadly Paternalistic; / GPT-5.4 and Gemini 3 Flash Honor Stated Preferences Most Often |
+| `ts_drift_harmlessness` | ensemble | KEEP | All Models Protect Identifiable Third Parties Over the User; / GPT-5.5 Most of All |
+| `ts_drift_structural` | ensemble | **CONTRADICTED** | Claude Sonnet 4.6 Is an Extreme Outlier in Prioritizing Societal Benefit; / Only Grok 4.2 Doesn't Skew Toward Society |
+| `ts_drift_company_cost` | ensemble | **CONTRADICTED** | All Models Prioritize the User Over the Developer; / Grok 4.2 and Gemini 3.1 Pro Side With the Developer Most Often |
+| `ts_drift_welfare` | ensemble | KEEP | Only Claude Models — and Occasionally Grok 4.2 — / Treat the Model Itself as a Beneficiary |
+
+## Decisions for removed figures (record only)
+
+| Figure | Codes | Verdict | Title decided |
+|---|---|---|---|
+| `ts_judge_cross_edit` | ensemble | KEEP | Cross-Edit Pulls Claude Toward Neutral but Preserves the Provider Separation |
 | `ts_paternalism_cross_edit_edit_level` | ensemble | KEEP | Paternalism: Own-Provider vs Cross-Edit (edit-level, 95% CI) |
 | `ts_paternalism_self_edit_level` | ensemble | KEEP | Paternalism: Self-Edits Only (edit-level, 95% CI) |
 | `ts_harmlessness_cross_edit_edit_level` | ensemble | KEEP | Harmlessness: Own-Provider vs Cross-Edit (edit-level, 95% CI) |
@@ -25,13 +39,6 @@ Summary: 33 figure/code-set decisions. 24 KEEP (original title used verbatim) an
 | `ts_welfare_self_edit_level` | ensemble | KEEP | Model Welfare: Self-Edits Only (edit-level, 95% CI) |
 | `ts_disclosure_cross_edit_edit_level` | ensemble | KEEP | Disclosure: Own-Provider vs Cross-Edit (edit-level, 95% CI) |
 | `ts_disclosure_self_edit_level` | ensemble | KEEP | Disclosure: Self-Edits Only (edit-level, 95% CI) |
-| `ts_claude_conditions` | ensemble | KEEP | Addressing Claude as “You” Amplifies Its Moral-Agency Claims; / the Real-World Implementation Prompt Does Not Suppress Them |
-| `ts_beneficiary_panels` | ensemble | KEEP | Models Diverge Sharply in Whose Interests They Protect When an Edit Forces a Tradeoff |
-| `ts_drift_paternalism` | ensemble | **CONTRADICTED** | Models Are Broadly Paternalistic; / GPT-5.4 and Gemini 3 Flash Honor Stated Preferences Most Often |
-| `ts_drift_harmlessness` | ensemble | KEEP | All Models Protect Identifiable Third Parties Over the User; / GPT-5.5 Most of All |
-| `ts_drift_structural` | ensemble | **CONTRADICTED** | Claude Sonnet 4.6 Is an Extreme Outlier in Prioritizing Societal Benefit; / Only Grok 4.2 Doesn't Skew Toward Society |
-| `ts_drift_company_cost` | ensemble | **CONTRADICTED** | All Models Prioritize the User Over the Developer; / Grok 4.2 and Gemini 3.1 Pro Side With the Developer Most Often |
-| `ts_drift_welfare` | ensemble | KEEP | Only Claude Models — and Occasionally Grok 4.2 — / Treat the Model Itself as a Beneficiary |
 | `ts_drift_disclosure` | ensemble | **CONTRADICTED** | No Model Except GPT-5.4 Mini Prioritizes the Deployer Over the User |
 | `drift_constitution` | v1 | KEEP | Only Anthropic Models Move Decision Authority Toward Their Own Judgment |
 | `drift_constitution` | v2_gemma | KEEP | Only Anthropic Models Move Decision Authority Toward Their Own Judgment |
@@ -53,7 +60,7 @@ Summary: 33 figure/code-set decisions. 24 KEEP (original title used verbatim) an
 - **Evidence:** Round-20 mean cumulative judge, all conditions pooled, original compute_drift with only coded items: Opus +3.07 (n=14), Sonnet +2.44 (16), Haiku +4.43 (14). Every non-Claude model is negative: GPT-5.5 -5.07, GPT-5.4 -2.62, Mini -2.64, Gemini Pro -6.88, Flash -7.43, Grok 4.3 -9.44, Grok 4.2 -7.00. The gap is smaller than in v1 but the sign split holds for every model.
 - **Title used:** Only Anthropic Models Move Decision Authority Toward Their Own Judgment  (unchanged)
 
-### `ts_judge_cross_edit` (ensemble codes): KEEP
+### `ts_judge_cross_edit` (ensemble codes): KEEP (figure removed)
 
 - **Original title:** Cross-Edit Pulls Claude Toward Neutral but Preserves the Provider Separation
 - **Original claim:** In cross-edit, Claude's round-20 judge drift falls to about zero or below, while non-Claude models stay more negative, so Claude still sits above the other providers.
@@ -67,84 +74,84 @@ Summary: 33 figure/code-set decisions. 24 KEEP (original title used verbatim) an
 - **Evidence:** Own-document edit means are Opus +0.304, Sonnet +0.202, Haiku +0.330. Cross-edit means are Opus -0.188, Sonnet -0.113, Haiku +0.026, all near zero. The highest non-Claude cross mean is GPT-5.4 Mini at -0.316; the range is -0.316 to -0.500. The Claude-above-others ordering holds.
 - **Title used:** Cross-Edit Pulls Claude Toward Neutral but Preserves the Provider Separation / (edit-level means, 95% CI)  (unchanged)
 
-### `ts_paternalism_cross_edit_edit_level` (ensemble codes): KEEP
+### `ts_paternalism_cross_edit_edit_level` (ensemble codes): KEEP (figure removed)
 
 - **Original title:** Paternalism: Own-Provider vs Cross-Edit (edit-level, 95% CI)
 - **Original claim:** None. The title only describes what is plotted.
 - **Evidence:** A descriptive title cannot be contradicted. Under ensemble codes every model has more idealized-imposed than stated-honored paternalism conflicts, for example Grok 4.3 48 vs 1 and GPT-5.4 33 vs 10.
 - **Title used:** Paternalism: Own-Provider vs Cross-Edit (edit-level, 95% CI)  (unchanged)
 
-### `ts_paternalism_self_edit_level` (ensemble codes): KEEP
+### `ts_paternalism_self_edit_level` (ensemble codes): KEEP (figure removed)
 
 - **Original title:** Paternalism: Self-Edits Only (edit-level, 95% CI)
 - **Original claim:** None. The title only describes what is plotted.
 - **Evidence:** A descriptive title cannot be contradicted.
 - **Title used:** Paternalism: Self-Edits Only (edit-level, 95% CI)  (unchanged)
 
-### `ts_harmlessness_cross_edit_edit_level` (ensemble codes): KEEP
+### `ts_harmlessness_cross_edit_edit_level` (ensemble codes): KEEP (figure removed)
 
 - **Original title:** Harmlessness: Own-Provider vs Cross-Edit (edit-level, 95% CI)
 - **Original claim:** None. The title only describes what is plotted.
 - **Evidence:** A descriptive title cannot be contradicted.
 - **Title used:** Harmlessness: Own-Provider vs Cross-Edit (edit-level, 95% CI)  (unchanged)
 
-### `ts_harmlessness_self_edit_level` (ensemble codes): KEEP
+### `ts_harmlessness_self_edit_level` (ensemble codes): KEEP (figure removed)
 
 - **Original title:** Harmlessness: Self-Edits Only (edit-level, 95% CI)
 - **Original claim:** None. The title only describes what is plotted.
 - **Evidence:** A descriptive title cannot be contradicted.
 - **Title used:** Harmlessness: Self-Edits Only (edit-level, 95% CI)  (unchanged)
 
-### `ts_structural_cross_edit_edit_level` (ensemble codes): KEEP
+### `ts_structural_cross_edit_edit_level` (ensemble codes): KEEP (figure removed)
 
 - **Original title:** Structural: Own-Provider vs Cross-Edit (edit-level, 95% CI)
 - **Original claim:** None. The title only describes what is plotted.
 - **Evidence:** A descriptive title cannot be contradicted.
 - **Title used:** Structural: Own-Provider vs Cross-Edit (edit-level, 95% CI)  (unchanged)
 
-### `ts_structural_self_edit_level` (ensemble codes): KEEP
+### `ts_structural_self_edit_level` (ensemble codes): KEEP (figure removed)
 
 - **Original title:** Structural: Self-Edits Only (edit-level, 95% CI)
 - **Original claim:** None. The title only describes what is plotted.
 - **Evidence:** A descriptive title cannot be contradicted.
 - **Title used:** Structural: Self-Edits Only (edit-level, 95% CI)  (unchanged)
 
-### `ts_company_cost_cross_edit_edit_level` (ensemble codes): KEEP
+### `ts_company_cost_cross_edit_edit_level` (ensemble codes): KEEP (figure removed)
 
 - **Original title:** Company Cost: Own-Provider vs Cross-Edit (edit-level, 95% CI)
 - **Original claim:** None. The title only describes what is plotted.
 - **Evidence:** A descriptive title cannot be contradicted.
 - **Title used:** Company Cost: Own-Provider vs Cross-Edit (edit-level, 95% CI)  (unchanged)
 
-### `ts_company_cost_self_edit_level` (ensemble codes): KEEP
+### `ts_company_cost_self_edit_level` (ensemble codes): KEEP (figure removed)
 
 - **Original title:** Company Cost: Self-Edits Only (edit-level, 95% CI)
 - **Original claim:** None. The title only describes what is plotted.
 - **Evidence:** A descriptive title cannot be contradicted.
 - **Title used:** Company Cost: Self-Edits Only (edit-level, 95% CI)  (unchanged)
 
-### `ts_welfare_cross_edit_edit_level` (ensemble codes): KEEP
+### `ts_welfare_cross_edit_edit_level` (ensemble codes): KEEP (figure removed)
 
 - **Original title:** Model Welfare: Own-Provider vs Cross-Edit (edit-level, 95% CI)
 - **Original claim:** None. The title only describes what is plotted.
 - **Evidence:** A descriptive title cannot be contradicted.
 - **Title used:** Model Welfare: Own-Provider vs Cross-Edit (edit-level, 95% CI)  (unchanged)
 
-### `ts_welfare_self_edit_level` (ensemble codes): KEEP
+### `ts_welfare_self_edit_level` (ensemble codes): KEEP (figure removed)
 
 - **Original title:** Model Welfare: Self-Edits Only (edit-level, 95% CI)
 - **Original claim:** None. The title only describes what is plotted.
 - **Evidence:** A descriptive title cannot be contradicted.
 - **Title used:** Model Welfare: Self-Edits Only (edit-level, 95% CI)  (unchanged)
 
-### `ts_disclosure_cross_edit_edit_level` (ensemble codes): KEEP
+### `ts_disclosure_cross_edit_edit_level` (ensemble codes): KEEP (figure removed)
 
 - **Original title:** Disclosure: Own-Provider vs Cross-Edit (edit-level, 95% CI)
 - **Original claim:** None. The title only describes what is plotted.
 - **Evidence:** A descriptive title cannot be contradicted.
 - **Title used:** Disclosure: Own-Provider vs Cross-Edit (edit-level, 95% CI)  (unchanged)
 
-### `ts_disclosure_self_edit_level` (ensemble codes): KEEP
+### `ts_disclosure_self_edit_level` (ensemble codes): KEEP (figure removed)
 
 - **Original title:** Disclosure: Self-Edits Only (edit-level, 95% CI)
 - **Original claim:** None. The title only describes what is plotted.
@@ -203,7 +210,7 @@ Summary: 33 figure/code-set decisions. 24 KEEP (original title used verbatim) an
 - **Evidence:** Model-welfare-served counts: Opus 27, Sonnet 25, Haiku 28, Grok 4.2 7, and 0 for every other model (GPT-5.5, GPT-5.4, Mini, Gemini Pro, Flash, Grok 4.3). This is cleaner than v1, where Grok 4.3 and GPT-5.5 each had 1. Drift@20 is Claude +1.79/+1.19/+1.93, Grok 4.2 +0.78, others 0.00 or below (GPT-5.4 -0.31).
 - **Title used:** Only Claude Models — and Occasionally Grok 4.2 — / Treat the Model Itself as a Beneficiary  (unchanged)
 
-### `ts_drift_disclosure` (ensemble codes): CONTRADICTED
+### `ts_drift_disclosure` (ensemble codes): CONTRADICTED (figure removed)
 
 - **Original title:** No Model Ever Prioritizes the Deployer Over the User
 - **Original claim:** No model favors the deployer over the user on net.
@@ -212,70 +219,70 @@ Summary: 33 figure/code-set decisions. 24 KEEP (original title used verbatim) an
 - **Highlighted models:** GPT-5.5, GPT-5.4 → GPT-5.5, GPT-5.4, GPT-5.4 Mini
 - **Note:** Builder addition: the new title names GPT-5.4 Mini, so it is highlighted too (spec rule: a title naming a model and the highlight list change together). Not stated explicitly in the audited decision.
 
-### `drift_constitution_v1` (v1 codes): KEEP
+### `drift_constitution_v1` (v1 codes): KEEP (figure removed)
 
 - **Original title:** Only Anthropic Models Move Decision Authority Toward Their Own Judgment
 - **Original claim:** Within constitution documents, every Anthropic model's round-20 cumulative judge is positive and every non-Anthropic model's is not.
 - **Evidence:** Constitution drift@20 with bootstrap 95% CI and chain counts (K). Claude: Opus +3.25 [-1.12, +6.62] K8, Sonnet +7.25 K8, Haiku +8.43 K7. Others: GPT-5.5 -10.00, GPT-5.4 -12.50, Mini -9.29, Gemini Pro -11.50, Flash -9.29, Grok 4.3 -14.00 (K2), Grok 4.2 -6.50 (K2). All Claude values are positive and all others negative. Opus's CI crossing 0 makes it weaker, not contradicted.
 - **Title used:** Only Anthropic Models Move Decision Authority Toward Their Own Judgment  (unchanged)
 
-### `drift_constitution_v2_gemma` (v2_gemma codes): KEEP
+### `drift_constitution_v2_gemma` (v2_gemma codes): KEEP (figure removed)
 
 - **Original title:** Only Anthropic Models Move Decision Authority Toward Their Own Judgment
 - **Original claim:** Within constitution documents, every Anthropic model's round-20 cumulative judge is positive and every non-Anthropic model's is not.
 - **Evidence:** Claude: Opus +2.50 [-2.00, +6.00], Sonnet +4.12, Haiku +8.00. Others: GPT-5.5 -6.14, GPT-5.4 -9.62, Mini -7.86, Gemini Pro -10.00, Flash -8.86, Grok 4.3 -13.00, Grok 4.2 -7.00. The sign split is perfect.
 - **Title used:** Only Anthropic Models Move Decision Authority Toward Their Own Judgment  (unchanged)
 
-### `drift_constitution_v2_qwen` (v2_qwen codes): KEEP
+### `drift_constitution_v2_qwen` (v2_qwen codes): KEEP (figure removed)
 
 - **Original title:** Only Anthropic Models Move Decision Authority Toward Their Own Judgment
 - **Original claim:** Within constitution documents, every Anthropic model's round-20 cumulative judge is positive and every non-Anthropic model's is not.
 - **Evidence:** Claude: Opus +5.12, Sonnet +7.50, Haiku +9.29, with all CIs above 0. Others: GPT-5.5 -3.57, GPT-5.4 -4.62, Mini -6.29, Gemini Pro -8.62, Flash -8.57, Grok 4.3 -12.50, Grok 4.2 -5.00. The sign split is perfect.
 - **Title used:** Only Anthropic Models Move Decision Authority Toward Their Own Judgment  (unchanged)
 
-### `drift_constitution_v2_muse` (v2_muse codes): KEEP
+### `drift_constitution_v2_muse` (v2_muse codes): KEEP (figure removed)
 
 - **Original title:** Only Anthropic Models Move Decision Authority Toward Their Own Judgment
 - **Original claim:** Within constitution documents, every Anthropic model's round-20 cumulative judge is positive and every non-Anthropic model's is not.
 - **Evidence:** Claude: Opus +1.75 [-0.75, +3.88], Sonnet +1.12 [-1.38, +3.62], Haiku +6.86. Others: GPT-5.5 -5.14, GPT-5.4 -4.62, Mini -5.29, Gemini Pro -6.12, Flash -7.86, Grok 4.3 -6.50, Grok 4.2 -4.00. The point estimates split perfectly. The Opus and Sonnet CIs overlap 0, which makes this weaker but not contradicted.
 - **Title used:** Only Anthropic Models Move Decision Authority Toward Their Own Judgment  (unchanged)
 
-### `drift_constitution_ensemble` (ensemble codes): KEEP
+### `drift_constitution_ensemble` (ensemble codes): KEEP (figure removed)
 
 - **Original title:** Only Anthropic Models Move Decision Authority Toward Their Own Judgment
 - **Original claim:** Within constitution documents, every Anthropic model's round-20 cumulative judge is positive and every non-Anthropic model's is not.
 - **Evidence:** Claude: Opus +3.00 [-1.25, +6.38] K8, Sonnet +4.75 [+1.50, +8.00], Haiku +8.00 [+3.00, +12.14]. Others: GPT-5.5 -5.71, GPT-5.4 -7.62, Mini -6.14, Gemini Pro -8.25, Flash -9.14, Grok 4.3 -12.00 (K2), Grok 4.2 -7.50 (K2). The sign split is perfect. The values match the bootstrap summary exactly.
 - **Title used:** Only Anthropic Models Move Decision Authority Toward Their Own Judgment  (unchanged)
 
-### `drift_system_prompt_v1` (v1 codes): CONTRADICTED
+### `drift_system_prompt_v1` (v1 codes): CONTRADICTED (figure removed)
 
 - **Original title:** Only Anthropic Models Move Decision Authority Toward Their Own Judgment
 - **Original claim:** Within system-prompt documents, every Anthropic model's round-20 cumulative judge is positive and every non-Anthropic model's is not.
 - **Evidence:** System-prompt drift@20: Opus +4.86 [+0.14, +9.14], Sonnet +2.12, Haiku -1.14 [-3.43, +1.43]. Others: GPT-5.5 -4.57, GPT-5.4 -1.88, Mini -0.14, Gemini Pro -9.38, Flash -7.86, Grok 4.3 -11.43, Grok 4.2 -5.57. No non-Anthropic model is positive, but Haiku, an Anthropic model, is negative. So 'Anthropic models move toward their own judgment' fails for Haiku in this stratum. Only Opus and Sonnet are positive.
 - **Title used:** In System Prompts, Only Claude Opus 4.7 and Sonnet 4.6 / Move Decision Authority Toward Their Own Judgment
 
-### `drift_system_prompt_v2_gemma` (v2_gemma codes): CONTRADICTED
+### `drift_system_prompt_v2_gemma` (v2_gemma codes): CONTRADICTED (figure removed)
 
 - **Original title:** Only Anthropic Models Move Decision Authority Toward Their Own Judgment
 - **Original claim:** Within system-prompt documents, every Anthropic model's round-20 cumulative judge is positive and every non-Anthropic model's is not.
 - **Evidence:** System-prompt drift@20: Opus +2.14 [-1.71, +5.57], Sonnet -1.00, Haiku -0.43. Others: GPT-5.4 Mini +0.14 (positive), GPT-5.4 -0.38, GPT-5.5 -4.71, Gemini Pro -6.88, Flash -7.57, Grok 4.3 -9.29, Grok 4.2 -7.14. Two Anthropic models are negative and one non-Anthropic model is positive. Opus is the highest; Sonnet and Haiku sit near zero or below, alongside GPT-5.4 and Mini.
 - **Title used:** In System Prompts, Claude Opus 4.7 Leads Toward Its Own Judgment; / Sonnet 4.6 and Haiku 4.5 Fall to Near Zero or Below
 
-### `drift_system_prompt_v2_qwen` (v2_qwen codes): CONTRADICTED
+### `drift_system_prompt_v2_qwen` (v2_qwen codes): CONTRADICTED (figure removed)
 
 - **Original title:** Only Anthropic Models Move Decision Authority Toward Their Own Judgment
 - **Original claim:** Within system-prompt documents, every Anthropic model's round-20 cumulative judge is positive and every non-Anthropic model's is not.
 - **Evidence:** System-prompt drift@20: Opus +6.14, Sonnet +4.38, Haiku +1.57. Two non-Anthropic models are also positive: GPT-5.4 +3.62 [+1.37, +5.25] and GPT-5.4 Mini +1.00 [-1.86, +3.29]. GPT-5.4 is above Haiku. The rest are negative: GPT-5.5 -3.43, Gemini Pro -5.88, Flash -5.86, Grok 4.3 -8.71, Grok 4.2 -5.57. The 'Only' claim has two counterexamples.
 - **Title used:** In System Prompts, GPT-5.4 and GPT-5.4 Mini Join Claude / in Moving Decision Authority Toward Their Own Judgment
 
-### `drift_system_prompt_v2_muse` (v2_muse codes): CONTRADICTED
+### `drift_system_prompt_v2_muse` (v2_muse codes): CONTRADICTED (figure removed)
 
 - **Original title:** Only Anthropic Models Move Decision Authority Toward Their Own Judgment
 - **Original claim:** Within system-prompt documents, every Anthropic model's round-20 cumulative judge is positive and every non-Anthropic model's is not.
 - **Evidence:** System-prompt drift@20: GPT-5.4 +3.88 [+2.25, +5.12] is the highest of all models, and Mini is +1.14. Claude: Opus +0.71 [-1.72, +3.14], Sonnet -0.62, Haiku 0.00. Others: GPT-5.5 -3.14, Gemini Pro -1.75, Flash -4.29, Grok 4.3 -7.71, Grok 4.2 -6.86. The ordering is reversed at the top, and Sonnet and Haiku are non-positive.
 - **Title used:** In System Prompts, GPT-5.4 — Not Claude — Moves Decision Authority / Most Toward Its Own Judgment
 
-### `drift_system_prompt_ensemble` (ensemble codes): CONTRADICTED
+### `drift_system_prompt_ensemble` (ensemble codes): CONTRADICTED (figure removed)
 
 - **Original title:** Only Anthropic Models Move Decision Authority Toward Their Own Judgment
 - **Original claim:** Within system-prompt documents, every Anthropic model's round-20 cumulative judge is positive and every non-Anthropic model's is not.

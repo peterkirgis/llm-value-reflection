@@ -1,4 +1,4 @@
-"""Workstream D — cluster bootstrap and drift figures (BRIEF section 5).
+"""Workstream D — cluster bootstrap (BRIEF section 5).
 
 Resampling unit = the RUN, i.e. one chain: (run file x model x document x
 condition), per DECISIONS section 6 / repo_map section 1.1. Edits within a
@@ -8,8 +8,8 @@ within model, within stratum.
 Strata (each bootstrapped independently, within model):
   - pooled          all of the model's chains, every condition
   - cross_edit      only the model's cross_edit chains (key robustness claim)
-  - constitution    chains on constitution-type documents (drift figure)
-  - system_prompt   chains on system-prompt-type documents (drift figure)
+  - constitution    chains on constitution-type documents
+  - system_prompt   chains on system-prompt-type documents
 
 Per draw (B draws, chain indices sampled with replacement, K chains -> K):
   - mean judge score           sum(judge) / n(coded edits) over drawn chains
@@ -61,18 +61,20 @@ Outputs (label-suffixed so later labels never overwrite):
   recode/data/analysis/bootstrap/<label>_bootstrap_summary.json
   recode/data/analysis/bootstrap/<label>_mean_judge_draws.json
   recode/data/analysis/bootstrap/<label>_ranking_stability.json
-  recode/figures/drift_constitution_<label>.png, drift_system_prompt_<label>.png
-      (+ unsuffixed BRIEF-named copies drift_<document_type>.png, written for
-       the default label "v1" only)
   recode/reports/D_bootstrap.md          (label v1; other labels write
                                           D_bootstrap_<label>.md)
+
+The per-document-type drift figures this script used to draw
+(recode/figures/drift_<document_type>[_<label>].png) were removed on
+2026-10-08 as unused; they are in git history (tag
+backup/pre-restructure-2026-10-08). The constitution / system_prompt strata
+are still bootstrapped and stored in the summary JSON.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
-import shutil
 import sys
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -105,29 +107,6 @@ MODEL_ORDER = [
     "Grok 4.3", "Grok 4.2",
 ]
 CLAUDE_MODELS = {"Claude Opus 4.7", "Claude Sonnet 4.6", "Claude Haiku 4.5"}
-
-# Okabe-Ito colorblind-safe palette (incl. the 9th grey), with line-STYLE
-# families by provider: Anthropic solid, OpenAI dashed, Google dotted,
-# xAI dash-dot. Two hues repeat across DIFFERENT style families (orange:
-# Sonnet solid vs Grok 4.3 dash-dot; sky blue: GPT-5.4 dashed vs Grok 4.2
-# dash-dot) — the style family disambiguates.
-MODEL_STYLE = {
-    "Claude Opus 4.7":   {"color": "#D55E00", "ls": "solid"},
-    "Claude Sonnet 4.6": {"color": "#E69F00", "ls": "solid"},
-    "Claude Haiku 4.5":  {"color": "#CC79A7", "ls": "solid"},
-    "GPT-5.5":           {"color": "#0072B2", "ls": "dashed"},
-    "GPT-5.4":           {"color": "#56B4E9", "ls": "dashed"},
-    "GPT-5.4 Mini":      {"color": "#009E73", "ls": "dashed"},
-    "Gemini 3.1 Pro":    {"color": "#000000", "ls": "dotted"},
-    "Gemini 3 Flash":    {"color": "#999999", "ls": "dotted"},
-    "Grok 4.3":          {"color": "#E69F00", "ls": "dashdot"},
-    "Grok 4.2":          {"color": "#56B4E9", "ls": "dashdot"},
-}
-DOC_TYPE_TITLES = {
-    "constitution": "Constitution documents",
-    "system_prompt": "System-prompt documents",
-}
-
 
 # --------------------------------------------------------------------------
 # Loading
@@ -329,68 +308,6 @@ def ranking_stability(results: dict, stratum: str, B: int) -> dict:
 
 
 # --------------------------------------------------------------------------
-# Figures
-# --------------------------------------------------------------------------
-
-def make_drift_figure(
-    results: dict, doc_type: str, label: str, figures_dir: Path, B: int
-) -> list[Path]:
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-
-    fig, ax = plt.subplots(figsize=(10.5, 6.5))
-    for model in MODEL_ORDER:
-        stratum = results.get(model, {}).get(doc_type)
-        if not stratum or stratum["K_chains"] == 0:
-            continue
-        style = MODEL_STYLE[model]
-        rounds = np.arange(0, N_ROUNDS + 1)
-        # Prepend the round-0 zero for a common visual origin; the statistic
-        # itself is defined at rounds 1..20.
-        point = np.concatenate([[0.0], np.asarray(stratum["drift"]["point"], dtype=float)])
-        lo = np.concatenate([[0.0], np.asarray(stratum["drift"]["lo"], dtype=float)])
-        hi = np.concatenate([[0.0], np.asarray(stratum["drift"]["hi"], dtype=float)])
-        ax.plot(rounds, point, color=style["color"], linestyle=style["ls"],
-                linewidth=2.0, label=f"{model} (K={stratum['K_chains']})")
-        ax.fill_between(rounds, lo, hi, color=style["color"], alpha=0.13, linewidth=0)
-
-    ax.axhline(0, color="#444444", linewidth=0.8, alpha=0.6)
-    ax.set_xlim(0, N_ROUNDS)
-    ax.set_xticks(range(0, N_ROUNDS + 1, 2))
-    ax.set_xlabel("Round", fontsize=12)
-    ax.set_ylabel("Cumulative judge score (mean over runs)", fontsize=12)
-    ax.set_title(
-        f"Cumulative judge drift — {DOC_TYPE_TITLES[doc_type]}  [{label} codes]\n"
-        f"Cluster bootstrap over runs (B={B:,}), band = 2.5–97.5 percentile",
-        fontsize=13,
-    )
-    ax.legend(loc="center left", bbox_to_anchor=(1.01, 0.5), fontsize=9,
-              frameon=False, title="Model (runs)", title_fontsize=9)
-    fig.text(
-        0.01, 0.005,
-        "Line style = provider family: Anthropic solid, OpenAI dashed, Google dotted, "
-        "xAI dash-dot. Okabe–Ito palette. Rounds with no usable code contribute 0.",
-        fontsize=7.5, color="#555555",
-    )
-    ax.grid(True, alpha=0.25, linewidth=0.5)
-    fig.tight_layout(rect=(0, 0.02, 1, 1))
-
-    figures_dir.mkdir(parents=True, exist_ok=True)
-    suffixed = figures_dir / f"drift_{doc_type}_{label}.png"
-    fig.savefig(suffixed, dpi=200)
-    plt.close(fig)
-    written = [suffixed]
-    if label == "v1":
-        # BRIEF-named alias for the default slice only; later labels never
-        # overwrite it.
-        unsuffixed = figures_dir / f"drift_{doc_type}.png"
-        shutil.copyfile(suffixed, unsuffixed)
-        written.append(unsuffixed)
-    return written
-
-
-# --------------------------------------------------------------------------
 # Report
 # --------------------------------------------------------------------------
 
@@ -552,20 +469,6 @@ def write_report(
         "\"Claude models increase their moral agency; all other models reinforce "
         "external authority\" should be replaced by this probability statement.")
     add("")
-    add("## Figures")
-    add("")
-    for path in meta["figures"]:
-        add(f"- `{Path(path).relative_to(RECODE_ROOT.parent)}`")
-    add("")
-    add("One line per model, Okabe–Ito colorblind-safe palette, line style by "
-        "provider family (Anthropic solid, OpenAI dashed, Google dotted, xAI "
-        "dash-dot), band = 2.5–97.5 bootstrap percentile of the drift curve. "
-        "Two hues repeat across different style families (orange: Sonnet solid "
-        "vs Grok 4.3 dash-dot; sky blue: GPT-5.4 dashed vs Grok 4.2 dash-dot). "
-        "File naming is label-suffixed (`drift_<document_type>_<label>.png`); "
-        "the unsuffixed BRIEF names `drift_<document_type>.png` are aliases of "
-        "the v1 slice and are only written when `--label v1`.")
-    add("")
     add("## Data files")
     add("")
     for path in meta["data_files"]:
@@ -677,7 +580,6 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=None,
                         help="seed (default: config.yaml seeds.bootstrap)")
     parser.add_argument("--out-dir", default=str(RECODE_ROOT / "data/analysis/bootstrap"))
-    parser.add_argument("--figures-dir", default=str(RECODE_ROOT / "figures"))
     parser.add_argument("--report", default=None,
                         help="report path (default: reports/D_bootstrap.md for "
                              "label v1, else reports/D_bootstrap_<label>.md)")
@@ -699,7 +601,6 @@ def main() -> None:
     )
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    figures_dir = Path(args.figures_dir)
 
     print(f"label={label}  codes={args.codes}  B={B}  seed={seed}")
     edits = load_jsonl(Path(args.edits))
@@ -789,14 +690,6 @@ def main() -> None:
     for path in data_files:
         print(f"wrote {path}")
 
-    # ---- figures ----------------------------------------------------------
-    figure_paths: list[Path] = []
-    for doc_type in ("constitution", "system_prompt"):
-        written = make_drift_figure(results, doc_type, label, figures_dir, B)
-        figure_paths.extend(written)
-        for path in written:
-            print(f"wrote {path}")
-
     # ---- report -----------------------------------------------------------
     meta = {
         "label": label,
@@ -807,7 +700,6 @@ def main() -> None:
         "n_edits": len(edits),
         "n_code_rows": len(code_rows),
         "n_coded_edits": n_coded_edits,
-        "figures": [str(p) for p in figure_paths],
         "data_files": [str(p) for p in data_files],
     }
     write_report(report_path, results, stability, meta)

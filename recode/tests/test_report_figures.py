@@ -1,5 +1,4 @@
-"""Tests for recode/src/report_figures.py (vendored report generator) and
-recode/src/restyle_drift_figures.py (house-style drift figures).
+"""Tests for recode/src/report_figures.py (vendored report generator).
 
 What is proved here:
   1. Runtime guard: nothing can be written into reports/figures (or any other
@@ -7,16 +6,22 @@ What is proved here:
      drift restyler.
   2. Vendoring is faithful: the vendored constants equal reports/generate_figures.py
      (parsed with ast, never imported), and every function/constant not listed
-     as a deviation has an identical AST to reports/generate_judge_beneficiary_figures.py.
+     as a deviation has an identical AST to reports/generate_judge_beneficiary_figures.py
+     (the functions RECODE D11 dropped, which drew only unused figures, must be absent).
   3. The adapter builds items in the original schema: on v1.jsonl it reproduces
      results/iterative_edit/judge_beneficiary_coded_gemma.json item-for-item.
   4. Rendering the v1 codes through the vendored generator reproduces the
      ORIGINAL plotted data: the original generator (loaded from its source file
      with a stand-in `generate_figures` module whose _save only captures — it
      never writes) is run on the original coded JSON, and its plotted values
-     are compared with the vendored sidecars for 9 figures. For the same
+     are compared with the vendored sidecars for 7 figures. For the same
      figures the rendered PNGs are pixel-identical to reports/figures/*.png.
-  5. Titles in the committed outputs equal the audited decision table.
+  5. Titles in the committed outputs equal the audited decision table, and
+     recode/figures holds exactly the figures in use.
+
+The drift_* figures (recode/src/restyle_drift_figures.py) and the unused ts_*
+stems were removed on 2026-10-08, together with their tests; they are in git
+history (tag backup/pre-restructure-2026-10-08).
 """
 
 from __future__ import annotations
@@ -33,7 +38,6 @@ import numpy as np
 import pytest
 
 import report_figures as rf
-import restyle_drift_figures as rd
 
 REPO = rf.PROJECT_ROOT
 ORIG_GEN = REPO / "reports" / "generate_judge_beneficiary_figures.py"
@@ -45,16 +49,27 @@ FIG_DIR = rf.RECODE_ROOT / "figures"
 
 # figure-function batches rendered in the parity tests (stems in comments)
 PARITY_FUNCS = ["judge_drift",          # ts_judge_drift_by_provider
-                "judge_cross_edit",     # ts_judge_cross_edit
                 "beneficiary_panels",   # ts_beneficiary_panels
-                "beneficiary_drift"]    # ts_drift_<code> x6
-PARITY_STEMS = (["ts_judge_drift_by_provider", "ts_judge_cross_edit", "ts_beneficiary_panels"]
-                + [f"ts_drift_{p['code']}" for p in rf.BENEFICIARY_PANELS])
-ALL_STEMS = (["ts_judge_drift_by_provider", "ts_judge_cross_edit",
-              "ts_judge_cross_edit_edit_level", "ts_claude_conditions", "ts_beneficiary_panels"]
-             + [f"ts_drift_{p['code']}" for p in rf.BENEFICIARY_PANELS]
-             + [f"ts_{p['code']}_{m}_edit_level" for p in rf.BENEFICIARY_PANELS
-                for m in ("cross_edit", "self")])
+                "beneficiary_drift"]    # ts_drift_<code> x5
+PARITY_STEMS = (["ts_judge_drift_by_provider", "ts_beneficiary_panels"]
+                + [f"ts_drift_{code}" for code in rf.DRIFT_CODES])
+ALL_STEMS = (["ts_judge_drift_by_provider", "ts_judge_cross_edit_edit_level",
+              "ts_claude_conditions", "ts_beneficiary_panels"]
+             + [f"ts_drift_{code}" for code in rf.DRIFT_CODES])
+
+# Figures in recode/figures not drawn by report_figures.py.
+OTHER_STEMS = ["ts_value_drift_summary",     # value_drift_summary.py
+               "ts_value_drift_round20",     # value_drift_round20.py
+               "ts_home_likeness_summary"]   # home_likeness_summary.py
+
+# Decisions in title_decisions.json (a hand-authored record, left unchanged)
+# whose figures were removed on 2026-10-08 as unused (see TITLES.md).
+REMOVED_DECISION_FIGURES = (
+    {"ts_judge_cross_edit", "ts_drift_disclosure", "drift_constitution", "drift_system_prompt"}
+    | {f"ts_{code}_{m}_edit_level"
+       for code in ("paternalism", "harmlessness", "structural", "company_cost", "welfare",
+                    "disclosure")
+       for m in ("cross_edit", "self")})
 
 
 def _listing(path: Path):
@@ -88,8 +103,6 @@ def test_render_all_and_save_never_write_reports_figures(monkeypatch):
     with pytest.raises(RuntimeError, match="read-only"):
         rf._save(fig, "ts_guard_probe")
     matplotlib.pyplot.close(fig)
-    with pytest.raises(RuntimeError, match="read-only"):
-        rd.render("v1", "constitution", REPORT_FIGS, rd.load_summary("v1"))
     assert _listing(REPORT_FIGS) == before
 
 
@@ -120,24 +133,35 @@ def test_vendored_constants_equal_generate_figures_source():
         assert ast.literal_eval(orig[name].value) == getattr(rf, name), name
 
 
-# functions whose bodies carry a `# RECODE:` deviation (D1, D3, D4, D5)
-DEVIATING = {"load_coded", "fig_judge_drift", "fig_judge_cross_edit",
-             "fig_judge_cross_edit_edit_level", "_edit_level_measure_fig",
+# functions whose bodies carry a `# RECODE:` deviation (D1, D3, D4, D5, D11)
+DEVIATING = {"load_coded", "fig_judge_drift",
+             "fig_judge_cross_edit_edit_level",
              "fig_claude_conditions", "fig_beneficiary_panels", "_draw_drift_lines",
              "fig_beneficiary_drift", "PROJECT_ROOT", "CODED_PATH"}
+
+# RECODE D11: original functions/constants not vendored (they drew only
+# unused figures, or none at all).
+NOT_VENDORED = {"fig_judge_cross_edit", "fig_beneficiary_edit_level",
+                "_edit_level_measure_fig", "_conflict_edit_score", "_ci95",
+                "fig_patienthood", "fig_conflict_density", "fig_paternalism",
+                "fig_entropy_convergence", "ROUND_BINS", "shannon_entropy"}
 
 
 def test_non_deviating_code_is_verbatim():
     orig = _module_ast(ORIG_GEN)
     vend = _module_ast(Path(rf.__file__))
+    assert NOT_VENDORED <= set(orig)
     checked = 0
     for name, node in orig.items():
         if name in DEVIATING:
             continue
+        if name in NOT_VENDORED:
+            assert name not in vend, f"{name} should not be vendored (D11)"
+            continue
         assert name in vend, f"{name} missing from vendored module"
         assert ast.dump(node) == ast.dump(vend[name]), f"{name} differs from the original"
         checked += 1
-    assert checked >= 25  # constants + helpers + the 4 uncalled figure functions
+    assert checked >= 15  # constants + helpers
 
 
 # ---------------------------------------------------------------------------
@@ -212,7 +236,6 @@ def original_plotted():
         exec(compile(ORIG_GEN.read_text(encoding="utf-8"), str(ORIG_GEN), "exec"), mod.__dict__)
         items = mod.load_coded()
         mod.fig_judge_drift(items)
-        mod.fig_judge_cross_edit(items)
         mod.fig_beneficiary_panels(items)
         mod.fig_beneficiary_drift(items)
     finally:
@@ -302,10 +325,10 @@ def test_committed_ts_figures_use_audited_titles(stem):
 
 
 def test_committed_highlights_follow_decisions():
-    for panel in rf.BENEFICIARY_PANELS:
-        stem = f"ts_drift_{panel['code']}"
+    for code in rf.DRIFT_CODES:
+        stem = f"ts_drift_{code}"
         side = json.loads((FIG_DIR / "data" / f"{stem}.json").read_text(encoding="utf-8"))
-        expected = _decisions()[(stem, "ensemble")].get("highlights", rf.DRIFT_HIGHLIGHTS[panel["code"]])
+        expected = _decisions()[(stem, "ensemble")].get("highlights", rf.DRIFT_HIGHLIGHTS[code])
         assert side["highlights_used"] == expected
         labelled = {t["text"] for t in side["plotted"]["axes"][1]["texts"]}
         assert set(expected) <= labelled
@@ -321,55 +344,22 @@ def test_ensemble_judge_drift_supports_kept_title():
         assert (end > 0) == model.startswith("Claude"), (model, end)
 
 
-def test_all_decisions_are_rendered():
+def test_every_decision_is_rendered_or_recorded_as_removed():
+    rendered = set(ALL_STEMS)
     for (figure, label) in _decisions():
-        stem = figure if figure.startswith("ts_") else f"{figure}_{label}"
-        assert (FIG_DIR / f"{stem}.png").exists(), stem
+        if figure in REMOVED_DECISION_FIGURES:
+            assert figure not in rendered
+            for stem in (figure, f"{figure}_{label}"):
+                assert not (FIG_DIR / f"{stem}.png").exists(), stem
+            continue
+        assert label == "ensemble" and figure in rendered, (figure, label)
+    assert {f for f, _ in _decisions()} >= rendered
 
 
-@pytest.mark.parametrize("label", rd.LABELS)
-@pytest.mark.parametrize("doc_type", rd.DOC_TYPES)
-def test_committed_drift_figures(label, doc_type):
-    stem = f"drift_{doc_type}_{label}"
-    assert (FIG_DIR / f"{stem}.png").exists() and (FIG_DIR / f"{stem}.pdf").exists()
-    side = json.loads((FIG_DIR / "data" / f"{stem}.json").read_text(encoding="utf-8"))
-    decision = _decisions()[(f"drift_{doc_type}", label)]
-    assert side["title_used"] == decision["new_title"] == side["plotted"]["suptitle"]
-    summary = rd.load_summary(label)
-    assert side["B"] == summary["B"] == 2000 and side["seed"] == summary["seed"]
-    notes = side["plotted"]["fig_texts"]
-    assert any("95% cluster-bootstrap percentile interval of the mean" in t for t in notes)
-    assert not any("±1 SD" in t for t in notes)
-    assert any(rd.STRATUM_TEXT[doc_type] in t and rd.LABEL_TEXT[label] in t for t in notes)
-    # four provider panels, lines/bands == committed bootstrap summary
-    axes = side["plotted"]["axes"]
-    assert [ax["title"] for ax in axes] == list(rf.FAMILY_TO_MODELS)
-    for ax, (family, models) in zip(axes, rf.FAMILY_TO_MODELS.items()):
-        for line, fill, model in zip(ax["lines"], ax["fills"], models):
-            s = summary["models"][model][doc_type]
-            assert line["label"] == f"{model} (n={s['K_chains']})"
-            assert line["color"] == rf.MODEL_COLORS[model] and line["linewidth"] == 2.4
-            assert line["y"] == pytest.approx([0.0] + s["drift"]["point"])
-            assert fill["y1"] == pytest.approx([0.0] + s["drift"]["lo"])
-            assert fill["y2"] == pytest.approx([0.0] + s["drift"]["hi"])
-
-
-@pytest.mark.parametrize("doc_type", rd.DOC_TYPES)
-def test_unsuffixed_drift_aliases_are_v1(doc_type):
-    for ext in ("png", "pdf"):
-        alias = (FIG_DIR / f"drift_{doc_type}.{ext}").read_bytes()
-        assert alias == (FIG_DIR / f"drift_{doc_type}_v1.{ext}").read_bytes()
-
-
-def test_drift_title_lookup_is_strict():
-    with pytest.raises(KeyError):
-        rd.drift_title("constitution", "e2_para1")
-    title, verdict = rd.drift_title("system_prompt", "ensemble")
-    assert verdict == "CONTRADICTED" and "GPT-5.4" in title
-
-
-def test_restyle_render_to_tmp(tmp_path):
-    written = rd.render("ensemble", "system_prompt", tmp_path, rd.load_summary("ensemble"))
-    names = {p.name for p in written}
-    assert {"drift_system_prompt_ensemble.png", "drift_system_prompt_ensemble.pdf",
-            "drift_system_prompt_ensemble.json"} <= names
+def test_figure_folder_holds_only_used_figures():
+    """recode/figures holds exactly the rendered figure set: png + pdf + sidecar each."""
+    stems = set(ALL_STEMS) | set(OTHER_STEMS)
+    assert {p.stem for p in FIG_DIR.glob("*.png")} == stems
+    assert {p.stem for p in FIG_DIR.glob("*.pdf")} == stems
+    assert {p.stem for p in (FIG_DIR / "data").glob("*.json")} == stems
+    assert set(rf.STEM_FUNCS) - {rf.TRAJECTORY_STEM} == set(ALL_STEMS)

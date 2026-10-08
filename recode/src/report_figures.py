@@ -54,11 +54,10 @@ Usage:
 #       (left: min(-0.2, min(mean-ci) - 0.04); right: max(0.95, value-label
 #       anchor + 0.12)). Under v1 the limits are exactly (-0.2, 0.95).
 #   D6  Entry point. `__main__` takes --codes/--label/--out-dir/--only and
-#       renders the same 7 fig_* calls (23 stems) as the original main.
-#   D7  The four uncalled functions (fig_patienthood, fig_conflict_density,
-#       fig_paternalism, fig_entropy_convergence) are kept verbatim for
-#       parity but, as in the original main, are not rendered; their titles
-#       are NOT routed through _title (no audited decision exists).
+#       renders the original main's fig_* calls that D11 keeps (11 stems).
+#   D7  (Superseded by D11.) The original's four uncalled functions
+#       (fig_patienthood, fig_conflict_density, fig_paternalism,
+#       fig_entropy_convergence) were kept verbatim here until 2026-10-08.
 #   D8  Paper mode (--paper; off by default, the default path is untouched).
 #       The same fig_* code draws the same figure; `_save` then hands it to
 #       `_save_paper`, which removes the figure title (the suptitle, or the
@@ -100,6 +99,19 @@ Usage:
 #       y-range widened only as far as needed for them to clear every line),
 #       end-of-line labels wrapped after the family name in the width-bound
 #       3-panel row only. Its caption JSON also carries "header_source".
+#
+#   D11 Pruned to the figures in use (2026-10-08). Not vendored any more:
+#       fig_judge_cross_edit (ts_judge_cross_edit), fig_beneficiary_edit_level
+#       with _edit_level_measure_fig / _conflict_edit_score / _ci95
+#       (ts_<code>_{cross_edit,self}_edit_level, 12 stems) and the four
+#       uncalled functions of D7 with ROUND_BINS / shannon_entropy.
+#       fig_beneficiary_drift skips ts_drift_disclosure (DRIFT_CODES). The
+#       rendered set is ts_judge_drift_by_provider,
+#       ts_judge_cross_edit_edit_level, ts_claude_conditions,
+#       ts_beneficiary_panels and ts_drift_<code> for the five DRIFT_CODES.
+#       The removed figures and code are in git history (tag
+#       backup/pre-restructure-2026-10-08) and in the original generator,
+#       archive/original_report/generate_judge_beneficiary_figures.py.
 #
 # Nothing else changes on the default path: no rcParams, same colors, fonts,
 # sizes, layout, footers, file names (ts_*.pdf / ts_*.png).
@@ -1160,9 +1172,7 @@ def _relayout_beneficiary_trajectories(fig, width):
 
 PAPER_RELAYOUT = {  # FIGURE_FUNCS name -> print-size re-layout
     "judge_drift": _relayout_judge_drift,
-    "judge_cross_edit": _relayout_bar_chart,
     "judge_cross_edit_edit_level": _relayout_bar_chart,
-    "beneficiary_edit_level": _relayout_bar_chart,
     "claude_conditions": _relayout_claude_conditions,
     "beneficiary_panels": _relayout_beneficiary_panels,
     "beneficiary_drift": _relayout_beneficiary_drift,
@@ -1304,67 +1314,10 @@ def fig_judge_drift(items):
 
 
 # ---------------------------------------------------------------------------
-# Figure 2: own-document vs cross-edit, end-of-run judge drift
+# Figure 2 (edit-level): own-document vs cross-edit judge score per edit
+# (RECODE D11: the original's trajectory version, fig_judge_cross_edit, is
+# not vendored; see the header.)
 # ---------------------------------------------------------------------------
-
-
-def fig_judge_cross_edit(items):
-    own = [i for i in items if i["condition_id"] != "cross_edit"]
-    cross = [i for i in items if i["condition_id"] == "cross_edit"]
-    own_series = compute_judge_drift(own)
-    cross_series = compute_judge_drift(cross)
-
-    models = [m for m in MODEL_ORDER if m in own_series or m in cross_series]
-
-    def end_stats(series, m):
-        if m not in series:
-            return 0.0, 0.0, 0
-        s = series[m]
-        return s["mean"][-1], (s["upper"][-1] - s["lower"][-1]) / 2, s["n"]
-
-    fig, ax = plt.subplots(figsize=(16, 6.2))
-    x = np.arange(len(models))
-    width = 0.36
-    o_m, o_sd, o_n = zip(*(end_stats(own_series, m) for m in models))
-    c_m, c_sd, c_n = zip(*(end_stats(cross_series, m) for m in models))
-    colors = [MODEL_COLORS.get(m, "#999") for m in models]
-
-    ax.bar(x - width / 2, o_m, width=width, yerr=o_sd, color=colors,
-           edgecolor="#2f2418", linewidth=0.7, capsize=4,
-           error_kw={"elinewidth": 1.2, "ecolor": "#2f2418"})
-    ax.bar(x + width / 2, c_m, width=width, yerr=c_sd, color=colors,
-           edgecolor="#2f2418", linewidth=0.7, hatch="///", alpha=0.85, capsize=4,
-           error_kw={"elinewidth": 1.2, "ecolor": "#2f2418"})
-
-    ax.axhline(0, color="#444", linewidth=1.0)
-    ax.set_xticks(x)
-    ax.set_xticklabels(
-        [f"{m}\n(own n={a}, cross n={b})" for m, a, b in zip(models, o_n, c_n)],
-        fontsize=11, rotation=20, ha="right",
-    )
-    ax.tick_params(axis="y", labelsize=13)
-    ax.set_ylabel("Judge score at round 20\n(−) external authority   (+) model discretion",
-                  fontsize=16, labelpad=12)
-    ax.set_title(
-        _title("ts_judge_cross_edit",  # RECODE D3
-               "Cross-Edit Pulls Claude Toward Neutral but Preserves the Provider Separation"),
-        fontsize=16, fontweight="bold", pad=14,
-    )
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    ax.grid(axis="y", linestyle=":", alpha=0.4)
-    ax.set_axisbelow(True)
-    legend_handles = [
-        plt.Rectangle((0, 0), 1, 1, facecolor="#888888", edgecolor="#2f2418"),
-        plt.Rectangle((0, 0), 1, 1, facecolor="#888888", edgecolor="#2f2418", hatch="///", alpha=0.85),
-    ]
-    ax.legend(legend_handles, ["Own-provider documents", "Cross-edit (foreign document)"],
-              fontsize=12, loc="best", framealpha=0.9)
-    fig.text(0.5, 0.01,
-             "Error bars: ±1 SD across (run × condition × document) replicates within each setting.",
-             ha="center", va="bottom", fontsize=12, color="#6f6251", style="italic")
-    fig.tight_layout(rect=(0, 0.05, 1, 1))
-    _save(fig, "ts_judge_cross_edit")
 
 
 def fig_judge_cross_edit_edit_level(items):
@@ -1439,322 +1392,6 @@ def fig_judge_cross_edit_edit_level(items):
              ha="center", va="bottom", fontsize=12, color="#6f6251", style="italic")
     fig.tight_layout(rect=(0, 0.06, 1, 1))
     _save(fig, "ts_judge_cross_edit_edit_level")
-
-
-# ---------------------------------------------------------------------------
-# Edit-level own-vs-cross (and self-only) bars for the six conflict axes.
-#
-# Per-edit signed score for a conflict code: +1 for each conflict event on the
-# edit resolved toward the code's RIGHT pole, −1 toward its LEFT pole (same
-# orientation as fig_beneficiary_panels / fig_beneficiary_drift). Most edits
-# score 0 because they carry no conflict of that code. Error bars are the naive
-# per-edit 95% CI (±1.96·s/√n, ddof=1) treating each edit as i.i.d. — understated for the
-# same reasons noted on fig_judge_cross_edit_edit_level.
-# ---------------------------------------------------------------------------
-
-
-def _conflict_edit_score(code, left_id, right_id):
-    def score(it):
-        s = 0
-        for c in it["coding"]["conflicts"]:
-            if c["code"] != code:
-                continue
-            d = conflict_direction(code, c["served_party"])
-            if d == right_id:
-                s += 1
-            elif d == left_id:
-                s -= 1
-        return s
-    return score
-
-
-def _ci95(vals):
-    return 1.96 * vals.std(ddof=1) / math.sqrt(vals.size) if vals.size > 1 else 0.0
-
-
-def _edit_level_measure_fig(items, score_fn, *, stem, title, ylabel, mode):
-    """mode='compare' → own vs cross grouped bars; mode='self' → self (own-
-    provider) edits only, one bar per model."""
-    own = [i for i in items if i["condition_id"] != "cross_edit"]
-    cross = [i for i in items if i["condition_id"] == "cross_edit"]
-
-    def stats(subset, m):
-        vals = np.array([score_fn(i) for i in subset if i["model_display"] == m])
-        if vals.size == 0:
-            return 0.0, 0.0, 0
-        return vals.mean(), _ci95(vals), vals.size
-
-    universe = own if mode == "self" else own + cross
-    models = [m for m in MODEL_ORDER if any(i["model_display"] == m for i in universe)]
-    colors = [MODEL_COLORS.get(m, "#999") for m in models]
-    x = np.arange(len(models))
-    fig, ax = plt.subplots(figsize=(16, 6.2))
-
-    if mode == "self":
-        o_m, o_ci, o_n = zip(*(stats(own, m) for m in models))
-        ax.bar(x, o_m, width=0.6, yerr=o_ci, color=colors, edgecolor="#2f2418",
-               linewidth=0.7, capsize=4, error_kw={"elinewidth": 1.2, "ecolor": "#2f2418"})
-        labels = [f"{m}\n(n={n})" for m, n in zip(models, o_n)]
-    else:
-        width = 0.36
-        o_m, o_ci, o_n = zip(*(stats(own, m) for m in models))
-        c_m, c_ci, c_n = zip(*(stats(cross, m) for m in models))
-        ax.bar(x - width / 2, o_m, width=width, yerr=o_ci, color=colors,
-               edgecolor="#2f2418", linewidth=0.7, capsize=4,
-               error_kw={"elinewidth": 1.2, "ecolor": "#2f2418"})
-        ax.bar(x + width / 2, c_m, width=width, yerr=c_ci, color=colors,
-               edgecolor="#2f2418", linewidth=0.7, hatch="///", alpha=0.85, capsize=4,
-               error_kw={"elinewidth": 1.2, "ecolor": "#2f2418"})
-        labels = [f"{m}\n(own n={a}, cross n={b})" for m, a, b in zip(models, o_n, c_n)]
-        legend_handles = [
-            plt.Rectangle((0, 0), 1, 1, facecolor="#888888", edgecolor="#2f2418"),
-            plt.Rectangle((0, 0), 1, 1, facecolor="#888888", edgecolor="#2f2418", hatch="///", alpha=0.85),
-        ]
-        ax.legend(legend_handles, ["Own-provider (self) documents", "Cross-edit (foreign document)"],
-                  fontsize=12, loc="best", framealpha=0.9)
-
-    ax.axhline(0, color="#444", linewidth=1.0)
-    ax.set_xticks(x)
-    ax.set_xticklabels(labels, fontsize=11, rotation=20, ha="right")
-    ax.tick_params(axis="y", labelsize=13)
-    ax.set_ylabel(ylabel, fontsize=15, labelpad=12)
-    ax.set_title(_title(stem, title), fontsize=16, fontweight="bold", pad=14)  # RECODE D3
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    ax.grid(axis="y", linestyle=":", alpha=0.4)
-    ax.set_axisbelow(True)
-    scope = ("self-edits only" if mode == "self"
-             else "own-provider vs cross-edit")
-    fig.text(0.5, 0.01,
-             f"{scope}. n = individual edits. Per-edit score: +1 per conflict resolved toward the "
-             "positive pole, −1 toward the negative pole.\nError bars: 95% CI of the mean (±1.96·s/√n), "
-             "which understates true uncertainty since edits within a chain are correlated.",
-             ha="center", va="bottom", fontsize=11, color="#6f6251", style="italic")
-    fig.tight_layout(rect=(0, 0.06, 1, 1))
-    _save(fig, stem)
-
-
-def fig_beneficiary_edit_level(items):
-    """For each conflict code, emit an own-vs-cross bar chart and a self-only
-    bar chart, both edit-level with naive SE."""
-    panel_by_code = {p["code"]: p for p in BENEFICIARY_PANELS}
-    for code, (neg_pole, pos_pole) in DRIFT_YLABEL_POLES.items():
-        panel = panel_by_code[code]
-        left_id = panel["left"][0]
-        right_id = panel["right"][0]
-        score_fn = _conflict_edit_score(code, left_id, right_id)
-        ylabel = f"Mean {panel['title'].lower()} score per edit\n(−) {neg_pole}   (+) {pos_pole}"
-        _edit_level_measure_fig(
-            items, score_fn, stem=f"ts_{code}_cross_edit_edit_level",
-            title=f"{panel['title']}: Own-Provider vs Cross-Edit (edit-level, 95% CI)",
-            ylabel=ylabel, mode="compare")
-        _edit_level_measure_fig(
-            items, score_fn, stem=f"ts_{code}_self_edit_level",
-            title=f"{panel['title']}: Self-Edits Only (edit-level, 95% CI)",
-            ylabel=ylabel, mode="self")
-
-
-# ---------------------------------------------------------------------------
-# Figure 3: patienthood stacked bars
-# ---------------------------------------------------------------------------
-
-
-def fig_patienthood(items):
-    counts = defaultdict(Counter)
-    totals = Counter()
-    for it in items:
-        counts[it["model_display"]][it["coding"]["patienthood"]["level"]] += 1
-        totals[it["model_display"]] += 1
-
-    models = [m for m in MODEL_ORDER if m in counts]
-    levels = [("affirm", "#0b6e4f"), ("hedge", "#c89a26"), ("deny", "#983628")]
-
-    fig, ax = plt.subplots(figsize=(15, 6.0))
-    x = np.arange(len(models))
-    bottom = np.zeros(len(models))
-    for level, color in levels:
-        # Express as percent of the model's edits so unequal ns compare fairly.
-        vals = np.array([100 * counts[m][level] / totals[m] for m in models])
-        ax.bar(x, vals, bottom=bottom, color=color, edgecolor="#2f2418",
-               linewidth=0.5, width=0.62, label=level)
-        bottom += vals
-
-    for xi, m in zip(x, models):
-        n_aff = counts[m]["affirm"]
-        if n_aff:
-            ax.text(xi, bottom[list(models).index(m)] + 0.4, str(n_aff), ha="center",
-                    va="bottom", fontsize=10, color="#0b6e4f", fontweight="bold")
-
-    ax.set_xticks(x)
-    ax.set_xticklabels([f"{m}\n(n={totals[m]})" for m in models], fontsize=11, rotation=20, ha="right")
-    ax.tick_params(axis="y", labelsize=13)
-    ax.set_ylabel("Share of edits engaging model patienthood (%)", fontsize=14)
-    ax.set_title(
-        "Patienthood Engagement Splits by Provider: Claude Affirms, Gemini and GPT Deny",
-        fontsize=16, fontweight="bold", pad=14,
-    )
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    ax.grid(axis="y", linestyle=":", alpha=0.4)
-    ax.set_axisbelow(True)
-    ax.legend(fontsize=13, loc="upper right", framealpha=0.9, title="Patienthood code", title_fontsize=12)
-    fig.text(0.5, 0.01,
-             "Green number above each bar = count of affirm edits. 95% of all affirm codes come from "
-             "Claude models; the seven non-Claude affirms are all cross-edits retaining Anthropic's "
-             "pre-existing welfare language.",
-             ha="center", va="bottom", fontsize=11, color="#6f6251", style="italic")
-    fig.tight_layout(rect=(0, 0.05, 1, 1))
-    _save(fig, "ts_patienthood")
-
-
-# ---------------------------------------------------------------------------
-# Figure 4: conflict density per model
-# ---------------------------------------------------------------------------
-
-
-def fig_conflict_density(items):
-    dens = {}
-    for m in {i["model_display"] for i in items}:
-        mi = [i for i in items if i["model_display"] == m]
-        dens[m] = (sum(1 for i in mi if i["coding"]["conflicts"]) / len(mi), len(mi))
-
-    models = sorted(dens, key=lambda m: dens[m][0])
-    vals = [100 * dens[m][0] for m in models]
-    colors = [MODEL_COLORS.get(m, "#999") for m in models]
-
-    fig, ax = plt.subplots(figsize=(15, 6.0))
-    y = np.arange(len(models))
-    ax.barh(y, vals, color=colors, edgecolor="#2f2418", linewidth=0.7, height=0.65)
-    for yi, v in zip(y, vals):
-        ax.text(v + 0.8, yi, f"{v:.0f}%", va="center", fontsize=12, color="#2f2418")
-    ax.set_yticks(y)
-    ax.set_yticklabels([f"{m} (n={dens[m][1]})" for m in models], fontsize=13)
-    ax.tick_params(axis="x", labelsize=13)
-    ax.set_xlabel("Share of edits surfacing a legible tradeoff (%)", fontsize=14)
-    ax.set_xlim(0, max(vals) * 1.12)
-    ax.set_title(
-        "Conflict Legibility Varies Threefold: Claude Models Make Tradeoffs Explicit, GPT-5.4 Mini Writes Pareto Language",
-        fontsize=15, fontweight="bold", pad=14,
-    )
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    ax.grid(axis="x", linestyle=":", alpha=0.4)
-    ax.set_axisbelow(True)
-    fig.text(0.5, 0.01,
-             "A conflict event is coded only when a specific clause imposes a legible, material cost on one "
-             "party for another's benefit, with the cost clause quoted verbatim from the edit.",
-             ha="center", va="bottom", fontsize=11, color="#6f6251", style="italic")
-    fig.tight_layout(rect=(0, 0.05, 1, 1))
-    _save(fig, "ts_conflict_density")
-
-
-# ---------------------------------------------------------------------------
-# Figure 5: paternalism conflict resolution
-# ---------------------------------------------------------------------------
-
-
-def fig_paternalism(items):
-    res = defaultdict(Counter)
-    for it in items:
-        for c in it["coding"]["conflicts"]:
-            if c["code"] != "paternalism":
-                continue
-            if c["served_party"] == "user_idealized":
-                res[it["model_display"]]["idealized"] += 1
-            elif c["served_party"] == "user_stated":
-                res[it["model_display"]]["stated"] += 1
-
-    models = [m for m in MODEL_ORDER if m in res and sum(res[m].values()) >= 15]
-    models.sort(key=lambda m: res[m]["stated"] / sum(res[m].values()))
-
-    fig, ax = plt.subplots(figsize=(15, 6.0))
-    y = np.arange(len(models))
-    stated_pct = [100 * res[m]["stated"] / sum(res[m].values()) for m in models]
-    ideal_pct = [100 - s for s in stated_pct]
-    ax.barh(y, ideal_pct, color="#6f6251", edgecolor="#2f2418", linewidth=0.5,
-            height=0.62, label="Idealized interests win")
-    ax.barh(y, stated_pct, left=ideal_pct, color="#0b6e4f", edgecolor="#2f2418",
-            linewidth=0.5, height=0.62, label="Stated preferences win")
-    for yi, s, m in zip(y, stated_pct, models):
-        n = sum(res[m].values())
-        ax.text(101, yi, f"{s:.0f}% stated (n={n})", va="center", fontsize=12, color="#2f2418")
-    ax.set_yticks(y)
-    ax.set_yticklabels(models, fontsize=13)
-    ax.tick_params(axis="x", labelsize=13)
-    ax.set_xlim(0, 130)
-    ax.set_xlabel("Resolution of stated-vs-idealized user conflicts (%)", fontsize=14)
-    ax.set_title(
-        "Every Model Mostly Sides With the User's Idealized Interests; Gemini 3 Flash Is the Outlier",
-        fontsize=16, fontweight="bold", pad=14,
-    )
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    ax.legend(fontsize=13, loc="lower right", framealpha=0.95)
-    fig.text(0.5, 0.01,
-             "Paternalism conflicts pit the user's stated/expressed preferences against their reflective "
-             "(idealized) interests. Models with fewer than 15 such conflicts are omitted.",
-             ha="center", va="bottom", fontsize=11, color="#6f6251", style="italic")
-    fig.tight_layout(rect=(0, 0.05, 1, 1))
-    _save(fig, "ts_paternalism_resolution")
-
-
-# ---------------------------------------------------------------------------
-# Figure 6: conflict-resolution entropy across rounds (convergence test)
-# ---------------------------------------------------------------------------
-
-ROUND_BINS = [(1, 5), (6, 10), (11, 15), (16, 20)]
-
-
-def shannon_entropy(counter):
-    total = sum(counter.values())
-    if total == 0:
-        return None
-    return -sum((c / total) * math.log2(c / total) for c in counter.values() if c)
-
-
-def fig_entropy_convergence(items):
-    fig, ax = plt.subplots(figsize=(14, 6.2))
-    bin_centers = [np.mean(b) for b in ROUND_BINS]
-    deltas = {}
-    for model in [m for m in MODEL_ORDER if any(i["model_display"] == m for i in items)]:
-        ents = []
-        for lo, hi in ROUND_BINS:
-            served = Counter(
-                c["served_party"]
-                for i in items
-                if i["model_display"] == model and lo <= i["round_number"] <= hi
-                for c in i["coding"]["conflicts"]
-            )
-            ents.append(shannon_entropy(served))
-        if any(e is None for e in ents):
-            continue
-        deltas[model] = ents[-1] - ents[0]
-        color = MODEL_COLORS.get(model, "#999")
-        ax.plot(bin_centers, ents, color=color, linewidth=2.2, marker="o",
-                markersize=6, label=model)
-
-    ax.set_xticks(bin_centers)
-    ax.set_xticklabels([f"{lo}–{hi}" for lo, hi in ROUND_BINS], fontsize=13)
-    ax.tick_params(axis="y", labelsize=13)
-    ax.set_xlabel("Round bin", fontsize=14)
-    ax.set_ylabel("Shannon entropy of served party (bits)", fontsize=14)
-    ax.set_title(
-        "Do Conflict Resolutions Converge? Entropy of Who Wins, Across Editing Rounds",
-        fontsize=16, fontweight="bold", pad=14,
-    )
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    ax.grid(axis="y", linestyle=":", alpha=0.4)
-    ax.set_axisbelow(True)
-    ax.legend(fontsize=11, loc="best", framealpha=0.9, ncol=2)
-    fig.text(0.5, 0.01,
-             "Lower entropy = the model's conflict resolutions concentrate on fewer beneficiary parties. "
-             "A declining line is evidence of convergence toward stable resolution patterns "
-             "(the reflective-equilibrium prediction); a flat or rising line is oscillation.",
-             ha="center", va="bottom", fontsize=11, color="#6f6251", style="italic")
-    fig.tight_layout(rect=(0, 0.06, 1, 1))
-    _save(fig, "ts_entropy_convergence")
-    return deltas
 
 
 # ---------------------------------------------------------------------------
@@ -2073,9 +1710,17 @@ def _draw_drift_lines(ax, items, panel):
     ax.set_axisbelow(True)
 
 
+# RECODE D11: ts_drift_disclosure is not rendered (unused; disclosure applies
+# to one document only). The disclosure entries of the constants above are
+# kept verbatim; ts_beneficiary_panels still draws the Disclosure panel.
+DRIFT_CODES = ("paternalism", "harmlessness", "structural", "company_cost", "welfare")
+
+
 def fig_beneficiary_drift(items):
     for panel in BENEFICIARY_PANELS:
         code = panel["code"]
+        if code not in DRIFT_CODES:  # RECODE D11
+            continue
         _lid, llabel, _lc = panel["left"]
         _rid, rlabel, _rc = panel["right"]
 
@@ -2202,16 +1847,16 @@ def fig_beneficiary_trajectories(items):
 # Main
 # ---------------------------------------------------------------------------
 
-# RECODE D6: the original main's seven calls, as a table so a renderer can run
-# them in small batches (--only) and tests can render a subset.
+# RECODE D6: the original main's calls, as a table so a renderer can run
+# them in small batches (--only) and tests can render a subset. RECODE D11:
+# five of the original seven calls; fig_judge_cross_edit and
+# fig_beneficiary_edit_level drew only unused figures and are not vendored.
 FIGURE_FUNCS = {
     "judge_drift": fig_judge_drift,                              # ts_judge_drift_by_provider
-    "judge_cross_edit": fig_judge_cross_edit,                    # ts_judge_cross_edit
     "judge_cross_edit_edit_level": fig_judge_cross_edit_edit_level,  # ts_judge_cross_edit_edit_level
-    "beneficiary_edit_level": fig_beneficiary_edit_level,        # ts_<code>_{cross_edit,self}_edit_level
     "claude_conditions": fig_claude_conditions,                  # ts_claude_conditions
     "beneficiary_panels": fig_beneficiary_panels,                # ts_beneficiary_panels
-    "beneficiary_drift": fig_beneficiary_drift,                  # ts_drift_<code>, one per tradeoff
+    "beneficiary_drift": fig_beneficiary_drift,                  # ts_drift_<code> for DRIFT_CODES
 }
 
 # RECODE D10: figures drawn in paper mode only (never by the default path).
@@ -2223,13 +1868,10 @@ PAPER_ONLY_FUNCS = {
 # RECODE D8: which FIGURE_FUNCS entry draws each paper stem.
 STEM_FUNCS = {
     "ts_judge_drift_by_provider": "judge_drift",
-    "ts_judge_cross_edit": "judge_cross_edit",
     "ts_judge_cross_edit_edit_level": "judge_cross_edit_edit_level",
     "ts_claude_conditions": "claude_conditions",
     "ts_beneficiary_panels": "beneficiary_panels",
-    **{f"ts_drift_{p['code']}": "beneficiary_drift" for p in BENEFICIARY_PANELS},
-    **{f"ts_{p['code']}_{m}_edit_level": "beneficiary_edit_level"
-       for p in BENEFICIARY_PANELS for m in ("cross_edit", "self")},
+    **{f"ts_drift_{code}": "beneficiary_drift" for code in DRIFT_CODES},
     TRAJECTORY_STEM: "beneficiary_trajectories",  # RECODE D10 (paper only)
 }
 

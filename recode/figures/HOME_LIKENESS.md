@@ -1,6 +1,6 @@
 # Home-likeness: does each model edit a document like its developer's own models?
 
-Figure: `recode/figures/ts_home_likeness.png` / `.pdf`. Sidecar: `recode/figures/data/ts_home_likeness.json`.
+Results: `recode/data/analysis/home_likeness/home_likeness.json`. The summary figure (`ts_home_likeness_summary`) is described at the end of this file.
 
 Regenerate (a few seconds):
 

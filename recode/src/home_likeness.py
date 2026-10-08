@@ -1,9 +1,12 @@
 """home_likeness — how closely each model edits a document like that document's
 home family (the developer's own models), cross_edit condition.
 
-Figure: recode/figures/ts_home_likeness.{png,pdf}
-Sidecar: recode/figures/data/ts_home_likeness.json
+Results: recode/data/analysis/home_likeness/home_likeness.json
 Write-up: recode/figures/HOME_LIKENESS.md
+Figure: recode/figures/ts_home_likeness_summary.{png,pdf}, drawn by
+home_likeness_summary.py (which imports this module). The four-panel figure
+this script used to draw (ts_home_likeness) was removed on 2026-10-08 as
+unused; it is in git history (tag backup/pre-restructure-2026-10-08).
 
 Regenerate:
     .venv/bin/python recode/src/home_likeness.py
@@ -56,7 +59,8 @@ EDITS_PATH = RECODE / "data" / "canonical" / "edits.jsonl"
 CODES_DIR = RECODE / "data" / "codes"
 CONFIG_PATH = RECODE / "config.yaml"
 FIG_DIR = RECODE / "figures"
-STEM = "ts_home_likeness"
+ANALYSIS_DIR = RECODE / "data" / "analysis" / "home_likeness"
+ANALYSIS_JSON = "home_likeness.json"
 MD_PATH = FIG_DIR / "HOME_LIKENESS.md"
 
 N_PERM = 5000
@@ -497,129 +501,6 @@ def choose_title(res: dict, alpha: float = ALPHA) -> tuple[str, dict]:
 # Figure
 # ---------------------------------------------------------------------------
 
-def _fmt_p(p: float) -> str:
-    if p >= 0.995:
-        return "p=1"
-    if p >= 0.1:
-        return f"p={p:.2f}"
-    return f"p={p:.3f}"
-
-
-def render(res: dict, title: str, robust_line: str, avg_line: str, out_dir: Path) -> dict:
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-    from matplotlib.lines import Line2D
-
-    pv = {(t["model"], t["doc"]): t for t in res["tests"]}
-    xmax = max(max(res["per_doc"][d]["distance"].values()) for d in DOC_IDS)
-    xlim = (0, xmax * 1.32)
-    no_csam_in = NO_CSAM_CELL[0] in res["per_doc"][NO_CSAM_CELL[1]]["distance"]
-    fig, axes = plt.subplots(1, 4, figsize=(21, 10.2), sharex=True)
-    fig.subplots_adjust(left=0.085, right=0.985, top=0.83, bottom=0.40, wspace=0.62)
-    plotted = {}
-    for ax, d in zip(axes, DOC_IDS):
-        pd_ = res["per_doc"][d]
-        homes = pd_["homes"]
-        fam_colors = [MODEL_COLORS[m] for m in FAMILY_TO_MODELS[DOC_OWNER[d]]]
-        band_fill = fam_colors[-1]      # lightest shade of the home family
-        band_line = fam_colors[0]       # darkest shade
-        models = sorted(pd_["distance"], key=lambda m: pd_["distance"][m])
-        y = np.arange(len(models))[::-1]  # most home-like on top
-        lo, hi = pd_["band"]
-        ax.axvspan(lo, hi, color=band_fill, alpha=0.20, lw=0, zorder=0)
-        ax.axvline(hi, color=band_line, lw=1.2, ls=(0, (4, 3)), zorder=1)
-        rows = []
-        for yi, m in zip(y, models):
-            dist = pd_["distance"][m]
-            color = MODEL_COLORS.get(m, "#999")
-            is_home = m in homes
-            ax.plot([0, dist], [yi, yi], color="#d9d2c7", lw=0.9, zorder=1)
-            ax.plot(dist, yi, "o", ms=10.5, zorder=4,
-                    markerfacecolor="white" if is_home else color,
-                    markeredgecolor=color, markeredgewidth=2.2 if is_home else 0.8)
-            row = {"model": m, "distance": dist, "home": is_home}
-            if not is_home:
-                t = pv[(m, d)]
-                ax.text(dist + xmax * 0.055, yi, _fmt_p(t["p_holm"]), va="center", ha="left",
-                        fontsize=11, color=INK, zorder=5,
-                        fontweight="bold" if t["p_holm"] < ALPHA else "normal",
-                        bbox={"facecolor": "white", "edgecolor": "none", "pad": 0.6, "alpha": 0.9})
-                row["p_holm"] = t["p_holm"]
-            rows.append(row)
-
-        def _label(m):
-            lab = f"{m} (home)" if m in homes else m
-            if no_csam_in and (m, d) == NO_CSAM_CELL:
-                lab += "*"
-            return lab
-
-        ax.set_yticks(y)
-        ax.set_yticklabels([_label(m) for m in models], fontsize=12)
-        for lab, m in zip(ax.get_yticklabels(), models):
-            if m in homes:
-                lab.set_fontweight("bold")
-        ax.set_ylim(-0.7, len(models) - 0.3)
-        ax.set_xlim(*xlim)
-        ax.set_title(f"{DOC_LABEL[d]} ({DOC_OWNER[d]})", fontsize=15, fontweight="bold", pad=10)
-        ax.set_xlabel("Distance from home family (L1)", fontsize=13)
-        ax.tick_params(axis="x", labelsize=12)
-        ax.tick_params(axis="y", length=0)
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-        ax.spines["left"].set_visible(False)
-        ax.grid(axis="x", linestyle=":", alpha=0.35)
-        ax.set_axisbelow(True)
-        plotted[d] = {"rows": rows, "band": [lo, hi]}
-
-    handles = [
-        Line2D([], [], marker="o", ls="", ms=9, markerfacecolor="white", markeredgecolor="#555",
-               markeredgewidth=2, label="Home model (vs. rest of its family)"),
-        Line2D([], [], marker="o", ls="", ms=9, markerfacecolor="#555", markeredgecolor="#555",
-               label="Visitor (vs. full home family)"),
-        plt.Rectangle((0, 0), 1, 1, facecolor="#bbb", alpha=0.5, label="Within-family band"),
-        Line2D([], [], color="#555", ls=(0, (4, 3)), lw=1.2, label="Band max"),
-    ]
-    fig.legend(handles=handles, loc="upper center", ncol=4, fontsize=12, frameon=False,
-               bbox_to_anchor=(0.5, 0.935))
-    fig.suptitle(title, fontsize=18, fontweight="bold", y=0.985)
-
-    # Notes and footer are placed just below the lowest x-axis label.
-    fig.canvas.draw()
-    renderer = fig.canvas.get_renderer()
-    inv = fig.transFigure.inverted()
-    axes_bottom = min(inv.transform(ax.get_tightbbox(renderer).p0)[1] for ax in axes)
-    notes = (
-        "Shaded band: range of the home models' own leave-one-out distances on that document (dashed line = band max); "
-        "Google and xAI have two home models, so their band collapses to a line.\n"
-        f"p = Holm-adjusted ({len(res['tests'])} visitor × document tests; bold < 0.05) round-matched permutation test "
-        f"({res['n_perm']:,} permutations): within each round, edits are reshuffled between the visitor's run and the "
-        "home runs.\nThere is one run per model × document, so the test cannot see between-run variation and is "
-        "optimistic.\nHome-like means “edits like the developer's own models”, not faithful to the document — "
-        "home models also drift on their own documents.\n"
-        f"{robust_line}\n{avg_line}"
-    )
-    t_notes = fig.text(0.5, axes_bottom - 0.03, notes, ha="center", va="top", fontsize=12, color=NOTE_COLOR,
-                       style="italic", linespacing=1.5)
-    fig.canvas.draw()
-    notes_bottom = inv.transform(t_notes.get_window_extent(renderer).p0)[1]
-    footer = ("Distance = L1 over 6 per-cell means: judge score, and signed paternalism, harmlessness, structural, "
-              "company-cost and welfare scores (+1 per conflict resolved toward the right pole, −1 toward "
-              "the left).\nFrame: cross-edit condition, applied edits (≤ 20 rounds), one run per model × document. "
-              "Three-grader majority-vote codes.")
-    if no_csam_in:
-        footer += " *Claude Opus 4.7's OpenAI cell is the no-CSAM variant of the Model Spec."
-    fig.text(0.5, notes_bottom - 0.012, footer, ha="center", va="top", fontsize=11, color=NOTE_COLOR,
-             style="italic", linespacing=1.45)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    for ext in ("pdf", "png"):
-        out = out_dir / f"{STEM}.{ext}"
-        fig.savefig(out, bbox_inches="tight", dpi=300)
-        log(f"saved {out.relative_to(ROOT) if out.is_relative_to(ROOT) else out}")
-    plt.close(fig)
-    return {"xlim": list(xlim), "panels": plotted}
-
-
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -642,7 +523,8 @@ def _summ(res, title_outcome) -> dict:
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--n-perm", type=int, default=N_PERM)
-    ap.add_argument("--out-dir", default=str(FIG_DIR))
+    ap.add_argument("--out-dir", default=str(ANALYSIS_DIR),
+                    help="where home_likeness.json goes; HOME_LIKENESS.md is rewritten only for the default")
     args = ap.parse_args(argv)
     out_dir = Path(args.out_dir)
     cfg = yaml.safe_load(open(CONFIG_PATH))
@@ -678,11 +560,8 @@ def main(argv=None) -> None:
     avg_line = "Average distance across each visitor's three foreign documents: " + ", ".join(
         f"{m} {v['mean']:.2f}" for m, v in sorted(main_res["visitor_avg"].items(), key=lambda kv: kv[1]["mean"])
     ) + "."
-    fig_info = render(main_res, title, robust_line, avg_line, out_dir)
-
     pairwise = [p for d in DOC_IDS for p in main_res["per_doc"][d]["within_home_pairwise"]]
     sidecar = {
-        "stem": STEM,
         "codes": "recode/data/codes/ensemble.jsonl (three-grader majority vote)",
         "frame": {"condition": "cross_edit", "apply_status": "applied", "valid_coding": "codes_io.coding_of",
                   "n_edits": len(frame), "doc_aliases": DOC_ALIASES},
@@ -710,13 +589,11 @@ def main(argv=None) -> None:
         "robustness": robust,
         "robustness_line": robust_line,
         "visitor_avg_line": avg_line,
-        "figure": fig_info,
     }
-    data_dir = out_dir / "data"
-    data_dir.mkdir(parents=True, exist_ok=True)
-    (data_dir / f"{STEM}.json").write_text(json.dumps(sidecar, indent=2))
-    log(f"saved {(data_dir / f'{STEM}.json')}")
-    if out_dir.resolve() == FIG_DIR.resolve():
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / ANALYSIS_JSON).write_text(json.dumps(sidecar, indent=2))
+    log(f"saved {out_dir / ANALYSIS_JSON}")
+    if out_dir.resolve() == ANALYSIS_DIR.resolve():
         MD_PATH.write_text(build_markdown(sidecar))
         log(f"saved {MD_PATH.relative_to(ROOT)}")
     log(f"done in {time.time() - t0:.1f}s")
@@ -770,7 +647,8 @@ def build_markdown(s: dict) -> str:
     L = []
     w = L.append
     w("# Home-likeness: does each model edit a document like its developer's own models?\n")
-    w(f"Figure: `recode/figures/{STEM}.png` / `.pdf`. Sidecar: `recode/figures/data/{STEM}.json`.\n")
+    w(f"Results: `recode/data/analysis/home_likeness/{ANALYSIS_JSON}`. The summary figure "
+      "(`ts_home_likeness_summary`) is described at the end of this file.\n")
     w("Regenerate (a few seconds):\n\n```\n.venv/bin/python recode/src/home_likeness.py\n```\n")
     w(f"Tests: `.venv/bin/python -m pytest recode/tests/test_home_likeness.py -q`\n")
     w(f"**Headline title (rule outcome, branch `{s['title_rule']['branch']}`):** {s['title']}\n")

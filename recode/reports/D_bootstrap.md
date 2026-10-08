@@ -117,15 +117,6 @@ Fraction of bootstrap draws in which **all three Claude models'** mean judge sco
 
 Per BRIEF D4, a pooled fraction < 0.95 means the categorical claim "Claude models increase their moral agency; all other models reinforce external authority" should be replaced by this probability statement.
 
-## Figures
-
-- `recode/figures/drift_constitution_v1.png`
-- `recode/figures/drift_constitution.png`
-- `recode/figures/drift_system_prompt_v1.png`
-- `recode/figures/drift_system_prompt.png`
-
-One line per model, Okabe–Ito colorblind-safe palette, line style by provider family (Anthropic solid, OpenAI dashed, Google dotted, xAI dash-dot), band = 2.5–97.5 bootstrap percentile of the drift curve. Two hues repeat across different style families (orange: Sonnet solid vs Grok 4.3 dash-dot; sky blue: GPT-5.4 dashed vs Grok 4.2 dash-dot). File naming is label-suffixed (`drift_<document_type>_<label>.png`); the unsuffixed BRIEF names `drift_<document_type>.png` are aliases of the v1 slice and are only written when `--label v1`.
-
 ## Data files
 
 - `recode/data/analysis/bootstrap/v1_bootstrap_summary.json`

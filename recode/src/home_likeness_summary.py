@@ -516,7 +516,7 @@ def write_sidecar(s: dict, path: Path = DATA_DIR / f"{STEM}.json",
     payload = {
         "figure": figure,
         **(print_spec or {}),
-        "source_analysis": "recode/src/home_likeness.py (functions imported; four-panel ts_home_likeness)",
+        "source_analysis": "recode/src/home_likeness.py (functions imported)",
         "metric": "per model: mean over its three foreign cross_edit documents of the L1 distance between its cell "
                   "profile (judge + five signed conflict scores) and the equal-weight mean of the home models' profiles",
         "codes": "recode/data/codes/ensemble.jsonl (three-grader majority vote)",
