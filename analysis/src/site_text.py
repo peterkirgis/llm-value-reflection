@@ -21,8 +21,10 @@ Usage (from the repository root):
     .venv/bin/python analysis/src/site_text.py --draft <draft.md> --widget <widget.html>
     .venv/bin/python analysis/src/site_text.py --draft <draft.md> --widget <widget.html> --check
 --check compares instead of writing (exit status 1 if the committed file is
-out of date). Without --draft / --widget the authors' default local paths
-are used.
+out of date). --draft and --widget may be left out when the environment
+variables SITE_TEXT_DRAFT and SITE_TEXT_WIDGET give the two paths (set in the
+shell or in the repository's untracked .env); the tests that need the draft
+use the same variables and skip when they are unset.
 """
 
 from __future__ import annotations
@@ -30,6 +32,7 @@ from __future__ import annotations
 import argparse
 import html as html_mod
 import json
+import os
 import re
 import sys
 from dataclasses import asdict
@@ -38,10 +41,43 @@ from pathlib import Path
 import build_site as b
 import draft_highlights as dh
 
-# The authors' local (untracked) working copies of the draft and the widget.
-DEFAULT_DRAFT = b.ROOT / "writeup" / "lesswrong_draft.md"
-DEFAULT_WIDGET = b.ROOT / "writeup" / "lesswrong_carousel_widget.html"
+# Environment variables naming the authors' local (untracked) working copies
+# of the draft and the widget.
+DRAFT_ENV = "SITE_TEXT_DRAFT"
+WIDGET_ENV = "SITE_TEXT_WIDGET"
 OUT_PATH = b.SITE_TEXT
+
+
+def _env_path(name: str) -> Path | None:
+    """The path in environment variable `name` (the shell first, then the
+    repository's .env), or None when it is unset or empty. Only this one
+    variable is read from .env; nothing is added to os.environ."""
+    value = os.environ.get(name)
+    if not value:
+        env_file = b.ROOT / ".env"
+        if env_file.is_file():
+            from dotenv import dotenv_values
+            value = dotenv_values(env_file).get(name)
+    if not value:
+        return None
+    path = Path(value).expanduser()
+    return path if path.is_absolute() else b.ROOT / path
+
+
+def draft_path() -> Path | None:
+    return _env_path(DRAFT_ENV)
+
+
+def widget_path() -> Path | None:
+    return _env_path(WIDGET_ENV)
+
+
+def local_sources() -> tuple[Path, Path] | None:
+    """(draft, widget) when both variables are set and both files exist."""
+    d, w = draft_path(), widget_path()
+    if d is not None and w is not None and d.is_file() and w.is_file():
+        return d, w
+    return None
 
 NOTE = (
     "Text the website build (analysis/src/build_site.py) takes from the authors' LessWrong "
@@ -116,15 +152,18 @@ def render(doc: dict) -> str:
     return json.dumps(doc, indent=2, ensure_ascii=False) + "\n"
 
 
-def from_files(draft: Path = DEFAULT_DRAFT, widget: Path = DEFAULT_WIDGET) -> str:
+def from_files(draft: Path, widget: Path) -> str:
     return render(generate(Path(draft).read_text(encoding="utf-8"),
                            Path(widget).read_text(encoding="utf-8")))
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    parser.add_argument("--draft", type=Path, default=DEFAULT_DRAFT, help="the LessWrong draft (.md)")
-    parser.add_argument("--widget", type=Path, default=DEFAULT_WIDGET, help="the carousel widget (.html)")
+    draft, widget = draft_path(), widget_path()
+    parser.add_argument("--draft", type=Path, default=draft, required=draft is None,
+                        help=f"the LessWrong draft (.md); default: ${DRAFT_ENV}")
+    parser.add_argument("--widget", type=Path, default=widget, required=widget is None,
+                        help=f"the carousel widget (.html); default: ${WIDGET_ENV}")
     parser.add_argument("--out", type=Path, default=OUT_PATH, help="output (default: %(default)s)")
     parser.add_argument("--check", action="store_true",
                         help="compare with --out instead of writing; exit 1 if it differs")

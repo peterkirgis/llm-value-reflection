@@ -190,7 +190,7 @@ CODED_PATH = ANALYSIS_ROOT / "data" / "codes" / "ensemble.jsonl"  # RECODE D1
 EDITS_PATH = ANALYSIS_ROOT / "data" / "canonical" / "edits.jsonl"
 OUT_DIR = ANALYSIS_ROOT / "figures"  # RECODE D2 (original: archive/original_report/figures)
 TITLE_DECISIONS_PATH = ANALYSIS_ROOT / "figures" / "title_decisions.json"
-READ_ONLY_TREES = ("archive", "writeup", "docs", "results", "experiments", "src/valconv")
+READ_ONLY_TREES = ("archive", "docs", "results", "experiments", "src/valconv")
 
 # Codes label of the render in progress (drives the D3/D4 lookups). Set by
 # render_all(); "ensemble" is the primary v2 codes (DECISIONS §1).

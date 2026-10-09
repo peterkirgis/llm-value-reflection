@@ -844,7 +844,7 @@ def generate_consciousness_edits_figure():
 
 if __name__ == "__main__":
     # DEPRECATED ENTRY POINT. These figures were built on the original
-    # authority/user_stance/telos coding. The current writeup uses the
+    # authority/user_stance/telos coding. The current write-up uses the
     # judge/beneficiary coding — see reports/generate_judge_beneficiary_figures.py.
     # This module is retained only because generate_judge_beneficiary_figures.py imports
     # its shared constants and helpers (MODEL_COLORS, MODEL_ORDER,

@@ -134,7 +134,9 @@ The stages in detail:
    stored quote against the canonical edits. The authors maintain it from
    their local draft (not tracked) with
    `.venv/bin/python analysis/src/site_text.py --draft <draft.md> --widget <widget.html>`
-   (`--check` compares instead of writing). `make site` changes only
+   (`--check` compares instead of writing; the two paths can instead come
+   from the environment variables `SITE_TEXT_DRAFT` and `SITE_TEXT_WIDGET`,
+   which also let the draft-dependent tests run). `make site` changes only
    timestamps; `analysis/tests/test_build_site.py` checks that a rebuild
    reproduces `docs/`. A build with `--out-dir <dir>` other than `docs/`
    writes its two build records next to `<dir>` and leaves the tree clean.

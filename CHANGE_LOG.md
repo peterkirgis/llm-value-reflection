@@ -142,8 +142,8 @@ and amended along the way; analysis/reports/STATUS.md is the build log.
 - Repository restructure (2026-10-08): the folder recode/ was renamed
   analysis/ (with git mv, so history follows); unused figures, superseded site
   variants and their code were removed; historical files moved to archive/;
-  the LessWrong draft (reports/final_draft.md) left the repository (it stays
-  in git history); the grader API cache was committed as one
+  the LessWrong draft (reports/final_draft.md) was moved out of reports/
+  and, on 2026-10-09, stopped being tracked (it stays in git history); the grader API cache was committed as one
   compressed archive; and raw_data.sha256 records the checksum of every raw
   data file. Raw files that changed path are listed in archive/README.md
   ("Raw files that moved"); none changed content.

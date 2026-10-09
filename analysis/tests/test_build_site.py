@@ -7,8 +7,10 @@ guard that a rebuild reproduces the committed docs/ byte for byte (apart from
 the embedded generated_at timestamp).
 
 The draft itself is the authors' local working file and is not in the
-repository. The tests that parse it skip when it is absent; where it is
-present they also check that regenerating the site-text file from it gives
+repository. The tests that parse it find it (and the carousel widget) through
+the environment variables SITE_TEXT_DRAFT and SITE_TEXT_WIDGET (shell or
+.env, see analysis/src/site_text.py) and skip when they are unset or the files
+are missing; where the draft is present they also check that regenerating the site-text file from it gives
 exactly the committed file.
 """
 
@@ -24,15 +26,17 @@ import draft_highlights as dh
 import site_text as st
 
 SITE_TEXT = b.load_site_text()
+LOCAL_SOURCES = st.local_sources()
 needs_draft = pytest.mark.skipif(
-    not (st.DEFAULT_DRAFT.is_file() and st.DEFAULT_WIDGET.is_file()),
-    reason="the authors' LessWrong draft is not in this checkout",
+    LOCAL_SOURCES is None,
+    reason="the authors' LessWrong draft is not available "
+           "(SITE_TEXT_DRAFT / SITE_TEXT_WIDGET unset or missing)",
 )
 
 
 @pytest.fixture(scope="module")
 def draft():
-    return st.DEFAULT_DRAFT.read_text(encoding="utf-8")
+    return LOCAL_SOURCES[0].read_text(encoding="utf-8")
 
 
 def _node():
@@ -127,7 +131,7 @@ def test_stale_site_text_fails_the_build():
 
 @needs_draft
 def test_site_text_regenerates_from_the_draft():
-    assert st.from_files() == b.SITE_TEXT.read_text(encoding="utf-8"), (
+    assert st.from_files(*LOCAL_SOURCES) == b.SITE_TEXT.read_text(encoding="utf-8"), (
         "site_text.json is out of date with the draft: run analysis/src/site_text.py")
 
 
