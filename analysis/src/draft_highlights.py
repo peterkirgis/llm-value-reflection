@@ -1,9 +1,12 @@
 """draft_highlights — read the findings statements and quoted example edits
-out of the current LessWrong draft (writeup/lesswrong_draft.md) and resolve every
-quote to its edit id in analysis/data/canonical/edits.jsonl.
+out of the authors' LessWrong draft (Markdown) and resolve every quote to its
+edit id in analysis/data/canonical/edits.jsonl.
 
-Used by the website build (analysis/src/build_site.py) so the site's
-statements and "Highlighted edits" reproduce the draft verbatim.
+Used by analysis/src/site_text.py, which stores the result in
+analysis/data/site/site_text.json for the website build
+(analysis/src/build_site.py), so the site's statements and "Highlighted
+edits" reproduce the draft verbatim; the build re-runs match_quote on the
+stored quotes.
 
 Draft structure relied on (asserted, so a restructured draft fails loudly):
   - the Introduction paragraph beginning "Our analysis focuses on two value
@@ -24,7 +27,6 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-DRAFT_PATH = ROOT / "writeup" / "lesswrong_draft.md"
 EDITS_PATH = ROOT / "analysis" / "data" / "canonical" / "edits.jsonl"
 
 # Draft Results subsection heading (prefix, markdown stripped) -> site facet.

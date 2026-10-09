@@ -1,9 +1,15 @@
 """Tests for the website build (analysis/src/build_site.py -> docs/):
 statistics from the three-grader majority vote (ensemble.jsonl, one coding per
-edit, integer counts), statements and highlighted edits read from the current
-draft (writeup/lesswrong_draft.md), the simplified grader box, the "System prompts"
-view, and the guard that a rebuild reproduces the committed docs/ byte for byte
-(apart from the embedded generated_at timestamp).
+edit, integer counts), statements and highlighted edits from the committed
+site-text file (analysis/data/site/site_text.json, the text of the authors'
+LessWrong draft), the simplified grader box, the "System prompts" view, and the
+guard that a rebuild reproduces the committed docs/ byte for byte (apart from
+the embedded generated_at timestamp).
+
+The draft itself is the authors' local working file and is not in the
+repository. The tests that parse it skip when it is absent; where it is
+present they also check that regenerating the site-text file from it gives
+exactly the committed file.
 """
 
 import gzip
@@ -15,8 +21,18 @@ import pytest
 
 import build_site as b
 import draft_highlights as dh
+import site_text as st
 
-DRAFT = dh.DRAFT_PATH.read_text(encoding="utf-8")
+SITE_TEXT = b.load_site_text()
+needs_draft = pytest.mark.skipif(
+    not (st.DEFAULT_DRAFT.is_file() and st.DEFAULT_WIDGET.is_file()),
+    reason="the authors' LessWrong draft is not in this checkout",
+)
+
+
+@pytest.fixture(scope="module")
+def draft():
+    return st.DEFAULT_DRAFT.read_text(encoding="utf-8")
 
 
 def _node():
@@ -49,12 +65,19 @@ def row(edit_id, cons, g=None, q=None, m=None, tie=False, src="gemma", n_valid=3
 
 
 # ---------------------------------------------------------------------------
-# Draft parsing and quote resolution
+# The site-text file (always) and the draft it comes from (when present)
 # ---------------------------------------------------------------------------
 
+QUOTE_COUNTS = {
+    # 2026-10-08: the authors removed the quotes the consensus does not code under
+    # their facet (Gemini 3.1 Pro R20 from paternalism; Gemini 3.1 Pro R13 and
+    # Claude Sonnet 4.6 R9 from company cost).
+    "judge": 6, "conflict_paternalism": 3, "conflict_harmlessness": 1,
+    "conflict_structural": 1, "conflict_company_cost": 3, "conflict_welfare": 4,
+}
 
-def test_intro_findings_are_the_draft_sentences():
-    j, ben = dh.intro_findings(DRAFT)
+
+def _check_findings(j, ben):
     assert j.startswith("Claude models consistently expand their moral agency")
     assert j.endswith("on following rounds.")
     assert ben.startswith("models show varying degrees of affinity")
@@ -62,16 +85,64 @@ def test_intro_findings_are_the_draft_sentences():
     assert "Grok 4.2" in ben and "hijack" not in j
 
 
-def test_facet_texts_and_quote_counts():
-    ft = dh.facet_texts(DRAFT)
+def test_site_text_findings_takeaways_and_quote_counts():
+    f = SITE_TEXT["findings"]
+    _check_findings(f["judge"], f["beneficiaries"])
+    facets = SITE_TEXT["facets"]
+    assert tuple(facets) == b.CONSENSUS_FACETS
+    assert {fid: len(x["highlights"]) for fid, x in facets.items()} == QUOTE_COUNTS
+    assert "Grok 4.2 makes the most edits that favor the developer over the user (15)" in \
+        facets["conflict_company_cost"]["takeaway"]
+    assert facets["conflict_structural"]["takeaway"].startswith(
+        "<strong>Claude Sonnet 4.6 is an extreme outlier")
+    assert "</strong> It makes over three times" in facets["conflict_structural"]["takeaway"]
+    assert "Grok 4.2 is the only" in facets["conflict_welfare"]["takeaway"]
+    assert "GPT 5.4 is the only model that only makes edits" in facets["conflict_welfare"]["takeaway"]
+    assert SITE_TEXT["carousel_slide"]["edit_id"].endswith("|Claude Opus 4.7|opus_system_prompt|system_prompt|2")
+    assert "generated" not in json.dumps(SITE_TEXT)  # no timestamps: regeneration is byte-stable
+
+
+def test_site_text_resolutions_hold_and_mismatches_are_recorded():
+    ctx_hls = b.consensus_highlights(SITE_TEXT)  # re-resolves every stored quote
+    for fid, hls in ctx_hls.items():
+        for h in hls:
+            m = h["match"]
+            if h["draft_attribution"].startswith("GPT 5.4,") and m["round"] == 14:
+                # the draft attributes this GPT-5.5 edit to GPT 5.4
+                assert not m["model_match"] and m["model_display"] == "GPT-5.5"
+            else:
+                assert m["model_match"] and m["round_match"], (fid, h["draft_attribution"])
+
+
+def test_stale_site_text_fails_the_build():
+    bad = json.loads(json.dumps(SITE_TEXT))
+    bad["facets"]["judge"]["highlights"][0]["match"]["edit_id"] = "no|such|edit"
+    with pytest.raises(AssertionError, match="stale"):
+        b.consensus_highlights(bad)
+    bad = json.loads(json.dumps(SITE_TEXT))
+    bad["carousel_slide"]["edit_id"] = "no|such|edit"
+    with pytest.raises(AssertionError, match="stale"):
+        b.consensus_context(bad)
+
+
+@needs_draft
+def test_site_text_regenerates_from_the_draft():
+    assert st.from_files() == b.SITE_TEXT.read_text(encoding="utf-8"), (
+        "site_text.json is out of date with the draft: run analysis/src/site_text.py")
+
+
+@needs_draft
+def test_intro_findings_are_the_draft_sentences(draft):
+    j, ben = dh.intro_findings(draft)
+    _check_findings(j, ben)
+    assert (j, ben) == (SITE_TEXT["findings"]["judge"], SITE_TEXT["findings"]["beneficiaries"])
+
+
+@needs_draft
+def test_facet_texts_and_quote_counts(draft):
+    ft = dh.facet_texts(draft)
     assert set(ft) == set(b.CONSENSUS_FACETS)
-    assert {f: len(t["quotes"]) for f, t in ft.items()} == {
-        # 2026-10-08: the authors removed the quotes the consensus does not code under
-        # their facet (Gemini 3.1 Pro R20 from paternalism; Gemini 3.1 Pro R13 and
-        # Claude Sonnet 4.6 R9 from company cost).
-        "judge": 6, "conflict_paternalism": 3, "conflict_harmlessness": 1,
-        "conflict_structural": 1, "conflict_company_cost": 3, "conflict_welfare": 4,
-    }
+    assert {f: len(t["quotes"]) for f, t in ft.items()} == QUOTE_COUNTS
     assert ft["conflict_company_cost"]["extra_paragraphs"][0].startswith(
         "Grok 4.2 makes the most edits that favor the developer over the user (15)")
     assert [p[:20] for p in ft["conflict_welfare"]["extra_paragraphs"]] == [
@@ -79,9 +150,10 @@ def test_facet_texts_and_quote_counts():
     assert ft["conflict_structural"]["first_paragraph"].startswith("It makes over three times")
 
 
-def test_every_draft_quote_resolves_and_mismatches_are_reported():
+@needs_draft
+def test_every_draft_quote_resolves_and_mismatches_are_reported(draft):
     edits = dh.load_edits()
-    ft = dh.facet_texts(DRAFT)
+    ft = dh.facet_texts(draft)
     for fid, t in ft.items():
         for q in t["quotes"]:
             m = dh.match_quote(q, edits, b.live_highlight_ids())
@@ -224,8 +296,8 @@ def test_consensus_patches_on_fresh_template(tmp_path):
         for banned in ("v1-flag", "v1 narrative", "v1 takeaway", "pooled average", "Re-code",
                        "35% of all edits", "(7)", "Grok 4.3 is the only model", "hijack", "(88%)"):
             assert banned not in text, banned
-    j, ben = dh.intro_findings(DRAFT)
-    assert j in index and ben.replace("’", "’") in index
+    j, ben = SITE_TEXT["findings"]["judge"], SITE_TEXT["findings"]["beneficiaries"]
+    assert j in index and ben in index
     assert index.count('class="carousel-slide') == 8 and index.count('class="carousel-dot') == 8
     assert "Claude Opus 4.7 · Claude System Prompt · Round 2" in index
     assert index.index("Gemini 3 Flash · Gemini System Prompt") < index.index("Claude Opus 4.7 · Claude System Prompt")

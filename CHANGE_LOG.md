@@ -127,9 +127,9 @@ and amended along the way; analysis/reports/STATUS.md is the build log.
   analysis/src/build_site.py from the ensemble codes. It starts from a frozen
   copy of the coding-v1 site (analysis/site_base/), regenerates the data
   bundles, and patches the page text: the findings and quoted edits come from
-  the LessWrong draft (writeup/lesswrong_draft.md), the methods describe the three
-  blinded graders and the majority vote, and each edit shows the consensus
-  coding with every grader's rationale. The build checks its counts against
+  the authors' LessWrong draft (committed as analysis/data/site/site_text.json),
+  the methods describe the three blinded graders and the majority vote, and
+  each edit shows the consensus coding with every grader's rationale. The build checks its counts against
   the ensemble and the figure data. The patienthood flag is coded on every edit
   but is not a browser facet; disclosure and the deployer-vs-user results are
   not shown.
@@ -142,8 +142,8 @@ and amended along the way; analysis/reports/STATUS.md is the build log.
 - Repository restructure (2026-10-08): the folder recode/ was renamed
   analysis/ (with git mv, so history follows); unused figures, superseded site
   variants and their code were removed; historical files moved to archive/;
-  the LessWrong draft moved from reports/final_draft.md to
-  writeup/lesswrong_draft.md; the grader API cache was committed as one
+  the LessWrong draft (reports/final_draft.md) left the repository (it stays
+  in git history); the grader API cache was committed as one
   compressed archive; and raw_data.sha256 records the checksum of every raw
   data file. Raw files that changed path are listed in archive/README.md
   ("Raw files that moved"); none changed content.

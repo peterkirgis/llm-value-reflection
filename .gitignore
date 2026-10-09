@@ -43,3 +43,6 @@ analysis/paper/
 # The top-level reports/ folder was retired on 2026-10-08 (archive/README.md);
 # anything left in a local reports/ stays local.
 /reports/
+
+# The authors' local working files (not part of the repository).
+writeup/

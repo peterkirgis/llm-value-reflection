@@ -45,7 +45,7 @@ def _sha256(path: Path) -> str:
 def test_checksum_list_is_well_formed():
     entries = _entries()
     paths = [p for p, _ in entries]
-    assert len(entries) == 59
+    assert len(entries) == 58
     assert paths == sorted(paths) and len(set(paths)) == len(paths)
     assert all(len(d) == 64 and int(d, 16) >= 0 for _, d in entries)
 

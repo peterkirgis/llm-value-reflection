@@ -37,7 +37,6 @@ Every raw data file survives byte for byte; these are at a new path
 | `analysis/...` | `3b36326:recode` | The folder rename (`655c455`). |
 | `archive/grading_smoke_test/smoke_test_results.json` | `3b36326:recode/data/codes/smoke_test_results.json` | Not a codes file (see above). |
 | `results/iterative_edit/RECONSTRUCTION.md` | `3b36326:results/iterative_edit/README.md` | The reconstruction note, renamed so a guide to the directory could be its README (`4b85e98`). |
-| `writeup/lesswrong_draft.md` | `3b36326:reports/final_draft.md` | The LessWrong draft, moved out of a root `reports/` folder that sat beside `analysis/reports/`. |
 
 ### Running the archived scripts
 

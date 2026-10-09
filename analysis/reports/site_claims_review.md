@@ -3,8 +3,8 @@
 > **Historical (2026-10-08).** This reviews the site as it was before the
 > consensus rebuild, against the two-grader evidence of 2026-09-09. The live site
 > (`docs/`) is now built on the three-grader majority vote by
-> `analysis/src/build_site.py`, with its statements taken from
-> `writeup/lesswrong_draft.md`.
+> `analysis/src/build_site.py`, with its statements taken from the authors'
+> LessWrong draft (`analysis/data/site/site_text.json`).
 
 Reviewed 2026-09-09 against the committed evidence base (headline JSONs, cluster-bootstrap
 CIs, ranking-stability files, E1–E5 validity experiments, B3 inter-grader report,

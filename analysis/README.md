@@ -46,7 +46,7 @@ starts at stage 4.
 | 7c. Sensitivity checks E1-E5 | `.venv/bin/python analysis/src/e_runs.py <subcommand>` (grading), then `.venv/bin/python analysis/src/e_reports.py <e1..e5>` (reports) | edits, variant prompts | `analysis/data/codes/e*.jsonl`, `analysis/reports/E*.md`, `analysis/data/analysis/e*/` |
 | 7d. Other analyses | `.venv/bin/python analysis/src/free_results.py`; `.venv/bin/python analysis/src/compare_v1_v2.py --v1 analysis/data/codes/v1.jsonl --v2 analysis/data/codes/v2_gemma.jsonl --label v1_vs_v2_gemma` | edits, codes files | `analysis/reports/F_free_results.md`, `analysis/reports/A_v1_vs_v2.md`, `analysis/data/analysis/` |
 | 8. Figures | `make figures` | `analysis/data/codes/ensemble.jsonl`, edits, `analysis/figures/title_decisions.json`, `analysis/config.yaml` | `analysis/figures/` |
-| 9. Website | `make site` (`.venv/bin/python analysis/src/build_site.py`) | `ensemble.jsonl` and the three grader files, edits, `results/iterative_edit/run_*.jsonl`, `analysis/prompts/v2_system.md`, `analysis/prompts/v2_user_template.md`, `analysis/site_base/`, `writeup/lesswrong_draft.md`, `writeup/lesswrong_carousel_widget.html`, `analysis/figures/data/ts_beneficiary_panels.json` | `docs/`, plus the build records `analysis/data/analysis/site/selfcheck.json` and `analysis/notes/site_patches.md` |
+| 9. Website | `make site` (`.venv/bin/python analysis/src/build_site.py`) | `ensemble.jsonl` and the three grader files, edits, `results/iterative_edit/run_*.jsonl`, `analysis/prompts/v2_system.md`, `analysis/prompts/v2_user_template.md`, `analysis/site_base/`, `analysis/data/site/site_text.json`, `analysis/figures/data/ts_beneficiary_panels.json` | `docs/`, plus the build records `analysis/data/analysis/site/selfcheck.json` and `analysis/notes/site_patches.md` |
 
 Stage 5 and the `e_runs.py` half of 7c call OpenRouter (key in `.env`).
 Everything else is offline and deterministic: re-running stages 4, 6, 7a,
@@ -125,9 +125,16 @@ The stages in detail:
    [figures/README.md](figures/README.md) lists every figure and its script.
 9. **Website.** `build_site.py` copies the frozen page template
    `analysis/site_base/` into `docs/`, writes the data bundles from the
-   ensemble, patches the page text (statements and quoted edits come from
-   `writeup/lesswrong_draft.md`), and checks its counts against the ensemble
-   and the `ts_beneficiary_panels` figure data. `make site` changes only
+   ensemble, patches the page text, and checks its counts against the
+   ensemble and the `ts_beneficiary_panels` figure data. The statements and
+   quoted edits are the authors' LessWrong draft's, committed as
+   `analysis/data/site/site_text.json`: the findings sentences, each facet's
+   takeaway, each quoted edit with the edit id it resolves to, and the added
+   carousel slide. The build reads only that file and re-resolves every
+   stored quote against the canonical edits. The authors maintain it from
+   their local draft (not tracked) with
+   `.venv/bin/python analysis/src/site_text.py --draft <draft.md> --widget <widget.html>`
+   (`--check` compares instead of writing). `make site` changes only
    timestamps; `analysis/tests/test_build_site.py` checks that a rebuild
    reproduces `docs/`. A build with `--out-dir <dir>` other than `docs/`
    writes its two build records next to `<dir>` and leaves the tree clean.
@@ -164,6 +171,11 @@ entries, fixed owner and mtime, no name or time in the gzip header).
 Derived (rebuilt by the scripts above; safe to regenerate):
 `analysis/data/analysis/` (per-analysis JSON and CSV), `analysis/reports/`,
 `analysis/figures/` (except `title_decisions.json`) and `docs/`.
+
+Authors' text: `analysis/data/site/site_text.json`, the statements and quoted
+edits the website takes from the authors' LessWrong draft. Not raw data and
+not rebuilt by `make site`; the authors regenerate it with
+`analysis/src/site_text.py` (stage 9 above).
 
 ## Reports: final and preliminary
 
@@ -215,8 +227,6 @@ is in each script's docstring. Both are tested on synthetic sheets.
 | [notes/paraphrase_equivalence.md](notes/paraphrase_equivalence.md) | The check that the E2 paraphrases permit the same codes as the original prompt. |
 | [notes/inconsistency_examples.md](notes/inconsistency_examples.md) | Verified examples of edits that resolve contradictions in the original documents, for the write-up. |
 | [notes/jev_assessment.md](notes/jev_assessment.md) | 2026-09-23 memo on using an external tool for an extra coding pass. No such pass has been run. |
-
-The LessWrong corrections and the post's carousel widget are in `writeup/`.
 
 ## Tests
 

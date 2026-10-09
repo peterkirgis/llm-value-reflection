@@ -25,7 +25,7 @@ The `ts_judge_*`, `ts_claude_conditions`, `ts_beneficiary_panels` and `ts_drift_
 
 The uncertainty conventions are the original's (±1 SD trajectory bands, naive per-edit CIs), not the re-coding's cluster bootstrap (`analysis/reports/D_bootstrap_ensemble.md`). These figures answer one question: what does the report's own figure look like under the new codes?
 
-Nothing here is written into `archive/original_report/figures/`. The generator refuses at runtime to write into `archive/`, `writeup/`, `docs/`, `results/`, `experiments/` or `src/valconv/`.
+Nothing here is written into `archive/original_report/figures/`. The generator refuses at runtime to write into `archive/`, `docs/`, `results/`, `experiments/` or `src/valconv/`.
 
 ### Deviations from the original generator
 

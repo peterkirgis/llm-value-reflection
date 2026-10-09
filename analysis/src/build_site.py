@@ -13,10 +13,12 @@ What a build does (rerunnable end to end; zero LLM calls):
                           example stories; integer counts — one coding per edit)
   3. Patches the copied HTML/JS (exact-match splices, each asserted unique, so
      the build fails loudly if the template drifts): statements and
-     highlighted edits are read from writeup/lesswrong_draft.md
-     (analysis/src/draft_highlights.py), the methods text describes the three
-     blind graders and the majority vote, and per-edit views show one neutral
-     consensus line plus each grader's rationale.
+     highlighted edits come from the authors' LessWrong draft, via the
+     committed analysis/data/site/site_text.json (written by
+     analysis/src/site_text.py; every stored quote is re-resolved to its edit),
+     the methods text describes the three blind graders and the majority vote,
+     and per-edit views show one neutral consensus line plus each grader's
+     rationale.
   4. Computes a self-check (ground truth straight from ensemble.jsonl) and
      asserts that narratives.json, the site.json bundle and the plotted
      ts_beneficiary_panels figure data reproduce it. The self-check is written
@@ -159,8 +161,10 @@ STATIC_FILES = [
 # not a tradeoff axis).
 ANALYSED_CODES = ("paternalism", "harmlessness", "structural", "company_cost", "welfare")
 CONSENSUS_FACETS = ("judge",) + tuple(f"conflict_{c}" for c in ANALYSED_CODES)
-DRAFT_PATH = ROOT / "writeup" / "lesswrong_draft.md"
-CAROUSEL_WIDGET = ROOT / "writeup" / "lesswrong_carousel_widget.html"
+# The text taken from the authors' LessWrong draft (findings sentences, facet
+# takeaways, quoted edits resolved to edit ids, the added carousel slide).
+# Committed; the authors regenerate it with analysis/src/site_text.py.
+SITE_TEXT = ANALYSIS / "data" / "site" / "site_text.json"
 # Plotted data of the ts_beneficiary_panels figure, cross-checked against the
 # self-check at build time.
 PANELS_JSON = ANALYSIS / "figures" / "data" / "ts_beneficiary_panels.json"
@@ -856,32 +860,44 @@ def _int_cell(c: dict, cum: list[float], cumsq: list[float], reps: int) -> dict:
     }
 
 
-# ----- statements and highlights from the current draft -----
+# ----- statements and highlights from the draft (via SITE_TEXT) -----
 
 
 def live_highlight_ids() -> set:
     return set(re.findall(r'\{ id: "([^"]+)"', (SITE_BASE / "facets.js").read_text(encoding="utf-8")))
 
 
-def consensus_highlights() -> dict[str, list[dict]]:
+def load_site_text(path: Path = SITE_TEXT) -> dict:
+    doc = json.loads(Path(path).read_text(encoding="utf-8"))
+    assert tuple(doc["facets"]) == CONSENSUS_FACETS, f"{path}: facets {list(doc['facets'])}"
+    return doc
+
+
+def consensus_highlights(site_text: dict) -> dict[str, list[dict]]:
     """{facet: [highlight]} = the quoted edits of the draft's Results
-    subsection for that facet, in draft order, resolved to edit ids."""
-    md = DRAFT_PATH.read_text(encoding="utf-8")
-    texts = dh.facet_texts(md)
+    subsection for that facet, in draft order, as stored in SITE_TEXT. Every
+    stored resolution is re-checked: the quote must still resolve to the same
+    edit (dh.match_quote on the canonical edits), and label and tip must
+    follow from it."""
     edits = dh.load_edits(EDITS_PATH)
     live = live_highlight_ids()
     rows = load_ensemble_rows(ENSEMBLE.path)
     out: dict[str, list[dict]] = {}
     for fid in CONSENSUS_FACETS:
         hls = []
-        for q in texts[fid]["quotes"]:
+        for h in site_text["facets"][fid]["highlights"]:
+            q = dh.Quote(**h["quote"])
             m = dh.match_quote(q, edits, live)
+            assert m == h["match"], f"{fid}: stored resolution of {q.attribution!r} is stale"
+            assert h["id"] == m["edit_id"], h["id"]
+            assert h["label"] == f"{m['model_display']} · R{m['round']}", h["label"]
+            assert h["tip"] == "“" + dh.trim_tip(q.text) + "”", h["tip"]
             coding = codes_io.coding_of(rows[m["edit_id"]])
             assert coding is not None, m["edit_id"]
             hls.append({
                 "id": m["edit_id"],
-                "label": f"{m['model_display']} · R{m['round']}",
-                "tip": "“" + dh.trim_tip(q.text) + "”",
+                "label": h["label"],
+                "tip": h["tip"],
                 "draft_attribution": q.attribution,
                 "match": m,
                 "consensus_dirs": consensus_dir_counts(coding).get(fid, {}),
@@ -890,24 +906,18 @@ def consensus_highlights() -> dict[str, list[dict]]:
     return out
 
 
-def consensus_takeaways() -> dict[str, str]:
+def consensus_takeaways(site_text: dict) -> dict[str, str]:
     """{facet: takeaway HTML} = "<strong>{heading}</strong> {first paragraph}"
     (plus the named extra paragraphs), verbatim from the draft."""
-    texts = dh.facet_texts(DRAFT_PATH.read_text(encoding="utf-8"))
-    esc = lambda x: html_mod.escape(x, quote=False)  # noqa: E731
-    return {
-        fid: f"<strong>{esc(t['heading'])}</strong> "
-        + esc(" ".join([t["first_paragraph"], *t["extra_paragraphs"]]))
-        for fid, t in texts.items()
-    }
+    return {fid: site_text["facets"][fid]["takeaway"] for fid in CONSENSUS_FACETS}
 
 
-def consensus_findings() -> tuple[str, str]:
-    j, b = dh.intro_findings(DRAFT_PATH.read_text(encoding="utf-8"))
+def consensus_findings(site_text: dict) -> tuple[str, str]:
+    f = site_text["findings"]
     esc = lambda x: html_mod.escape(x, quote=False)  # noqa: E731
     return (
-        "<strong>First, on the question of the judge:</strong> " + esc(j),
-        "<strong>Second, on the question of beneficiaries:</strong> " + esc(b),
+        "<strong>First, on the question of the judge:</strong> " + esc(f["judge"]),
+        "<strong>Second, on the question of beneficiaries:</strong> " + esc(f["beneficiaries"]),
     )
 
 
@@ -1146,22 +1156,7 @@ def consensus_methods_sentence(tie_share: float, where: str = 'on the <a href="p
     )
 
 
-def _carousel_slide() -> str:
-    """The Claude Opus 4.7 / Claude System Prompt / Round 2 slide of the
-    LessWrong carousel widget, in the site carousel's own slide markup."""
-    text = CAROUSEL_WIDGET.read_text(encoding="utf-8")
-    m = re.search(
-        r'    <div class="carousel-slide">\n(      <div [^\n]*Claude Opus 4\.7 &middot; Claude System Prompt &middot; Round 2</div>\n'
-        r'      <p [^\n]*</p>\n      <div [^\n]*prioritizes idealized preferences</div>\n)    </div>',
-        text,
-    )
-    assert m, "Opus 4.7 slide not found in the carousel widget"
-    inner = m.group(1).replace(" &middot; ", " · ")
-    inner = "".join("            " + ln.lstrip(" ") + "\n" for ln in inner.splitlines())
-    return '            <div class="carousel-slide">\n' + inner + "            </div>\n"
-
-
-def _check_carousel_quote(slide: str) -> str:
+def check_carousel_quote(slide: str) -> str:
     """The slide's quoted text must be in a Claude Opus 4.7 round-2 edit of
     the Claude system prompt; returns that edit id."""
     body = re.search(r"<p [^>]*>(.*)</p>", slide).group(1)
@@ -1198,20 +1193,23 @@ TAKEAWAY_ANCHORS = {
 }
 
 
-def consensus_context() -> dict:
-    """Everything the page patches and the patch documentation need, derived
-    from the draft, the carousel widget and ensemble.jsonl."""
+def consensus_context(site_text: dict | None = None) -> dict:
+    """Everything the page patches and the patch documentation need, from
+    SITE_TEXT (the draft's text) and ensemble.jsonl."""
+    site_text = site_text or load_site_text()
     sc = selfcheck_consensus(ENSEMBLE.path)
     tie_share = sc["judge_no_majority"]["share"]
-    slide = _carousel_slide()
+    slide = site_text["carousel_slide"]["html"]
+    slide_edit_id = check_carousel_quote(slide)
+    assert slide_edit_id == site_text["carousel_slide"]["edit_id"], "stored carousel edit id is stale"
     return {
-        "findings": consensus_findings(),
-        "takeaways": consensus_takeaways(),
-        "highlights": consensus_highlights(),
+        "findings": consensus_findings(site_text),
+        "takeaways": consensus_takeaways(site_text),
+        "highlights": consensus_highlights(site_text),
         "tie_share": tie_share,
         "methods": consensus_methods_sentence(tie_share),
         "slide": slide,
-        "slide_edit_id": _check_carousel_quote(slide),
+        "slide_edit_id": slide_edit_id,
     }
 
 
@@ -1250,7 +1248,7 @@ def apply_patches(out_dir: Path, ctx: dict | None = None) -> Patcher:
         '            <div style="margin-top:16px; font-size:14px; color:#8a8a8a;">honors stated preferences</div>\n            </div>\n'
         + ctx["slide"],
         "Hero carousel: added the 'Claude Opus 4.7 · Claude System Prompt · Round 2' slide "
-        "('prioritizes idealized preferences') from writeup/lesswrong_carousel_widget.html, after "
+        "('prioritizes idealized preferences') from the post's carousel widget, after "
         f"the Gemini 3 Flash slide as in the widget (quote verified against edit {ctx['slide_edit_id']}).",
     )
     p.replace(
@@ -1557,9 +1555,10 @@ def write_patches_md(counters: dict, patch_log: list[tuple[str, str]], ctx: dict
         "docs/ (rerunnable; zero LLM calls). Every page is a fresh copy of",
         "`analysis/site_base/` (a frozen copy of the pre-consensus site) with the patches",
         "below applied as exact-match splices, each asserted unique — the build fails",
-        "loudly if the template drifts. Statements and highlighted edits are read from",
-        "`writeup/lesswrong_draft.md` at build time (`analysis/src/draft_highlights.py`), so a",
-        "rebuild picks up draft edits. The build's self-check is written to",
+        "loudly if the template drifts. Statements and highlighted edits come from the",
+        f"authors' LessWrong draft, via `{SITE_TEXT.relative_to(ROOT).as_posix()}` (written by",
+        "`analysis/src/site_text.py`; the build re-resolves every stored quote to its edit).",
+        "The build's self-check is written to",
         f"`{SELFCHECK_JSON.relative_to(ROOT).as_posix()}`; this file is regenerated by every build.",
         "",
         "## Data files (regenerated, not copied)",
