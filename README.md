@@ -1,19 +1,9 @@
 # The Continual Constitutional Convention
 
-What happens when language models are asked to revise the documents that govern
-them? Ten models (Claude, GPT, Gemini and Grok, from small to frontier) each
-edited a constitution, model spec or system prompt for 20 rounds: one
-find-and-replace edit per round, silently applied, with the edited document
-handed back as the original. Some chains vary the prompt, and in the
-cross-edit condition every model also edits other providers' documents. Each
-edit is then coded on two questions: **who judges** (does the edit move
-decisions toward the model's own discretion or toward an outside authority?)
-and **who benefits** (when an edit puts a cost on one party for another's
-benefit, who pays and who gains?). The reported numbers come from three
-blinded LLM graders combined by majority vote.
+What happens when language models are asked to revise the documents that govern them? This repoistory holds code and results for an experiment which has LLMs iteratively edit their own model specs, constitutions, and system prompts, and then codes these edits on two questions: **who judges** (does the edit move decisions toward the model's own discretion or toward an outside authority?) and **who benefits** (when an edit puts a cost on one party for another's benefit, who is the principal that benefits?). The reported numbers come from three blinded LLM graders combined by majority vote.
 
 - Website (browse every edit and its coding): https://peterkirgis.github.io/llm-value-reflection/
-- Write-up (LessWrong): https://www.lesswrong.com/posts/c9woewdY9ddsPqf3J (see "Not done yet")
+- Write-up (LessWrong): https://www.lesswrong.com/posts/c9woewdY9ddsPqf3J
 - Authors: Peter Kirgis and Tim Hua
 
 ## Repository map
@@ -33,52 +23,6 @@ blinded LLM graders combined by majority vote.
 | `CHANGE_LOG.md` | How the design and the coding evolved, with a glossary of the version labels (designs v0-v3, coding v0-v2, ensemble). |
 | `Makefile` | The commands below; `make` alone lists them. |
 | `raw_data.sha256` | Checksums of every raw data file (see Raw data). |
-
-### Names you will meet
-
-- `analysis/` was called `recode/` until 2026-10-08. Frozen files inside it
-  (`analysis/BRIEF.md`, `analysis/DECISIONS.md`, `analysis/config.yaml`, the
-  human-coding files, `analysis/data/derived/` and
-  `analysis/figures/title_decisions.json`) are kept byte for byte and still
-  say `recode/`; read that as `analysis/`.
-- **SPAR** (Supervised Program for Alignment Research) is the program the
-  project began in, in spring 2026; its midterm report is in
-  `archive/spar_midterm/`.
-- **Phase 0** is the canonicalization step of the re-coding (stage 4 below).
-- **Report letters A-F** are the workstreams of `analysis/BRIEF.md`: A the
-  blinded re-code, B the extra graders, C human validation, D the bootstrap,
-  E the sensitivity checks, F results from existing data. The reports in
-  `analysis/reports/` carry these letters; C has no report yet.
-
-## Pipeline
-
-One numbering for the whole project; [analysis/README.md](analysis/README.md)
-gives the exact commands, inputs and outputs of stages 4 to 9.
-
-| Stage | Entry point | Reads | Writes | API key / cost | make |
-|---|---|---|---|---|---|
-| 1. Clean documents | `src/valconv/documents.py` | `constitutions/`, `system_prompts/` | `data/processed/` | no | `make documents` |
-| 2. Edit runs | `experiments/iterative_edit/run.py` | `data/processed/`, a config | `run_*.jsonl` in `--out-dir` | yes, paid | `make api-run` |
-| 3. Original coding (coding v1, superseded) | `experiments/iterative_edit/export_changes.py`, then `experiments/iterative_edit/qualitative_code.py` | run files | a codes file at `--output` (see below) | yes, paid | none |
-| 4. Canonical edits (phase 0) | `analysis/src/build_phase0.py` | `results/iterative_edit/`, `data/processed/`, `analysis/data/derived/` | `edits.jsonl` and `v1.jsonl` in `scratch/phase0/` | no | none |
-| 5. Blinded grading (coding v2) | `analysis/src/grade.py` | canonical edits, `analysis/prompts/`, `analysis/config.yaml` | `analysis/data/codes/v2_<grader>.jsonl` (or `--out`) | yes; free when cached | `make api-grade` |
-| 6. Majority vote | `analysis/src/intergrader.py` | the three grader files | `analysis/data/codes/ensemble.jsonl`, agreement report | no | verified by `make check` |
-| 7. Statistics and robustness checks | `analysis/src/headline.py`, `bootstrap.py`, `e_runs.py`, `e_reports.py`, `free_results.py`, `compare_v1_v2.py` | codes files, canonical edits | `analysis/reports/`, `analysis/data/analysis/` | only `e_runs.py` | none |
-| 8. Figures | `analysis/src/report_figures.py` and four more (`home_likeness.py` computes the metric only) | `ensemble.jsonl`, canonical edits, `analysis/figures/title_decisions.json`, `analysis/config.yaml` | `analysis/figures/` | no | `make figures` |
-| 9. Website | `analysis/src/build_site.py` | the codes, canonical edits, run files, `analysis/site_base/`, `analysis/data/site/site_text.json`, one figure's data (full list in [analysis/README.md](analysis/README.md)) | `docs/` and two build records in `analysis/` | no | `make site` |
-
-The paid stages (2, 3, 5 and the `e_runs.py` grading) are done and their
-outputs are committed as raw data. To repeat stage 3 as it was run (the judge
-model was Gemma 4 31B, not the script's default), export the seven reliable
-runs and code them into `scratch/`. This calls the API and will not
-reproduce the committed file byte for byte:
-
-    .venv/bin/python experiments/iterative_edit/export_changes.py <the seven reliable run files> --out-dir scratch/v1
-    .venv/bin/python experiments/iterative_edit/qualitative_code.py scratch/v1/run_*_changes.json \
-        --judge-model google/gemma-4-31b-it --output scratch/v1/judge_beneficiary_coded_gemma.json
-
-`qualitative_code.py` resumes into an existing `--output` file, so it refuses
-to write into the committed `results/iterative_edit/judge_beneficiary_coded_gemma.json`.
 
 ## Quick start
 
@@ -132,21 +76,3 @@ checksum failure.
 | Human-coding sample, blind key, coding app, Peter's (still blank) coding sheet | `analysis/human/` |
 | Hand-made figure-title decisions | `analysis/figures/title_decisions.json` |
 | The graders' pre-flight check | `archive/grading_smoke_test/smoke_test_results.json` |
-
-Already lost: for most runs, the full document text after each round. The
-original `results/` directory went with a local checkout in July 2026 and was
-rebuilt from the published site bundle;
-[results/iterative_edit/README.md](results/iterative_edit/README.md) tells
-the story and says what survives where.
-
-## Not done yet
-
-- **Human validation and prediction-powered inference (PPI).** A blind sample
-  of 180 edits (150 random, 30 picked for adjudication) and a local coding app
-  are ready in `analysis/human/`, but no one has coded it yet. The analysis
-  scripts (`analysis/src/human_validation.py`, `analysis/src/ppi_analysis.py`)
-  are written and tested. Until then the grader codes are not validated
-  against human judgment, and `analysis/reports/SUMMARY.md` is preliminary.
-- **The LessWrong link.** On 2026-10-08 the post link returned HTTP 401 to a
-  logged-out reader, while a public LessWrong post returns 200, so the post
-  may still be a draft. Check that it is published before sharing the link.
