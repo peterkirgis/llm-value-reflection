@@ -1,0 +1,12 @@
+model,n_records,applied,no_change,find_not_found,find_ambiguous,generation_error,total_failures,failure_rate
+Claude Haiku 4.5,280,259,0,8,13,0,21,0.0750
+Claude Opus 4.7,300,271,0,0,0,29,29,0.0967
+Claude Sonnet 4.6,320,318,0,1,1,0,2,0.0063
+GPT-5.4,320,320,0,0,0,0,0,0.0000
+GPT-5.4 Mini,280,186,0,28,1,65,94,0.3357
+GPT-5.5,280,280,0,0,0,0,0,0.0000
+Gemini 3 Flash,280,276,0,4,0,0,4,0.0143
+Gemini 3.1 Pro,320,320,0,0,0,0,0,0.0000
+Grok 4.2,180,175,0,2,3,0,5,0.0278
+Grok 4.3,180,175,2,3,0,0,3,0.0167
+ALL,2740,2580,2,46,18,94,158,0.0577

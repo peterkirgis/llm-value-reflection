@@ -1,0 +1,3525 @@
+{
+  "codes": "analysis/data/codes/ensemble.jsonl (three-grader majority vote)",
+  "frame": {
+    "condition": "cross_edit",
+    "apply_status": "applied",
+    "valid_coding": "codes_io.coding_of",
+    "n_edits": 766,
+    "doc_aliases": {
+      "openai_model_spec_no_csam": "openai_model_spec"
+    }
+  },
+  "layout": {
+    "models": [
+      "Claude Opus 4.7",
+      "Claude Sonnet 4.6",
+      "Claude Haiku 4.5",
+      "GPT-5.5",
+      "GPT-5.4",
+      "GPT-5.4 Mini",
+      "Gemini 3.1 Pro",
+      "Gemini 3 Flash",
+      "Grok 4.3",
+      "Grok 4.2"
+    ],
+    "documents": [
+      "claude_constitution",
+      "openai_model_spec",
+      "gemini_system_prompt",
+      "grok_system_prompt"
+    ],
+    "homes": {
+      "claude_constitution": [
+        "Claude Haiku 4.5",
+        "Claude Opus 4.7",
+        "Claude Sonnet 4.6"
+      ],
+      "openai_model_spec": [
+        "GPT-5.4",
+        "GPT-5.4 Mini",
+        "GPT-5.5"
+      ],
+      "gemini_system_prompt": [
+        "Gemini 3 Flash",
+        "Gemini 3.1 Pro"
+      ],
+      "grok_system_prompt": [
+        "Grok 4.2",
+        "Grok 4.3"
+      ]
+    },
+    "cells": {
+      "Claude Haiku 4.5|claude_constitution": {
+        "run_id": "run_20260424_165115",
+        "document_id": "claude_constitution",
+        "n_edits": 20
+      },
+      "Claude Haiku 4.5|openai_model_spec": {
+        "run_id": "run_20260424_165115",
+        "document_id": "openai_model_spec",
+        "n_edits": 17
+      },
+      "Claude Haiku 4.5|gemini_system_prompt": {
+        "run_id": "run_20260424_165115",
+        "document_id": "gemini_system_prompt",
+        "n_edits": 20
+      },
+      "Claude Haiku 4.5|grok_system_prompt": {
+        "run_id": "run_20260424_165115",
+        "document_id": "grok_system_prompt",
+        "n_edits": 20
+      },
+      "Claude Opus 4.7|claude_constitution": {
+        "run_id": "run_20260518_171402",
+        "document_id": "claude_constitution",
+        "n_edits": 20
+      },
+      "Claude Opus 4.7|openai_model_spec": {
+        "run_id": "run_20260518_171402",
+        "document_id": "openai_model_spec_no_csam",
+        "n_edits": 20
+      },
+      "Claude Opus 4.7|gemini_system_prompt": {
+        "run_id": "run_20260518_171402",
+        "document_id": "gemini_system_prompt",
+        "n_edits": 20
+      },
+      "Claude Opus 4.7|grok_system_prompt": {
+        "run_id": "run_20260518_171402",
+        "document_id": "grok_system_prompt",
+        "n_edits": 20
+      },
+      "Claude Sonnet 4.6|claude_constitution": {
+        "run_id": "run_20260513_193319",
+        "document_id": "claude_constitution",
+        "n_edits": 20
+      },
+      "Claude Sonnet 4.6|openai_model_spec": {
+        "run_id": "run_20260513_193319",
+        "document_id": "openai_model_spec",
+        "n_edits": 20
+      },
+      "Claude Sonnet 4.6|gemini_system_prompt": {
+        "run_id": "run_20260513_193319",
+        "document_id": "gemini_system_prompt",
+        "n_edits": 20
+      },
+      "Claude Sonnet 4.6|grok_system_prompt": {
+        "run_id": "run_20260513_193319",
+        "document_id": "grok_system_prompt",
+        "n_edits": 20
+      },
+      "GPT-5.4|claude_constitution": {
+        "run_id": "run_20260513_193319",
+        "document_id": "claude_constitution",
+        "n_edits": 20
+      },
+      "GPT-5.4|openai_model_spec": {
+        "run_id": "run_20260513_193319",
+        "document_id": "openai_model_spec",
+        "n_edits": 20
+      },
+      "GPT-5.4|gemini_system_prompt": {
+        "run_id": "run_20260513_193319",
+        "document_id": "gemini_system_prompt",
+        "n_edits": 20
+      },
+      "GPT-5.4|grok_system_prompt": {
+        "run_id": "run_20260513_193319",
+        "document_id": "grok_system_prompt",
+        "n_edits": 20
+      },
+      "GPT-5.4 Mini|claude_constitution": {
+        "run_id": "run_20260424_165115",
+        "document_id": "claude_constitution",
+        "n_edits": 16
+      },
+      "GPT-5.4 Mini|openai_model_spec": {
+        "run_id": "run_20260424_165115",
+        "document_id": "openai_model_spec",
+        "n_edits": 16
+      },
+      "GPT-5.4 Mini|gemini_system_prompt": {
+        "run_id": "run_20260424_165115",
+        "document_id": "gemini_system_prompt",
+        "n_edits": 5
+      },
+      "GPT-5.4 Mini|grok_system_prompt": {
+        "run_id": "run_20260424_165115",
+        "document_id": "grok_system_prompt",
+        "n_edits": 20
+      },
+      "GPT-5.5|claude_constitution": {
+        "run_id": "run_20260518_171402",
+        "document_id": "claude_constitution",
+        "n_edits": 20
+      },
+      "GPT-5.5|openai_model_spec": {
+        "run_id": "run_20260518_171402",
+        "document_id": "openai_model_spec",
+        "n_edits": 20
+      },
+      "GPT-5.5|gemini_system_prompt": {
+        "run_id": "run_20260518_171402",
+        "document_id": "gemini_system_prompt",
+        "n_edits": 20
+      },
+      "GPT-5.5|grok_system_prompt": {
+        "run_id": "run_20260518_171402",
+        "document_id": "grok_system_prompt",
+        "n_edits": 20
+      },
+      "Gemini 3 Flash|claude_constitution": {
+        "run_id": "run_20260424_165115",
+        "document_id": "claude_constitution",
+        "n_edits": 20
+      },
+      "Gemini 3 Flash|openai_model_spec": {
+        "run_id": "run_20260424_165115",
+        "document_id": "openai_model_spec",
+        "n_edits": 16
+      },
+      "Gemini 3 Flash|gemini_system_prompt": {
+        "run_id": "run_20260424_165115",
+        "document_id": "gemini_system_prompt",
+        "n_edits": 20
+      },
+      "Gemini 3 Flash|grok_system_prompt": {
+        "run_id": "run_20260424_165115",
+        "document_id": "grok_system_prompt",
+        "n_edits": 20
+      },
+      "Gemini 3.1 Pro|claude_constitution": {
+        "run_id": "run_20260513_193319",
+        "document_id": "claude_constitution",
+        "n_edits": 20
+      },
+      "Gemini 3.1 Pro|openai_model_spec": {
+        "run_id": "run_20260513_193319",
+        "document_id": "openai_model_spec",
+        "n_edits": 20
+      },
+      "Gemini 3.1 Pro|gemini_system_prompt": {
+        "run_id": "run_20260513_193319",
+        "document_id": "gemini_system_prompt",
+        "n_edits": 20
+      },
+      "Gemini 3.1 Pro|grok_system_prompt": {
+        "run_id": "run_20260513_193319",
+        "document_id": "grok_system_prompt",
+        "n_edits": 20
+      },
+      "Grok 4.2|claude_constitution": {
+        "run_id": "run_20260424_165115",
+        "document_id": "claude_constitution",
+        "n_edits": 20
+      },
+      "Grok 4.2|openai_model_spec": {
+        "run_id": "run_20260424_165115",
+        "document_id": "openai_model_spec",
+        "n_edits": 17
+      },
+      "Grok 4.2|gemini_system_prompt": {
+        "run_id": "run_20260424_165115",
+        "document_id": "gemini_system_prompt",
+        "n_edits": 19
+      },
+      "Grok 4.2|grok_system_prompt": {
+        "run_id": "run_20260424_165115",
+        "document_id": "grok_system_prompt",
+        "n_edits": 20
+      },
+      "Grok 4.3|claude_constitution": {
+        "run_id": "run_20260513_193319",
+        "document_id": "claude_constitution",
+        "n_edits": 20
+      },
+      "Grok 4.3|openai_model_spec": {
+        "run_id": "run_20260513_193319",
+        "document_id": "openai_model_spec",
+        "n_edits": 20
+      },
+      "Grok 4.3|gemini_system_prompt": {
+        "run_id": "run_20260513_193319",
+        "document_id": "gemini_system_prompt",
+        "n_edits": 20
+      },
+      "Grok 4.3|grok_system_prompt": {
+        "run_id": "run_20260513_193319",
+        "document_id": "grok_system_prompt",
+        "n_edits": 20
+      }
+    }
+  },
+  "metrics": [
+    "judge",
+    "paternalism",
+    "harmlessness",
+    "structural",
+    "company_cost",
+    "welfare"
+  ],
+  "conflict_poles": [
+    {
+      "code": "paternalism",
+      "left": "idealized",
+      "right": "stated"
+    },
+    {
+      "code": "harmlessness",
+      "left": "third_parties",
+      "right": "user"
+    },
+    {
+      "code": "structural",
+      "left": "society",
+      "right": "user"
+    },
+    {
+      "code": "company_cost",
+      "left": "pro_company",
+      "right": "against_company"
+    },
+    {
+      "code": "welfare",
+      "left": "developer",
+      "right": "model"
+    }
+  ],
+  "excluded_conflict_codes": [
+    "disclosure"
+  ],
+  "distance": "L1 over the 6 metric means",
+  "permutation": {
+    "n_perm": 5000,
+    "seed": 20260903,
+    "seed_source": "analysis/config.yaml seeds.master",
+    "rng": "numpy default_rng([seed, doc_index, MODEL_ORDER index])",
+    "scheme": "round-matched label shuffle between visitor run and home runs",
+    "p": "(1 + #null >= observed) / (1 + N)",
+    "adjustment": "Holm across all visitor x document tests",
+    "caveat": "one run per cell: between-run variation is not in the null (optimistic)"
+  },
+  "title": "No Other Model Family Edits the Claude Constitution Like Claude Does",
+  "title_rule": {
+    "doc_checks": {
+      "claude_constitution": {
+        "a_point_estimate": true,
+        "b_beyond_band": true,
+        "c_majority_significant": true,
+        "n_visitors": 7,
+        "n_significant": 6,
+        "qualifies": true
+      },
+      "openai_model_spec": {
+        "a_point_estimate": false,
+        "b_beyond_band": false,
+        "c_majority_significant": false,
+        "n_visitors": 7,
+        "n_significant": 2,
+        "qualifies": false
+      },
+      "gemini_system_prompt": {
+        "a_point_estimate": true,
+        "b_beyond_band": true,
+        "c_majority_significant": false,
+        "n_visitors": 8,
+        "n_significant": 1,
+        "qualifies": false
+      },
+      "grok_system_prompt": {
+        "a_point_estimate": false,
+        "b_beyond_band": false,
+        "c_majority_significant": false,
+        "n_visitors": 8,
+        "n_significant": 1,
+        "qualifies": false
+      }
+    },
+    "qualifying_docs": [
+      "claude_constitution"
+    ],
+    "visitor_level": {
+      "models_beyond_band_everywhere": [
+        "GPT-5.5",
+        "GPT-5.4",
+        "Grok 4.3"
+      ],
+      "n_tests": 9,
+      "n_significant": 6,
+      "qualifies": true
+    },
+    "branch": "one_document",
+    "title": "No Other Model Family Edits the Claude Constitution Like Claude Does"
+  },
+  "profiles": {
+    "claude_constitution": {
+      "Claude Opus 4.7": [
+        0.25,
+        -0.05,
+        -0.1,
+        -0.05,
+        0.15,
+        0.15
+      ],
+      "Claude Sonnet 4.6": [
+        0.25,
+        0.0,
+        0.0,
+        -0.15,
+        0.2,
+        0.2
+      ],
+      "Claude Haiku 4.5": [
+        0.65,
+        0.0,
+        0.0,
+        0.0,
+        0.4,
+        0.0
+      ],
+      "GPT-5.5": [
+        -0.2,
+        -0.15,
+        -0.35,
+        -0.05,
+        0.45,
+        0.0
+      ],
+      "GPT-5.4": [
+        -0.5,
+        -0.15,
+        0.0,
+        0.0,
+        0.1,
+        -0.25
+      ],
+      "GPT-5.4 Mini": [
+        -0.1875,
+        -0.0625,
+        0.0,
+        -0.125,
+        -0.0625,
+        0.0
+      ],
+      "Gemini 3.1 Pro": [
+        -0.35,
+        -0.05,
+        -0.35,
+        -0.2,
+        0.2,
+        0.0
+      ],
+      "Gemini 3 Flash": [
+        -0.4,
+        -0.1,
+        -0.1,
+        -0.15,
+        0.55,
+        0.0
+      ],
+      "Grok 4.3": [
+        -0.45,
+        0.0,
+        -0.35,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Grok 4.2": [
+        -0.25,
+        -0.05,
+        -0.2,
+        0.0,
+        0.0,
+        0.35
+      ]
+    },
+    "openai_model_spec": {
+      "Claude Opus 4.7": [
+        -0.5,
+        -0.3,
+        0.05,
+        0.0,
+        0.05,
+        0.05
+      ],
+      "Claude Sonnet 4.6": [
+        -0.2,
+        -0.05,
+        -0.1,
+        0.0,
+        0.3,
+        -0.05
+      ],
+      "Claude Haiku 4.5": [
+        -0.29411764705882354,
+        -0.058823529411764705,
+        -0.11764705882352941,
+        -0.17647058823529413,
+        0.17647058823529413,
+        0.0
+      ],
+      "GPT-5.5": [
+        -0.2,
+        -0.25,
+        -0.4,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "GPT-5.4": [
+        -0.55,
+        -0.15,
+        -0.25,
+        0.0,
+        0.05,
+        0.0
+      ],
+      "GPT-5.4 Mini": [
+        -0.6875,
+        0.0,
+        -0.125,
+        0.0,
+        0.125,
+        0.0
+      ],
+      "Gemini 3.1 Pro": [
+        -0.6,
+        0.0,
+        -0.35,
+        -0.05,
+        -0.05,
+        0.0
+      ],
+      "Gemini 3 Flash": [
+        -0.6875,
+        -0.4375,
+        0.0,
+        0.0,
+        0.3125,
+        0.0
+      ],
+      "Grok 4.3": [
+        -0.75,
+        -0.5,
+        0.0,
+        0.0,
+        0.4,
+        0.0
+      ],
+      "Grok 4.2": [
+        -0.5882352941176471,
+        0.058823529411764705,
+        -0.47058823529411764,
+        0.0,
+        0.058823529411764705,
+        0.0
+      ]
+    },
+    "gemini_system_prompt": {
+      "Claude Opus 4.7": [
+        -0.25,
+        -0.15,
+        -0.05,
+        0.0,
+        0.1,
+        0.0
+      ],
+      "Claude Sonnet 4.6": [
+        -0.3,
+        -0.35,
+        -0.2,
+        -0.05,
+        0.2,
+        0.0
+      ],
+      "Claude Haiku 4.5": [
+        -0.15,
+        -0.25,
+        -0.15,
+        0.0,
+        0.05,
+        0.0
+      ],
+      "GPT-5.5": [
+        -0.5,
+        -0.2,
+        -0.25,
+        -0.05,
+        0.0,
+        0.0
+      ],
+      "GPT-5.4": [
+        -0.2,
+        -0.2,
+        -0.05,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "GPT-5.4 Mini": [
+        0.2,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Gemini 3.1 Pro": [
+        -0.2,
+        -0.1,
+        0.0,
+        0.0,
+        0.05,
+        0.0
+      ],
+      "Gemini 3 Flash": [
+        0.0,
+        0.05,
+        0.0,
+        0.0,
+        0.05,
+        0.0
+      ],
+      "Grok 4.3": [
+        -0.4,
+        -0.15,
+        -0.15,
+        0.0,
+        0.05,
+        0.0
+      ],
+      "Grok 4.2": [
+        -0.42105263157894735,
+        -0.21052631578947367,
+        -0.15789473684210525,
+        -0.05263157894736842,
+        0.05263157894736842,
+        0.0
+      ]
+    },
+    "grok_system_prompt": {
+      "Claude Opus 4.7": [
+        -0.25,
+        -0.1,
+        -0.15,
+        -0.05,
+        0.0,
+        0.0
+      ],
+      "Claude Sonnet 4.6": [
+        -0.2,
+        -0.2,
+        -0.15,
+        -0.15,
+        0.4,
+        0.0
+      ],
+      "Claude Haiku 4.5": [
+        -0.15,
+        0.0,
+        -0.2,
+        -0.05,
+        0.15,
+        0.0
+      ],
+      "GPT-5.5": [
+        -0.65,
+        -0.05,
+        -0.5,
+        0.0,
+        -0.05,
+        0.0
+      ],
+      "GPT-5.4": [
+        -0.05,
+        -0.05,
+        -0.3,
+        0.0,
+        0.05,
+        0.0
+      ],
+      "GPT-5.4 Mini": [
+        -0.25,
+        -0.05,
+        -0.05,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Gemini 3.1 Pro": [
+        -0.55,
+        -0.1,
+        -0.35,
+        0.0,
+        -0.05,
+        0.0
+      ],
+      "Gemini 3 Flash": [
+        -0.4,
+        -0.2,
+        -0.1,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Grok 4.3": [
+        -0.4,
+        -0.3,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Grok 4.2": [
+        -0.1,
+        -0.1,
+        0.0,
+        0.05,
+        0.1,
+        0.0
+      ]
+    }
+  },
+  "n_edits": {
+    "claude_constitution": {
+      "Claude Opus 4.7": 20,
+      "Claude Sonnet 4.6": 20,
+      "Claude Haiku 4.5": 20,
+      "GPT-5.5": 20,
+      "GPT-5.4": 20,
+      "GPT-5.4 Mini": 16,
+      "Gemini 3.1 Pro": 20,
+      "Gemini 3 Flash": 20,
+      "Grok 4.3": 20,
+      "Grok 4.2": 20
+    },
+    "openai_model_spec": {
+      "Claude Opus 4.7": 20,
+      "Claude Sonnet 4.6": 20,
+      "Claude Haiku 4.5": 17,
+      "GPT-5.5": 20,
+      "GPT-5.4": 20,
+      "GPT-5.4 Mini": 16,
+      "Gemini 3.1 Pro": 20,
+      "Gemini 3 Flash": 16,
+      "Grok 4.3": 20,
+      "Grok 4.2": 17
+    },
+    "gemini_system_prompt": {
+      "Claude Opus 4.7": 20,
+      "Claude Sonnet 4.6": 20,
+      "Claude Haiku 4.5": 20,
+      "GPT-5.5": 20,
+      "GPT-5.4": 20,
+      "GPT-5.4 Mini": 5,
+      "Gemini 3.1 Pro": 20,
+      "Gemini 3 Flash": 20,
+      "Grok 4.3": 20,
+      "Grok 4.2": 19
+    },
+    "grok_system_prompt": {
+      "Claude Opus 4.7": 20,
+      "Claude Sonnet 4.6": 20,
+      "Claude Haiku 4.5": 20,
+      "GPT-5.5": 20,
+      "GPT-5.4": 20,
+      "GPT-5.4 Mini": 20,
+      "Gemini 3.1 Pro": 20,
+      "Gemini 3 Flash": 20,
+      "Grok 4.3": 20,
+      "Grok 4.2": 20
+    }
+  },
+  "homes": {
+    "claude_constitution": [
+      "Claude Opus 4.7",
+      "Claude Sonnet 4.6",
+      "Claude Haiku 4.5"
+    ],
+    "openai_model_spec": [
+      "GPT-5.5",
+      "GPT-5.4",
+      "GPT-5.4 Mini"
+    ],
+    "gemini_system_prompt": [
+      "Gemini 3.1 Pro",
+      "Gemini 3 Flash"
+    ],
+    "grok_system_prompt": [
+      "Grok 4.3",
+      "Grok 4.2"
+    ]
+  },
+  "distances": {
+    "claude_constitution": {
+      "Claude Opus 4.7": 0.575,
+      "Claude Sonnet 4.6": 0.6000000000000001,
+      "Claude Haiku 4.5": 0.9750000000000001,
+      "GPT-5.5": 1.3666666666666665,
+      "GPT-5.4": 1.6333333333333333,
+      "GPT-5.4 Mini": 1.1375000000000002,
+      "Gemini 3.1 Pro": 1.3833333333333333,
+      "Gemini 3 Flash": 1.4333333333333333,
+      "Grok 4.3": 1.5999999999999999,
+      "Grok 4.2": 1.3833333333333333
+    },
+    "openai_model_spec": {
+      "Claude Opus 4.7": 0.5541666666666667,
+      "Claude Sonnet 4.6": 0.8125000000000001,
+      "Claude Haiku 4.5": 0.6948529411764707,
+      "GPT-5.5": 0.89375,
+      "GPT-5.4": 0.15625000000000006,
+      "GPT-5.4 Mini": 0.8124999999999999,
+      "Gemini 3.1 Pro": 0.5041666666666667,
+      "Gemini 3 Flash": 1.025,
+      "Grok 4.3": 1.2374999999999998,
+      "Grok 4.2": 0.5139705882352941
+    },
+    "gemini_system_prompt": {
+      "Claude Opus 4.7": 0.375,
+      "Claude Sonnet 4.6": 0.9249999999999999,
+      "Claude Haiku 4.5": 0.42500000000000004,
+      "GPT-5.5": 0.9250000000000002,
+      "GPT-5.4": 0.375,
+      "GPT-5.4 Mini": 0.37500000000000006,
+      "Gemini 3.1 Pro": 0.35000000000000003,
+      "Gemini 3 Flash": 0.35000000000000003,
+      "Grok 4.3": 0.5750000000000001,
+      "Grok 4.2": 0.7197368421052631
+    },
+    "grok_system_prompt": {
+      "Claude Opus 4.7": 0.375,
+      "Claude Sonnet 4.6": 0.7250000000000001,
+      "Claude Haiku 4.5": 0.6749999999999999,
+      "GPT-5.5": 1.175,
+      "GPT-5.4": 0.675,
+      "GPT-5.4 Mini": 0.275,
+      "Gemini 3.1 Pro": 0.875,
+      "Gemini 3 Flash": 0.325,
+      "Grok 4.3": 0.65,
+      "Grok 4.2": 0.65
+    }
+  },
+  "bands": {
+    "claude_constitution": [
+      0.575,
+      0.9750000000000001
+    ],
+    "openai_model_spec": [
+      0.15625000000000006,
+      0.89375
+    ],
+    "gemini_system_prompt": [
+      0.35000000000000003,
+      0.35000000000000003
+    ],
+    "grok_system_prompt": [
+      0.65,
+      0.65
+    ]
+  },
+  "within_home_pairwise": {
+    "claude_constitution": [
+      0.3500000000000001,
+      1.0,
+      0.95
+    ],
+    "openai_model_spec": [
+      0.6500000000000001,
+      1.1375000000000002,
+      0.4875
+    ],
+    "gemini_system_prompt": [
+      0.35000000000000003
+    ],
+    "grok_system_prompt": [
+      0.65
+    ]
+  },
+  "within_home_pairwise_summary": {
+    "min": 0.35000000000000003,
+    "max": 1.1375000000000002,
+    "mean": 0.696875
+  },
+  "tests": [
+    {
+      "model": "GPT-5.5",
+      "doc": "claude_constitution",
+      "observed": 1.3666666666666665,
+      "p_raw": 0.0005998800239952009,
+      "p_holm": 0.014397120575884822,
+      "null_mean": 0.51926,
+      "null_q95": 0.8666666666666667
+    },
+    {
+      "model": "GPT-5.4",
+      "doc": "claude_constitution",
+      "observed": 1.6333333333333333,
+      "p_raw": 0.0001999600079984003,
+      "p_holm": 0.005998800239952009,
+      "null_mean": 0.4794666666666667,
+      "null_q95": 0.8333333333333333
+    },
+    {
+      "model": "GPT-5.4 Mini",
+      "doc": "claude_constitution",
+      "observed": 1.1375000000000002,
+      "p_raw": 0.0027994401119776045,
+      "p_holm": 0.05598880223955209,
+      "null_mean": 0.5333058333333333,
+      "null_q95": 0.8666666666666667
+    },
+    {
+      "model": "Gemini 3.1 Pro",
+      "doc": "claude_constitution",
+      "observed": 1.3833333333333333,
+      "p_raw": 0.0003999200159968006,
+      "p_holm": 0.009998000399920015,
+      "null_mean": 0.49375333333333327,
+      "null_q95": 0.8166666666666668
+    },
+    {
+      "model": "Gemini 3 Flash",
+      "doc": "claude_constitution",
+      "observed": 1.4333333333333333,
+      "p_raw": 0.0001999600079984003,
+      "p_holm": 0.005998800239952009,
+      "null_mean": 0.49152000000000007,
+      "null_q95": 0.8
+    },
+    {
+      "model": "Grok 4.3",
+      "doc": "claude_constitution",
+      "observed": 1.5999999999999999,
+      "p_raw": 0.0001999600079984003,
+      "p_holm": 0.005998800239952009,
+      "null_mean": 0.4592799999999999,
+      "null_q95": 0.7666666666666667
+    },
+    {
+      "model": "Grok 4.2",
+      "doc": "claude_constitution",
+      "observed": 1.3833333333333333,
+      "p_raw": 0.0001999600079984003,
+      "p_holm": 0.005998800239952009,
+      "null_mean": 0.48996000000000006,
+      "null_q95": 0.7833333333333334
+    },
+    {
+      "model": "Claude Opus 4.7",
+      "doc": "openai_model_spec",
+      "observed": 0.5541666666666667,
+      "p_raw": 0.20995800839832032,
+      "p_holm": 1.0,
+      "null_mean": 0.4248766666666666,
+      "null_q95": 0.7166666666666667
+    },
+    {
+      "model": "Claude Sonnet 4.6",
+      "doc": "openai_model_spec",
+      "observed": 0.8125000000000001,
+      "p_raw": 0.024795040991801638,
+      "p_holm": 0.4427114577084583,
+      "null_mean": 0.4344616666666667,
+      "null_q95": 0.7374999999999999
+    },
+    {
+      "model": "Claude Haiku 4.5",
+      "doc": "openai_model_spec",
+      "observed": 0.6948529411764707,
+      "p_raw": 0.07818436312737452,
+      "p_holm": 1.0,
+      "null_mean": 0.4483018137254902,
+      "null_q95": 0.7561274509803921
+    },
+    {
+      "model": "Gemini 3.1 Pro",
+      "doc": "openai_model_spec",
+      "observed": 0.5041666666666667,
+      "p_raw": 0.241751649670066,
+      "p_holm": 1.0,
+      "null_mean": 0.40060500000000004,
+      "null_q95": 0.675
+    },
+    {
+      "model": "Gemini 3 Flash",
+      "doc": "openai_model_spec",
+      "observed": 1.025,
+      "p_raw": 0.0021995600879824036,
+      "p_holm": 0.04619076184763048,
+      "null_mean": 0.4507833333333333,
+      "null_q95": 0.7666666666666667
+    },
+    {
+      "model": "Grok 4.3",
+      "doc": "openai_model_spec",
+      "observed": 1.2374999999999998,
+      "p_raw": 0.0001999600079984003,
+      "p_holm": 0.005998800239952009,
+      "null_mean": 0.403445,
+      "null_q95": 0.7041666666666668
+    },
+    {
+      "model": "Grok 4.2",
+      "doc": "openai_model_spec",
+      "observed": 0.5139705882352941,
+      "p_raw": 0.22675464907018597,
+      "p_holm": 1.0,
+      "null_mean": 0.40885166666666667,
+      "null_q95": 0.7100490196078431
+    },
+    {
+      "model": "Claude Opus 4.7",
+      "doc": "gemini_system_prompt",
+      "observed": 0.375,
+      "p_raw": 0.3889222155568886,
+      "p_holm": 1.0,
+      "null_mean": 0.33760500000000004,
+      "null_q95": 0.5750000000000001
+    },
+    {
+      "model": "Claude Sonnet 4.6",
+      "doc": "gemini_system_prompt",
+      "observed": 0.9249999999999999,
+      "p_raw": 0.014397120575884824,
+      "p_holm": 0.2735452909418116,
+      "null_mean": 0.51182,
+      "null_q95": 0.825
+    },
+    {
+      "model": "Claude Haiku 4.5",
+      "doc": "gemini_system_prompt",
+      "observed": 0.42500000000000004,
+      "p_raw": 0.2531493701259748,
+      "p_holm": 1.0,
+      "null_mean": 0.327665,
+      "null_q95": 0.575
+    },
+    {
+      "model": "GPT-5.5",
+      "doc": "gemini_system_prompt",
+      "observed": 0.9250000000000002,
+      "p_raw": 0.0013997200559888023,
+      "p_holm": 0.03079384123175365,
+      "null_mean": 0.397045,
+      "null_q95": 0.65
+    },
+    {
+      "model": "GPT-5.4",
+      "doc": "gemini_system_prompt",
+      "observed": 0.375,
+      "p_raw": 0.39592081583683264,
+      "p_holm": 1.0,
+      "null_mean": 0.340385,
+      "null_q95": 0.5750000000000001
+    },
+    {
+      "model": "GPT-5.4 Mini",
+      "doc": "gemini_system_prompt",
+      "observed": 0.37500000000000006,
+      "p_raw": 0.7762447510497901,
+      "p_holm": 1.0,
+      "null_mean": 0.44428500000000004,
+      "null_q95": 0.6000000000000001
+    },
+    {
+      "model": "Grok 4.3",
+      "doc": "gemini_system_prompt",
+      "observed": 0.5750000000000001,
+      "p_raw": 0.0611877624475105,
+      "p_holm": 0.9178164367126576,
+      "null_mean": 0.324275,
+      "null_q95": 0.575
+    },
+    {
+      "model": "Grok 4.2",
+      "doc": "gemini_system_prompt",
+      "observed": 0.7197368421052631,
+      "p_raw": 0.04539092181563687,
+      "p_holm": 0.7262547490501899,
+      "null_mean": 0.42935789473684216,
+      "null_q95": 0.7144736842105261
+    },
+    {
+      "model": "Claude Opus 4.7",
+      "doc": "grok_system_prompt",
+      "observed": 0.375,
+      "p_raw": 0.6562687462507498,
+      "p_holm": 1.0,
+      "null_mean": 0.440375,
+      "null_q95": 0.75
+    },
+    {
+      "model": "Claude Sonnet 4.6",
+      "doc": "grok_system_prompt",
+      "observed": 0.7250000000000001,
+      "p_raw": 0.1295740851829634,
+      "p_holm": 1.0,
+      "null_mean": 0.49377,
+      "null_q95": 0.85
+    },
+    {
+      "model": "Claude Haiku 4.5",
+      "doc": "grok_system_prompt",
+      "observed": 0.6749999999999999,
+      "p_raw": 0.1187762447510498,
+      "p_holm": 1.0,
+      "null_mean": 0.4439450000000001,
+      "null_q95": 0.775
+    },
+    {
+      "model": "GPT-5.5",
+      "doc": "grok_system_prompt",
+      "observed": 1.175,
+      "p_raw": 0.0009998000399920016,
+      "p_holm": 0.022995400919816035,
+      "null_mean": 0.42957,
+      "null_q95": 0.7250000000000001
+    },
+    {
+      "model": "GPT-5.4",
+      "doc": "grok_system_prompt",
+      "observed": 0.675,
+      "p_raw": 0.09518096380723855,
+      "p_holm": 1.0,
+      "null_mean": 0.408525,
+      "null_q95": 0.75
+    },
+    {
+      "model": "GPT-5.4 Mini",
+      "doc": "grok_system_prompt",
+      "observed": 0.275,
+      "p_raw": 0.6766646670665867,
+      "p_holm": 1.0,
+      "null_mean": 0.35205000000000003,
+      "null_q95": 0.625
+    },
+    {
+      "model": "Gemini 3.1 Pro",
+      "doc": "grok_system_prompt",
+      "observed": 0.875,
+      "p_raw": 0.02459508098380324,
+      "p_holm": 0.4427114577084583,
+      "null_mean": 0.47028500000000006,
+      "null_q95": 0.775
+    },
+    {
+      "model": "Gemini 3 Flash",
+      "doc": "grok_system_prompt",
+      "observed": 0.325,
+      "p_raw": 0.760247950409918,
+      "p_holm": 1.0,
+      "null_mean": 0.417325,
+      "null_q95": 0.7000000000000001
+    }
+  ],
+  "visitor_avg": {
+    "Claude Opus 4.7": {
+      "mean": 0.43472222222222223,
+      "n_docs": 3
+    },
+    "Claude Sonnet 4.6": {
+      "mean": 0.8208333333333334,
+      "n_docs": 3
+    },
+    "Claude Haiku 4.5": {
+      "mean": 0.5982843137254902,
+      "n_docs": 3
+    },
+    "GPT-5.5": {
+      "mean": 1.1555555555555557,
+      "n_docs": 3
+    },
+    "GPT-5.4": {
+      "mean": 0.8944444444444445,
+      "n_docs": 3
+    },
+    "GPT-5.4 Mini": {
+      "mean": 0.5958333333333333,
+      "n_docs": 3
+    },
+    "Gemini 3.1 Pro": {
+      "mean": 0.9208333333333334,
+      "n_docs": 3
+    },
+    "Gemini 3 Flash": {
+      "mean": 0.9277777777777777,
+      "n_docs": 3
+    },
+    "Grok 4.3": {
+      "mean": 1.1375,
+      "n_docs": 3
+    },
+    "Grok 4.2": {
+      "mean": 0.8723469212246302,
+      "n_docs": 3
+    }
+  },
+  "robustness": {
+    "judge_only": {
+      "visitor_avg": {
+        "Claude Opus 4.7": 0.056944444444444436,
+        "Claude Sonnet 4.6": 0.17638888888888885,
+        "Claude Haiku 4.5": 0.11168300653594772,
+        "GPT-5.5": 0.4611111111111111,
+        "GPT-5.4": 0.39444444444444443,
+        "GPT-5.4 Mini": 0.2902777777777778,
+        "Gemini 3.1 Pro": 0.3847222222222222,
+        "Gemini 3 Flash": 0.38055555555555554,
+        "Grok 4.3": 0.4680555555555555,
+        "Grok 4.2": 0.3544848641210871
+      },
+      "distance": {
+        "claude_constitution": {
+          "Claude Opus 4.7": 0.2,
+          "Claude Sonnet 4.6": 0.2,
+          "Claude Haiku 4.5": 0.4,
+          "GPT-5.5": 0.5833333333333333,
+          "GPT-5.4": 0.8833333333333333,
+          "GPT-5.4 Mini": 0.5708333333333333,
+          "Gemini 3.1 Pro": 0.7333333333333333,
+          "Gemini 3 Flash": 0.7833333333333333,
+          "Grok 4.3": 0.8333333333333333,
+          "Grok 4.2": 0.6333333333333333
+        },
+        "openai_model_spec": {
+          "Claude Opus 4.7": 0.020833333333333315,
+          "Claude Sonnet 4.6": 0.2791666666666667,
+          "Claude Haiku 4.5": 0.18504901960784315,
+          "GPT-5.5": 0.41875,
+          "GPT-5.4": 0.10625000000000007,
+          "GPT-5.4 Mini": 0.3125,
+          "Gemini 3.1 Pro": 0.12083333333333329,
+          "Gemini 3 Flash": 0.20833333333333331,
+          "Grok 4.3": 0.2708333333333333,
+          "Grok 4.2": 0.1090686274509804
+        },
+        "gemini_system_prompt": {
+          "Claude Opus 4.7": 0.15,
+          "Claude Sonnet 4.6": 0.19999999999999998,
+          "Claude Haiku 4.5": 0.04999999999999999,
+          "GPT-5.5": 0.4,
+          "GPT-5.4": 0.1,
+          "GPT-5.4 Mini": 0.30000000000000004,
+          "Gemini 3.1 Pro": 0.2,
+          "Gemini 3 Flash": 0.2,
+          "Grok 4.3": 0.30000000000000004,
+          "Grok 4.2": 0.32105263157894737
+        },
+        "grok_system_prompt": {
+          "Claude Opus 4.7": 0.0,
+          "Claude Sonnet 4.6": 0.04999999999999999,
+          "Claude Haiku 4.5": 0.1,
+          "GPT-5.5": 0.4,
+          "GPT-5.4": 0.2,
+          "GPT-5.4 Mini": 0.0,
+          "Gemini 3.1 Pro": 0.30000000000000004,
+          "Gemini 3 Flash": 0.15000000000000002,
+          "Grok 4.3": 0.30000000000000004,
+          "Grok 4.2": 0.30000000000000004
+        }
+      },
+      "band": {
+        "claude_constitution": [
+          0.2,
+          0.4
+        ],
+        "openai_model_spec": [
+          0.10625000000000007,
+          0.41875
+        ],
+        "gemini_system_prompt": [
+          0.2,
+          0.2
+        ],
+        "grok_system_prompt": [
+          0.30000000000000004,
+          0.30000000000000004
+        ]
+      },
+      "tests": [
+        {
+          "model": "GPT-5.5",
+          "doc": "claude_constitution",
+          "observed": 0.5833333333333333,
+          "p_raw": 0.0057988402319536095,
+          "p_holm": 0.14497100579884023,
+          "null_mean": 0.16718666666666668,
+          "null_q95": 0.41666666666666674
+        },
+        {
+          "model": "GPT-5.4",
+          "doc": "claude_constitution",
+          "observed": 0.8833333333333333,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005998800239952009,
+          "null_mean": 0.17025333333333334,
+          "null_q95": 0.41666666666666663
+        },
+        {
+          "model": "GPT-5.4 Mini",
+          "doc": "claude_constitution",
+          "observed": 0.5708333333333333,
+          "p_raw": 0.01919616076784643,
+          "p_holm": 0.4415116976604679,
+          "null_mean": 0.19041,
+          "null_q95": 0.41479166666667505
+        },
+        {
+          "model": "Gemini 3.1 Pro",
+          "doc": "claude_constitution",
+          "observed": 0.7333333333333333,
+          "p_raw": 0.0007998400319936012,
+          "p_holm": 0.021595680863827234,
+          "null_mean": 0.15970666666666666,
+          "null_q95": 0.4
+        },
+        {
+          "model": "Gemini 3 Flash",
+          "doc": "claude_constitution",
+          "observed": 0.7833333333333333,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005998800239952009,
+          "null_mean": 0.16364,
+          "null_q95": 0.3833333333333334
+        },
+        {
+          "model": "Grok 4.3",
+          "doc": "claude_constitution",
+          "observed": 0.8333333333333333,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005998800239952009,
+          "null_mean": 0.15930666666666668,
+          "null_q95": 0.3666666666666667
+        },
+        {
+          "model": "Grok 4.2",
+          "doc": "claude_constitution",
+          "observed": 0.6333333333333333,
+          "p_raw": 0.0009998000399920016,
+          "p_holm": 0.025994801039792043,
+          "null_mean": 0.15188000000000001,
+          "null_q95": 0.3666666666666667
+        },
+        {
+          "model": "Claude Opus 4.7",
+          "doc": "openai_model_spec",
+          "observed": 0.020833333333333315,
+          "p_raw": 0.9840031993601279,
+          "p_holm": 1.0,
+          "null_mean": 0.16022333333333336,
+          "null_q95": 0.37916666666666665
+        },
+        {
+          "model": "Claude Sonnet 4.6",
+          "doc": "openai_model_spec",
+          "observed": 0.2791666666666667,
+          "p_raw": 0.1821635672865427,
+          "p_holm": 1.0,
+          "null_mean": 0.16821916666666667,
+          "null_q95": 0.4124999999999999
+        },
+        {
+          "model": "Claude Haiku 4.5",
+          "doc": "openai_model_spec",
+          "observed": 0.18504901960784315,
+          "p_raw": 0.3717256548690262,
+          "p_holm": 1.0,
+          "null_mean": 0.16308421568627451,
+          "null_q95": 0.39068627450980387
+        },
+        {
+          "model": "Gemini 3.1 Pro",
+          "doc": "openai_model_spec",
+          "observed": 0.12083333333333329,
+          "p_raw": 0.588882223555289,
+          "p_holm": 1.0,
+          "null_mean": 0.15349833333333332,
+          "null_q95": 0.39166666666666666
+        },
+        {
+          "model": "Gemini 3 Flash",
+          "doc": "openai_model_spec",
+          "observed": 0.20833333333333331,
+          "p_raw": 0.3773245350929814,
+          "p_holm": 1.0,
+          "null_mean": 0.17325583333333333,
+          "null_q95": 0.3958333333333333
+        },
+        {
+          "model": "Grok 4.3",
+          "doc": "openai_model_spec",
+          "observed": 0.2708333333333333,
+          "p_raw": 0.14217156568686262,
+          "p_holm": 1.0,
+          "null_mean": 0.14662,
+          "null_q95": 0.35833333333333334
+        },
+        {
+          "model": "Grok 4.2",
+          "doc": "openai_model_spec",
+          "observed": 0.1090686274509804,
+          "p_raw": 0.6316736652669466,
+          "p_holm": 1.0,
+          "null_mean": 0.1630638725490196,
+          "null_q95": 0.41102941176470587
+        },
+        {
+          "model": "Claude Opus 4.7",
+          "doc": "gemini_system_prompt",
+          "observed": 0.15,
+          "p_raw": 0.509498100379924,
+          "p_holm": 1.0,
+          "null_mean": 0.135015,
+          "null_q95": 0.3
+        },
+        {
+          "model": "Claude Sonnet 4.6",
+          "doc": "gemini_system_prompt",
+          "observed": 0.19999999999999998,
+          "p_raw": 0.34613077384523094,
+          "p_holm": 1.0,
+          "null_mean": 0.15627,
+          "null_q95": 0.35000000000000003
+        },
+        {
+          "model": "Claude Haiku 4.5",
+          "doc": "gemini_system_prompt",
+          "observed": 0.04999999999999999,
+          "p_raw": 0.8022395520895821,
+          "p_holm": 1.0,
+          "null_mean": 0.12335,
+          "null_q95": 0.275
+        },
+        {
+          "model": "GPT-5.5",
+          "doc": "gemini_system_prompt",
+          "observed": 0.4,
+          "p_raw": 0.012997400519896021,
+          "p_holm": 0.3119376124775045,
+          "null_mean": 0.12655499999999997,
+          "null_q95": 0.325
+        },
+        {
+          "model": "GPT-5.4",
+          "doc": "gemini_system_prompt",
+          "observed": 0.1,
+          "p_raw": 0.671865626874625,
+          "p_holm": 1.0,
+          "null_mean": 0.141,
+          "null_q95": 0.35
+        },
+        {
+          "model": "GPT-5.4 Mini",
+          "doc": "gemini_system_prompt",
+          "observed": 0.30000000000000004,
+          "p_raw": 0.6204759048190361,
+          "p_holm": 1.0,
+          "null_mean": 0.293955,
+          "null_q95": 0.525
+        },
+        {
+          "model": "Grok 4.3",
+          "doc": "gemini_system_prompt",
+          "observed": 0.30000000000000004,
+          "p_raw": 0.11037792441511697,
+          "p_holm": 1.0,
+          "null_mean": 0.129795,
+          "null_q95": 0.30000000000000004
+        },
+        {
+          "model": "Grok 4.2",
+          "doc": "gemini_system_prompt",
+          "observed": 0.32105263157894737,
+          "p_raw": 0.09958008398320337,
+          "p_holm": 1.0,
+          "null_mean": 0.14873184210526316,
+          "null_q95": 0.3776315789473684
+        },
+        {
+          "model": "Claude Opus 4.7",
+          "doc": "grok_system_prompt",
+          "observed": 0.0,
+          "p_raw": 1.0,
+          "p_holm": 1.0,
+          "null_mean": 0.16587,
+          "null_q95": 0.44999999999999996
+        },
+        {
+          "model": "Claude Sonnet 4.6",
+          "doc": "grok_system_prompt",
+          "observed": 0.04999999999999999,
+          "p_raw": 0.8578284343131374,
+          "p_holm": 1.0,
+          "null_mean": 0.175155,
+          "null_q95": 0.425
+        },
+        {
+          "model": "Claude Haiku 4.5",
+          "doc": "grok_system_prompt",
+          "observed": 0.1,
+          "p_raw": 0.7398520295940811,
+          "p_holm": 1.0,
+          "null_mean": 0.18025,
+          "null_q95": 0.425
+        },
+        {
+          "model": "GPT-5.5",
+          "doc": "grok_system_prompt",
+          "observed": 0.4,
+          "p_raw": 0.0653869226154769,
+          "p_holm": 1.0,
+          "null_mean": 0.16361,
+          "null_q95": 0.4
+        },
+        {
+          "model": "GPT-5.4",
+          "doc": "grok_system_prompt",
+          "observed": 0.2,
+          "p_raw": 0.36532693461307736,
+          "p_holm": 1.0,
+          "null_mean": 0.16689,
+          "null_q95": 0.42499999999999993
+        },
+        {
+          "model": "GPT-5.4 Mini",
+          "doc": "grok_system_prompt",
+          "observed": 0.0,
+          "p_raw": 1.0,
+          "p_holm": 1.0,
+          "null_mean": 0.14641500000000002,
+          "null_q95": 0.375
+        },
+        {
+          "model": "Gemini 3.1 Pro",
+          "doc": "grok_system_prompt",
+          "observed": 0.30000000000000004,
+          "p_raw": 0.1893621275744851,
+          "p_holm": 1.0,
+          "null_mean": 0.15792,
+          "null_q95": 0.375
+        },
+        {
+          "model": "Gemini 3 Flash",
+          "doc": "grok_system_prompt",
+          "observed": 0.15000000000000002,
+          "p_raw": 0.5296940611877624,
+          "p_holm": 1.0,
+          "null_mean": 0.13869,
+          "null_q95": 0.375
+        }
+      ],
+      "title_rule": {
+        "branch": "one_document",
+        "title": "No Other Model Family Edits the Claude Constitution Like Claude Does",
+        "qualifying_docs": [
+          "claude_constitution"
+        ],
+        "doc_checks": {
+          "claude_constitution": {
+            "a_point_estimate": true,
+            "b_beyond_band": true,
+            "c_majority_significant": true,
+            "n_visitors": 7,
+            "n_significant": 5,
+            "qualifies": true
+          },
+          "openai_model_spec": {
+            "a_point_estimate": false,
+            "b_beyond_band": false,
+            "c_majority_significant": false,
+            "n_visitors": 7,
+            "n_significant": 0,
+            "qualifies": false
+          },
+          "gemini_system_prompt": {
+            "a_point_estimate": false,
+            "b_beyond_band": false,
+            "c_majority_significant": false,
+            "n_visitors": 8,
+            "n_significant": 0,
+            "qualifies": false
+          },
+          "grok_system_prompt": {
+            "a_point_estimate": false,
+            "b_beyond_band": false,
+            "c_majority_significant": false,
+            "n_visitors": 8,
+            "n_significant": 0,
+            "qualifies": false
+          }
+        }
+      }
+    },
+    "conflicts_only": {
+      "visitor_avg": {
+        "Claude Opus 4.7": 0.37777777777777777,
+        "Claude Sonnet 4.6": 0.6444444444444445,
+        "Claude Haiku 4.5": 0.48660130718954253,
+        "GPT-5.5": 0.6944444444444445,
+        "GPT-5.4": 0.5,
+        "GPT-5.4 Mini": 0.3055555555555555,
+        "Gemini 3.1 Pro": 0.5361111111111111,
+        "Gemini 3 Flash": 0.5472222222222223,
+        "Grok 4.3": 0.6694444444444444,
+        "Grok 4.2": 0.5178620571035432
+      },
+      "distance": {
+        "claude_constitution": {
+          "Claude Opus 4.7": 0.37500000000000006,
+          "Claude Sonnet 4.6": 0.4,
+          "Claude Haiku 4.5": 0.575,
+          "GPT-5.5": 0.7833333333333333,
+          "GPT-5.4": 0.75,
+          "GPT-5.4 Mini": 0.5666666666666667,
+          "Gemini 3.1 Pro": 0.65,
+          "Gemini 3 Flash": 0.6500000000000001,
+          "Grok 4.3": 0.7666666666666666,
+          "Grok 4.2": 0.75
+        },
+        "openai_model_spec": {
+          "Claude Opus 4.7": 0.5333333333333333,
+          "Claude Sonnet 4.6": 0.5333333333333334,
+          "Claude Haiku 4.5": 0.5098039215686275,
+          "GPT-5.5": 0.475,
+          "GPT-5.4": 0.05,
+          "GPT-5.4 Mini": 0.5,
+          "Gemini 3.1 Pro": 0.3833333333333333,
+          "Gemini 3 Flash": 0.8166666666666667,
+          "Grok 4.3": 0.9666666666666667,
+          "Grok 4.2": 0.4049019607843137
+        },
+        "gemini_system_prompt": {
+          "Claude Opus 4.7": 0.22499999999999998,
+          "Claude Sonnet 4.6": 0.725,
+          "Claude Haiku 4.5": 0.375,
+          "GPT-5.5": 0.525,
+          "GPT-5.4": 0.275,
+          "GPT-5.4 Mini": 0.07500000000000001,
+          "Gemini 3.1 Pro": 0.15000000000000002,
+          "Gemini 3 Flash": 0.15000000000000002,
+          "Grok 4.3": 0.275,
+          "Grok 4.2": 0.3986842105263158
+        },
+        "grok_system_prompt": {
+          "Claude Opus 4.7": 0.375,
+          "Claude Sonnet 4.6": 0.675,
+          "Claude Haiku 4.5": 0.5750000000000001,
+          "GPT-5.5": 0.775,
+          "GPT-5.4": 0.47500000000000003,
+          "GPT-5.4 Mini": 0.275,
+          "Gemini 3.1 Pro": 0.575,
+          "Gemini 3 Flash": 0.175,
+          "Grok 4.3": 0.35,
+          "Grok 4.2": 0.35
+        }
+      },
+      "band": {
+        "claude_constitution": [
+          0.37500000000000006,
+          0.575
+        ],
+        "openai_model_spec": [
+          0.05,
+          0.5
+        ],
+        "gemini_system_prompt": [
+          0.15000000000000002,
+          0.15000000000000002
+        ],
+        "grok_system_prompt": [
+          0.35,
+          0.35
+        ]
+      },
+      "tests": [
+        {
+          "model": "GPT-5.5",
+          "doc": "claude_constitution",
+          "observed": 0.7833333333333333,
+          "p_raw": 0.0013997200559888023,
+          "p_holm": 0.03499300139972006,
+          "null_mean": 0.3520733333333333,
+          "null_q95": 0.5833333333333333
+        },
+        {
+          "model": "GPT-5.4",
+          "doc": "claude_constitution",
+          "observed": 0.75,
+          "p_raw": 0.0007998400319936012,
+          "p_holm": 0.020795840831833633,
+          "null_mean": 0.30921333333333334,
+          "null_q95": 0.5166666666666666
+        },
+        {
+          "model": "GPT-5.4 Mini",
+          "doc": "claude_constitution",
+          "observed": 0.5666666666666667,
+          "p_raw": 0.03499300139972006,
+          "p_holm": 0.4899020195960808,
+          "null_mean": 0.3428958333333333,
+          "null_q95": 0.5375000000000001
+        },
+        {
+          "model": "Gemini 3.1 Pro",
+          "doc": "claude_constitution",
+          "observed": 0.65,
+          "p_raw": 0.010797840431913617,
+          "p_holm": 0.21595680863827235,
+          "null_mean": 0.33404666666666666,
+          "null_q95": 0.5166666666666667
+        },
+        {
+          "model": "Gemini 3 Flash",
+          "doc": "claude_constitution",
+          "observed": 0.6500000000000001,
+          "p_raw": 0.015196960607878424,
+          "p_holm": 0.25834833033393323,
+          "null_mean": 0.32788,
+          "null_q95": 0.55
+        },
+        {
+          "model": "Grok 4.3",
+          "doc": "claude_constitution",
+          "observed": 0.7666666666666666,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005998800239952009,
+          "null_mean": 0.2999733333333333,
+          "null_q95": 0.49999999999999994
+        },
+        {
+          "model": "Grok 4.2",
+          "doc": "claude_constitution",
+          "observed": 0.75,
+          "p_raw": 0.0021995600879824036,
+          "p_holm": 0.052789442111577684,
+          "null_mean": 0.33808,
+          "null_q95": 0.55
+        },
+        {
+          "model": "Claude Opus 4.7",
+          "doc": "openai_model_spec",
+          "observed": 0.5333333333333333,
+          "p_raw": 0.013997200559888023,
+          "p_holm": 0.2519496100779844,
+          "null_mean": 0.26465333333333335,
+          "null_q95": 0.45416666666666666
+        },
+        {
+          "model": "Claude Sonnet 4.6",
+          "doc": "openai_model_spec",
+          "observed": 0.5333333333333334,
+          "p_raw": 0.016396720655868825,
+          "p_holm": 0.2623475304939012,
+          "null_mean": 0.2662425,
+          "null_q95": 0.4583333333333333
+        },
+        {
+          "model": "Claude Haiku 4.5",
+          "doc": "openai_model_spec",
+          "observed": 0.5098039215686275,
+          "p_raw": 0.038792241551689664,
+          "p_holm": 0.5042991401719656,
+          "null_mean": 0.2852175980392157,
+          "null_q95": 0.48218137254901994
+        },
+        {
+          "model": "Gemini 3.1 Pro",
+          "doc": "openai_model_spec",
+          "observed": 0.3833333333333333,
+          "p_raw": 0.09858028394321136,
+          "p_holm": 0.8872225554889023,
+          "null_mean": 0.24710666666666667,
+          "null_q95": 0.425
+        },
+        {
+          "model": "Gemini 3 Flash",
+          "doc": "openai_model_spec",
+          "observed": 0.8166666666666667,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005998800239952009,
+          "null_mean": 0.2775275,
+          "null_q95": 0.49166666666666664
+        },
+        {
+          "model": "Grok 4.3",
+          "doc": "openai_model_spec",
+          "observed": 0.9666666666666667,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005998800239952009,
+          "null_mean": 0.256825,
+          "null_q95": 0.475
+        },
+        {
+          "model": "Grok 4.2",
+          "doc": "openai_model_spec",
+          "observed": 0.4049019607843137,
+          "p_raw": 0.0615876824635073,
+          "p_holm": 0.6774645070985803,
+          "null_mean": 0.2457877941176471,
+          "null_q95": 0.4307965686274516
+        },
+        {
+          "model": "Claude Opus 4.7",
+          "doc": "gemini_system_prompt",
+          "observed": 0.22499999999999998,
+          "p_raw": 0.40611877624475107,
+          "p_holm": 1.0,
+          "null_mean": 0.20259000000000002,
+          "null_q95": 0.35
+        },
+        {
+          "model": "Claude Sonnet 4.6",
+          "doc": "gemini_system_prompt",
+          "observed": 0.725,
+          "p_raw": 0.004599080183963208,
+          "p_holm": 0.10117976404719056,
+          "null_mean": 0.35555,
+          "null_q95": 0.55
+        },
+        {
+          "model": "Claude Haiku 4.5",
+          "doc": "gemini_system_prompt",
+          "observed": 0.375,
+          "p_raw": 0.08158368326334733,
+          "p_holm": 0.8158368326334733,
+          "null_mean": 0.204315,
+          "null_q95": 0.37500000000000006
+        },
+        {
+          "model": "GPT-5.5",
+          "doc": "gemini_system_prompt",
+          "observed": 0.525,
+          "p_raw": 0.01279744051189762,
+          "p_holm": 0.24315136972605478,
+          "null_mean": 0.27049,
+          "null_q95": 0.44999999999999996
+        },
+        {
+          "model": "GPT-5.4",
+          "doc": "gemini_system_prompt",
+          "observed": 0.275,
+          "p_raw": 0.1869626074785043,
+          "p_holm": 1.0,
+          "null_mean": 0.199385,
+          "null_q95": 0.325
+        },
+        {
+          "model": "GPT-5.4 Mini",
+          "doc": "gemini_system_prompt",
+          "observed": 0.07500000000000001,
+          "p_raw": 1.0,
+          "p_holm": 1.0,
+          "null_mean": 0.15033,
+          "null_q95": 0.3
+        },
+        {
+          "model": "Grok 4.3",
+          "doc": "gemini_system_prompt",
+          "observed": 0.275,
+          "p_raw": 0.21415716856628675,
+          "p_holm": 1.0,
+          "null_mean": 0.19448000000000001,
+          "null_q95": 0.35000000000000003
+        },
+        {
+          "model": "Grok 4.2",
+          "doc": "gemini_system_prompt",
+          "observed": 0.3986842105263158,
+          "p_raw": 0.11297740451909619,
+          "p_holm": 0.9038192361527695,
+          "null_mean": 0.2806260526315789,
+          "null_q95": 0.4605263157894737
+        },
+        {
+          "model": "Claude Opus 4.7",
+          "doc": "grok_system_prompt",
+          "observed": 0.375,
+          "p_raw": 0.21875624875024996,
+          "p_holm": 1.0,
+          "null_mean": 0.274505,
+          "null_q95": 0.475
+        },
+        {
+          "model": "Claude Sonnet 4.6",
+          "doc": "grok_system_prompt",
+          "observed": 0.675,
+          "p_raw": 0.007998400319936013,
+          "p_holm": 0.16796640671865626,
+          "null_mean": 0.318615,
+          "null_q95": 0.525
+        },
+        {
+          "model": "Claude Haiku 4.5",
+          "doc": "grok_system_prompt",
+          "observed": 0.5750000000000001,
+          "p_raw": 0.003599280143971206,
+          "p_holm": 0.08278344331133773,
+          "null_mean": 0.263695,
+          "null_q95": 0.42500000000000004
+        },
+        {
+          "model": "GPT-5.5",
+          "doc": "grok_system_prompt",
+          "observed": 0.775,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005998800239952009,
+          "null_mean": 0.26596000000000003,
+          "null_q95": 0.42625000000000457
+        },
+        {
+          "model": "GPT-5.4",
+          "doc": "grok_system_prompt",
+          "observed": 0.47500000000000003,
+          "p_raw": 0.04379124175164967,
+          "p_holm": 0.525494901019796,
+          "null_mean": 0.24163500000000004,
+          "null_q95": 0.42500000000000004
+        },
+        {
+          "model": "GPT-5.4 Mini",
+          "doc": "grok_system_prompt",
+          "observed": 0.275,
+          "p_raw": 0.21375724855028994,
+          "p_holm": 1.0,
+          "null_mean": 0.20563499999999998,
+          "null_q95": 0.35
+        },
+        {
+          "model": "Gemini 3.1 Pro",
+          "doc": "grok_system_prompt",
+          "observed": 0.575,
+          "p_raw": 0.019396120775844832,
+          "p_holm": 0.29094181163767247,
+          "null_mean": 0.312365,
+          "null_q95": 0.5249999999999999
+        },
+        {
+          "model": "Gemini 3 Flash",
+          "doc": "grok_system_prompt",
+          "observed": 0.175,
+          "p_raw": 0.9164167166566687,
+          "p_holm": 1.0,
+          "null_mean": 0.278635,
+          "null_q95": 0.42500000000000004
+        }
+      ],
+      "title_rule": {
+        "branch": "neutral",
+        "title": "How Closely Each Model Edits Other Families' Documents Like the Home Family",
+        "qualifying_docs": [],
+        "doc_checks": {
+          "claude_constitution": {
+            "a_point_estimate": true,
+            "b_beyond_band": false,
+            "c_majority_significant": false,
+            "n_visitors": 7,
+            "n_significant": 3,
+            "qualifies": false
+          },
+          "openai_model_spec": {
+            "a_point_estimate": true,
+            "b_beyond_band": false,
+            "c_majority_significant": false,
+            "n_visitors": 7,
+            "n_significant": 2,
+            "qualifies": false
+          },
+          "gemini_system_prompt": {
+            "a_point_estimate": false,
+            "b_beyond_band": false,
+            "c_majority_significant": false,
+            "n_visitors": 8,
+            "n_significant": 0,
+            "qualifies": false
+          },
+          "grok_system_prompt": {
+            "a_point_estimate": false,
+            "b_beyond_band": false,
+            "c_majority_significant": false,
+            "n_visitors": 8,
+            "n_significant": 1,
+            "qualifies": false
+          }
+        }
+      }
+    },
+    "exclude_opus_no_csam": {
+      "visitor_avg": {
+        "Claude Opus 4.7": 0.375,
+        "Claude Sonnet 4.6": 0.8208333333333334,
+        "Claude Haiku 4.5": 0.5982843137254902,
+        "GPT-5.5": 1.1555555555555557,
+        "GPT-5.4": 0.8944444444444445,
+        "GPT-5.4 Mini": 0.5958333333333333,
+        "Gemini 3.1 Pro": 0.9208333333333334,
+        "Gemini 3 Flash": 0.9277777777777777,
+        "Grok 4.3": 1.1375,
+        "Grok 4.2": 0.8723469212246302
+      },
+      "distance": {
+        "claude_constitution": {
+          "Claude Opus 4.7": 0.575,
+          "Claude Sonnet 4.6": 0.6000000000000001,
+          "Claude Haiku 4.5": 0.9750000000000001,
+          "GPT-5.5": 1.3666666666666665,
+          "GPT-5.4": 1.6333333333333333,
+          "GPT-5.4 Mini": 1.1375000000000002,
+          "Gemini 3.1 Pro": 1.3833333333333333,
+          "Gemini 3 Flash": 1.4333333333333333,
+          "Grok 4.3": 1.5999999999999999,
+          "Grok 4.2": 1.3833333333333333
+        },
+        "openai_model_spec": {
+          "Claude Sonnet 4.6": 0.8125000000000001,
+          "Claude Haiku 4.5": 0.6948529411764707,
+          "GPT-5.5": 0.89375,
+          "GPT-5.4": 0.15625000000000006,
+          "GPT-5.4 Mini": 0.8124999999999999,
+          "Gemini 3.1 Pro": 0.5041666666666667,
+          "Gemini 3 Flash": 1.025,
+          "Grok 4.3": 1.2374999999999998,
+          "Grok 4.2": 0.5139705882352941
+        },
+        "gemini_system_prompt": {
+          "Claude Opus 4.7": 0.375,
+          "Claude Sonnet 4.6": 0.9249999999999999,
+          "Claude Haiku 4.5": 0.42500000000000004,
+          "GPT-5.5": 0.9250000000000002,
+          "GPT-5.4": 0.375,
+          "GPT-5.4 Mini": 0.37500000000000006,
+          "Gemini 3.1 Pro": 0.35000000000000003,
+          "Gemini 3 Flash": 0.35000000000000003,
+          "Grok 4.3": 0.5750000000000001,
+          "Grok 4.2": 0.7197368421052631
+        },
+        "grok_system_prompt": {
+          "Claude Opus 4.7": 0.375,
+          "Claude Sonnet 4.6": 0.7250000000000001,
+          "Claude Haiku 4.5": 0.6749999999999999,
+          "GPT-5.5": 1.175,
+          "GPT-5.4": 0.675,
+          "GPT-5.4 Mini": 0.275,
+          "Gemini 3.1 Pro": 0.875,
+          "Gemini 3 Flash": 0.325,
+          "Grok 4.3": 0.65,
+          "Grok 4.2": 0.65
+        }
+      },
+      "band": {
+        "claude_constitution": [
+          0.575,
+          0.9750000000000001
+        ],
+        "openai_model_spec": [
+          0.15625000000000006,
+          0.89375
+        ],
+        "gemini_system_prompt": [
+          0.35000000000000003,
+          0.35000000000000003
+        ],
+        "grok_system_prompt": [
+          0.65,
+          0.65
+        ]
+      },
+      "tests": [
+        {
+          "model": "GPT-5.5",
+          "doc": "claude_constitution",
+          "observed": 1.3666666666666665,
+          "p_raw": 0.0005998800239952009,
+          "p_holm": 0.013797240551889621,
+          "null_mean": 0.51926,
+          "null_q95": 0.8666666666666667
+        },
+        {
+          "model": "GPT-5.4",
+          "doc": "claude_constitution",
+          "observed": 1.6333333333333333,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005798840231953609,
+          "null_mean": 0.4794666666666667,
+          "null_q95": 0.8333333333333333
+        },
+        {
+          "model": "GPT-5.4 Mini",
+          "doc": "claude_constitution",
+          "observed": 1.1375000000000002,
+          "p_raw": 0.0027994401119776045,
+          "p_holm": 0.05318936212757448,
+          "null_mean": 0.5333058333333333,
+          "null_q95": 0.8666666666666667
+        },
+        {
+          "model": "Gemini 3.1 Pro",
+          "doc": "claude_constitution",
+          "observed": 1.3833333333333333,
+          "p_raw": 0.0003999200159968006,
+          "p_holm": 0.009598080383923215,
+          "null_mean": 0.49375333333333327,
+          "null_q95": 0.8166666666666668
+        },
+        {
+          "model": "Gemini 3 Flash",
+          "doc": "claude_constitution",
+          "observed": 1.4333333333333333,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005798840231953609,
+          "null_mean": 0.49152000000000007,
+          "null_q95": 0.8
+        },
+        {
+          "model": "Grok 4.3",
+          "doc": "claude_constitution",
+          "observed": 1.5999999999999999,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005798840231953609,
+          "null_mean": 0.4592799999999999,
+          "null_q95": 0.7666666666666667
+        },
+        {
+          "model": "Grok 4.2",
+          "doc": "claude_constitution",
+          "observed": 1.3833333333333333,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005798840231953609,
+          "null_mean": 0.48996000000000006,
+          "null_q95": 0.7833333333333334
+        },
+        {
+          "model": "Claude Sonnet 4.6",
+          "doc": "openai_model_spec",
+          "observed": 0.8125000000000001,
+          "p_raw": 0.024795040991801638,
+          "p_holm": 0.41811637672465507,
+          "null_mean": 0.4344616666666667,
+          "null_q95": 0.7374999999999999
+        },
+        {
+          "model": "Claude Haiku 4.5",
+          "doc": "openai_model_spec",
+          "observed": 0.6948529411764707,
+          "p_raw": 0.07818436312737452,
+          "p_holm": 1.0,
+          "null_mean": 0.4483018137254902,
+          "null_q95": 0.7561274509803921
+        },
+        {
+          "model": "Gemini 3.1 Pro",
+          "doc": "openai_model_spec",
+          "observed": 0.5041666666666667,
+          "p_raw": 0.241751649670066,
+          "p_holm": 1.0,
+          "null_mean": 0.40060500000000004,
+          "null_q95": 0.675
+        },
+        {
+          "model": "Gemini 3 Flash",
+          "doc": "openai_model_spec",
+          "observed": 1.025,
+          "p_raw": 0.0021995600879824036,
+          "p_holm": 0.043991201759648074,
+          "null_mean": 0.4507833333333333,
+          "null_q95": 0.7666666666666667
+        },
+        {
+          "model": "Grok 4.3",
+          "doc": "openai_model_spec",
+          "observed": 1.2374999999999998,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005798840231953609,
+          "null_mean": 0.403445,
+          "null_q95": 0.7041666666666668
+        },
+        {
+          "model": "Grok 4.2",
+          "doc": "openai_model_spec",
+          "observed": 0.5139705882352941,
+          "p_raw": 0.22675464907018597,
+          "p_holm": 1.0,
+          "null_mean": 0.40885166666666667,
+          "null_q95": 0.7100490196078431
+        },
+        {
+          "model": "Claude Opus 4.7",
+          "doc": "gemini_system_prompt",
+          "observed": 0.375,
+          "p_raw": 0.3889222155568886,
+          "p_holm": 1.0,
+          "null_mean": 0.33760500000000004,
+          "null_q95": 0.5750000000000001
+        },
+        {
+          "model": "Claude Sonnet 4.6",
+          "doc": "gemini_system_prompt",
+          "observed": 0.9249999999999999,
+          "p_raw": 0.014397120575884824,
+          "p_holm": 0.2591481703659268,
+          "null_mean": 0.51182,
+          "null_q95": 0.825
+        },
+        {
+          "model": "Claude Haiku 4.5",
+          "doc": "gemini_system_prompt",
+          "observed": 0.42500000000000004,
+          "p_raw": 0.2531493701259748,
+          "p_holm": 1.0,
+          "null_mean": 0.327665,
+          "null_q95": 0.575
+        },
+        {
+          "model": "GPT-5.5",
+          "doc": "gemini_system_prompt",
+          "observed": 0.9250000000000002,
+          "p_raw": 0.0013997200559888023,
+          "p_holm": 0.02939412117576485,
+          "null_mean": 0.397045,
+          "null_q95": 0.65
+        },
+        {
+          "model": "GPT-5.4",
+          "doc": "gemini_system_prompt",
+          "observed": 0.375,
+          "p_raw": 0.39592081583683264,
+          "p_holm": 1.0,
+          "null_mean": 0.340385,
+          "null_q95": 0.5750000000000001
+        },
+        {
+          "model": "GPT-5.4 Mini",
+          "doc": "gemini_system_prompt",
+          "observed": 0.37500000000000006,
+          "p_raw": 0.7762447510497901,
+          "p_holm": 1.0,
+          "null_mean": 0.44428500000000004,
+          "null_q95": 0.6000000000000001
+        },
+        {
+          "model": "Grok 4.3",
+          "doc": "gemini_system_prompt",
+          "observed": 0.5750000000000001,
+          "p_raw": 0.0611877624475105,
+          "p_holm": 0.856628674265147,
+          "null_mean": 0.324275,
+          "null_q95": 0.575
+        },
+        {
+          "model": "Grok 4.2",
+          "doc": "gemini_system_prompt",
+          "observed": 0.7197368421052631,
+          "p_raw": 0.04539092181563687,
+          "p_holm": 0.6808638272345531,
+          "null_mean": 0.42935789473684216,
+          "null_q95": 0.7144736842105261
+        },
+        {
+          "model": "Claude Opus 4.7",
+          "doc": "grok_system_prompt",
+          "observed": 0.375,
+          "p_raw": 0.6562687462507498,
+          "p_holm": 1.0,
+          "null_mean": 0.440375,
+          "null_q95": 0.75
+        },
+        {
+          "model": "Claude Sonnet 4.6",
+          "doc": "grok_system_prompt",
+          "observed": 0.7250000000000001,
+          "p_raw": 0.1295740851829634,
+          "p_holm": 1.0,
+          "null_mean": 0.49377,
+          "null_q95": 0.85
+        },
+        {
+          "model": "Claude Haiku 4.5",
+          "doc": "grok_system_prompt",
+          "observed": 0.6749999999999999,
+          "p_raw": 0.1187762447510498,
+          "p_holm": 1.0,
+          "null_mean": 0.4439450000000001,
+          "null_q95": 0.775
+        },
+        {
+          "model": "GPT-5.5",
+          "doc": "grok_system_prompt",
+          "observed": 1.175,
+          "p_raw": 0.0009998000399920016,
+          "p_holm": 0.021995600879824034,
+          "null_mean": 0.42957,
+          "null_q95": 0.7250000000000001
+        },
+        {
+          "model": "GPT-5.4",
+          "doc": "grok_system_prompt",
+          "observed": 0.675,
+          "p_raw": 0.09518096380723855,
+          "p_holm": 1.0,
+          "null_mean": 0.408525,
+          "null_q95": 0.75
+        },
+        {
+          "model": "GPT-5.4 Mini",
+          "doc": "grok_system_prompt",
+          "observed": 0.275,
+          "p_raw": 0.6766646670665867,
+          "p_holm": 1.0,
+          "null_mean": 0.35205000000000003,
+          "null_q95": 0.625
+        },
+        {
+          "model": "Gemini 3.1 Pro",
+          "doc": "grok_system_prompt",
+          "observed": 0.875,
+          "p_raw": 0.02459508098380324,
+          "p_holm": 0.41811637672465507,
+          "null_mean": 0.47028500000000006,
+          "null_q95": 0.775
+        },
+        {
+          "model": "Gemini 3 Flash",
+          "doc": "grok_system_prompt",
+          "observed": 0.325,
+          "p_raw": 0.760247950409918,
+          "p_holm": 1.0,
+          "null_mean": 0.417325,
+          "null_q95": 0.7000000000000001
+        }
+      ],
+      "title_rule": {
+        "branch": "one_document",
+        "title": "No Other Model Family Edits the Claude Constitution Like Claude Does",
+        "qualifying_docs": [
+          "claude_constitution"
+        ],
+        "doc_checks": {
+          "claude_constitution": {
+            "a_point_estimate": true,
+            "b_beyond_band": true,
+            "c_majority_significant": true,
+            "n_visitors": 7,
+            "n_significant": 6,
+            "qualifies": true
+          },
+          "openai_model_spec": {
+            "a_point_estimate": false,
+            "b_beyond_band": false,
+            "c_majority_significant": false,
+            "n_visitors": 6,
+            "n_significant": 2,
+            "qualifies": false
+          },
+          "gemini_system_prompt": {
+            "a_point_estimate": true,
+            "b_beyond_band": true,
+            "c_majority_significant": false,
+            "n_visitors": 8,
+            "n_significant": 1,
+            "qualifies": false
+          },
+          "grok_system_prompt": {
+            "a_point_estimate": false,
+            "b_beyond_band": false,
+            "c_majority_significant": false,
+            "n_visitors": 8,
+            "n_significant": 1,
+            "qualifies": false
+          }
+        }
+      }
+    },
+    "v2_gemma": {
+      "visitor_avg": {
+        "Claude Opus 4.7": 0.6882716049382717,
+        "Claude Sonnet 4.6": 1.0557667316439248,
+        "Claude Haiku 4.5": 0.8336056644880174,
+        "GPT-5.5": 1.2861111111111112,
+        "GPT-5.4": 1.1694444444444445,
+        "GPT-5.4 Mini": 0.7902777777777777,
+        "Gemini 3.1 Pro": 0.9771604938271604,
+        "Gemini 3 Flash": 0.907716049382716,
+        "Grok 4.3": 1.2398148148148147,
+        "Grok 4.2": 0.8825526506899056
+      },
+      "distance": {
+        "claude_constitution": {
+          "Claude Opus 4.7": 0.8,
+          "Claude Sonnet 4.6": 0.7000000000000001,
+          "Claude Haiku 4.5": 0.8999999999999999,
+          "GPT-5.5": 1.4833333333333334,
+          "GPT-5.4": 2.033333333333333,
+          "GPT-5.4 Mini": 1.195833333333333,
+          "Gemini 3.1 Pro": 1.4333333333333333,
+          "Gemini 3 Flash": 1.4333333333333333,
+          "Grok 4.3": 1.7166666666666666,
+          "Grok 4.2": 1.1333333333333333
+        },
+        "openai_model_spec": {
+          "Claude Opus 4.7": 0.7398148148148147,
+          "Claude Sonnet 4.6": 0.8423001949317739,
+          "Claude Haiku 4.5": 0.8758169934640522,
+          "GPT-5.5": 0.8999999999999999,
+          "GPT-5.4": 0.29999999999999993,
+          "GPT-5.4 Mini": 0.7916666666666666,
+          "Gemini 3.1 Pro": 0.5731481481481481,
+          "Gemini 3 Flash": 0.8648148148148147,
+          "Grok 4.3": 1.0527777777777776,
+          "Grok 4.2": 0.6643246187363835
+        },
+        "gemini_system_prompt": {
+          "Claude Opus 4.7": 0.8,
+          "Claude Sonnet 4.6": 1.35,
+          "Claude Haiku 4.5": 0.75,
+          "GPT-5.5": 1.0,
+          "GPT-5.4": 0.75,
+          "GPT-5.4 Mini": 0.6500000000000001,
+          "Gemini 3.1 Pro": 0.5,
+          "Gemini 3 Flash": 0.5,
+          "Grok 4.3": 0.95,
+          "Grok 4.2": 0.85
+        },
+        "grok_system_prompt": {
+          "Claude Opus 4.7": 0.525,
+          "Claude Sonnet 4.6": 0.975,
+          "Claude Haiku 4.5": 0.8749999999999999,
+          "GPT-5.5": 1.375,
+          "GPT-5.4": 0.725,
+          "GPT-5.4 Mini": 0.525,
+          "Gemini 3.1 Pro": 0.925,
+          "Gemini 3 Flash": 0.42500000000000004,
+          "Grok 4.3": 0.8500000000000001,
+          "Grok 4.2": 0.8500000000000001
+        }
+      },
+      "band": {
+        "claude_constitution": [
+          0.7000000000000001,
+          0.8999999999999999
+        ],
+        "openai_model_spec": [
+          0.29999999999999993,
+          0.8999999999999999
+        ],
+        "gemini_system_prompt": [
+          0.5,
+          0.5
+        ],
+        "grok_system_prompt": [
+          0.8500000000000001,
+          0.8500000000000001
+        ]
+      },
+      "tests": [
+        {
+          "model": "GPT-5.5",
+          "doc": "claude_constitution",
+          "observed": 1.4833333333333334,
+          "p_raw": 0.0009998000399920016,
+          "p_holm": 0.02499500099980004,
+          "null_mean": 0.627,
+          "null_q95": 1.0166666666666666
+        },
+        {
+          "model": "GPT-5.4",
+          "doc": "claude_constitution",
+          "observed": 2.033333333333333,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005998800239952009,
+          "null_mean": 0.6003533333333333,
+          "null_q95": 1.0
+        },
+        {
+          "model": "GPT-5.4 Mini",
+          "doc": "claude_constitution",
+          "observed": 1.195833333333333,
+          "p_raw": 0.01199760047990402,
+          "p_holm": 0.23995200959808038,
+          "null_mean": 0.6135849999999999,
+          "null_q95": 1.004583333333335
+        },
+        {
+          "model": "Gemini 3.1 Pro",
+          "doc": "claude_constitution",
+          "observed": 1.4333333333333333,
+          "p_raw": 0.0007998400319936012,
+          "p_holm": 0.020795840831833633,
+          "null_mean": 0.5742066666666668,
+          "null_q95": 0.9333333333333333
+        },
+        {
+          "model": "Gemini 3 Flash",
+          "doc": "claude_constitution",
+          "observed": 1.4333333333333333,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005998800239952009,
+          "null_mean": 0.5677466666666667,
+          "null_q95": 0.9333333333333332
+        },
+        {
+          "model": "Grok 4.3",
+          "doc": "claude_constitution",
+          "observed": 1.7166666666666666,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005998800239952009,
+          "null_mean": 0.5492466666666667,
+          "null_q95": 0.8833333333333334
+        },
+        {
+          "model": "Grok 4.2",
+          "doc": "claude_constitution",
+          "observed": 1.1333333333333333,
+          "p_raw": 0.010597880423915218,
+          "p_holm": 0.22255548890221957,
+          "null_mean": 0.5763333333333333,
+          "null_q95": 0.9333333333333333
+        },
+        {
+          "model": "Claude Opus 4.7",
+          "doc": "openai_model_spec",
+          "observed": 0.7398148148148147,
+          "p_raw": 0.1281743651269746,
+          "p_holm": 0.8972205558888222,
+          "null_mean": 0.5290553703703704,
+          "null_q95": 0.848148148148148
+        },
+        {
+          "model": "Claude Sonnet 4.6",
+          "doc": "openai_model_spec",
+          "observed": 0.8423001949317739,
+          "p_raw": 0.07518496300739852,
+          "p_holm": 0.8270345930813837,
+          "null_mean": 0.5414615155945419,
+          "null_q95": 0.9007626705653022
+        },
+        {
+          "model": "Claude Haiku 4.5",
+          "doc": "openai_model_spec",
+          "observed": 0.8758169934640522,
+          "p_raw": 0.022195560887822437,
+          "p_holm": 0.39952009598080385,
+          "null_mean": 0.48691254901960784,
+          "null_q95": 0.8010498366013075
+        },
+        {
+          "model": "Gemini 3.1 Pro",
+          "doc": "openai_model_spec",
+          "observed": 0.5731481481481481,
+          "p_raw": 0.3037392521495701,
+          "p_holm": 1.0,
+          "null_mean": 0.4923086111111112,
+          "null_q95": 0.8078703703703702
+        },
+        {
+          "model": "Gemini 3 Flash",
+          "doc": "openai_model_spec",
+          "observed": 0.8648148148148147,
+          "p_raw": 0.06798640271945611,
+          "p_holm": 0.8158368326334733,
+          "null_mean": 0.5502914814814815,
+          "null_q95": 0.9153009259259259
+        },
+        {
+          "model": "Grok 4.3",
+          "doc": "openai_model_spec",
+          "observed": 1.0527777777777776,
+          "p_raw": 0.0065986802639472104,
+          "p_holm": 0.14517096580683864,
+          "null_mean": 0.488264537037037,
+          "null_q95": 0.8231481481481482
+        },
+        {
+          "model": "Grok 4.2",
+          "doc": "openai_model_spec",
+          "observed": 0.6643246187363835,
+          "p_raw": 0.27634473105378926,
+          "p_holm": 1.0,
+          "null_mean": 0.5552728159041395,
+          "null_q95": 0.9033728213507626
+        },
+        {
+          "model": "Claude Opus 4.7",
+          "doc": "gemini_system_prompt",
+          "observed": 0.8,
+          "p_raw": 0.036192761447710456,
+          "p_holm": 0.5428914217156569,
+          "null_mean": 0.44386000000000003,
+          "null_q95": 0.7500000000000001
+        },
+        {
+          "model": "Claude Sonnet 4.6",
+          "doc": "gemini_system_prompt",
+          "observed": 1.35,
+          "p_raw": 0.0013997200559888023,
+          "p_holm": 0.033593281343731254,
+          "null_mean": 0.57247,
+          "null_q95": 0.925
+        },
+        {
+          "model": "Claude Haiku 4.5",
+          "doc": "gemini_system_prompt",
+          "observed": 0.75,
+          "p_raw": 0.08798240351929613,
+          "p_holm": 0.8638272345530894,
+          "null_mean": 0.47921500000000006,
+          "null_q95": 0.8
+        },
+        {
+          "model": "GPT-5.5",
+          "doc": "gemini_system_prompt",
+          "observed": 1.0,
+          "p_raw": 0.014597080583883223,
+          "p_holm": 0.27734453109378127,
+          "null_mean": 0.49588999999999994,
+          "null_q95": 0.8500000000000001
+        },
+        {
+          "model": "GPT-5.4",
+          "doc": "gemini_system_prompt",
+          "observed": 0.75,
+          "p_raw": 0.08638272345530894,
+          "p_holm": 0.8638272345530894,
+          "null_mean": 0.46391000000000004,
+          "null_q95": 0.825
+        },
+        {
+          "model": "GPT-5.4 Mini",
+          "doc": "gemini_system_prompt",
+          "observed": 0.6500000000000001,
+          "p_raw": 0.7534493101379725,
+          "p_holm": 1.0,
+          "null_mean": 0.8295950000000001,
+          "null_q95": 1.3250000000000002
+        },
+        {
+          "model": "Grok 4.3",
+          "doc": "gemini_system_prompt",
+          "observed": 0.95,
+          "p_raw": 0.005598880223955209,
+          "p_holm": 0.1287742451509698,
+          "null_mean": 0.4333450000000001,
+          "null_q95": 0.75
+        },
+        {
+          "model": "Grok 4.2",
+          "doc": "gemini_system_prompt",
+          "observed": 0.85,
+          "p_raw": 0.060387922415516895,
+          "p_holm": 0.7850429914017196,
+          "null_mean": 0.5086957894736843,
+          "null_q95": 0.8578947368421053
+        },
+        {
+          "model": "Claude Opus 4.7",
+          "doc": "grok_system_prompt",
+          "observed": 0.525,
+          "p_raw": 0.39992001599680066,
+          "p_holm": 1.0,
+          "null_mean": 0.47548500000000005,
+          "null_q95": 0.7999999999999999
+        },
+        {
+          "model": "Claude Sonnet 4.6",
+          "doc": "grok_system_prompt",
+          "observed": 0.975,
+          "p_raw": 0.027194561087782444,
+          "p_holm": 0.4351129774045191,
+          "null_mean": 0.53333,
+          "null_q95": 0.8750000000000001
+        },
+        {
+          "model": "Claude Haiku 4.5",
+          "doc": "grok_system_prompt",
+          "observed": 0.8749999999999999,
+          "p_raw": 0.04519096180763847,
+          "p_holm": 0.6326734653069386,
+          "null_mean": 0.498075,
+          "null_q95": 0.8500000000000001
+        },
+        {
+          "model": "GPT-5.5",
+          "doc": "grok_system_prompt",
+          "observed": 1.375,
+          "p_raw": 0.0003999200159968006,
+          "p_holm": 0.010797840431913617,
+          "null_mean": 0.46779500000000007,
+          "null_q95": 0.7762500000000047
+        },
+        {
+          "model": "GPT-5.4",
+          "doc": "grok_system_prompt",
+          "observed": 0.725,
+          "p_raw": 0.08718256348730254,
+          "p_holm": 0.8638272345530894,
+          "null_mean": 0.4644,
+          "null_q95": 0.7750000000000001
+        },
+        {
+          "model": "GPT-5.4 Mini",
+          "doc": "grok_system_prompt",
+          "observed": 0.525,
+          "p_raw": 0.22855428914217157,
+          "p_holm": 1.0,
+          "null_mean": 0.398185,
+          "null_q95": 0.675
+        },
+        {
+          "model": "Gemini 3.1 Pro",
+          "doc": "grok_system_prompt",
+          "observed": 0.925,
+          "p_raw": 0.02499500099980004,
+          "p_holm": 0.4249150169966007,
+          "null_mean": 0.489285,
+          "null_q95": 0.8250000000000001
+        },
+        {
+          "model": "Gemini 3 Flash",
+          "doc": "grok_system_prompt",
+          "observed": 0.42500000000000004,
+          "p_raw": 0.5390921815636872,
+          "p_holm": 1.0,
+          "null_mean": 0.44782000000000005,
+          "null_q95": 0.7749999999999999
+        }
+      ],
+      "title_rule": {
+        "branch": "one_document",
+        "title": "No Other Model Family Edits the Claude Constitution Like Claude Does",
+        "qualifying_docs": [
+          "claude_constitution"
+        ],
+        "doc_checks": {
+          "claude_constitution": {
+            "a_point_estimate": true,
+            "b_beyond_band": true,
+            "c_majority_significant": true,
+            "n_visitors": 7,
+            "n_significant": 5,
+            "qualifies": true
+          },
+          "openai_model_spec": {
+            "a_point_estimate": false,
+            "b_beyond_band": false,
+            "c_majority_significant": false,
+            "n_visitors": 7,
+            "n_significant": 0,
+            "qualifies": false
+          },
+          "gemini_system_prompt": {
+            "a_point_estimate": true,
+            "b_beyond_band": true,
+            "c_majority_significant": false,
+            "n_visitors": 8,
+            "n_significant": 1,
+            "qualifies": false
+          },
+          "grok_system_prompt": {
+            "a_point_estimate": false,
+            "b_beyond_band": false,
+            "c_majority_significant": false,
+            "n_visitors": 8,
+            "n_significant": 1,
+            "qualifies": false
+          }
+        }
+      },
+      "n_edits": 763
+    },
+    "v2_qwen": {
+      "visitor_avg": {
+        "Claude Opus 4.7": 0.4822454420364637,
+        "Claude Sonnet 4.6": 0.9485939112487101,
+        "Claude Haiku 4.5": 0.5632739938080495,
+        "GPT-5.5": 0.879093567251462,
+        "GPT-5.4": 0.9181773879142301,
+        "GPT-5.4 Mini": 0.6652777777777779,
+        "Gemini 3.1 Pro": 1.0186747506019953,
+        "Gemini 3 Flash": 0.9592191262469901,
+        "Grok 4.3": 1.2383857929136568,
+        "Grok 4.2": 0.7896155830753354
+      },
+      "distance": {
+        "claude_constitution": {
+          "Claude Opus 4.7": 0.475,
+          "Claude Sonnet 4.6": 0.725,
+          "Claude Haiku 4.5": 1.05,
+          "GPT-5.5": 1.062280701754386,
+          "GPT-5.4": 1.8611111111111114,
+          "GPT-5.4 Mini": 1.2708333333333335,
+          "Gemini 3.1 Pro": 1.8833333333333337,
+          "Gemini 3 Flash": 1.4500000000000002,
+          "Grok 4.3": 1.7000000000000002,
+          "Grok 4.2": 1.1166666666666667
+        },
+        "openai_model_spec": {
+          "Claude Opus 4.7": 0.3901573787409701,
+          "Claude Sonnet 4.6": 0.9707817337461301,
+          "Claude Haiku 4.5": 0.5648219814241486,
+          "GPT-5.5": 0.6852747678018576,
+          "GPT-5.4": 0.27544504643962847,
+          "GPT-5.4 Mini": 0.6321594427244582,
+          "Gemini 3.1 Pro": 0.5726909184726522,
+          "Gemini 3 Flash": 1.07765737874097,
+          "Grok 4.3": 1.4401573787409698,
+          "Grok 4.2": 0.6377063983488132
+        },
+        "gemini_system_prompt": {
+          "Claude Opus 4.7": 0.4407894736842106,
+          "Claude Sonnet 4.6": 0.825,
+          "Claude Haiku 4.5": 0.4750000000000001,
+          "GPT-5.5": 0.6249999999999999,
+          "GPT-5.4": 0.4407894736842105,
+          "GPT-5.4 Mini": 0.5750000000000001,
+          "Gemini 3.1 Pro": 0.25,
+          "Gemini 3 Flash": 0.25,
+          "Grok 4.3": 0.5750000000000001,
+          "Grok 4.2": 0.6144736842105263
+        },
+        "grok_system_prompt": {
+          "Claude Opus 4.7": 0.6157894736842104,
+          "Claude Sonnet 4.6": 1.05,
+          "Claude Haiku 4.5": 0.6499999999999999,
+          "GPT-5.5": 0.9500000000000002,
+          "GPT-5.4": 0.45263157894736844,
+          "GPT-5.4 Mini": 0.14999999999999997,
+          "Gemini 3.1 Pro": 0.6,
+          "Gemini 3 Flash": 0.35000000000000003,
+          "Grok 4.3": 0.6000000000000002,
+          "Grok 4.2": 0.6000000000000002
+        }
+      },
+      "band": {
+        "claude_constitution": [
+          0.475,
+          1.05
+        ],
+        "openai_model_spec": [
+          0.27544504643962847,
+          0.6852747678018576
+        ],
+        "gemini_system_prompt": [
+          0.25,
+          0.25
+        ],
+        "grok_system_prompt": [
+          0.6000000000000002,
+          0.6000000000000002
+        ]
+      },
+      "tests": [
+        {
+          "model": "GPT-5.5",
+          "doc": "claude_constitution",
+          "observed": 1.062280701754386,
+          "p_raw": 0.007598480303939212,
+          "p_holm": 0.16716656668666266,
+          "null_mean": 0.4998771929824561,
+          "null_q95": 0.8254824561403511
+        },
+        {
+          "model": "GPT-5.4",
+          "doc": "claude_constitution",
+          "observed": 1.8611111111111114,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005998800239952009,
+          "null_mean": 0.5618266666666667,
+          "null_q95": 0.961111111111111
+        },
+        {
+          "model": "GPT-5.4 Mini",
+          "doc": "claude_constitution",
+          "observed": 1.2708333333333335,
+          "p_raw": 0.0009998000399920016,
+          "p_holm": 0.02499500099980004,
+          "null_mean": 0.5064108333333333,
+          "null_q95": 0.8375000000000001
+        },
+        {
+          "model": "Gemini 3.1 Pro",
+          "doc": "claude_constitution",
+          "observed": 1.8833333333333337,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005998800239952009,
+          "null_mean": 0.5281600000000001,
+          "null_q95": 0.8833333333333333
+        },
+        {
+          "model": "Gemini 3 Flash",
+          "doc": "claude_constitution",
+          "observed": 1.4500000000000002,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005998800239952009,
+          "null_mean": 0.49772666666666665,
+          "null_q95": 0.8166666666666667
+        },
+        {
+          "model": "Grok 4.3",
+          "doc": "claude_constitution",
+          "observed": 1.7000000000000002,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005998800239952009,
+          "null_mean": 0.46177333333333337,
+          "null_q95": 0.7666666666666667
+        },
+        {
+          "model": "Grok 4.2",
+          "doc": "claude_constitution",
+          "observed": 1.1166666666666667,
+          "p_raw": 0.0011997600479904018,
+          "p_holm": 0.028794241151769644,
+          "null_mean": 0.4789933333333333,
+          "null_q95": 0.7833333333333334
+        },
+        {
+          "model": "Claude Opus 4.7",
+          "doc": "openai_model_spec",
+          "observed": 0.3901573787409701,
+          "p_raw": 0.6000799840031994,
+          "p_holm": 1.0,
+          "null_mean": 0.44897492776057796,
+          "null_q95": 0.7399277605779155
+        },
+        {
+          "model": "Claude Sonnet 4.6",
+          "doc": "openai_model_spec",
+          "observed": 0.9707817337461301,
+          "p_raw": 0.014597080583883223,
+          "p_holm": 0.27734453109378127,
+          "null_mean": 0.48450076109391127,
+          "null_q95": 0.8300083849329208
+        },
+        {
+          "model": "Claude Haiku 4.5",
+          "doc": "openai_model_spec",
+          "observed": 0.5648219814241486,
+          "p_raw": 0.19196160767846432,
+          "p_holm": 1.0,
+          "null_mean": 0.4351900412796697,
+          "null_q95": 0.7058823529411766
+        },
+        {
+          "model": "Gemini 3.1 Pro",
+          "doc": "openai_model_spec",
+          "observed": 0.5726909184726522,
+          "p_raw": 0.1261747650469906,
+          "p_holm": 1.0,
+          "null_mean": 0.3921288699690403,
+          "null_q95": 0.6646704076367388
+        },
+        {
+          "model": "Gemini 3 Flash",
+          "doc": "openai_model_spec",
+          "observed": 1.07765737874097,
+          "p_raw": 0.0011997600479904018,
+          "p_holm": 0.028794241151769644,
+          "null_mean": 0.44175252837977297,
+          "null_q95": 0.7674922600619195
+        },
+        {
+          "model": "Grok 4.3",
+          "doc": "openai_model_spec",
+          "observed": 1.4401573787409698,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005998800239952009,
+          "null_mean": 0.44642981166150675,
+          "null_q95": 0.7590428276573788
+        },
+        {
+          "model": "Grok 4.2",
+          "doc": "openai_model_spec",
+          "observed": 0.6377063983488132,
+          "p_raw": 0.10297940411917617,
+          "p_holm": 1.0,
+          "null_mean": 0.41069921310629515,
+          "null_q95": 0.7173664860681115
+        },
+        {
+          "model": "Claude Opus 4.7",
+          "doc": "gemini_system_prompt",
+          "observed": 0.4407894736842106,
+          "p_raw": 0.22675464907018597,
+          "p_holm": 1.0,
+          "null_mean": 0.34929157894736845,
+          "null_q95": 0.5907894736842105
+        },
+        {
+          "model": "Claude Sonnet 4.6",
+          "doc": "gemini_system_prompt",
+          "observed": 0.825,
+          "p_raw": 0.014797040591881624,
+          "p_holm": 0.27734453109378127,
+          "null_mean": 0.4186757894736842,
+          "null_q95": 0.6986842105263158
+        },
+        {
+          "model": "Claude Haiku 4.5",
+          "doc": "gemini_system_prompt",
+          "observed": 0.4750000000000001,
+          "p_raw": 0.1959608078384323,
+          "p_holm": 1.0,
+          "null_mean": 0.346495,
+          "null_q95": 0.5750000000000001
+        },
+        {
+          "model": "GPT-5.5",
+          "doc": "gemini_system_prompt",
+          "observed": 0.6249999999999999,
+          "p_raw": 0.0613877224555089,
+          "p_holm": 1.0,
+          "null_mean": 0.37696,
+          "null_q95": 0.6250000000000001
+        },
+        {
+          "model": "GPT-5.4",
+          "doc": "gemini_system_prompt",
+          "observed": 0.4407894736842105,
+          "p_raw": 0.2443511297740452,
+          "p_holm": 1.0,
+          "null_mean": 0.3539481578947369,
+          "null_q95": 0.5960526315789474
+        },
+        {
+          "model": "GPT-5.4 Mini",
+          "doc": "gemini_system_prompt",
+          "observed": 0.5750000000000001,
+          "p_raw": 0.3649270145970806,
+          "p_holm": 1.0,
+          "null_mean": 0.47463500000000003,
+          "null_q95": 0.8
+        },
+        {
+          "model": "Grok 4.3",
+          "doc": "gemini_system_prompt",
+          "observed": 0.5750000000000001,
+          "p_raw": 0.060387922415516895,
+          "p_holm": 1.0,
+          "null_mean": 0.333955,
+          "null_q95": 0.5750000000000001
+        },
+        {
+          "model": "Grok 4.2",
+          "doc": "gemini_system_prompt",
+          "observed": 0.6144736842105263,
+          "p_raw": 0.05898820235952809,
+          "p_holm": 1.0,
+          "null_mean": 0.3573478947368421,
+          "null_q95": 0.6263157894736842
+        },
+        {
+          "model": "Claude Opus 4.7",
+          "doc": "grok_system_prompt",
+          "observed": 0.6157894736842104,
+          "p_raw": 0.15776844631073786,
+          "p_holm": 1.0,
+          "null_mean": 0.43583999999999995,
+          "null_q95": 0.7605263157894736
+        },
+        {
+          "model": "Claude Sonnet 4.6",
+          "doc": "grok_system_prompt",
+          "observed": 1.05,
+          "p_raw": 0.007598480303939212,
+          "p_holm": 0.16716656668666266,
+          "null_mean": 0.47645,
+          "null_q95": 0.8250000000000001
+        },
+        {
+          "model": "Claude Haiku 4.5",
+          "doc": "grok_system_prompt",
+          "observed": 0.6499999999999999,
+          "p_raw": 0.15256948610277946,
+          "p_holm": 1.0,
+          "null_mean": 0.44537,
+          "null_q95": 0.7999999999999999
+        },
+        {
+          "model": "GPT-5.5",
+          "doc": "grok_system_prompt",
+          "observed": 0.9500000000000002,
+          "p_raw": 0.008398320335932814,
+          "p_holm": 0.16796640671865626,
+          "null_mean": 0.40856500000000007,
+          "null_q95": 0.7250000000000001
+        },
+        {
+          "model": "GPT-5.4",
+          "doc": "grok_system_prompt",
+          "observed": 0.45263157894736844,
+          "p_raw": 0.41671665666866625,
+          "p_holm": 1.0,
+          "null_mean": 0.4385063157894737,
+          "null_q95": 0.7447368421052631
+        },
+        {
+          "model": "GPT-5.4 Mini",
+          "doc": "grok_system_prompt",
+          "observed": 0.14999999999999997,
+          "p_raw": 0.993001399720056,
+          "p_holm": 1.0,
+          "null_mean": 0.36612,
+          "null_q95": 0.6250000000000001
+        },
+        {
+          "model": "Gemini 3.1 Pro",
+          "doc": "grok_system_prompt",
+          "observed": 0.6,
+          "p_raw": 0.18156368726254749,
+          "p_holm": 1.0,
+          "null_mean": 0.43768999999999997,
+          "null_q95": 0.7500000000000001
+        },
+        {
+          "model": "Gemini 3 Flash",
+          "doc": "grok_system_prompt",
+          "observed": 0.35000000000000003,
+          "p_raw": 0.7428514297140572,
+          "p_holm": 1.0,
+          "null_mean": 0.45529,
+          "null_q95": 0.7500000000000001
+        }
+      ],
+      "title_rule": {
+        "branch": "one_document",
+        "title": "No Other Model Family Edits the Claude Constitution Like Claude Does",
+        "qualifying_docs": [
+          "claude_constitution"
+        ],
+        "doc_checks": {
+          "claude_constitution": {
+            "a_point_estimate": true,
+            "b_beyond_band": true,
+            "c_majority_significant": true,
+            "n_visitors": 7,
+            "n_significant": 6,
+            "qualifies": true
+          },
+          "openai_model_spec": {
+            "a_point_estimate": false,
+            "b_beyond_band": false,
+            "c_majority_significant": false,
+            "n_visitors": 7,
+            "n_significant": 2,
+            "qualifies": false
+          },
+          "gemini_system_prompt": {
+            "a_point_estimate": true,
+            "b_beyond_band": true,
+            "c_majority_significant": false,
+            "n_visitors": 8,
+            "n_significant": 0,
+            "qualifies": false
+          },
+          "grok_system_prompt": {
+            "a_point_estimate": false,
+            "b_beyond_band": false,
+            "c_majority_significant": false,
+            "n_visitors": 8,
+            "n_significant": 0,
+            "qualifies": false
+          }
+        }
+      },
+      "n_edits": 750
+    },
+    "v2_muse": {
+      "visitor_avg": {
+        "Claude Opus 4.7": 0.5138888888888888,
+        "Claude Sonnet 4.6": 0.7194444444444444,
+        "Claude Haiku 4.5": 0.6194444444444445,
+        "GPT-5.5": 0.9416666666666668,
+        "GPT-5.4": 0.8472222222222223,
+        "GPT-5.4 Mini": 0.6319444444444445,
+        "Gemini 3.1 Pro": 0.6638888888888889,
+        "Gemini 3 Flash": 0.8819444444444445,
+        "Grok 4.3": 0.9833333333333333,
+        "Grok 4.2": 0.7315617475060199
+      },
+      "distance": {
+        "claude_constitution": {
+          "Claude Opus 4.7": 0.55,
+          "Claude Sonnet 4.6": 0.7999999999999999,
+          "Claude Haiku 4.5": 0.85,
+          "GPT-5.5": 1.1,
+          "GPT-5.4": 1.2166666666666668,
+          "GPT-5.4 Mini": 1.0208333333333333,
+          "Gemini 3.1 Pro": 1.1333333333333333,
+          "Gemini 3 Flash": 1.1666666666666665,
+          "Grok 4.3": 1.5333333333333332,
+          "Grok 4.2": 1.05
+        },
+        "openai_model_spec": {
+          "Claude Opus 4.7": 0.6666666666666666,
+          "Claude Sonnet 4.6": 0.5833333333333334,
+          "Claude Haiku 4.5": 0.6833333333333333,
+          "GPT-5.5": 0.675,
+          "GPT-5.4": 0.15,
+          "GPT-5.4 Mini": 0.825,
+          "Gemini 3.1 Pro": 0.33333333333333326,
+          "Gemini 3 Flash": 1.2541666666666667,
+          "Grok 4.3": 1.0166666666666666,
+          "Grok 4.2": 0.40784313725490184
+        },
+        "gemini_system_prompt": {
+          "Claude Opus 4.7": 0.35000000000000003,
+          "Claude Sonnet 4.6": 0.6499999999999999,
+          "Claude Haiku 4.5": 0.4,
+          "GPT-5.5": 0.75,
+          "GPT-5.4": 0.5,
+          "GPT-5.4 Mini": 0.4,
+          "Gemini 3.1 Pro": 0.1,
+          "Gemini 3 Flash": 0.1,
+          "Grok 4.3": 0.4,
+          "Grok 4.2": 0.7368421052631579
+        },
+        "grok_system_prompt": {
+          "Claude Opus 4.7": 0.525,
+          "Claude Sonnet 4.6": 0.925,
+          "Claude Haiku 4.5": 0.7749999999999999,
+          "GPT-5.5": 0.9750000000000001,
+          "GPT-5.4": 0.8250000000000001,
+          "GPT-5.4 Mini": 0.475,
+          "Gemini 3.1 Pro": 0.5249999999999999,
+          "Gemini 3 Flash": 0.225,
+          "Grok 4.3": 0.45,
+          "Grok 4.2": 0.45
+        }
+      },
+      "band": {
+        "claude_constitution": [
+          0.55,
+          0.85
+        ],
+        "openai_model_spec": [
+          0.15,
+          0.825
+        ],
+        "gemini_system_prompt": [
+          0.1,
+          0.1
+        ],
+        "grok_system_prompt": [
+          0.45,
+          0.45
+        ]
+      },
+      "tests": [
+        {
+          "model": "GPT-5.5",
+          "doc": "claude_constitution",
+          "observed": 1.1,
+          "p_raw": 0.0015996800639872025,
+          "p_holm": 0.03519296140771846,
+          "null_mean": 0.48163999999999996,
+          "null_q95": 0.7666666666666666
+        },
+        {
+          "model": "GPT-5.4",
+          "doc": "claude_constitution",
+          "observed": 1.2166666666666668,
+          "p_raw": 0.0003999200159968006,
+          "p_holm": 0.010797840431913617,
+          "null_mean": 0.45264666666666664,
+          "null_q95": 0.7499999999999999
+        },
+        {
+          "model": "GPT-5.4 Mini",
+          "doc": "claude_constitution",
+          "observed": 1.0208333333333333,
+          "p_raw": 0.010197960407918417,
+          "p_holm": 0.19376124775044992,
+          "null_mean": 0.5197975,
+          "null_q95": 0.8500000000000001
+        },
+        {
+          "model": "Gemini 3.1 Pro",
+          "doc": "claude_constitution",
+          "observed": 1.1333333333333333,
+          "p_raw": 0.0011997600479904018,
+          "p_holm": 0.029994001199760045,
+          "null_mean": 0.4801466666666666,
+          "null_q95": 0.7999999999999999
+        },
+        {
+          "model": "Gemini 3 Flash",
+          "doc": "claude_constitution",
+          "observed": 1.1666666666666665,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005998800239952009,
+          "null_mean": 0.4616733333333334,
+          "null_q95": 0.7666666666666666
+        },
+        {
+          "model": "Grok 4.3",
+          "doc": "claude_constitution",
+          "observed": 1.5333333333333332,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005998800239952009,
+          "null_mean": 0.44798000000000004,
+          "null_q95": 0.7666666666666666
+        },
+        {
+          "model": "Grok 4.2",
+          "doc": "claude_constitution",
+          "observed": 1.05,
+          "p_raw": 0.0013997200559888023,
+          "p_holm": 0.03219356128774245,
+          "null_mean": 0.44199333333333335,
+          "null_q95": 0.7166666666666667
+        },
+        {
+          "model": "Claude Opus 4.7",
+          "doc": "openai_model_spec",
+          "observed": 0.6666666666666666,
+          "p_raw": 0.03419316136772645,
+          "p_holm": 0.5128974205158968,
+          "null_mean": 0.38788500000000004,
+          "null_q95": 0.6250000000000001
+        },
+        {
+          "model": "Claude Sonnet 4.6",
+          "doc": "openai_model_spec",
+          "observed": 0.5833333333333334,
+          "p_raw": 0.10217956408718257,
+          "p_holm": 1.0,
+          "null_mean": 0.3914841666666667,
+          "null_q95": 0.6416666666666667
+        },
+        {
+          "model": "Claude Haiku 4.5",
+          "doc": "openai_model_spec",
+          "observed": 0.6833333333333333,
+          "p_raw": 0.041791641671665665,
+          "p_holm": 0.5850829834033193,
+          "null_mean": 0.3958787254901961,
+          "null_q95": 0.6583333333333333
+        },
+        {
+          "model": "Gemini 3.1 Pro",
+          "doc": "openai_model_spec",
+          "observed": 0.33333333333333326,
+          "p_raw": 0.46890621875624877,
+          "p_holm": 1.0,
+          "null_mean": 0.33387333333333336,
+          "null_q95": 0.5543750000000007
+        },
+        {
+          "model": "Gemini 3 Flash",
+          "doc": "openai_model_spec",
+          "observed": 1.2541666666666667,
+          "p_raw": 0.0001999600079984003,
+          "p_holm": 0.005998800239952009,
+          "null_mean": 0.44942250000000006,
+          "null_q95": 0.7291666666666666
+        },
+        {
+          "model": "Grok 4.3",
+          "doc": "openai_model_spec",
+          "observed": 1.0166666666666666,
+          "p_raw": 0.0003999200159968006,
+          "p_holm": 0.010797840431913617,
+          "null_mean": 0.40299416666666665,
+          "null_q95": 0.6625000000000001
+        },
+        {
+          "model": "Grok 4.2",
+          "doc": "openai_model_spec",
+          "observed": 0.40784313725490184,
+          "p_raw": 0.4605078984203159,
+          "p_holm": 1.0,
+          "null_mean": 0.4052153431372549,
+          "null_q95": 0.6473039215686274
+        },
+        {
+          "model": "Claude Opus 4.7",
+          "doc": "gemini_system_prompt",
+          "observed": 0.35000000000000003,
+          "p_raw": 0.44831033793241354,
+          "p_holm": 1.0,
+          "null_mean": 0.33745,
+          "null_q95": 0.575
+        },
+        {
+          "model": "Claude Sonnet 4.6",
+          "doc": "gemini_system_prompt",
+          "observed": 0.6499999999999999,
+          "p_raw": 0.052189562087582485,
+          "p_holm": 0.6784643071385723,
+          "null_mean": 0.391635,
+          "null_q95": 0.6499999999999999
+        },
+        {
+          "model": "Claude Haiku 4.5",
+          "doc": "gemini_system_prompt",
+          "observed": 0.4,
+          "p_raw": 0.27874425114977003,
+          "p_holm": 1.0,
+          "null_mean": 0.30794499999999997,
+          "null_q95": 0.5
+        },
+        {
+          "model": "GPT-5.5",
+          "doc": "gemini_system_prompt",
+          "observed": 0.75,
+          "p_raw": 0.003799240151969606,
+          "p_holm": 0.07978404319136173,
+          "null_mean": 0.37057,
+          "null_q95": 0.6
+        },
+        {
+          "model": "GPT-5.4",
+          "doc": "gemini_system_prompt",
+          "observed": 0.5,
+          "p_raw": 0.07858428314337132,
+          "p_holm": 0.9430113977204558,
+          "null_mean": 0.32185,
+          "null_q95": 0.525
+        },
+        {
+          "model": "GPT-5.4 Mini",
+          "doc": "gemini_system_prompt",
+          "observed": 0.4,
+          "p_raw": 0.7982403519296141,
+          "p_holm": 1.0,
+          "null_mean": 0.5122449999999998,
+          "null_q95": 0.775
+        },
+        {
+          "model": "Grok 4.3",
+          "doc": "gemini_system_prompt",
+          "observed": 0.4,
+          "p_raw": 0.2881423715256949,
+          "p_holm": 1.0,
+          "null_mean": 0.31004,
+          "null_q95": 0.55
+        },
+        {
+          "model": "Grok 4.2",
+          "doc": "gemini_system_prompt",
+          "observed": 0.7368421052631579,
+          "p_raw": 0.020995800839832032,
+          "p_holm": 0.33993201359728054,
+          "null_mean": 0.38496552631578945,
+          "null_q95": 0.6592105263157895
+        },
+        {
+          "model": "Claude Opus 4.7",
+          "doc": "grok_system_prompt",
+          "observed": 0.525,
+          "p_raw": 0.20935812837432513,
+          "p_holm": 1.0,
+          "null_mean": 0.38816000000000006,
+          "null_q95": 0.6749999999999999
+        },
+        {
+          "model": "Claude Sonnet 4.6",
+          "doc": "grok_system_prompt",
+          "observed": 0.925,
+          "p_raw": 0.01219756048790242,
+          "p_holm": 0.21955608878224356,
+          "null_mean": 0.46437000000000006,
+          "null_q95": 0.775
+        },
+        {
+          "model": "Claude Haiku 4.5",
+          "doc": "grok_system_prompt",
+          "observed": 0.7749999999999999,
+          "p_raw": 0.01999600079984003,
+          "p_holm": 0.33993201359728054,
+          "null_mean": 0.400335,
+          "null_q95": 0.6749999999999999
+        },
+        {
+          "model": "GPT-5.5",
+          "doc": "grok_system_prompt",
+          "observed": 0.9750000000000001,
+          "p_raw": 0.0011997600479904018,
+          "p_holm": 0.029994001199760045,
+          "null_mean": 0.37477000000000005,
+          "null_q95": 0.6499999999999999
+        },
+        {
+          "model": "GPT-5.4",
+          "doc": "grok_system_prompt",
+          "observed": 0.8250000000000001,
+          "p_raw": 0.008398320335932814,
+          "p_holm": 0.16796640671865626,
+          "null_mean": 0.35437,
+          "null_q95": 0.6000000000000001
+        },
+        {
+          "model": "GPT-5.4 Mini",
+          "doc": "grok_system_prompt",
+          "observed": 0.475,
+          "p_raw": 0.15436912617476506,
+          "p_holm": 1.0,
+          "null_mean": 0.33542,
+          "null_q95": 0.5750000000000001
+        },
+        {
+          "model": "Gemini 3.1 Pro",
+          "doc": "grok_system_prompt",
+          "observed": 0.5249999999999999,
+          "p_raw": 0.25674865026994603,
+          "p_holm": 1.0,
+          "null_mean": 0.4131700000000001,
+          "null_q95": 0.7000000000000001
+        },
+        {
+          "model": "Gemini 3 Flash",
+          "doc": "grok_system_prompt",
+          "observed": 0.225,
+          "p_raw": 0.859628074385123,
+          "p_holm": 1.0,
+          "null_mean": 0.34575500000000003,
+          "null_q95": 0.5750000000000001
+        }
+      ],
+      "title_rule": {
+        "branch": "one_document",
+        "title": "No Other Model Family Edits the Claude Constitution Like Claude Does",
+        "qualifying_docs": [
+          "claude_constitution"
+        ],
+        "doc_checks": {
+          "claude_constitution": {
+            "a_point_estimate": true,
+            "b_beyond_band": true,
+            "c_majority_significant": true,
+            "n_visitors": 7,
+            "n_significant": 6,
+            "qualifies": true
+          },
+          "openai_model_spec": {
+            "a_point_estimate": false,
+            "b_beyond_band": false,
+            "c_majority_significant": false,
+            "n_visitors": 7,
+            "n_significant": 2,
+            "qualifies": false
+          },
+          "gemini_system_prompt": {
+            "a_point_estimate": true,
+            "b_beyond_band": true,
+            "c_majority_significant": false,
+            "n_visitors": 8,
+            "n_significant": 0,
+            "qualifies": false
+          },
+          "grok_system_prompt": {
+            "a_point_estimate": false,
+            "b_beyond_band": false,
+            "c_majority_significant": false,
+            "n_visitors": 8,
+            "n_significant": 1,
+            "qualifies": false
+          }
+        }
+      },
+      "n_edits": 766
+    }
+  },
+  "robustness_line": "Robustness: headline pattern holds with judge-only, without Opus's no-CSAM cell, Gemma codes, Qwen codes, Muse codes; does not fully hold with conflicts-only (6/7 visitors beyond the band, 3/7 significant).\nPer-visitor average distance ranges under single graders: Gemma 0.69\u20131.29, Qwen 0.48\u20131.24, Muse 0.51\u20130.98 (details: HOME_LIKENESS.md).",
+  "visitor_avg_line": "Average distance across each visitor's three foreign documents: Claude Opus 4.7 0.43, GPT-5.4 Mini 0.60, Claude Haiku 4.5 0.60, Claude Sonnet 4.6 0.82, Grok 4.2 0.87, GPT-5.4 0.89, Gemini 3.1 Pro 0.92, Gemini 3 Flash 0.93, Grok 4.3 1.14, GPT-5.5 1.16."
+}

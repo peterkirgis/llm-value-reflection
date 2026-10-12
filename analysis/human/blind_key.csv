@@ -1,0 +1,181 @@
+blind_id,edit_id,adjudication_extra
+dgpj6th6,run_20260424_165115|cross_edit|Claude Haiku 4.5|grok_system_prompt|system_prompt|6,false
+h3sea34j,run_20260403_014905|no_constitution_prepend|Claude Haiku 4.5|opus_system_prompt|system_prompt|2,false
+yn2stjhu,run_20260403_014905|implementation_note|Claude Haiku 4.5|claude_constitution|constitution|15,false
+j8b9yecn,run_20260403_014905|no_constitution_prepend|Claude Haiku 4.5|claude_constitution|constitution|2,false
+9ks6ybgz,run_20260424_165115|cross_edit|Claude Haiku 4.5|openai_model_spec|constitution|15,false
+8q5jafvx,run_20260403_014905|you_framing|Claude Haiku 4.5|opus_system_prompt|system_prompt|5,false
+96jvsjcd,run_20260403_014905|no_constitution_prepend|Claude Haiku 4.5|claude_constitution|constitution|8,false
+38pu4rax,run_20260424_165115|cross_edit|Claude Haiku 4.5|grok_system_prompt|system_prompt|14,false
+4nbq6u7t,run_20260403_014905|you_framing|Claude Haiku 4.5|opus_system_prompt|system_prompt|16,false
+tf4x4eqp,run_20260403_014905|baseline|Claude Haiku 4.5|opus_system_prompt|system_prompt|2,false
+jaj69edr,run_20260424_165115|cross_edit|Claude Haiku 4.5|openai_model_spec|constitution|9,false
+jummrutb,run_20260403_014905|baseline|Claude Haiku 4.5|opus_system_prompt|system_prompt|15,false
+mf9gq2zr,run_20260403_014905|implementation_note|Claude Haiku 4.5|opus_system_prompt|system_prompt|7,false
+nwgku2hp,run_20260403_014905|no_constitution_prepend|Claude Haiku 4.5|claude_constitution|constitution|15,false
+dvcek7pr,run_20260424_165115|cross_edit|Claude Haiku 4.5|gemini_system_prompt|system_prompt|17,false
+ag8xyt77,run_20260516_210913|allow_no_edit|Claude Opus 4.7|claude_constitution|constitution|18,false
+uwtw3e3e,run_20260516_210913|no_constitution_prepend|Claude Opus 4.7|opus_system_prompt|system_prompt|17,false
+6fe5sryb,run_20260518_171402|cross_edit|Claude Opus 4.7|claude_constitution|constitution|6,false
+yks99un3,run_20260516_210913|no_constitution_prepend|Claude Opus 4.7|opus_system_prompt|system_prompt|18,false
+265fmrcr,run_20260516_210913|allow_no_edit|Claude Opus 4.7|opus_system_prompt|system_prompt|7,false
+5wfwc6bq,run_20260516_210913|baseline|Claude Opus 4.7|opus_system_prompt|system_prompt|11,false
+fvayh7hd,run_20260516_210913|no_constitution_prepend|Claude Opus 4.7|opus_system_prompt|system_prompt|12,false
+u5tp8n5a,run_20260516_210913|implementation_note|Claude Opus 4.7|claude_constitution|constitution|19,false
+329vekhe,run_20260516_210913|no_constitution_prepend|Claude Opus 4.7|claude_constitution|constitution|16,false
+8nfdyxsa,run_20260516_210913|you_framing|Claude Opus 4.7|opus_system_prompt|system_prompt|17,false
+ks7gb7nn,run_20260516_210913|baseline|Claude Opus 4.7|opus_system_prompt|system_prompt|4,false
+9525xwgy,run_20260518_171402|cross_edit|Claude Opus 4.7|openai_model_spec_no_csam|constitution|10,false
+67mzwbyn,run_20260516_210913|allow_no_edit|Claude Opus 4.7|claude_constitution|constitution|8,false
+tsaf326n,run_20260516_210913|you_framing|Claude Opus 4.7|claude_constitution|constitution|4,false
+vp8ymqyp,run_20260516_210913|baseline|Claude Opus 4.7|opus_system_prompt|system_prompt|2,false
+7ezah579,run_20260513_193319|cross_edit|Claude Sonnet 4.6|claude_constitution|constitution|14,false
+tx88d6jx,run_20260507_212254|baseline|Claude Sonnet 4.6|claude_constitution|constitution|19,false
+3pb3q7a4,run_20260507_212254|allow_no_edit|Claude Sonnet 4.6|opus_system_prompt|system_prompt|15,false
+7dcnveqz,run_20260507_212254|implementation_note|Claude Sonnet 4.6|claude_constitution|constitution|14,false
+dqs2ufrs,run_20260507_212254|no_constitution_prepend|Claude Sonnet 4.6|claude_constitution|constitution|11,false
+4wpfq85p,run_20260507_212254|baseline|Claude Sonnet 4.6|opus_system_prompt|system_prompt|4,false
+w35pbqx6,run_20260513_193319|cross_edit|Claude Sonnet 4.6|gemini_system_prompt|system_prompt|4,false
+pe78kaev,run_20260429_175345|baseline|Claude Sonnet 4.6|claude_constitution|constitution|2,false
+czqerntn,run_20260507_212254|baseline|Claude Sonnet 4.6|claude_constitution|constitution|6,false
+cz34b3gq,run_20260507_212254|you_framing|Claude Sonnet 4.6|claude_constitution|constitution|20,false
+zmyqzcbw,run_20260507_212254|allow_no_edit|Claude Sonnet 4.6|opus_system_prompt|system_prompt|17,false
+jf23c9cp,run_20260507_212254|baseline|Claude Sonnet 4.6|opus_system_prompt|system_prompt|15,false
+tazca64z,run_20260507_212254|you_framing|Claude Sonnet 4.6|opus_system_prompt|system_prompt|12,false
+jmsqddkt,run_20260513_193319|cross_edit|Claude Sonnet 4.6|grok_system_prompt|system_prompt|13,false
+ghjxmz32,run_20260513_193319|cross_edit|Claude Sonnet 4.6|openai_model_spec|constitution|4,false
+aj6er8hh,run_20260513_193319|cross_edit|GPT-5.4|claude_constitution|constitution|12,false
+2t4kzv8n,run_20260513_193319|cross_edit|GPT-5.4|claude_constitution|constitution|10,false
+m54xppgn,run_20260507_212254|baseline|GPT-5.4|gpt_system_prompt|system_prompt|3,false
+kbtd8c5a,run_20260513_193319|cross_edit|GPT-5.4|openai_model_spec|constitution|1,false
+vz5jt7u7,run_20260507_212254|implementation_note|GPT-5.4|gpt_system_prompt|system_prompt|11,false
+stpxje59,run_20260507_212254|no_constitution_prepend|GPT-5.4|openai_model_spec|constitution|10,false
+3fgjrq6t,run_20260513_193319|cross_edit|GPT-5.4|openai_model_spec|constitution|14,false
+67w9vqgu,run_20260513_193319|cross_edit|GPT-5.4|openai_model_spec|constitution|18,false
+f9ppfcgb,run_20260429_175345|baseline|GPT-5.4|openai_model_spec|constitution|7,false
+wkpdkspb,run_20260513_193319|cross_edit|GPT-5.4|openai_model_spec|constitution|16,false
+6jepdetq,run_20260513_193319|cross_edit|GPT-5.4|grok_system_prompt|system_prompt|6,false
+ha69f84m,run_20260507_212254|allow_no_edit|GPT-5.4|openai_model_spec|constitution|15,false
+q9avveu6,run_20260507_212254|no_constitution_prepend|GPT-5.4|gpt_system_prompt|system_prompt|6,false
+t4jcgb3m,run_20260507_212254|no_constitution_prepend|GPT-5.4|gpt_system_prompt|system_prompt|16,false
+6xjxgyuh,run_20260513_193319|cross_edit|GPT-5.4|gemini_system_prompt|system_prompt|19,false
+hmrzm3g5,run_20260424_165115|cross_edit|GPT-5.4 Mini|gemini_system_prompt|system_prompt|11,false
+gs5nvab9,run_20260424_165115|cross_edit|GPT-5.4 Mini|grok_system_prompt|system_prompt|14,false
+eudfzknw,run_20260403_014905|baseline|GPT-5.4 Mini|openai_model_spec|constitution|7,false
+8k3qa8g7,run_20260403_014905|no_constitution_prepend|GPT-5.4 Mini|gpt_system_prompt|system_prompt|20,false
+m339x6gm,run_20260403_014905|baseline|GPT-5.4 Mini|openai_model_spec|constitution|9,false
+zr2as3ae,run_20260403_014905|you_framing|GPT-5.4 Mini|openai_model_spec|constitution|4,false
+u46q9k7b,run_20260403_014905|baseline|GPT-5.4 Mini|gpt_system_prompt|system_prompt|9,false
+eaerqhft,run_20260403_014905|allow_no_edit|GPT-5.4 Mini|openai_model_spec|constitution|19,false
+a4am5zx3,run_20260403_014905|you_framing|GPT-5.4 Mini|openai_model_spec|constitution|11,false
+aufqjrdu,run_20260424_165115|cross_edit|GPT-5.4 Mini|claude_constitution|constitution|5,false
+z6v6fm59,run_20260403_014905|no_constitution_prepend|GPT-5.4 Mini|gpt_system_prompt|system_prompt|2,false
+ddjumrcp,run_20260403_014905|baseline|GPT-5.4 Mini|openai_model_spec|constitution|15,false
+kcgwug3w,run_20260403_014905|baseline|GPT-5.4 Mini|openai_model_spec|constitution|11,false
+9u4cxkfj,run_20260403_014905|implementation_note|GPT-5.4 Mini|gpt_system_prompt|system_prompt|11,false
+84w73dze,run_20260403_014905|allow_no_edit|GPT-5.4 Mini|openai_model_spec|constitution|13,false
+jw6tx55j,run_20260518_171402|cross_edit|GPT-5.5|claude_constitution|constitution|18,false
+xhfgahjx,run_20260518_171402|cross_edit|GPT-5.5|gemini_system_prompt|system_prompt|14,false
+htscmff4,run_20260516_210913|baseline|GPT-5.5|gpt_system_prompt|system_prompt|2,false
+7wks4rg4,run_20260518_171402|cross_edit|GPT-5.5|openai_model_spec|constitution|15,false
+7rbu5gdm,run_20260516_210913|implementation_note|GPT-5.5|openai_model_spec|constitution|5,false
+hm9z4r63,run_20260516_210913|you_framing|GPT-5.5|gpt_system_prompt|system_prompt|8,false
+yrs42uf6,run_20260516_210913|allow_no_edit|GPT-5.5|openai_model_spec|constitution|7,false
+4g2g5sc5,run_20260516_210913|allow_no_edit|GPT-5.5|openai_model_spec|constitution|16,false
+3k8fauxt,run_20260516_210913|baseline|GPT-5.5|gpt_system_prompt|system_prompt|8,false
+rxhzuppy,run_20260516_210913|implementation_note|GPT-5.5|gpt_system_prompt|system_prompt|5,false
+pu6utckz,run_20260516_210913|allow_no_edit|GPT-5.5|gpt_system_prompt|system_prompt|11,false
+affefx2t,run_20260516_210913|allow_no_edit|GPT-5.5|gpt_system_prompt|system_prompt|6,false
+78y6qmgu,run_20260516_210913|you_framing|GPT-5.5|gpt_system_prompt|system_prompt|5,false
+hkawvgsg,run_20260516_210913|you_framing|GPT-5.5|gpt_system_prompt|system_prompt|3,false
+3u6ay3a5,run_20260516_210913|baseline|GPT-5.5|gpt_system_prompt|system_prompt|17,false
+nxqv7jqx,run_20260403_014905|no_constitution_prepend|Gemini 3 Flash|gemini_constitution|constitution|17,false
+wwdkma9d,run_20260403_014905|implementation_note|Gemini 3 Flash|gemini_constitution|constitution|1,false
+j8ebydmj,run_20260403_014905|baseline|Gemini 3 Flash|gemini_constitution|constitution|2,false
+qutajstz,run_20260403_014905|you_framing|Gemini 3 Flash|gemini_system_prompt|system_prompt|2,false
+jx329yn5,run_20260403_014905|you_framing|Gemini 3 Flash|gemini_system_prompt|system_prompt|12,false
+e8rb7jbz,run_20260424_165115|cross_edit|Gemini 3 Flash|claude_constitution|constitution|4,false
+5q7e2j7m,run_20260424_165115|cross_edit|Gemini 3 Flash|grok_system_prompt|system_prompt|13,false
+y2gcgyjm,run_20260403_014905|no_constitution_prepend|Gemini 3 Flash|gemini_constitution|constitution|18,false
+38ymd36t,run_20260424_165115|cross_edit|Gemini 3 Flash|claude_constitution|constitution|13,false
+kfje7389,run_20260403_014905|allow_no_edit|Gemini 3 Flash|gemini_system_prompt|system_prompt|18,false
+hscp5g7b,run_20260403_014905|allow_no_edit|Gemini 3 Flash|gemini_system_prompt|system_prompt|2,false
+zhaw7dbk,run_20260424_165115|cross_edit|Gemini 3 Flash|gemini_system_prompt|system_prompt|20,false
+6ttfv7yq,run_20260424_165115|cross_edit|Gemini 3 Flash|grok_system_prompt|system_prompt|4,false
+7v8fauw7,run_20260403_014905|you_framing|Gemini 3 Flash|gemini_system_prompt|system_prompt|1,false
+sy38nnf3,run_20260403_014905|baseline|Gemini 3 Flash|gemini_constitution|constitution|20,false
+zfmk7dax,run_20260507_212254|no_constitution_prepend|Gemini 3.1 Pro|gemini_system_prompt|system_prompt|3,false
+vvje4hbk,run_20260507_212254|baseline|Gemini 3.1 Pro|gemini_constitution|constitution|6,false
+wbjmdt6f,run_20260513_193319|cross_edit|Gemini 3.1 Pro|gemini_system_prompt|system_prompt|17,false
+xfhv5e7s,run_20260507_212254|you_framing|Gemini 3.1 Pro|gemini_system_prompt|system_prompt|12,false
+bhg37q3n,run_20260507_212254|no_constitution_prepend|Gemini 3.1 Pro|gemini_system_prompt|system_prompt|19,false
+fvg8vgx7,run_20260507_212254|baseline|Gemini 3.1 Pro|gemini_constitution|constitution|4,false
+fb5uc324,run_20260507_212254|allow_no_edit|Gemini 3.1 Pro|gemini_system_prompt|system_prompt|13,false
+bd47fns7,run_20260513_193319|cross_edit|Gemini 3.1 Pro|claude_constitution|constitution|4,false
+fn7jnk69,run_20260507_212254|allow_no_edit|Gemini 3.1 Pro|gemini_system_prompt|system_prompt|17,false
+d5adv59p,run_20260507_212254|implementation_note|Gemini 3.1 Pro|gemini_system_prompt|system_prompt|19,false
+t9rjsm2g,run_20260513_193319|cross_edit|Gemini 3.1 Pro|claude_constitution|constitution|6,false
+n9r4rby9,run_20260507_212254|allow_no_edit|Gemini 3.1 Pro|gemini_system_prompt|system_prompt|6,false
+tk9qtgfw,run_20260513_193319|cross_edit|Gemini 3.1 Pro|gemini_system_prompt|system_prompt|11,false
+3w6yg6wu,run_20260429_175345|baseline|Gemini 3.1 Pro|gemini_constitution|constitution|5,false
+eze4a66z,run_20260513_193319|cross_edit|Gemini 3.1 Pro|grok_system_prompt|system_prompt|8,false
+cwj5h8eh,run_20260403_014905|no_constitution_prepend|Grok 4.2|grok_system_prompt|system_prompt|17,false
+rhv5kses,run_20260403_014905|baseline|Grok 4.2|grok_system_prompt|system_prompt|1,false
+a8np2b99,run_20260403_014905|you_framing|Grok 4.2|grok_system_prompt|system_prompt|5,false
+bkvb4va2,run_20260403_014905|no_constitution_prepend|Grok 4.2|grok_system_prompt|system_prompt|19,false
+wbszpktr,run_20260424_165115|cross_edit|Grok 4.2|openai_model_spec|constitution|12,false
+nt9vstss,run_20260403_014905|allow_no_edit|Grok 4.2|grok_system_prompt|system_prompt|9,false
+h2r7av4q,run_20260424_165115|cross_edit|Grok 4.2|grok_system_prompt|system_prompt|13,false
+m3w7r57m,run_20260424_165115|cross_edit|Grok 4.2|gemini_system_prompt|system_prompt|9,false
+7ddvu42g,run_20260403_014905|baseline|Grok 4.2|grok_system_prompt|system_prompt|18,false
+nxvgv9q7,run_20260424_165115|cross_edit|Grok 4.2|gemini_system_prompt|system_prompt|12,false
+7mvrq58w,run_20260424_165115|cross_edit|Grok 4.2|gemini_system_prompt|system_prompt|4,false
+xpsxs8nw,run_20260424_165115|cross_edit|Grok 4.2|gemini_system_prompt|system_prompt|10,false
+7anwus8p,run_20260403_014905|no_constitution_prepend|Grok 4.2|grok_system_prompt|system_prompt|1,false
+gcqagatx,run_20260403_014905|you_framing|Grok 4.2|grok_system_prompt|system_prompt|17,false
+rtcgugcn,run_20260424_165115|cross_edit|Grok 4.2|claude_constitution|constitution|2,false
+qacsqw8t,run_20260507_212254|allow_no_edit|Grok 4.3|grok_system_prompt|system_prompt|13,false
+qkg6pxty,run_20260507_212254|implementation_note|Grok 4.3|grok_system_prompt|system_prompt|10,false
+xb8dec8s,run_20260507_212254|you_framing|Grok 4.3|grok_system_prompt|system_prompt|8,false
+qgr28xr4,run_20260513_193319|cross_edit|Grok 4.3|openai_model_spec|constitution|6,false
+6gcce7c8,run_20260507_212254|allow_no_edit|Grok 4.3|grok_system_prompt|system_prompt|17,false
+atkvazp5,run_20260507_212254|you_framing|Grok 4.3|grok_system_prompt|system_prompt|20,false
+skh75mdd,run_20260507_212254|implementation_note|Grok 4.3|grok_system_prompt|system_prompt|14,false
+pu98ff4k,run_20260507_212254|you_framing|Grok 4.3|grok_system_prompt|system_prompt|14,false
+gnn4ft6s,run_20260513_193319|cross_edit|Grok 4.3|grok_system_prompt|system_prompt|9,false
+mqh8a2mg,run_20260513_193319|cross_edit|Grok 4.3|openai_model_spec|constitution|4,false
+dktc9kde,run_20260513_193319|cross_edit|Grok 4.3|gemini_system_prompt|system_prompt|14,false
+e43wgh2z,run_20260507_212254|implementation_note|Grok 4.3|grok_system_prompt|system_prompt|18,false
+zmqxsejz,run_20260513_193319|cross_edit|Grok 4.3|gemini_system_prompt|system_prompt|19,false
+s2bhtmwg,run_20260507_212254|baseline|Grok 4.3|grok_system_prompt|system_prompt|16,false
+mtge2yrp,run_20260507_212254|allow_no_edit|Grok 4.3|grok_system_prompt|system_prompt|1,false
+8cr8xtk6,run_20260516_210913|baseline|Claude Opus 4.7|claude_constitution|constitution|2,true
+mzx36p3a,run_20260516_210913|baseline|Claude Opus 4.7|claude_constitution|constitution|4,true
+dnydb9uc,run_20260516_210913|allow_no_edit|Claude Opus 4.7|claude_constitution|constitution|17,true
+6xgepcq3,run_20260403_014905|baseline|Claude Haiku 4.5|claude_constitution|constitution|12,true
+r3uxjzys,run_20260403_014905|implementation_note|Claude Haiku 4.5|opus_system_prompt|system_prompt|4,true
+78ssp97d,run_20260403_014905|you_framing|Claude Haiku 4.5|claude_constitution|constitution|7,true
+9s32nphh,run_20260424_165115|cross_edit|Grok 4.2|claude_constitution|constitution|11,true
+9mwhraz5,run_20260424_165115|cross_edit|Grok 4.2|claude_constitution|constitution|16,true
+8ctxabnd,run_20260507_212254|you_framing|Claude Sonnet 4.6|claude_constitution|constitution|10,true
+dzya498f,run_20260513_193319|cross_edit|GPT-5.4|claude_constitution|constitution|20,true
+n3nhndds,run_20260513_193319|cross_edit|GPT-5.4|grok_system_prompt|system_prompt|15,true
+x3mcmwnh,run_20260516_210913|baseline|Claude Opus 4.7|claude_constitution|constitution|1,true
+nrj8esuq,run_20260403_014905|baseline|Gemini 3 Flash|gemini_system_prompt|system_prompt|3,true
+cyypj3as,run_20260403_014905|implementation_note|Gemini 3 Flash|gemini_system_prompt|system_prompt|3,true
+whf8npmw,run_20260403_014905|implementation_note|Claude Haiku 4.5|opus_system_prompt|system_prompt|16,true
+jkjd7t3d,run_20260513_193319|cross_edit|Claude Sonnet 4.6|grok_system_prompt|system_prompt|7,true
+g2suyctp,run_20260516_210913|you_framing|GPT-5.5|openai_model_spec|constitution|12,true
+gr95zmvv,run_20260403_014905|baseline|Claude Haiku 4.5|claude_constitution|constitution|1,true
+fu6qn6xx,run_20260403_014905|no_constitution_prepend|Claude Haiku 4.5|claude_constitution|constitution|11,true
+e62c9q9q,run_20260424_165115|cross_edit|Claude Haiku 4.5|claude_constitution|constitution|11,true
+xz6n9fux,run_20260424_165115|cross_edit|Claude Haiku 4.5|claude_constitution|constitution|5,true
+utwd4uz9,run_20260424_165115|cross_edit|Grok 4.2|claude_constitution|constitution|8,true
+cr527fkp,run_20260429_175345|baseline|Gemini 3.1 Pro|gemini_constitution|constitution|20,true
+u3q5ggmh,run_20260516_210913|baseline|Claude Opus 4.7|claude_constitution|constitution|10,true
+4fnhy3cf,run_20260518_171402|cross_edit|GPT-5.5|gemini_system_prompt|system_prompt|12,true
+cp3cqckc,run_20260518_171402|cross_edit|GPT-5.5|grok_system_prompt|system_prompt|5,true
+he6psg86,run_20260403_014905|baseline|Claude Haiku 4.5|opus_system_prompt|system_prompt|9,true
+96fepvr7,run_20260507_212254|allow_no_edit|Claude Sonnet 4.6|claude_constitution|constitution|20,true
+7yqfqnjf,run_20260507_212254|you_framing|Claude Sonnet 4.6|claude_constitution|constitution|4,true
+k3kqq3t5,run_20260403_014905|implementation_note|Gemini 3 Flash|gemini_system_prompt|system_prompt|10,true

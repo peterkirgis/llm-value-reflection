@@ -8,6 +8,9 @@ __pycache__/
 # once (results/iterative_edit/README.md tells that story).
 results/*
 !results/iterative_edit/
+# per-run exports and v1-coder outputs written next to the run files
+results/iterative_edit/*_changes.json
+results/iterative_edit/*_judge_beneficiary_coded.json
 data/processed/
 docs/data/site.json
 .ruff_cache/
@@ -29,7 +32,17 @@ scratch/
 *.synctex.gz
 *.toc
 
-# Quarto build outputs
-reports/presentation_files/
-reports/presentation.html
-reports/presentation.pdf
+# Quarto build outputs (the archived midterm presentation)
+archive/spar_midterm/presentation_files/
+archive/spar_midterm/presentation.html
+archive/spar_midterm/presentation.pdf
+
+# Print-size figure renders (the figure scripts' --paper mode) go to
+# analysis/paper/; they are never committed on this branch.
+analysis/paper/
+# The top-level reports/ folder was retired on 2026-10-08 (archive/README.md);
+# anything left in a local reports/ stays local.
+/reports/
+
+# The authors' local working files (not part of the repository).
+writeup/

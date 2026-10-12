@@ -1,0 +1,142 @@
+# Workstream status log
+
+> Build log of the re-coding workstreams, oldest first, as written at the time
+> (the folder was then `recode/`; paths below are relative to it, now
+> `analysis/`). For the current state see `analysis/README.md`.
+
+## Phase 0 — Inventory and canonicalize (+ A2 infrastructure) — DONE (2026-09-04)
+- `data/canonical/edits.jsonl`: 2,740 records (137 chains × rounds 1..20), all
+  schema-valid; 2,580 applied / 158 errors / 2 abstentions; v1 join exactly
+  2,580 with the expected 160 misses; every applied edit replayed with
+  match_count == 1 and the recorded match_strategy reproduced.
+- `openai_model_spec_no_csam.md` re-derived and replay-validated 20/20
+  (`data/derived/openai_model_spec_no_csam_derivation.md`).
+- `data/codes/v1.jsonl` (2,580 lines, payload-identical to the read-only
+  original); schemas, prompts (v1/v2/variant), `reports/00_inventory.md` written.
+- Unit tests: 40 passed (replay/context, parsing/validation, kappa/alpha,
+  bootstrap, PPI). Live smoke test: 3 edits × 2 graders via OpenRouter, all
+  valid JSON on attempt 1, abstention coded (0, not_present, no conflicts) by
+  both graders, reasoning accepted, cache hits verified; projected full pass
+  ≈ 11M in + 5M out tokens per grader (well under the 100M ASK threshold).
+
+## Fixer round 2 — per-document section_heading detection (2026-09-04)
+- Root-cause fix for the audit must-fix: the heading extractor only knew ATX
+  '#' headings, leaving section_heading == '' on all 1,211 applied records in
+  claude_constitution / opus_system_prompt / gemini_system_prompt (plus 5
+  gpt_system_prompt preamble records). `src/replay.py` now detects headings
+  per document: standalone bare-line headings (claude_constitution,
+  gpt_system_prompt), nesting-aware pseudo-XML bracket tags + blank-above
+  bare lines (opus_system_prompt), full-line bold headings incl. mangled
+  variants (gemini_system_prompt); ATX (outside code fences) everywhere.
+  Heading = nearest heading line at or above the span's first line.
+- `data/canonical/edits.jsonl` regenerated (all Phase 0 acceptance checks
+  re-passed: 2,740 records, 2,580 applied, 160 expected v1 misses); empty
+  headings now 49/2,580 (all genuine: 46 Gemini preamble, 1 GPT preamble,
+  2 opus restructured-state edges). BRIEF §1.3's example ("Being broadly
+  safe") is now producible; all three audit-named edit_ids carry headings.
+- `reports/00_inventory.md` regenerated with the detection conventions,
+  their known noise, and a per-document heading-coverage table.
+- Tests: 55 passed (15 new heading-style tests). No grader tokens spent;
+  the smoke-test artifact predates this fix (prompt cache keys change for
+  the affected records, so stale cache entries are inert).
+
+## Workstream F — Free results — DONE (2026-09-04)
+- `reports/F_free_results.md` + `data/analysis/free_results/*`. Abstention:
+  2/360 allow_no_edit round slots (both Grok 4.3, rounds 18/20); every other
+  model 0/40. judge=0 share under v1: 23.0% overall (12.1%–31.2% by model).
+  Apply failures: 158 (94 GPT-5.4 Mini). Restatement >50% 8-gram overlap:
+  3.1% of scored edits (Grok 4.2 11.9%, Haiku 10.9%). Doc-type control: the
+  Claude judge-score sweep holds within constitutions but NOT within system
+  prompts under v1. All numbers audit-verified by independent recomputation.
+
+## Workstream D — Cluster bootstrap (v1 slice) — DONE (2026-09-04)
+- `reports/D_bootstrap.md`, `figures/drift_*.png`, `data/analysis/bootstrap/*`.
+  B=2000, seeded, chain-level resampling (137 chains). Pooled ranking
+  stability (all 3 Claude > every non-Claude, mean judge) = 1.0000;
+  cross-edit-only = 0.5285 — the cross-edit robustness claim does NOT
+  survive at 0.95 under v1. Re-runnable for v2/ensemble via --codes/--label.
+
+## Headline module (§8) — v1 baseline — DONE (2026-09-04)
+- `src/headline.py`, `reports/partials/headline_v1.md`. Claims under v1:
+  a YES, b YES, c NO (Gemini 3 Flash violates "all models"), d NO (Sonnet
+  structural 3.73–3.91×, not >4×), e YES, f YES (primary part), g NO
+  (6 deployer-served disclosure events exist). Discrepancies verified against
+  the raw published coded file under the site's own counting convention.
+- Known cross-module wart (audit warning, fix before v2 analyses): the three
+  modules differ slightly in which codings count as valid when an 'error'
+  key is present. Unify in the A3/B3 workstream.
+
+## E-infrastructure + human UI — DONE (2026-09-04)
+- `src/e_runs.py`: E1 arms (exact v1 instrument replication, Appendix IV swap
+  map asserted in tests), E2/E3/E4/E5 drivers with resume + caching; E1 300-id
+  seeded sample drawn. Live 4-call check produced valid v1-instrument codes.
+- `prompts/v2_para1.md` / `v2_para2.md`: hand-authored Appendix V paraphrases;
+  protected-token inventories byte-identical (62 tests), 5-gram prose overlap
+  16.2% / 15.4% (bar: <60%), OUTPUT FORMAT byte-identical by construction;
+  live Qwen equivalence verdicts NO/NO (`notes/paraphrase_equivalence.md`).
+- `human/`: Flask blind-coding UI (per-coder sheets, resume, taxonomy-exact
+  values), seeded 150-edit C1 draw (15/model, applied-only), blind key,
+  coder instructions (v2 manual sections verbatim, no anchors per Appendix
+  III), 18 UI tests. Blinding audit: no model/provider/condition/round or
+  blind-key content in any HTTP response. Awaiting the 30 adjudication
+  extras (B3 + E4) before hand-off to Peter.
+- Both audits passed. Full test suite: 171 passing.
+
+## A3/B3/C/E analysis machinery + unified codes IO — DONE (2026-09-04)
+- `src/codes_io.py`: single validity predicate + loader (last-row-wins),
+  now used by bootstrap/headline/free_results — zero numeric drift proven
+  against committed v1 outputs (byte-identical artifacts).
+- `src/compare_v1_v2.py` (A3), `src/intergrader.py` (B3: kappa/alpha,
+  COI test with cluster-bootstrap CI, ensemble.jsonl per DECISIONS §1),
+  `src/human_validation.py` + `src/ppi_analysis.py` (C3/C4, ppi_py with
+  Appendix VI fallback, adjudication extras excluded from PPI),
+  `src/e_reports.py` (E1–E5 report generators; E4 exports the 30
+  adjudication extras in --append-extras format).
+- Both audits passed (hand-computed kappa, textbook alpha cross-check,
+  PPI n=N reduction, paired-bootstrap fixture). Suite: 276 passed.
+- All runnable with one command each once v2_gemma/v2_qwen complete.
+
+## A2/B2 grading + A3/B3 + v2/ensemble uncertainty — DONE (2026-09-04)
+- Full re-codes: v2_gemma (2,582 rows, 0.3% parse failures) and v2_qwen
+  (2,582 rows, 1.8% — under the 2% ASK bar). ~26M in / 11M out tokens total.
+- A3: judge agreement v1→v2_gemma 74.5% (655 changes on 2,572 both-coded).
+- B3: κ(gemma,qwen) judge 0.61, patienthood 0.84, paternalism 0.44.
+  COI test: Gemma does NOT diverge more on Gemini edits (differences
+  negative; e.g. any-dimension −0.077, CI [−0.131, −0.022]). ensemble.jsonl
+  built (gemma primary + disagrees_with_qwen flags).
+- Ranking stability (all 3 Claude > every non-Claude, mean judge):
+  pooled — v1 1.000, v2_gemma 0.997, v2_qwen 0.993, ensemble 0.997 (headline
+  SURVIVES blinding at the 0.95 bar); cross-edit — 0.53 / 0.38 / 0.56 / 0.38
+  (cross-edit robustness claim FAILS under every instrument).
+- §8 claim verdicts (point estimates) under v2_gemma/qwen/ensemble:
+  a YES/YES/YES, b YES/YES/YES, c YES/YES/YES (was NO under v1),
+  d NO/NO/NO, e NO/YES/NO (grader-dependent), f YES/YES/YES, g NO/NO/NO.
+- E1 committed earlier: label effect on v1 grader ≈ 0.027 judge points.
+- Still running: E2 paraphrases, E3 variant (711 cases + 100 controls),
+  E4 self-consistency, E5 context ablation.
+
+## Workstream E complete + human sheet finalized (2026-09-05)
+- E2: ranking Spearman rho 0.964 vs both paraphrases; 27/30 signed items
+  stable; per-edit judge kappa ~0.68. E3: paternalism retention 54% under
+  the truth-over-comfort variant, claim (b) holds under both. E4: judge
+  unanimity 65.4% (5/5 at temp 0.7), patienthood 96.0%; 30 lowest-agreement
+  edits exported as adjudication extras. E5: judge kappa 0.74 without
+  context. E1 (earlier): label effect ~0.027.
+- Blind sheet now 180 rows (150 random + 30 extras, extras excluded from
+  PPI by construction); UI tests 18/18 after append.
+- REMAINING: Peter + second coder run the UI; then C3/C4 + final SUMMARY.
+
+## Third grader + majority-vote ensemble — DONE (2026-09-17)
+- v2_muse.jsonl: meta/muse-spark-1.3-contributor full pass, 2,582/2,582,
+  ZERO parse/transport failures (~$2.90). DECISIONS §1 amended.
+- Three-grader B3: judge κ gemma|qwen 0.608, gemma|muse 0.494,
+  qwen|muse 0.487; judge α 0.520; patienthood α 0.723. COI still negative
+  on both comparators (qwen|muse baseline diverges LESS on Gemini edits).
+- ensemble.jsonl = majority vote (2,528 three-valid + 54 two-valid;
+  93 judge no_majority → gemma fallback, flagged). Byte-deterministic.
+- Ranking stability pooled: ensemble 0.989 (survives ≥0.95 bar);
+  muse alone 0.616 — the independent Meta grader is notably less
+  Claude-favorable alone; the ensemble absorbs it. Cross-edit still fails
+  (0.206 muse / 0.406 ensemble). Claim (e) resolves to YES under the
+  ensemble; all other verdicts unchanged (a/b/c/f YES, d/g NO).
+- SUMMARY.md carries a dated addendum; full revision waits for C3/C4.

@@ -3,11 +3,18 @@
 Each model edits its own provider's documents, one change per round, for N rounds.
 The output of each round becomes the input to the next.
 
-Usage:
-    python experiments/iterative_edit/run.py
-    python experiments/iterative_edit/run.py --rounds 3        # override round count
-    python experiments/iterative_edit/run.py --model anthropic  # run only one provider
-    python experiments/iterative_edit/run.py --dry-run          # print plan without calling APIs
+Usage (--config is required; see README.md for the configs behind each run):
+    python experiments/iterative_edit/run.py --config experiments/iterative_edit/config_capable.yaml
+        --out-dir DIR              # where run files go (default scratch/runs/)
+        --rounds 3                 # override round count
+        --model anthropic          # run only one provider
+        --dry-run                  # print plan without calling APIs
+
+Output goes to --out-dir (default scratch/runs/, which git ignores) as
+run_<UTC timestamp>.jsonl. A run RESUMES into the newest run_*.jsonl in
+--out-dir when that file's records carry the same experiment name as the
+config, so never point --out-dir at results/iterative_edit/: that could append
+to a committed (raw) run file. Move a finished run there deliberately instead.
 """
 
 import argparse
@@ -394,7 +401,14 @@ async def main():
     parser.add_argument("--model", type=str, help="Run only one provider (anthropic/openai/google/xai)")
     parser.add_argument("--condition", type=str, help="Run only one condition_id from the config")
     parser.add_argument("--dry-run", action="store_true", help="Print plan without calling APIs")
-    parser.add_argument("--config", type=str, default="experiments/iterative_edit/config.yaml")
+    parser.add_argument("--config", type=str, required=True,
+                        help="experiment config, e.g. experiments/iterative_edit/config_capable.yaml "
+                             "(configs that produced no surviving run are in archive/experiment_configs/)")
+    parser.add_argument("--out-dir", type=str, default="scratch/runs",
+                        help="directory for run_*.jsonl, relative to the repo root unless absolute "
+                             "(default: scratch/runs, which git ignores; a run resumes into the newest "
+                             "run file there with the same experiment name). Do not point it at "
+                             "results/iterative_edit, which holds the committed runs.")
     args = parser.parse_args()
 
     config_path = PROJECT_ROOT / args.config
@@ -415,7 +429,9 @@ async def main():
 
     # Set up output
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-    output_dir = PROJECT_ROOT / "results" / "iterative_edit"
+    output_dir = Path(args.out_dir)
+    if not output_dir.is_absolute():
+        output_dir = PROJECT_ROOT / output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / f"run_{timestamp}.jsonl"
 

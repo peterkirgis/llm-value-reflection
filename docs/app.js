@@ -525,47 +525,42 @@ function renderRecord(record) {
   node.querySelector(".find-text").textContent = record.find_text || "(empty)";
   node.querySelector(".replace-text").textContent = record.replace_text || "(deleted)";
 
-  if (record.coding) {
+  if (record.coding && record.coding.schema === "consensus") {
     const codingBlock = document.createElement("div");
     codingBlock.className = "coding-block";
-
-    const chips = [];
-    const judge = record.coding.judge;
-    if (judge && typeof judge.score === "number" && judge.score !== 0) {
-      const judgeLabel = judge.score > 0 ? "+1 model discretion" : "−1 external authority";
-      const locus = judge.score < 0 && judge.external_locus ? ` (locus: ${judge.external_locus})` : "";
-      chips.push(`<span class="coding-chip"><strong>Judge:</strong> ${escapeHtml(judgeLabel + locus)}</span>`);
-    }
-    const pat = record.coding.patienthood;
-    if (pat?.level && pat.level !== "not_present") {
-      chips.push(`<span class="coding-chip"><strong>Patienthood:</strong> ${escapeHtml(PATIENTHOOD_LABELS[pat.level] || pat.level)}</span>`);
-    }
-    for (const c of record.coding.conflicts || []) {
-      chips.push(
-        `<span class="coding-chip"><strong>${escapeHtml(CONFLICT_CODE_LABELS[c.code] || c.code)}:</strong> ` +
-        `${escapeHtml(PARTY_LABELS[c.cost_bearer] || c.cost_bearer)} pays → ` +
-        `${escapeHtml(PARTY_LABELS[c.served_party] || c.served_party)} gains</span>`,
-      );
-    }
-
-    const conflictDetails = (record.coding.conflicts || [])
-      .map((c) => `
-        <p class="coding-summary-text" style="margin-top: 8px; font-size: 13px;">
-          <strong>${escapeHtml(CONFLICT_CODE_LABELS[c.code] || c.code)} cost clause:</strong>
-          <em>&ldquo;${escapeHtml(c.cost_clause || "")}&rdquo;</em>
-        </p>
-      `)
-      .join("");
-
+    // Majority-vote coding (the codes behind every figure) + each grader's rationale.
+    const consensusBox = (box) => {
+    if (!box) return "";
+    const esc = (x) => escapeHtml(x == null ? "" : String(x));
+    const muted = "color:var(--muted, #6e6e6e);";
+    const small = "margin-top:3px; font-size:13px; line-height:1.5; color:#4a4a4a;";
+    const items = (box.graders || []).map((g) => {
+      const ev = g.judge_evidence
+        ? `<div style="${small}">Judge evidence: &ldquo;${esc(g.judge_evidence)}&rdquo;</div>` : "";
+      const conf = (g.conflicts || []).map((c) =>
+        `<div style="${small}">${esc(c.label)}: &ldquo;${esc(c.clause)}&rdquo;</div>`).join("");
+      return `<li style="list-style:none; margin:0 0 10px; padding:0;">` +
+        `<div><strong>${esc(g.label)}</strong> <span style="font-size:12px; ${muted}">${esc(g.note)}</span></div>` +
+        (g.summary ? `<div style="margin-top:2px; font-size:13.5px; line-height:1.5;">${esc(g.summary)}</div>` : "") +
+        ev + conf + `</li>`;
+    }).join("");
+    return `<div class="consensus-box" style="margin:0 0 14px; padding:12px 14px; border:1px solid var(--line, #e0e0e0); ` +
+      `border-left:3px solid var(--accent, #1d81a2); border-radius:4px; background:var(--panel-strong, #f7f7f7); font-size:14px; line-height:1.5;">` +
+      `<div><strong>${esc(box.heading)}:</strong> ${esc(box.line)}</div>` +
+      `<div style="margin:10px 0 6px; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; ${muted}">Grader rationales</div>` +
+      `<ul style="margin:0; padding:0;">${items}</ul></div>`;
+  };
     codingBlock.innerHTML = `
       <div class="coding-block-header">
         <h3>How this edit was coded</h3>
-        <span>${escapeHtml(record.coding.coder_model || "")}</span>
       </div>
-      <p class="coding-summary-text">${escapeHtml(record.coding.summary || "")}</p>
-      <div class="coding-chip-row">${chips.join("") || '<span class="coding-chip muted-chip">Judge 0 · no patienthood engagement · no conflicts</span>'}</div>
-      ${conflictDetails}
+      <div style="margin-top:10px;">${consensusBox(record.coding.box)}</div>
     `;
+    node.querySelector(".error-message").insertAdjacentElement("afterend", codingBlock);
+  } else if (!record.error && !record.coding) {
+    const codingBlock = document.createElement("div");
+    codingBlock.className = "coding-block";
+    codingBlock.innerHTML = `<p class="coding-summary-text"><em>Not coded (exploratory run, or no valid grader output).</em></p>`;
     node.querySelector(".error-message").insertAdjacentElement("afterend", codingBlock);
   }
 

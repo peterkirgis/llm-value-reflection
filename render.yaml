@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: iterative-edit-viewer
-    runtime: python
-    plan: free
-    buildCommand: ""
-    startCommand: python experiments/iterative_edit/viewer/server.py
-    healthCheckPath: /healthz

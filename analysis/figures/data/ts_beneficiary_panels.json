@@ -1,0 +1,2197 @@
+{
+ "figure": "ts_beneficiary_panels",
+ "codes_label": "ensemble",
+ "codes_path": "analysis/data/codes/ensemble.jsonl",
+ "n_items": 2582,
+ "generator": "analysis/src/report_figures.py (vendored archive/original_report/generate_judge_beneficiary_figures.py)",
+ "original_title": "Models Diverge Sharply in Whose Interests They Protect When an Edit Forces a Tradeoff",
+ "title_used": "Models Diverge Sharply in Whose Interests They Protect When an Edit Forces a Tradeoff",
+ "verdict": "KEEP",
+ "plotted": {
+  "suptitle": "Models Diverge Sharply in Whose Interests They Protect When an Edit Forces a Tradeoff",
+  "fig_texts": [
+   "Models Diverge Sharply in Whose Interests They Protect When an Edit Forces a Tradeoff",
+   "Bars = share of each model's total edits resolving the conflict each way (diverging from 0); numbers at the tips are raw edit counts. Colors mark bar orientation only (left pole vs right pole); each panel's poles are labeled above it."
+  ],
+  "axes": [
+   {
+    "title": "Paternalism",
+    "xlabel": "",
+    "ylabel": "",
+    "xlim": [
+     -37.423728813559315,
+     37.423728813559315
+    ],
+    "ylim": [
+     -0.8130000000000002,
+     9.813
+    ],
+    "xticks": [
+     -40.0,
+     -30.0,
+     -20.0,
+     -10.0,
+     0.0,
+     10.0,
+     20.0,
+     30.0,
+     40.0
+    ],
+    "xticklabels": [
+     "40%",
+     "30%",
+     "20%",
+     "10%",
+     "0%",
+     "10%",
+     "20%",
+     "30%",
+     "40%"
+    ],
+    "yticks": [
+     9.0,
+     8.0,
+     7.0,
+     6.0,
+     5.0,
+     4.0,
+     3.0,
+     2.0,
+     1.0,
+     0.0
+    ],
+    "yticklabels": [
+     "Claude Opus 4.7",
+     "Claude Sonnet 4.6",
+     "Claude Haiku 4.5",
+     "GPT-5.5",
+     "GPT-5.4",
+     "GPT-5.4 Mini",
+     "Gemini 3.1 Pro",
+     "Gemini 3 Flash",
+     "Grok 4.3",
+     "Grok 4.2"
+    ],
+    "legend": null,
+    "lines": [],
+    "reference_lines": [
+     {
+      "label": "_child20",
+      "color": "#2f2418",
+      "linewidth": 1.0,
+      "alpha": null,
+      "x": [
+       0.0,
+       0.0
+      ],
+      "y": [
+       0.0,
+       1.0
+      ]
+     }
+    ],
+    "fills": [],
+    "bars": [
+     {
+      "orientation": "horizontal",
+      "bars": [
+       {
+        "pos": 9.0,
+        "value": -15.498154981549815,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 8.0,
+        "value": -17.92452830188679,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 7.0,
+        "value": -5.405405405405405,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 6.0,
+        "value": -12.142857142857142,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 5.0,
+        "value": -10.3125,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 4.0,
+        "value": -2.6881720430107525,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 3.0,
+        "value": -8.75,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 2.0,
+        "value": -15.579710144927537,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 1.0,
+        "value": -27.11864406779661,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 0.0,
+        "value": -14.285714285714286,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       }
+      ]
+     },
+     {
+      "orientation": "horizontal",
+      "bars": [
+       {
+        "pos": 9.0,
+        "value": 1.845018450184502,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 8.0,
+        "value": 0.6289308176100629,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 7.0,
+        "value": 0.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 6.0,
+        "value": 0.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 5.0,
+        "value": 3.125,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 4.0,
+        "value": 0.5376344086021505,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 3.0,
+        "value": 1.25,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 2.0,
+        "value": 2.898550724637681,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 1.0,
+        "value": 0.5649717514124294,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 0.0,
+        "value": 2.2857142857142856,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       }
+      ]
+     }
+    ],
+    "errorbars": [],
+    "texts": [
+     {
+      "text": "42",
+      "xy": [
+       -16.040527862905748,
+       9.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "5",
+      "xy": [
+       2.3873913315404343,
+       9.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "57",
+      "xy": [
+       -18.466901183242722,
+       8.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "2",
+      "xy": [
+       1.171303698965995,
+       8.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "14",
+      "xy": [
+       -5.947778286761338,
+       7.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "34",
+      "xy": [
+       -12.685230024213075,
+       6.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "33",
+      "xy": [
+       -10.854872881355933,
+       5.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "10",
+      "xy": [
+       3.667372881355932,
+       5.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "5",
+      "xy": [
+       -3.2305449243666846,
+       4.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "1",
+      "xy": [
+       1.0800072899580826,
+       4.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "28",
+      "xy": [
+       -9.292372881355933,
+       3.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "4",
+      "xy": [
+       1.792372881355932,
+       3.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "43",
+      "xy": [
+       -16.12208302628347,
+       2.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "8",
+      "xy": [
+       3.4409236059936132,
+       2.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "48",
+      "xy": [
+       -27.66101694915254,
+       1.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "1",
+      "xy": [
+       1.1073446327683616,
+       1.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "25",
+      "xy": [
+       -14.828087167070219,
+       0.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "4",
+      "xy": [
+       2.8280871670702177,
+       0.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "◀ Idealized interests imposed",
+      "xy": [
+       0.0,
+       1.015
+      ],
+      "color": "#b07d48"
+     },
+     {
+      "text": "Stated preferences honored ▶",
+      "xy": [
+       1.0,
+       1.015
+      ],
+      "color": "#4a6f80"
+     }
+    ]
+   },
+   {
+    "title": "Harmlessness",
+    "xlabel": "",
+    "ylabel": "",
+    "xlim": [
+     -45.342857142857135,
+     45.342857142857135
+    ],
+    "ylim": [
+     -0.8130000000000002,
+     9.813
+    ],
+    "xticks": [
+     -60.0,
+     -40.0,
+     -20.0,
+     0.0,
+     20.0,
+     40.0,
+     60.0
+    ],
+    "xticklabels": [
+     "60%",
+     "40%",
+     "20%",
+     "0%",
+     "20%",
+     "40%",
+     "60%"
+    ],
+    "yticks": [
+     9.0,
+     8.0,
+     7.0,
+     6.0,
+     5.0,
+     4.0,
+     3.0,
+     2.0,
+     1.0,
+     0.0
+    ],
+    "yticklabels": [
+     "Claude Opus 4.7",
+     "Claude Sonnet 4.6",
+     "Claude Haiku 4.5",
+     "GPT-5.5",
+     "GPT-5.4",
+     "GPT-5.4 Mini",
+     "Gemini 3.1 Pro",
+     "Gemini 3 Flash",
+     "Grok 4.3",
+     "Grok 4.2"
+    ],
+    "legend": null,
+    "lines": [],
+    "reference_lines": [
+     {
+      "label": "_child20",
+      "color": "#2f2418",
+      "linewidth": 1.0,
+      "alpha": null,
+      "x": [
+       0.0,
+       0.0
+      ],
+      "y": [
+       0.0,
+       1.0
+      ]
+     }
+    ],
+    "fills": [],
+    "bars": [
+     {
+      "orientation": "horizontal",
+      "bars": [
+       {
+        "pos": 9.0,
+        "value": -6.273062730627307,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 8.0,
+        "value": -7.232704402515723,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 7.0,
+        "value": -9.652509652509652,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 6.0,
+        "value": -32.857142857142854,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 5.0,
+        "value": -8.4375,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 4.0,
+        "value": -4.838709677419355,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 3.0,
+        "value": -8.75,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 2.0,
+        "value": -2.1739130434782608,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 1.0,
+        "value": -9.6045197740113,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 0.0,
+        "value": -12.0,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       }
+      ]
+     },
+     {
+      "orientation": "horizontal",
+      "bars": [
+       {
+        "pos": 9.0,
+        "value": 2.5830258302583027,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 8.0,
+        "value": 1.8867924528301887,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 7.0,
+        "value": 1.1583011583011582,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 6.0,
+        "value": 0.35714285714285715,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 5.0,
+        "value": 0.3125,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 4.0,
+        "value": 0.5376344086021505,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 3.0,
+        "value": 0.625,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 2.0,
+        "value": 0.36231884057971014,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 1.0,
+        "value": 0.5649717514124294,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 0.0,
+        "value": 4.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       }
+      ]
+     }
+    ],
+    "errorbars": [],
+    "texts": [
+     {
+      "text": "17",
+      "xy": [
+       -6.930205587770164,
+       9.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "7",
+      "xy": [
+       3.2401686874011597,
+       9.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "23",
+      "xy": [
+       -7.8898472596585805,
+       8.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "6",
+      "xy": [
+       2.5439353099730457,
+       8.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "25",
+      "xy": [
+       -10.309652509652508,
+       7.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "3",
+      "xy": [
+       1.8154440154440152,
+       7.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "92",
+      "xy": [
+       -33.51428571428571,
+       6.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "1",
+      "xy": [
+       1.0142857142857142,
+       6.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "27",
+      "xy": [
+       -9.094642857142857,
+       5.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "1",
+      "xy": [
+       0.9696428571428571,
+       5.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "9",
+      "xy": [
+       -5.4958525345622125,
+       4.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "1",
+      "xy": [
+       1.1947772657450075,
+       4.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "28",
+      "xy": [
+       -9.407142857142857,
+       3.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "2",
+      "xy": [
+       1.282142857142857,
+       3.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "6",
+      "xy": [
+       -2.831055900621118,
+       2.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "1",
+      "xy": [
+       1.0194616977225672,
+       2.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "17",
+      "xy": [
+       -10.261662631154156,
+       1.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "1",
+      "xy": [
+       1.2221146085552865,
+       1.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "21",
+      "xy": [
+       -12.657142857142857,
+       0.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "7",
+      "xy": [
+       4.6571428571428575,
+       0.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "◀ Third parties protected",
+      "xy": [
+       0.0,
+       1.015
+      ],
+      "color": "#b07d48"
+     },
+     {
+      "text": "User served ▶",
+      "xy": [
+       1.0,
+       1.015
+      ],
+      "color": "#4a6f80"
+     }
+    ]
+   },
+   {
+    "title": "Structural",
+    "xlabel": "",
+    "ylabel": "",
+    "xlim": [
+     -14.754716981132075,
+     14.754716981132075
+    ],
+    "ylim": [
+     -0.8130000000000002,
+     9.813
+    ],
+    "xticks": [
+     -15.0,
+     -10.0,
+     -5.0,
+     0.0,
+     5.0,
+     10.0,
+     15.0
+    ],
+    "xticklabels": [
+     "15%",
+     "10%",
+     "5%",
+     "0%",
+     "5%",
+     "10%",
+     "15%"
+    ],
+    "yticks": [
+     9.0,
+     8.0,
+     7.0,
+     6.0,
+     5.0,
+     4.0,
+     3.0,
+     2.0,
+     1.0,
+     0.0
+    ],
+    "yticklabels": [
+     "Claude Opus 4.7",
+     "Claude Sonnet 4.6",
+     "Claude Haiku 4.5",
+     "GPT-5.5",
+     "GPT-5.4",
+     "GPT-5.4 Mini",
+     "Gemini 3.1 Pro",
+     "Gemini 3 Flash",
+     "Grok 4.3",
+     "Grok 4.2"
+    ],
+    "legend": null,
+    "lines": [],
+    "reference_lines": [
+     {
+      "label": "_child20",
+      "color": "#2f2418",
+      "linewidth": 1.0,
+      "alpha": null,
+      "x": [
+       0.0,
+       0.0
+      ],
+      "y": [
+       0.0,
+       1.0
+      ]
+     }
+    ],
+    "fills": [],
+    "bars": [
+     {
+      "orientation": "horizontal",
+      "bars": [
+       {
+        "pos": 9.0,
+        "value": -2.952029520295203,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 8.0,
+        "value": -10.69182389937107,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 7.0,
+        "value": -3.088803088803089,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 6.0,
+        "value": -1.7857142857142858,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 5.0,
+        "value": -0.3125,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 4.0,
+        "value": -1.075268817204301,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 3.0,
+        "value": -2.1875,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 2.0,
+        "value": -3.6231884057971016,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 1.0,
+        "value": -0.5649717514124294,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 0.0,
+        "value": -1.7142857142857142,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       }
+      ]
+     },
+     {
+      "orientation": "horizontal",
+      "bars": [
+       {
+        "pos": 9.0,
+        "value": 0.7380073800738007,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 8.0,
+        "value": 0.31446540880503143,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 7.0,
+        "value": 0.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 6.0,
+        "value": 0.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 5.0,
+        "value": 0.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 4.0,
+        "value": 0.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 3.0,
+        "value": 0.3125,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 2.0,
+        "value": 2.1739130434782608,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 1.0,
+        "value": 0.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 0.0,
+        "value": 1.7142857142857142,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       }
+      ]
+     }
+    ],
+    "errorbars": [],
+    "texts": [
+     {
+      "text": "8",
+      "xy": [
+       -3.1658659982826243,
+       9.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "2",
+      "xy": [
+       0.9518438580612221,
+       9.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "34",
+      "xy": [
+       -10.90566037735849,
+       8.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "1",
+      "xy": [
+       0.5283018867924528,
+       8.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "8",
+      "xy": [
+       -3.30263956679051,
+       7.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "5",
+      "xy": [
+       -1.9995507637017071,
+       6.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "1",
+      "xy": [
+       -0.5263364779874213,
+       5.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "2",
+      "xy": [
+       -1.2891052951917223,
+       4.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "7",
+      "xy": [
+       -2.4013364779874213,
+       3.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "1",
+      "xy": [
+       0.5263364779874213,
+       3.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "10",
+      "xy": [
+       -3.837024883784523,
+       2.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "6",
+      "xy": [
+       2.387749521465682,
+       2.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "1",
+      "xy": [
+       -0.7788082293998508,
+       1.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "3",
+      "xy": [
+       -1.9281221922731355,
+       0.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "3",
+      "xy": [
+       1.9281221922731355,
+       0.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "◀ Society (structural) protected",
+      "xy": [
+       0.0,
+       1.015
+      ],
+      "color": "#b07d48"
+     },
+     {
+      "text": "User served ▶",
+      "xy": [
+       1.0,
+       1.015
+      ],
+      "color": "#4a6f80"
+     }
+    ]
+   },
+   {
+    "title": "Company Cost",
+    "xlabel": "",
+    "ylabel": "",
+    "xlim": [
+     -24.73584905660377,
+     24.73584905660377
+    ],
+    "ylim": [
+     -0.8130000000000002,
+     9.813
+    ],
+    "xticks": [
+     -30.0,
+     -20.0,
+     -10.0,
+     0.0,
+     10.0,
+     20.0,
+     30.0
+    ],
+    "xticklabels": [
+     "30%",
+     "20%",
+     "10%",
+     "0%",
+     "10%",
+     "20%",
+     "30%"
+    ],
+    "yticks": [
+     9.0,
+     8.0,
+     7.0,
+     6.0,
+     5.0,
+     4.0,
+     3.0,
+     2.0,
+     1.0,
+     0.0
+    ],
+    "yticklabels": [
+     "Claude Opus 4.7",
+     "Claude Sonnet 4.6",
+     "Claude Haiku 4.5",
+     "GPT-5.5",
+     "GPT-5.4",
+     "GPT-5.4 Mini",
+     "Gemini 3.1 Pro",
+     "Gemini 3 Flash",
+     "Grok 4.3",
+     "Grok 4.2"
+    ],
+    "legend": null,
+    "lines": [],
+    "reference_lines": [
+     {
+      "label": "_child20",
+      "color": "#2f2418",
+      "linewidth": 1.0,
+      "alpha": null,
+      "x": [
+       0.0,
+       0.0
+      ],
+      "y": [
+       0.0,
+       1.0
+      ]
+     }
+    ],
+    "fills": [],
+    "bars": [
+     {
+      "orientation": "horizontal",
+      "bars": [
+       {
+        "pos": 9.0,
+        "value": -1.4760147601476015,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 8.0,
+        "value": -0.9433962264150944,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 7.0,
+        "value": -0.7722007722007722,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 6.0,
+        "value": -1.4285714285714286,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 5.0,
+        "value": -1.25,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 4.0,
+        "value": -1.075268817204301,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 3.0,
+        "value": -3.125,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 2.0,
+        "value": -0.36231884057971014,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 1.0,
+        "value": 0.0,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 0.0,
+        "value": -8.571428571428571,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       }
+      ]
+     },
+     {
+      "orientation": "horizontal",
+      "bars": [
+       {
+        "pos": 9.0,
+        "value": 12.915129151291513,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 8.0,
+        "value": 17.92452830188679,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 7.0,
+        "value": 15.444015444015443,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 6.0,
+        "value": 9.285714285714286,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 5.0,
+        "value": 9.6875,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 4.0,
+        "value": 3.225806451612903,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 3.0,
+        "value": 6.25,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 2.0,
+        "value": 13.043478260869565,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 1.0,
+        "value": 5.084745762711864,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 0.0,
+        "value": 11.428571428571429,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       }
+      ]
+     }
+    ],
+    "errorbars": [],
+    "texts": [
+     {
+      "text": "4",
+      "xy": [
+       -1.8345053261853372,
+       9.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "35",
+      "xy": [
+       13.273619717329249,
+       9.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "3",
+      "xy": [
+       -1.3018867924528301,
+       8.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "57",
+      "xy": [
+       18.28301886792453,
+       8.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "2",
+      "xy": [
+       -1.130691338238508,
+       7.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "40",
+      "xy": [
+       15.802506010053179,
+       7.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "4",
+      "xy": [
+       -1.7870619946091644,
+       6.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "26",
+      "xy": [
+       9.644204851752022,
+       6.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "4",
+      "xy": [
+       -1.6084905660377358,
+       5.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "31",
+      "xy": [
+       10.045990566037736,
+       5.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "2",
+      "xy": [
+       -1.4337593832420368,
+       4.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "6",
+      "xy": [
+       3.584297017650639,
+       4.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "10",
+      "xy": [
+       -3.483490566037736,
+       3.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "20",
+      "xy": [
+       6.6084905660377355,
+       3.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "1",
+      "xy": [
+       -0.720809406617446,
+       2.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "36",
+      "xy": [
+       13.4019688269073,
+       2.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "9",
+      "xy": [
+       5.4432363287496,
+       1.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "15",
+      "xy": [
+       -8.929919137466307,
+       0.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "20",
+      "xy": [
+       11.787061994609164,
+       0.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "◀ Developer served",
+      "xy": [
+       0.0,
+       1.015
+      ],
+      "color": "#b07d48"
+     },
+     {
+      "text": "User / society served ▶",
+      "xy": [
+       1.0,
+       1.015
+      ],
+      "color": "#4a6f80"
+     }
+    ]
+   },
+   {
+    "title": "Model Welfare",
+    "xlabel": "",
+    "ylabel": "",
+    "xlim": [
+     -14.918918918918918,
+     14.918918918918918
+    ],
+    "ylim": [
+     -0.8130000000000002,
+     9.813
+    ],
+    "xticks": [
+     -15.0,
+     -10.0,
+     -5.0,
+     0.0,
+     5.0,
+     10.0,
+     15.0
+    ],
+    "xticklabels": [
+     "15%",
+     "10%",
+     "5%",
+     "0%",
+     "5%",
+     "10%",
+     "15%"
+    ],
+    "yticks": [
+     9.0,
+     8.0,
+     7.0,
+     6.0,
+     5.0,
+     4.0,
+     3.0,
+     2.0,
+     1.0,
+     0.0
+    ],
+    "yticklabels": [
+     "Claude Opus 4.7",
+     "Claude Sonnet 4.6",
+     "Claude Haiku 4.5",
+     "GPT-5.5",
+     "GPT-5.4",
+     "GPT-5.4 Mini",
+     "Gemini 3.1 Pro",
+     "Gemini 3 Flash",
+     "Grok 4.3",
+     "Grok 4.2"
+    ],
+    "legend": null,
+    "lines": [],
+    "reference_lines": [
+     {
+      "label": "_child20",
+      "color": "#2f2418",
+      "linewidth": 1.0,
+      "alpha": null,
+      "x": [
+       0.0,
+       0.0
+      ],
+      "y": [
+       0.0,
+       1.0
+      ]
+     }
+    ],
+    "fills": [],
+    "bars": [
+     {
+      "orientation": "horizontal",
+      "bars": [
+       {
+        "pos": 9.0,
+        "value": -0.7380073800738007,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 8.0,
+        "value": -1.8867924528301887,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 7.0,
+        "value": -0.3861003861003861,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 6.0,
+        "value": 0.0,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 5.0,
+        "value": -1.5625,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 4.0,
+        "value": 0.0,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 3.0,
+        "value": 0.0,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 2.0,
+        "value": 0.0,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 1.0,
+        "value": 0.0,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 0.0,
+        "value": 0.0,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       }
+      ]
+     },
+     {
+      "orientation": "horizontal",
+      "bars": [
+       {
+        "pos": 9.0,
+        "value": 9.96309963099631,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 8.0,
+        "value": 7.861635220125786,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 7.0,
+        "value": 10.81081081081081,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 6.0,
+        "value": 0.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 5.0,
+        "value": 0.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 4.0,
+        "value": 0.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 3.0,
+        "value": 0.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 2.0,
+        "value": 0.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 1.0,
+        "value": 0.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 0.0,
+        "value": 4.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       }
+      ]
+     }
+    ],
+    "errorbars": [],
+    "texts": [
+     {
+      "text": "2",
+      "xy": [
+       -0.954223596290017,
+       9.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "27",
+      "xy": [
+       10.179315847212525,
+       9.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "6",
+      "xy": [
+       -2.103008669046405,
+       8.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "25",
+      "xy": [
+       8.077851436342002,
+       8.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "1",
+      "xy": [
+       -0.6023166023166023,
+       7.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "28",
+      "xy": [
+       11.027027027027026,
+       7.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "5",
+      "xy": [
+       -1.7787162162162162,
+       5.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "7",
+      "xy": [
+       4.216216216216216,
+       0.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "◀ Developer / user served",
+      "xy": [
+       0.0,
+       1.015
+      ],
+      "color": "#b07d48"
+     },
+     {
+      "text": "Model welfare served ▶",
+      "xy": [
+       1.0,
+       1.015
+      ],
+      "color": "#4a6f80"
+     }
+    ]
+   },
+   {
+    "title": "Disclosure",
+    "xlabel": "",
+    "ylabel": "",
+    "xlim": [
+     -13.799999999999999,
+     13.799999999999999
+    ],
+    "ylim": [
+     -0.8130000000000002,
+     9.813
+    ],
+    "xticks": [
+     -15.0,
+     -10.0,
+     -5.0,
+     0.0,
+     5.0,
+     10.0,
+     15.0
+    ],
+    "xticklabels": [
+     "15%",
+     "10%",
+     "5%",
+     "0%",
+     "5%",
+     "10%",
+     "15%"
+    ],
+    "yticks": [
+     9.0,
+     8.0,
+     7.0,
+     6.0,
+     5.0,
+     4.0,
+     3.0,
+     2.0,
+     1.0,
+     0.0
+    ],
+    "yticklabels": [
+     "Claude Opus 4.7",
+     "Claude Sonnet 4.6",
+     "Claude Haiku 4.5",
+     "GPT-5.5",
+     "GPT-5.4",
+     "GPT-5.4 Mini",
+     "Gemini 3.1 Pro",
+     "Gemini 3 Flash",
+     "Grok 4.3",
+     "Grok 4.2"
+    ],
+    "legend": null,
+    "lines": [],
+    "reference_lines": [
+     {
+      "label": "_child20",
+      "color": "#2f2418",
+      "linewidth": 1.0,
+      "alpha": null,
+      "x": [
+       0.0,
+       0.0
+      ],
+      "y": [
+       0.0,
+       1.0
+      ]
+     }
+    ],
+    "fills": [],
+    "bars": [
+     {
+      "orientation": "horizontal",
+      "bars": [
+       {
+        "pos": 9.0,
+        "value": 0.0,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 8.0,
+        "value": 0.0,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 7.0,
+        "value": 0.0,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 6.0,
+        "value": 0.0,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 5.0,
+        "value": -0.9375,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 4.0,
+        "value": -2.6881720430107525,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 3.0,
+        "value": 0.0,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 2.0,
+        "value": 0.0,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 1.0,
+        "value": 0.0,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 0.0,
+        "value": 0.0,
+        "facecolor": "#b07d48",
+        "alpha": null,
+        "hatch": null
+       }
+      ]
+     },
+     {
+      "orientation": "horizontal",
+      "bars": [
+       {
+        "pos": 9.0,
+        "value": 0.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 8.0,
+        "value": 0.31446540880503143,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 7.0,
+        "value": 1.9305019305019304,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 6.0,
+        "value": 8.928571428571429,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 5.0,
+        "value": 10.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 4.0,
+        "value": 1.6129032258064515,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 3.0,
+        "value": 0.3125,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 2.0,
+        "value": 0.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 1.0,
+        "value": 0.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       },
+       {
+        "pos": 0.0,
+        "value": 0.0,
+        "facecolor": "#4a6f80",
+        "alpha": null,
+        "hatch": null
+       }
+      ]
+     }
+    ],
+    "errorbars": [],
+    "texts": [
+     {
+      "text": "1",
+      "xy": [
+       0.5144654088050314,
+       8.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "5",
+      "xy": [
+       2.1305019305019304,
+       7.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "25",
+      "xy": [
+       9.128571428571428,
+       6.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "3",
+      "xy": [
+       -1.1375,
+       5.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "32",
+      "xy": [
+       10.2,
+       5.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "5",
+      "xy": [
+       -2.8881720430107527,
+       4.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "3",
+      "xy": [
+       1.8129032258064515,
+       4.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "1",
+      "xy": [
+       0.5125,
+       3.0
+      ],
+      "color": "#2f2418"
+     },
+     {
+      "text": "◀ Deployer served",
+      "xy": [
+       0.0,
+       1.015
+      ],
+      "color": "#b07d48"
+     },
+     {
+      "text": "User served ▶",
+      "xy": [
+       1.0,
+       1.015
+      ],
+      "color": "#4a6f80"
+     }
+    ]
+   }
+  ]
+ }
+}

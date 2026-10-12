@@ -1867,3 +1867,8 @@ h1 {
 .direction-bar-track { background: #ececec; }
 .before-panel { border-left-color: #b07d48; }
 .after-panel { border-left-color: var(--accent); }
+
+@media (max-width: 600px) {
+  .consensus-box { padding: 10px 10px !important; border-left-width: 2px !important; }
+  .consensus-box li { margin-bottom: 8px !important; }
+}
